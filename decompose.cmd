@@ -1,0 +1,1 @@
+cscript decompose.vbs projects.accdb
