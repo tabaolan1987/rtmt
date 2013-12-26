@@ -79,6 +79,10 @@ Function exportModulesTxt(sADPFilename, sExportpath)
     If (sExportpath = "") then
         sExportpath = myPath & "\source\"
     End If
+	If oFS.FolderExists(sExportpath) Then
+		oFS.DeleteFolder(sExportpath & "*"),True
+		oFS.DeleteFile(sExportpath & "*"),True
+	End If
     sStubADPFilename = sExportpath & myName & "_stub." & myType
 
     WScript.Echo "copy stub to " & sStubADPFilename & "..."
