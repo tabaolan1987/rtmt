@@ -1,0 +1,4 @@
+*.bas encoding=ansi
+*.form encoding=ansi
+*.mac encoding=ansi
+*.report encoding=ansi
