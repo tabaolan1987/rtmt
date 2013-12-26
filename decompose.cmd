@@ -1,1 +1,3 @@
-cscript decompose.vbs projects.accdb
+@echo off
+if "%OS%" == "Windows_NT" setlocal
+cscript ".\scripts\decompose.vbs" rolemapping.accdb

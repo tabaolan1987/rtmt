@@ -1,3 +1,5 @@
+' @author Oliver, Hai Lu
+
 ' Converts all modules, classes, forms and macros in a directory created by "decompose.vbs"
 ' and composes then into an Access Project file (.adp). This overwrites any existing Modules with the
 ' same names without warning!!!
@@ -18,7 +20,7 @@ Set fso = CreateObject("Scripting.FileSystemObject")
 
 dim sADPFilename
 If (WScript.Arguments.Count = 0) then
-    MsgBox "Bitte den Dateinamen angeben!", vbExclamation, "Error"
+    MsgBox "No parameter found.!", vbExclamation, "Error"
     Wscript.Quit()
 End if
 sADPFilename = fso.GetAbsolutePathName(WScript.Arguments(0))
@@ -52,7 +54,7 @@ Function importModulesTxt(sADPFilename, sImportpath)
 
     ' if no path was given as argument, use a relative directory
     If (sImportpath = "") then
-        sImportpath = myPath & "\Source\"
+        sImportpath = myPath & "\source\"
     End If
     sStubADPFilename = sImportpath & myName & "_stub." & myType
 
@@ -81,10 +83,18 @@ Function importModulesTxt(sADPFilename, sImportpath)
         oApplication.OpenCurrentDatabase sADPFilename
     End If
     oApplication.Visible = false
+	LoadModule oApplication, sImportpath & "main"
+	LoadModule oApplication, sImportpath & "test"
+	LoadModule oApplication, sImportpath & "test\lib"
+	LoadModule oApplication, sImportpath & "common"
+	
+    oApplication.RunCommand acCmdCompileAndSaveAllModules
+    oApplication.Quit
+End Function
 
-    Dim folder
-    Set folder = fso.GetFolder(sImportpath)
-
+Function LoadModule(oApplication, path)
+	Dim folder
+    Set folder = fso.GetFolder(path)
     ' load each file from the import path into the stub
     Dim myFile, objectname, objecttype
     for each myFile in folder.Files
@@ -101,13 +111,8 @@ Function importModulesTxt(sADPFilename, sImportpath)
         elseif (objecttype = "report") then
             oApplication.LoadFromText acReport, objectname, myFile.Path
         end if
-
     next
-
-    oApplication.RunCommand acCmdCompileAndSaveAllModules
-    oApplication.Quit
 End Function
-
 Public Function getErr()
     Dim strError
     strError = vbCrLf & "----------------------------------------------------------------------------------------------------------------------------------------" & vbCrLf & _

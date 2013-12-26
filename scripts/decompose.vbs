@@ -1,3 +1,5 @@
+' @author Oliver, Hai Lu
+
 ' Usage:
 '  CScript decompose.vbs <input file> <path>
 
@@ -13,12 +15,37 @@ const acMacro = 4
 const acReport = 3
 
 ' BEGIN CODE
+WScript.Echo "Read project.properties ..."
+Dim oFS : Set oFS = CreateObject( "Scripting.FileSystemObject" )
+Dim sPFSpec : sPFSpec = ".\project.properties"
+Dim dicProps : Set dicProps = CreateObject( "Scripting.Dictionary" )
+Dim oTS : Set oTS = oFS.OpenTextFile( sPFSpec )
+Dim sSect : sSect = ""
+Do Until oTS.AtEndOfStream
+Dim sLine : sLine = Trim( oTS.ReadLine )
+If "" <> sLine Then
+If "#" = Left( sLine, 1 ) Then
+sSect = sLine
+Else
+If "" = sSect Then
+Else
+Dim aParts : aParts = Split( sLine, "=" )
+If 1 <> UBound( aParts ) Then
+Else
+dicProps(Trim( aParts( 0 ) ) ) = Trim( aParts( 1 ) )
+End If
+End If
+End If
+End If
+Loop
+oTS.Close
+
 Dim fso
 Set fso = CreateObject("Scripting.FileSystemObject")
 
 dim sADPFilename
 If (WScript.Arguments.Count = 0) then
-    MsgBox "Bitte den Dateinamen angeben!", vbExclamation, "Error"
+    MsgBox "No parameter found!", vbExclamation, "Error"
     Wscript.Quit()
 End if
 sADPFilename = fso.GetAbsolutePathName(WScript.Arguments(0))
@@ -50,7 +77,7 @@ Function exportModulesTxt(sADPFilename, sExportpath)
     myPath = fso.GetParentFolderName(sADPFilename)
 
     If (sExportpath = "") then
-        sExportpath = myPath & "\Source\"
+        sExportpath = myPath & "\source\"
     End If
     sStubADPFilename = sExportpath & myName & "_stub." & myType
 
@@ -78,23 +105,23 @@ Function exportModulesTxt(sADPFilename, sExportpath)
     Dim myObj
     For Each myObj In oApplication.CurrentProject.AllForms
         WScript.Echo "  " & myObj.fullname
-        oApplication.SaveAsText acForm, myObj.fullname, sExportpath & "\" & myObj.fullname & ".form"
+        SaveAsText oApplication, acForm, myObj.fullname, sExportpath, myObj.fullname & ".form", dicProps
         oApplication.DoCmd.Close acForm, myObj.fullname
         dctDelete.Add "FO" & myObj.fullname, acForm
     Next
     For Each myObj In oApplication.CurrentProject.AllModules
         WScript.Echo "  " & myObj.fullname
-        oApplication.SaveAsText acModule, myObj.fullname, sExportpath & "\" & myObj.fullname & ".bas"
+        SaveAsText oApplication, acModule, myObj.fullname, sExportpath, myObj.fullname & ".bas", dicProps
         dctDelete.Add "MO" & myObj.fullname, acModule
     Next
     For Each myObj In oApplication.CurrentProject.AllMacros
         WScript.Echo "  " & myObj.fullname
-        oApplication.SaveAsText acMacro, myObj.fullname, sExportpath & "\" & myObj.fullname & ".mac"
+        SaveAsText oApplication, acMacro, myObj.fullname, sExportpath, myObj.fullname & ".mac", dicProps
         dctDelete.Add "MA" & myObj.fullname, acMacro
     Next
     For Each myObj In oApplication.CurrentProject.AllReports
         WScript.Echo "  " & myObj.fullname
-        oApplication.SaveAsText acReport, myObj.fullname, sExportpath & "\" & myObj.fullname & ".report"
+        SaveAsText oApplication, acReport, myObj.fullname, sExportpath, myObj.fullname & ".report", dicProps
         dctDelete.Add "RE" & myObj.fullname, acReport
     Next
 
@@ -113,6 +140,53 @@ Function exportModulesTxt(sADPFilename, sExportpath)
     fso.DeleteFile sStubADPFilename & "_"
 
 
+End Function
+
+Function SaveAsText(oApplication, acObj, fullName, path, fileName, dicProps)
+	Dim desPath, script
+	Dim check : check = False
+	If SaveModule(oApplication, acObj, fullName, path & "test", fileName, "src.test") Then
+		check = True
+	End If
+	If SaveModule(oApplication, acObj, fullName, path & "test\lib", fileName, "src.test.lib") Then
+		check = True
+	End If
+	If SaveModule(oApplication, acObj, fullName, path & "common", fileName, "src.common") Then
+		check = True
+	End If
+	If Not check Then
+		SaveFile oApplication, acObj, fullName, path & "main", fileName
+	End If
+End Function
+
+Function SaveModule(oApplication, acObj, fullName, path, fileName, key)
+	CheckDir(path)
+	Dim source : source = dicProps(key)
+	Dim check : check = False
+	Dim str
+	If Not StrComp(source,"",vbTextCompare) = 0 Then
+		Dim list : list = Split(source, ",")
+		For Each str In list
+			If StrComp(Trim(str), fileName, vbTextCompare) = 0 Then
+				SaveFile oApplication, acObj, fullName, path, fileName
+				check = True
+			End If
+		Next
+	End If
+	SaveModule = check
+End Function
+
+Function SaveFile(oApplication, acObj, fullName, path, fileName)
+	CheckDir path
+	oApplication.SaveAsText acObj, fullName, path & "\" & fileName
+End Function
+
+Function CheckDir(path)
+	Dim oFS : Set oFS = CreateObject("Scripting.FileSystemObject")
+	If Not oFS.FolderExists(path) Then
+		WScript.Echo "Create dir " & path
+		oFS.CreateFolder (path)
+	End If
 End Function
 
 Public Function getErr()

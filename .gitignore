@@ -1,4 +1,5 @@
 /target/**
-projects.accdb
-projects.accdb.bak
-projects.laccdb
+rolemapping.accdb
+rolemapping.accdb.bak
+rolemapping.laccdb
+buildnumber
