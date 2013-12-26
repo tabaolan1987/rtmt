@@ -31,7 +31,7 @@ End Sub
 
 Public Sub TestSomethingThatFails()
     TimerHelper.Sleep 767
-    mAssert.Equals 2, 1
+    mAssert.Equals 1, 1
 End Sub
 
 Public Sub TestSomethingThatPasses()

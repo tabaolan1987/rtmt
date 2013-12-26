@@ -60,12 +60,12 @@ Function importModulesTxt(sADPFilename, sImportpath)
 
     ' check for existing file and ask to overwrite with the stub
     if (fso.FileExists(sADPFilename)) Then
-        WScript.StdOut.Write sADPFilename & " is existed. Override it? (y/n) "
-        dim sInput
-        sInput = WScript.StdIn.Read(1)
-        if (sInput <> "y") Then
-            WScript.Quit
-        end if
+        'WScript.StdOut.Write sADPFilename & " is existed. Override it? (y/n) "
+        'dim sInput
+        'sInput = WScript.StdIn.Read(1)
+        'if (sInput <> "y") Then
+        '    WScript.Quit
+        'end if
 
         fso.CopyFile sADPFilename, sADPFilename & ".bak"
     end if
