@@ -22,9 +22,7 @@ End Property
 Private Sub IRunManager_Report()
     Dim Failure As TestFailure, RM As IRunManager, Test As ITest, TestCase As ITestCase, TCR As TestCaseRow
     
-    If Result.WasSuccessful Then
-        Debug.Print "OK (" & Result.TestCasesRun & ")"
-    Else
+    
         ' Added by Hai to create Unit test report
         Dim fso As Object, oFile As Object, reportPath As String, lastClass As String
         lastClass = ""
@@ -70,7 +68,7 @@ Private Sub IRunManager_Report()
             Set fso = Nothing
             Set oFile = Nothing
         End If
-    End If
+
 End Sub
 
 Private Property Get IRunManager_Result() As TestResult
