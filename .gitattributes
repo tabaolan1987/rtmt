@@ -2,3 +2,4 @@
 *.form encoding=ansi
 *.mac encoding=ansi
 *.report encoding=ansi
+core.eol
