@@ -32,7 +32,12 @@ else
     sPath = WScript.Arguments(1)
 End If
 
-
+Dim prjEnv
+If (WScript.Arguments.Count = 3) then
+	prjEnv = WScript.Arguments(2)
+else
+    prjEnv = "dev"
+End If
 importModulesTxt sADPFilename, sPath
 
 If (Err <> 0) and (Err.Description <> NULL) Then
@@ -84,9 +89,11 @@ Function importModulesTxt(sADPFilename, sImportpath)
     End If
     oApplication.Visible = false
 	LoadModule oApplication, sImportpath & "main"
-	LoadModule oApplication, sImportpath & "test"
-	LoadModule oApplication, sImportpath & "test\lib"
 	LoadModule oApplication, sImportpath & "common"
+	If StrComp(prjEnv, "dev", vbTextCompare) = 0 Then
+		LoadModule oApplication, sImportpath & "test"
+		LoadModule oApplication, sImportpath & "test\lib"
+	End If
 	
     oApplication.RunCommand acCmdCompileAndSaveAllModules
     oApplication.Quit

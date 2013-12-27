@@ -47,7 +47,7 @@ Dim version : version = dicProps("app.version")
 If oFS.FileExists(dicProps("build.number.file")) Then
    Dim rBN : Set rBN = oFS.OpenTextFile(dicProps("build.number.file"))
    Dim bn : bn = rBN.ReadAll
-   version = version & "." & bn
+   version = version & "." & Trim(bn)
 End If
 
 ' loop all key and replace script content
