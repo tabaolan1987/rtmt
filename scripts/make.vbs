@@ -46,7 +46,7 @@ Dim version : version = dicProps("app.version")
 ' Check buildnumer exists, append to app version
 If oFS.FileExists(dicProps("build.number.file")) Then
    Dim rBN : Set rBN = oFS.OpenTextFile(dicProps("build.number.file"))
-   Dim bn : bn = rBN.ReadAll
+   Dim bn : bn = rBN.ReadLine
    version = version & "." & Trim(bn)
 End If
 
