@@ -13,17 +13,17 @@ Public Function Tests() As Collection
 End Function
 
 Public Sub AddTest(TestClassName As String, Optional MethodName As String)
-    Dim Test As ITest
+    Dim test As ITest
     Dim TestCase As ITestCase
     Dim TL As TestClassLister
     Set TL = New TestClassLister
-    Set Test = TL.NewTestClass(TestClassName)
+    Set test = TL.NewTestClass(TestClassName)
     If MethodName <> "" Then
-        Set TestCase = Test
-        TestCase.Manager.Init MethodName
-        mTests.Add Test
+        Set TestCase = test
+        TestCase.Manager.init MethodName
+        mTests.Add test
     Else
-        mTests.Add Test.Suite
+        mTests.Add test.Suite
     End If
 End Sub
 

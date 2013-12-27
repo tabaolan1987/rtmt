@@ -136,8 +136,8 @@ Public Function GetTestMethods(className As String) As Collection
     Next
 End Function
 
-Private Function IsTestMethodLine(Line As String) As Boolean
-    IsTestMethodLine = Left(Line, 15) Like "Public Sub Test"
+Private Function IsTestMethodLine(line As String) As Boolean
+    IsTestMethodLine = Left(line, 15) Like "Public Sub Test"
 End Function
 
 Public Sub MakeSuite(className As String)

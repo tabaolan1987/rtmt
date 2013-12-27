@@ -61,6 +61,7 @@ For Each strKey In dicProps.Keys()
 		issSource = Replace(issSource, "%" & strKey & "%", dicProps(strKey))    
 	End If
 Next
+issSource = Replace(issSource, "%data.dir%", curDir & "\data\*")
 issSource = Replace(issSource, "%output.dir%", curDir & "\target")  
 issSource = Replace(issSource, "%source.file%", curDir & "\" & dicProps("app.db.file")) 
 issSource = Replace(issSource, "%base.filename%", dicProps("app.file.name") & "-v" & version)

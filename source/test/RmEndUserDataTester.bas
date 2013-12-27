@@ -29,27 +29,39 @@ Private Sub ITestCase_TearDown()
 
 End Sub
 
-Public Sub TestSomethingThatFails()
-    TimerHelper.Sleep 767
-    mAssert.Equals 1, 1
+Public Sub TestImportData()
+    
 End Sub
 
-Public Sub TestSomethingThatPasses()
-    TimerHelper.Sleep 431
-    mAssert.Equals 2, 1 + 1
-    
+Public Sub TestCreateTable()
+    Dim im As RmEndUserData: Set im = New RmEndUserData
+    im.CreateTable
+End Sub
+
+Public Sub TestDropTable()
+    Dim im As RmEndUserData: Set im = New RmEndUserData
+    im.DropTable
+End Sub
+
+Public Sub TestDeleteAllData()
+    Dim im As RmEndUserData: Set im = New RmEndUserData
+    im.DeleteAllData
 End Sub
 
 Private Function ITest_Suite() As TestSuite
     Set ITest_Suite = New TestSuite
-    ITest_Suite.AddTest ITest_Manager.className, "TestSomethingThatFails"
-    ITest_Suite.AddTest ITest_Manager.className, "TestSomethingThatPasses"
+    ITest_Suite.AddTest ITest_Manager.className, "TestCreateTable"
+    ITest_Suite.AddTest ITest_Manager.className, "TestImportData"
+    ITest_Suite.AddTest ITest_Manager.className, "TestDeleteAllData"
+    ITest_Suite.AddTest ITest_Manager.className, "TestDropTable"
 End Function
 
 Private Sub ITestCase_RunTest()
     Select Case mManager.MethodName
-        Case "TestSomethingThatFails": TestSomethingThatFails
-        Case "TestSomethingThatPasses": TestSomethingThatPasses
+        Case "TestImportData": TestImportData
+        Case "TestCreateTable": TestCreateTable
+        Case "TestDropTable": TestDropTable
+        Case "TestDeleteAllData": TestDeleteAllData
         Case Else: mAssert.Should False, "Invalid test name: " & mManager.MethodName
     End Select
 End Sub

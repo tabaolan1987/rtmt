@@ -7,7 +7,7 @@ Implements ITestManager
 
 Private mMethodName As String, mClassName As String
 
-Public Sub Init(MethodName As String)
+Public Sub init(MethodName As String)
     mMethodName = MethodName
 End Sub
 
@@ -23,16 +23,16 @@ Private Property Get ITestManager_ClassName() As String
     ITestManager_ClassName = mClassName
 End Property
 
-Private Function ITestManager_CountTestCases(Test As ITest) As Long
+Private Function ITestManager_CountTestCases(test As ITest) As Long
     ITestManager_CountTestCases = 1
 End Function
 
-Private Function ITestManager_Run(Test As ITest, Optional RunManager As IRunManager) As IRunManager
+Private Function ITestManager_Run(test As ITest, Optional RunManager As IRunManager) As IRunManager
     ' Changed by Hai to control timestamp
     Dim TestCase As ITestCase, sngStart As Long, sngEnd As Long, sngElapsed As Long
     If RunManager Is Nothing Then Set RunManager = New RunManager
     
-    Set TestCase = Test
+    Set TestCase = test
     RunManager.Result.StartTest TestCase
     sngStart = TimerHelper.GetCurrentMillisecond
     

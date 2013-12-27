@@ -20,40 +20,39 @@ Private Property Get IRunManager_Assert() As IAssert
 End Property
 
 Private Sub IRunManager_Report()
-    Dim Failure As TestFailure, RM As IRunManager, Test As ITest, TestCase As ITestCase, TCR As TestCaseRow
-    
-    
+    Dim Failure As TestFailure, RM As IRunManager, test As ITest, TestCase As ITestCase, TCR As TestCaseRow
         ' Added by Hai to create Unit test report
         Dim fso As Object, oFile As Object, reportPath As String, lastClass As String
         lastClass = ""
-        reportPath = Application.CurrentProject.Path & "\target"
+        reportPath = Application.CurrentProject.path & "\target"
         FileHelper.CheckDir (reportPath)
         reportPath = reportPath & "\reports"
         FileHelper.CheckDir (reportPath)
-        Debug.Print "Tests run: " & Result.TestCasesRun & " Failures: " & Result.Failures.count
+        Logger.LogInfo "RunManager.IRunManager_Report", "Tests run: " & Result.TestCasesRun & " Failures: " & Result.Failures.count
         For Each TCR In Result.TestCaseRows
             Set Failure = Result.isFailures(TCR.TestCase)
             Set TestCase = TCR.TestCase
-            Set Test = TestCase
-            If Not StrComp(lastClass, Test.Manager.className, vbTextCompare) = 0 Then
+            Set test = TestCase
+            If Not StrComp(lastClass, test.Manager.className, vbTextCompare) = 0 Then
                 If Not fso Is Nothing Then
                     oFile.WriteLine "</testsuite>"
                     oFile.Close
                     Set fso = Nothing
                     Set oFile = Nothing
                 End If
-                lastClass = Test.Manager.className
+                lastClass = test.Manager.className
                 Set fso = CreateObject("Scripting.FileSystemObject")
                 Set oFile = fso.CreateTextFile(reportPath & "\" & lastClass & ".xml")
                 oFile.WriteLine "<?xml version=""1.0"" encoding=""UTF-8""?>"
                 oFile.WriteLine "<testsuite name=""" & lastClass & """ time=""" & TimerHelper.MsToString(Result.TotalTime(lastClass)) & """ errors=""0"" tests=""" & CStr(Result.TestCaseCount(lastClass)) & """ failures=""" & CStr(Result.FailureCount(lastClass)) & """>"
             End If
             
-            Debug.Print Test.Manager.className & "." & TestCase.Manager.MethodName & ": " & TCR.Time
+           Logger.LogInfo "RunManager.IRunManager_Report", test.Manager.className & "." & TestCase.Manager.MethodName & ": " & TCR.Time
             
             oFile.WriteLine "   <testcase time=""" & TimerHelper.MsToString(TCR.Time) & """ name=""" & TestCase.Manager.MethodName & """ >"
             If Not Failure Is Nothing Then
-                oFile.WriteLine "       <failure type=""runtime"" message=""" & StringHelper.encodeXml(Failure.Comment) & """>"
+                Logger.LogError "RunManager.IRunManager_Report", " #Failure -> " & Failure.Comment, Nothing
+                oFile.WriteLine "       <failure type=""runtime"" message=""" & StringHelper.EncodeXml(Failure.Comment) & """>"
                 oFile.WriteLine "           " & Failure.Comment
                 oFile.WriteLine "       </failure>"
                 oFile.WriteLine "       <system-out>"

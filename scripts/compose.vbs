@@ -65,13 +65,14 @@ Function importModulesTxt(sADPFilename, sImportpath)
 
     ' check for existing file and ask to overwrite with the stub
     if (fso.FileExists(sADPFilename)) Then
-        'WScript.StdOut.Write sADPFilename & " is existed. Override it? (y/n) "
-        'dim sInput
-        'sInput = WScript.StdIn.Read(1)
-        'if (sInput <> "y") Then
-        '    WScript.Quit
-        'end if
-
+		If StrComp(prjEnv, "dev", vbTextCompare) = 0 Then
+			WScript.StdOut.Write sADPFilename & " is existed. Override it? (y/n) "
+			dim sInput
+			sInput = WScript.StdIn.Read(1)
+			if (sInput <> "y") Then
+				WScript.Quit
+			end if
+		End If
         fso.CopyFile sADPFilename, sADPFilename & ".bak"
     end if
 
@@ -90,7 +91,7 @@ Function importModulesTxt(sADPFilename, sImportpath)
     oApplication.Visible = false
 	LoadModule oApplication, sImportpath & "main"
 	LoadModule oApplication, sImportpath & "common"
-	If StrComp(prjEnv, "dev", vbTextCompare) = 0 Then
+	If StrComp(prjEnv, "dev", vbTextCompare) = 0 or StrComp(prjEnv, "test", vbTextCompare) = 0 Then
 		LoadModule oApplication, sImportpath & "test"
 		LoadModule oApplication, sImportpath & "test\lib"
 	End If
