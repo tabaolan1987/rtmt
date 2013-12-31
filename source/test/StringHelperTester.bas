@@ -65,11 +65,29 @@ OnError:
     Resume OnExit
 End Sub
 
+Public Sub TestEndsWith()
+    Dim checker As Boolean
+    checker = StringHelper.EndsWith("test", "ST", True)
+    mAssert.Equals checker, True, "ignoreCase = True"
+    'checker = StringHelper.EndsWith("test", "ST", False)
+    'mAssert.Equals checker, True, "ignoreCase = False"
+End Sub
+
+Public Sub TestStartsWith()
+    Dim checker As Boolean
+    checker = StringHelper.StartsWith("test", "Te", True)
+    mAssert.Equals checker, True, "ignoreCase = True"
+    'checker = StringHelper.StartsWith("test", "Te", False)
+    'mAssert.Equals checker, True, "ignoreCase = False"
+End Sub
+
 Private Function ITest_Suite() As TestSuite
     Set ITest_Suite = New TestSuite
     ITest_Suite.AddTest ITest_Manager.className, "TestEncodeXml"
     ITest_Suite.AddTest ITest_Manager.className, "TestIsEqual"
     ITest_Suite.AddTest ITest_Manager.className, "TestIsContain"
+    ITest_Suite.AddTest ITest_Manager.className, "TestEndsWith"
+    ITest_Suite.AddTest ITest_Manager.className, "TestStartsWith"
 End Function
 
 Private Sub ITestCase_RunTest()
@@ -77,6 +95,8 @@ Private Sub ITestCase_RunTest()
         Case "TestEncodeXml": TestEncodeXml
         Case "TestIsEqual": TestIsEqual
         Case "TestIsContain": TestIsContain
+        Case "TestEndsWith": TestEndsWith
+        Case "TestStartsWith": TestStartsWith
         Case Else: mAssert.Should False, "Invalid test name: " & mManager.MethodName
     End Select
 End Sub

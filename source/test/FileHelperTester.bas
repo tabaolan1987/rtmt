@@ -43,16 +43,39 @@ Public Sub TestGetCurrentDbPath()
     mAssert.Equals Len(path) > 0, True
 End Sub
 
+Public Sub TestIsExist()
+    Dim path As String
+    path = FileHelper.CurrentDbPath & Constants.END_USER_DATA_CSV_FILE_PATH
+    mAssert.Equals FileHelper.IsExist(path), True
+    path = FileHelper.CurrentDbPath & "nothing.test"
+    mAssert.Equals FileHelper.IsExist(path), False
+End Sub
+
+Public Sub TestReadSSFile()
+    Dim source() As String
+    source() = FileHelper.ReadSSFile(FileHelper.CurrentDbPath & Constants.SS_SYNC_TABLES)
+    
+    mAssert.Equals UBound(source) > 0, True
+    Dim i As Integer
+    For i = LBound(source) To UBound(source)
+        Logger.LogDebug "FileHelperTester.TestReadSSFile", source(i)
+    Next
+End Sub
+
 Private Function ITest_Suite() As TestSuite
     Set ITest_Suite = New TestSuite
     ITest_Suite.AddTest ITest_Manager.className, "TestReadFile"
     ITest_Suite.AddTest ITest_Manager.className, "TestGetCurrentDbPath"
+    ITest_Suite.AddTest ITest_Manager.className, "TestIsExist"
+    ITest_Suite.AddTest ITest_Manager.className, "TestReadSSFile"
 End Function
 
 Private Sub ITestCase_RunTest()
     Select Case mManager.MethodName
         Case "TestReadFile": TestReadFile
         Case "TestGetCurrentDbPath": TestGetCurrentDbPath
+        Case "TestIsExist": TestIsExist
+        Case "TestReadSSFile": TestReadSSFile
         Case Else: mAssert.Should False, "Invalid test name: " & mManager.MethodName
     End Select
 End Sub

@@ -33,9 +33,10 @@ End Function
 
 Public Function SelectTestClass(TestClassName As String) As ITest
     Select Case TestClassName
-        Case "RmEndUserDataTester": Set SelectTestClass = New RmEndUserDataTester
+        Case "DbManagerTester": Set SelectTestClass = New DbManagerTester
         Case "FileHelperTester": Set SelectTestClass = New FileHelperTester
         Case "StringHelperTester": Set SelectTestClass = New StringHelperTester
+        Case "ReportingTester": Set SelectTestClass = New ReportingTester
         Case Else:
     End Select
 End Function

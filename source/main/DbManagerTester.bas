@@ -30,22 +30,31 @@ Private Sub ITestCase_TearDown()
 End Sub
 
 Public Sub TestImportData()
-    
+    Dim csvPath As String
+    csvPath = FileHelper.CurrentDbPath & Constants.END_USER_DATA_CSV_FILE_PATH
+    Dim im As DbManager: Set im = New DbManager
+    im.ImportData "END_USER", csvPath
 End Sub
 
 Public Sub TestCreateTable()
-    Dim im As RmEndUserData: Set im = New RmEndUserData
+    Dim im As DbManager: Set im = New DbManager
     im.CreateTable
 End Sub
 
 Public Sub TestDropTable()
-    Dim im As RmEndUserData: Set im = New RmEndUserData
+    Dim im As DbManager: Set im = New DbManager
     im.DropTable
+    Ultilities.ifTableExists ("")
 End Sub
 
 Public Sub TestDeleteAllData()
-    Dim im As RmEndUserData: Set im = New RmEndUserData
-    im.DeleteAllData
+    Dim im As DbManager: Set im = New DbManager
+    im.DeleteAllData "empty"
+End Sub
+
+Public Sub TestImportSqlTable()
+    Dim im As DbManager: Set im = New DbManager
+    im.ImportSqlTable "CMGSRV2\SQLEXPRESS,1433", "upstream_role_mapping", "BpRoleStandard", "BpRoleStandard", "sa", "admincmg@3f"
 End Sub
 
 Private Function ITest_Suite() As TestSuite
@@ -54,6 +63,8 @@ Private Function ITest_Suite() As TestSuite
     ITest_Suite.AddTest ITest_Manager.className, "TestImportData"
     ITest_Suite.AddTest ITest_Manager.className, "TestDeleteAllData"
     ITest_Suite.AddTest ITest_Manager.className, "TestDropTable"
+    ITest_Suite.AddTest ITest_Manager.className, "TestImportSqlTable"
+    
 End Function
 
 Private Sub ITestCase_RunTest()
@@ -62,6 +73,7 @@ Private Sub ITestCase_RunTest()
         Case "TestCreateTable": TestCreateTable
         Case "TestDropTable": TestDropTable
         Case "TestDeleteAllData": TestDeleteAllData
+        Case "TestImportSqlTable": TestImportSqlTable
         Case Else: mAssert.Should False, "Invalid test name: " & mManager.MethodName
     End Select
 End Sub

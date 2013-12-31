@@ -1,0 +1,4 @@
+# IMPORTANT
+Activity, BpRoleStandard, BPRoleStandardCategory, MappingAcitivityBpStandardRole,
+MappingRegionSystemRole, MappingSystemRoleBpStandardRole,
+Region, SystemRole, SystemRoleCategory

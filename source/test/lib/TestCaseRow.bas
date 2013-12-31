@@ -6,7 +6,7 @@ Option Compare Database
 
 Private mTestCase As ITestCase, mTime As Long
 
-Public Sub init(TestCase As ITestCase, Time As Long)
+Public Sub Init(TestCase As ITestCase, Time As Long)
     Set mTestCase = TestCase
     mTime = Time
 End Sub

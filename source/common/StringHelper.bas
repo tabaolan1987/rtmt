@@ -42,3 +42,23 @@ Public Function IsEqual(str1 As String, str2 As String, ignoreCase As Boolean) A
         IsEqual = False
     End If
 End Function
+
+Public Function StartsWith(ByVal strValue As String, _
+  CheckFor As String, ignoreCase As Boolean) As Boolean
+  Dim sCompare As String
+  Dim lLen As Long
+  lLen = Len(CheckFor)
+  If lLen > Len(strValue) Then Exit Function
+  sCompare = Left(strValue, lLen)
+  StartsWith = IsEqual(sCompare, CheckFor, ignoreCase)
+End Function
+
+Public Function EndsWith(ByVal strValue As String, _
+   CheckFor As String, ignoreCase As Boolean) As Boolean
+  Dim sCompare As String
+  Dim lLen As Long
+  lLen = Len(CheckFor)
+  If lLen > Len(strValue) Then Exit Function
+  sCompare = Right(strValue, lLen)
+  EndsWith = IsEqual(sCompare, CheckFor, ignoreCase)
+End Function
