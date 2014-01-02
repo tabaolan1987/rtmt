@@ -11,9 +11,9 @@ End Property
 Public Property Get className() As String
 
 End Property
-Public Function Run(test As ITest, Optional RunManager As IRunManager) As IRunManager
+Public Function Run(Test As ITest, Optional RunManager As IRunManager) As IRunManager
 
 End Function
-Public Function CountTestCases(test As ITest) As Long
+Public Function CountTestCases(Test As ITest) As Long
 
 End Function

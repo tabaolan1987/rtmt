@@ -20,6 +20,8 @@ Private mPort As String
 Private mUsername As String
 Private mPassword As String
 Private mSyncTables() As String
+Private mSyncUsers As Scripting.Dictionary
+Private mLineToRemove() As Integer
 
 Private Function IniFileName() As String
   IniFileName = FileHelper.CurrentDbPath & "config\settings.ini"
@@ -74,8 +76,29 @@ Public Function Init()
     mUsername = ReadIniFileString(Constants.SECTION_REMOTE_DATABASE, Constants.KEY_USERNAME)
     mPassword = ReadIniFileString(Constants.SECTION_REMOTE_DATABASE, Constants.KEY_PASSWORD)
     
-    mSyncTables = FileHelper.ReadSSFile(FileHelper.CurrentDbPath & "")
+    mSyncTables = FileHelper.ReadSSFile(FileHelper.CurrentDbPath & Constants.SS_SYNC_TABLES)
     
+    Dim source As String, tmpList() As String, ln As String, arraySize As Integer, i As Integer
+    source = ReadIniFileString(Constants.SECTION_USER_DATA, Constants.KEY_LINE_TO_REMOVE)
+    tmpList = Split(source, ",")
+    For i = LBound(tmpList) To UBound(tmpList)
+        ln = Trim(tmpList(i))
+        If Len(ln) <> 0 Then
+            ReDim Preserve mLineToRemove(arraySize)
+            mLineToRemove(arraySize) = CInt(ln)
+            arraySize = arraySize + 1
+        End If
+    Next
+    Dim tl() As String
+    Set mSyncUsers = New Scripting.Dictionary
+    tmpList = FileHelper.ReadSSFile(FileHelper.CurrentDbPath & Constants.SS_SYNC_USERS)
+    For i = LBound(tmpList) To UBound(tmpList)
+        ln = Trim(tmpList(i))
+        If Len(ln) <> 0 Then
+            tl = Split(ln, ":")
+            mSyncUsers.Add Trim(tl(0)), Trim(tl(1))
+        End If
+    Next
 End Function
 
 Public Property Get ServerName() As String
@@ -100,4 +123,12 @@ End Property
 
 Public Property Get SyncTables() As String()
     SyncTables = mSyncTables
+End Property
+
+Public Property Get SyncUsers() As Scripting.Dictionary
+    Set SyncUsers = mSyncUsers
+End Property
+
+Public Property Get LineToRemove() As Integer()
+    LineToRemove = mLineToRemove
 End Property

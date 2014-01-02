@@ -16,6 +16,6 @@ Public Sub Prep(Optional className As String)
     AG.Prep className
 End Sub
 
-Public Function QW(S As String) As String
-    QW = Chr(34) & S & Chr(34)
+Public Function QW(s As String) As String
+    QW = Chr(34) & s & Chr(34)
 End Function

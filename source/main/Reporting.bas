@@ -11,7 +11,7 @@ Public Sub ExportExcelReport(sSQL As String, sFileNameTemplate As String, output
     Dim WS As Excel.Worksheet
     Dim rng As Excel.range
     Dim objConn As New ADODB.Connection
-    Dim objRs As New ADODB.Recordset
+    Dim objRs As New ADODB.RecordSet
     Set objConn = CurrentProject.Connection
     With oExcel
         .Visible = False
@@ -32,4 +32,8 @@ Public Sub ExportExcelReport(sSQL As String, sFileNameTemplate As String, output
      
     Set objConn = Nothing
     Set objRs = Nothing
+End Sub
+
+Public Sub GenerateReport(name As String)
+ 
 End Sub

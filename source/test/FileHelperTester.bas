@@ -31,7 +31,7 @@ End Sub
 
 Public Sub TestReadFile()
     Dim source As String
-    source = FileHelper.ReadFile(Constants.CREATE_TABLE_END_USER_QUERY)
+    source = FileHelper.readFile(Constants.CREATE_TABLE_END_USER_QUERY)
     'Logger.LogDebug "FileHelperTester.TestReadFile", source
     mAssert.Equals Len(source) > 0, True, "Source file length > 0"
 End Sub
@@ -62,12 +62,23 @@ Public Sub TestReadSSFile()
     Next
 End Sub
 
+Public Sub TestTrimSourceFile()
+    Dim LineToRemove(2) As Integer
+    LineToRemove(0) = 1
+    LineToRemove(1) = 2
+    LineToRemove(2) = 4
+    FileHelper.TrimSourceFile FileHelper.CurrentDbPath & Constants.END_USER_DATA_CSV_TEMPLATE_FILE_PATH, _
+                    FileHelper.CurrentDbPath & Constants.END_USER_DATA_CSV_TEMPLATE_TRIM_FILE_PATH, _
+                    LineToRemove
+End Sub
+
 Private Function ITest_Suite() As TestSuite
     Set ITest_Suite = New TestSuite
     ITest_Suite.AddTest ITest_Manager.className, "TestReadFile"
     ITest_Suite.AddTest ITest_Manager.className, "TestGetCurrentDbPath"
     ITest_Suite.AddTest ITest_Manager.className, "TestIsExist"
     ITest_Suite.AddTest ITest_Manager.className, "TestReadSSFile"
+    ITest_Suite.AddTest ITest_Manager.className, "TestTrimSourceFile"
 End Function
 
 Private Sub ITestCase_RunTest()
@@ -76,6 +87,7 @@ Private Sub ITestCase_RunTest()
         Case "TestGetCurrentDbPath": TestGetCurrentDbPath
         Case "TestIsExist": TestIsExist
         Case "TestReadSSFile": TestReadSSFile
+        Case "TestTrimSourceFile": TestTrimSourceFile
         Case Else: mAssert.Should False, "Invalid test name: " & mManager.MethodName
     End Select
 End Sub

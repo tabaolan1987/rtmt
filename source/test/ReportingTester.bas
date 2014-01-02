@@ -48,14 +48,20 @@ OnError:
     Resume OnExit
 End Sub
 
+Public Sub TestGenerateReport()
+    Reporting.GenerateReport Constants.RP_END_USER_TO_SYSTEM_ROLE
+End Sub
+
 Private Function ITest_Suite() As TestSuite
     Set ITest_Suite = New TestSuite
     ITest_Suite.AddTest ITest_Manager.className, "TestExportReport"
+    ITest_Suite.AddTest ITest_Manager.className, "TestGenerateReport"
 End Function
 
 Private Sub ITestCase_RunTest()
     Select Case mManager.MethodName
         Case "TestExportReport": TestExportReport
+        Case "TestGenerateReport": TestGenerateReport
         Case Else: mAssert.Should False, "Invalid test name: " & mManager.MethodName
     End Select
 End Sub

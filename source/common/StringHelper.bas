@@ -62,3 +62,15 @@ Public Function EndsWith(ByVal strValue As String, _
   sCompare = Right(strValue, lLen)
   EndsWith = IsEqual(sCompare, CheckFor, ignoreCase)
 End Function
+
+Function FixQuote(FQText As String) As String
+    On Error GoTo OnError
+    FixQuote = Replace(FQText, "'", "''")
+    FixQuote = Replace(FixQuote, """", """""")
+OnExit:
+    Exit Function
+OnError:
+    Logger.LogError "StringHelper.FixQuote", "Could not fix quote of string: " & FQText, Err
+    Resume OnExit
+    Resume 0
+End Function
