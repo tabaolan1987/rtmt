@@ -33,7 +33,25 @@ Public Sub CheckDir(strDirPath As String)
     Next i
 End Sub
 
-Public Function readFile(strFilePath As String) As String
+Public Function ReadQuery(stName As String, Optional qType As Integer)
+    Logger.LogDebug "FileHelper.ReadQuery", "qType: " & CStr(qType)
+    Dim queryPath As String: queryPath = ""
+    queryPath = queryPath & Constants.QUERIES_DIR
+    Select Case qType
+        Case Constants.Q_CREATE: queryPath = queryPath & "create_table_" & stName
+        Case Constants.Q_INSERT: queryPath = queryPath & "insert_" & stName
+        Case Constants.Q_UPDATE: queryPath = queryPath & "update_" & stName
+        Case Constants.Q_DELETE_ALL: queryPath = queryPath & "delete_all_" & stName
+        Case Else: queryPath = queryPath & stName
+    End Select
+    queryPath = queryPath & ".sql"
+    Logger.LogDebug "FileHelper.ReadQuery", "Path: " & queryPath
+    ReadQuery = ReadFile(queryPath)
+End Function
+
+
+Public Function ReadFile(strFilePath As String) As String
+   
    Dim nSourceFile As Integer, sText As String
    Close
    ''Get the number of the next free text file
@@ -42,7 +60,7 @@ Public Function readFile(strFilePath As String) As String
    Open CurrentDbPath & strFilePath For Input As #nSourceFile
         sText = Input$(LOF(1), 1)
    Close
-   readFile = sText
+   ReadFile = sText
 End Function
 
 Function CurrentDbPath() As String
@@ -71,37 +89,55 @@ Function Delete(path As String) As Boolean
     End If
 End Function
 
-Public Function ReadSSFile(path As String) As String()
+Public Function ReadSSFile(name As String) As String()
+    Dim path As String
     Dim arraySize As Integer
     Dim sInput As String
     Dim check As Boolean
     Dim i As Long
     Dim tmpList() As String
     Dim ln As String
+    path = FileHelper.CurrentDbPath & Constants.SS_DIR & name & ".ss"
     If IsExist(path) Then
         Dim FSO As Object
-        Dim readFile As Object
+        Dim ReadFile As Object
         Set FSO = CreateObject("Scripting.FileSystemObject")
-        Set readFile = FSO.OpenTextFile(path, ForReading, False)
-        Do Until readFile.AtEndOfStream = True
-            ln = Trim(readFile.ReadLine)
+        Set ReadFile = FSO.OpenTextFile(path, ForReading, False)
+        Do Until ReadFile.AtEndOfStream = True
+            ln = Trim(ReadFile.ReadLine)
             If StringHelper.StartsWith(ln, "#", True) = False And Len(ln) <> 0 Then
                 ReDim Preserve tmpList(arraySize)
                 tmpList(arraySize) = ln
                 arraySize = arraySize + 1
             End If
         Loop
-        readFile.Close
+        ReadFile.Close
         Set FSO = Nothing
-        Set readFile = Nothing
+        Set ReadFile = Nothing
     End If
     
     ReadSSFile = tmpList
 End Function
 
+Public Function SaveAsCSV(filePath As String, desFilePath As String)
+    Dim oExcel As New Excel.Application
+    Dim WB As New Excel.Workbook
+    If IsExist(desFilePath) Then
+        Delete desFilePath
+    End If
+    With oExcel
+        .Visible = False
+                    Set WB = .Workbooks.Add(filePath)
+                    WB.SaveAs desFilePath, FileFormat:=6 ' Save as CSV
+                    WB.Close False
+        .Quit
+    End With
+    Set oExcel = Nothing
+End Function
+
 Public Function TrimSourceFile(fileToRead As String, fileToWrite As String, LineToRemove() As Integer)
     Dim FSO As Object
-    Dim readFile As Object
+    Dim ReadFile As Object
     Dim writeFile As Object
     Dim repLine As Variant
     Dim ln As String
@@ -111,34 +147,34 @@ Public Function TrimSourceFile(fileToRead As String, fileToWrite As String, Line
     Dim check As Boolean
     Dim ltm As Variant
     Set FSO = CreateObject("Scripting.FileSystemObject")
-    Set readFile = FSO.OpenTextFile(fileToRead, ForReading, False)
+    Set ReadFile = FSO.OpenTextFile(fileToRead, ForReading, False)
     Set writeFile = FSO.CreateTextFile(fileToWrite, True, False)
     
     '# iterate the array and do the replacement line by line
-    Do Until readFile.AtEndOfStream = True
-        ln = readFile.ReadLine
+    Do Until ReadFile.AtEndOfStream = True
+        ln = ReadFile.ReadLine
         check = False
         For Each ltm In LineToRemove
             If (ltm = l + 1) Then
-            '    Logger.LogDebug "FileHelper.TrimSourceFile", "Line to remove " & CStr(ltm)
+                Logger.LogDebug "FileHelper.TrimSourceFile", "Line to remove " & CStr(ltm)
                 check = True
             End If
         Next
         If check = False Then
-           ' Logger.LogDebug "FileHelper.TrimSourceFile", "Readline " & CStr(l) & " . Text: " & ln
+            Logger.LogDebug "FileHelper.TrimSourceFile", "Readline " & CStr(l) & " . Text: " & ln
             ReDim Preserve tmpList(arraySize)
             tmpList(arraySize) = ln
             arraySize = arraySize + 1
         End If
         l = l + 1
     Loop
-    readFile.Close
+    ReadFile.Close
     '# Write to the array items to the file
     writeFile.Write Join(tmpList, vbNewLine)
     writeFile.Close
     
     '# clean up
-    Set readFile = Nothing
+    Set ReadFile = Nothing
     Set writeFile = Nothing
     Set FSO = Nothing
 End Function

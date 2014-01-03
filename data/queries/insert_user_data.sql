@@ -19,8 +19,7 @@ INSERT INTO [user_data](
 	[siteLocation],
 	[purchasOrg],
 	[Optionalfield1],
-	[Optionalfield2],
-	[region]
+	[Optionalfield2]
 ) VALUES (
 	[ntid],
 	[gpid],
@@ -42,6 +41,5 @@ INSERT INTO [user_data](
 	[siteLocation],
 	[purchasOrg],
 	[Optionalfield1],
-	[Optionalfield2],
-	[region]
+	[Optionalfield2]
 )

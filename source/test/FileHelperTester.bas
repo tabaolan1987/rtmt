@@ -29,10 +29,10 @@ Private Sub ITestCase_TearDown()
 
 End Sub
 
-Public Sub TestReadFile()
+Public Sub TestReadQuery()
     Dim source As String
-    source = FileHelper.readFile(Constants.CREATE_TABLE_END_USER_QUERY)
-    'Logger.LogDebug "FileHelperTester.TestReadFile", source
+    source = FileHelper.ReadQuery(Constants.END_USER_DATA_TABLE_NAME, Constants.Q_CREATE)
+    Logger.LogDebug "FileHelperTester.TestReadQuery", source
     mAssert.Equals Len(source) > 0, True, "Source file length > 0"
 End Sub
 
@@ -53,7 +53,7 @@ End Sub
 
 Public Sub TestReadSSFile()
     Dim source() As String
-    source() = FileHelper.ReadSSFile(FileHelper.CurrentDbPath & Constants.SS_SYNC_TABLES)
+    source() = FileHelper.ReadSSFile(Constants.SS_SYNC_TABLES)
     
     mAssert.Equals UBound(source) > 0, True
     Dim i As Integer
@@ -72,22 +72,33 @@ Public Sub TestTrimSourceFile()
                     LineToRemove
 End Sub
 
+Public Sub TestSaveAsCSV()
+    Dim inFile As String
+    Dim outFile As String
+    inFile = FileHelper.CurrentDbPath & Constants.END_USER_DATA_FILE_XLSX
+    outFile = FileHelper.CurrentDbPath & Constants.END_USER_DATA_FILE_CSV
+    FileHelper.SaveAsCSV inFile, outFile
+    mAssert.Equals FileHelper.IsExist(inFile), True
+End Sub
+
 Private Function ITest_Suite() As TestSuite
     Set ITest_Suite = New TestSuite
-    ITest_Suite.AddTest ITest_Manager.className, "TestReadFile"
+    ITest_Suite.AddTest ITest_Manager.className, "TestReadQuery"
     ITest_Suite.AddTest ITest_Manager.className, "TestGetCurrentDbPath"
     ITest_Suite.AddTest ITest_Manager.className, "TestIsExist"
     ITest_Suite.AddTest ITest_Manager.className, "TestReadSSFile"
     ITest_Suite.AddTest ITest_Manager.className, "TestTrimSourceFile"
+    ITest_Suite.AddTest ITest_Manager.className, "TestSaveAsCSV"
 End Function
 
 Private Sub ITestCase_RunTest()
     Select Case mManager.MethodName
-        Case "TestReadFile": TestReadFile
+        Case "TestReadQuery": TestReadQuery
         Case "TestGetCurrentDbPath": TestGetCurrentDbPath
         Case "TestIsExist": TestIsExist
         Case "TestReadSSFile": TestReadSSFile
         Case "TestTrimSourceFile": TestTrimSourceFile
+        Case "TestSaveAsCSV": TestSaveAsCSV
         Case Else: mAssert.Should False, "Invalid test name: " & mManager.MethodName
     End Select
 End Sub

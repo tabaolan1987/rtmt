@@ -18,7 +18,9 @@ Public Property Get QueryDef() As DAO.QueryDef
 End Property
 
 Public Function Init()
-    Set dbs = CurrentDb
+    If dbs Is Nothing Then
+        Set dbs = CurrentDb
+    End If
 End Function
 
 Public Function Recycle()
@@ -42,56 +44,23 @@ OnError:
     Resume OnExit
 End Function
 
-
-Public Function CreateTable()
-    Dim query As String
+Public Function ExecuteQuery(query As String, Optional params As Scripting.Dictionary)
     On Error GoTo OnError
-    query = FileHelper.readFile(Constants.CREATE_TABLE_END_USER_QUERY)
-    CurrentDb.Execute query, dbFailOnError
-    CurrentDb.TableDefs.Refresh
-OnExit:
-    
-    Exit Function
-OnError:
-    Logger.LogError "DbManager.CreateTable", "Could not create table end user", Err
-    Resume OnExit
-End Function
-
-Public Function DropTable()
-    Dim query As String
-    On Error GoTo OnError
-    query = FileHelper.readFile(Constants.DROP_TABLE_END_USER_QUERY)
-    CurrentDb.Execute query, dbFailOnError
-    CurrentDb.TableDefs.Refresh
-OnExit:
-    Exit Function
-OnError:
-    Logger.LogError "DbManager.DropTable", "Could not drop table end user", Err
-    Resume OnExit
-End Function
-
-Public Function DeleteTable(tbl As String)
-    DoCmd.DeleteObject acTable, tbl
-End Function
-
-Public Function DeleteAllData(stTable As String)
-    Dim query As String
-    On Error GoTo OnError
-    If Ultilities.ifTableExists(stTable) Then
-        CurrentDb.Execute "DELETE * FROM [" & stTable & "]", dbFailOnError
-        CurrentDb.TableDefs.Refresh
+    Dim key As String, value As Variant
+    Set qdf = dbs.CreateQueryDef("", query)
+    If Not params Is Nothing Then
+        'Logger.LogDebug "DbManager.OpenRecordSet", "Param cound: " & params.count
+        For i = 0 To params.count - 1
+            On Error Resume Next
+            key = params.Keys(i)
+            value = params.Items(i)
+            'Logger.LogDebug "DbManager.OpenRecordSet", "Param key: " & key & ". Value: " & value
+            qdf.Parameters(key).value = value
+            On Error GoTo 0
+        Next i
     End If
-OnExit:
-    Exit Function
-OnError:
-    Logger.LogError "DbManager.DeleteAllData", "Could not delete all table end user data", Err
-    Resume OnExit
-End Function
-
-Public Function ExecuteQuery(query As String)
-    On Error GoTo OnError
-    CurrentDb.Execute query, dbFailOnError
-    CurrentDb.TableDefs.Refresh
+    qdf.Execute
+    dbs.TableDefs.Refresh
 OnExit:
     Exit Function
 OnError:
@@ -100,13 +69,20 @@ OnError:
 End Function
 
 Public Function OpenRecordSet(query As String, Optional params As Scripting.Dictionary)
-    Dim prm As DAO.Parameter, i As Integer
+    Dim prm As DAO.Parameter, i As Integer, key As String
     On Error GoTo OnError
     Set qdf = dbs.CreateQueryDef("", query)
     If Not params Is Nothing Then
+        
+        'Logger.LogDebug "DbManager.OpenRecordSet", "Param cound: " & params.count
         For i = 0 To params.count - 1
-            Logger.LogDebug "DbManager.OpenRecordSet", "Param key: " & params.Keys(i) & ". Value: " & params.Items(i)
-            qdf.Parameters(params.Keys(i)).value = params.Items(i)
+            On Error Resume Next
+            key = params.Keys(i)
+            'Logger.LogDebug "DbManager.OpenRecordSet", "Param key: " & params.Keys(i) & ". Value: " & params.Items(i)
+            If params.Exists(key) Then
+                qdf.Parameters(key).value = params.Items(key)
+            End If
+            On Error GoTo 0
         Next i
     End If
     Set rst = qdf.OpenRecordSet
@@ -117,28 +93,102 @@ OnError:
     Resume OnExit
 End Function
 
-Public Function SyncUserData()
-    Init
-    Dim s As SystemSettings: Set s = New SystemSettings
-    s.Init
-    ' Read the dict mapping
-    Dim dictMapping As Scripting.Dictionary, i As Integer, key As String, value As String
-    Set dictMapping = s.SyncUsers
+Public Function RecycleTable(s As SystemSettings)
+    Dim i As Integer
+    Dim TableNames() As String
+    Dim tblName As Variant, tmp As String
     
+    TableNames = s.TableNames
+    Logger.LogDebug "DbManager.RecycleTable", "Start check table. Size: " & CStr(UBound(TableNames))
+    Dim query As String
+    
+    For i = LBound(TableNames) To UBound(TableNames)
+        tmp = Trim(CStr(TableNames(i)))
+        Logger.LogDebug "DbManager.RecycleTable", "Check table name " & tmp
+        If Ultilities.ifTableExists(tmp) = True Then
+            'ExecuteQuery FileHelper.ReadQuery(tmp, Constants.Q_DELETE_ALL)
+            DoCmd.DeleteObject acTable, tmp
+        End If
+        
+        ExecuteQuery FileHelper.ReadQuery(tmp, Constants.Q_CREATE)
+    Next
+End Function
+
+Public Function SyncUserData()
+    Dim s As SystemSettings: Set s = New SystemSettings
+    Dim flag As Boolean: flag = False
+    Dim dictMapping As Scripting.Dictionary, i As Integer, j As Integer, k As Integer, key As String, value As String
+    Dim tmpDict As Scripting.Dictionary
+    Dim dictParams As Scripting.Dictionary
+    Dim queryInsertData As String
+    Dim queryCustomInsert As String, checkValue As String, tmpSplit() As String, tmpValues() As String
+    Dim tmpValue As String
+    ' Init database
+    Init
+    ' Init settings
+    s.Init
+    '
+    RecycleTable s
+    ' Read the dict mapping
+    Set dictMapping = s.SyncUsers
+    ' Read query insert user data
+    queryInsertData = FileHelper.ReadQuery(Constants.END_USER_DATA_TABLE_NAME, Constants.Q_INSERT)
+    ' Open tmp table user data from CSV file
     OpenRecordSet "select * from " & Constants.TMP_END_USER_TABLE_NAME
 
     If Not (rst.EOF And rst.BOF) Then
         rst.MoveFirst
         Do Until rst.EOF = True
+            Dim tmpList() As String, arraySize As Integer
             Logger.LogDebug "DbManager.SyncUserData", "###########################################"
             ' List all mapping column
+            Set dictParams = New Scripting.Dictionary
             For i = 0 To dictMapping.count - 1
                  key = dictMapping.Keys(i)
                  value = dictMapping.Items(i)
                  If Not (StringHelper.StartsWith(key, "insert into", True)) Then
+                    ' Add params value
                     On Error Resume Next
                     Logger.LogDebug "DbManager.SyncUserData", key & " = " & rst(key)
+                    dictParams.Add value, rst(key)
+                 Else
+                    If flag = False Then
+                        ' Add custom insert key to list
+                        ReDim Preserve tmpList(arraySize)
+                        tmpList(arraySize) = key
+                        arraySize = arraySize + 1
+                    End If
                  End If
+            Next i
+            ' Add custom insert key one time
+            flag = True
+            ' Insert data to user_data table
+            ExecuteQuery queryInsertData, dictParams
+            ' Insert mapping data
+            For i = LBound(tmpList) To UBound(tmpList)
+                key = tmpList(i)
+                tmpSplit = Split(key, "|")
+                queryCustomInsert = Trim(tmpSplit(0))
+                checkValue = Trim(tmpSplit(1))
+                Logger.LogDebug "DbManager.SyncUserData", "custom import query: " & queryCustomInsert & ". Check value: " & checkValue & " . From list: " & value
+                value = dictMapping.Items(key)
+                tmpValues = Split(value, ",")
+                Logger.LogDebug "DbManager.SyncUserData", "Number of column to check: " & CStr(UBound(tmpValues) + 1)
+                ' Loop to check all column
+                For j = LBound(tmpValues) To UBound(tmpValues)
+                    tmpValue = Trim(tmpValues(j))
+                    'Logger.LogDebug "DbManager.SyncUserData", "column name: " & tmpValue
+                    If StringHelper.IsEqual(rst(tmpValue), checkValue, True) Then
+                        ' If value is valid, get parameter and execute query
+                        Set tmpDict = New Scripting.Dictionary
+                        For k = 0 To dictParams.count - 1
+                            tmpDict.Add dictParams.Keys(k), dictParams.Items(k)
+                        Next k
+                        tmpDict.Add "value", tmpValue
+                        tmpDict.Add "idRegion", "6"
+                        ExecuteQuery queryCustomInsert, tmpDict
+                    End If
+                Next j
             Next i
             rst.MoveNext
         Loop
@@ -148,28 +198,22 @@ Public Function SyncUserData()
 End Function
 
 Public Function ImportData(tblName As String, csvPath As String)
-    Dim db As DAO.Database
-    ' Re-link the CSV Table
-    Set db = CurrentDb
     On Error GoTo OnError
     If Ultilities.ifTableExists(Constants.TMP_END_USER_TABLE_NAME) Then
-        db.TableDefs.Delete Constants.TMP_END_USER_TABLE_NAME
+        dbs.TableDefs.Delete Constants.TMP_END_USER_TABLE_NAME
     End If
-    db.TableDefs.Refresh
+    dbs.TableDefs.Refresh
     DoCmd.TransferText TransferType:=acLinkDelim, TableName:=Constants.TMP_END_USER_TABLE_NAME, _
         FileName:=csvPath, HasFieldNames:=True
-    db.TableDefs.Refresh
-    
-    ' Perform the import
-    'db.Execute "INSERT INTO someTable SELECT col1, col2, ... FROM tblImport " _
-       & "WHERE NOT F1 IN ('A1', 'A2', 'A3')"
+    dbs.TableDefs.Refresh
 OnExit:
-    db.TableDefs.Delete "Name AutoCorrect Save Failures"
-    db.Close:   Set db = Nothing
+    On Error Resume Next
+        ' Delete table if name is correct or not
+        DoCmd.DeleteObject acTable, "Name AutoCorrect Save Failures"
     Exit Function
 OnError:
     If Ultilities.ifTableExists(Constants.TMP_END_USER_TABLE_NAME) Then
-        db.TableDefs.Delete Constants.TMP_END_USER_TABLE_NAME
+        DoCmd.DeleteObject acTable, Constants.TMP_END_USER_TABLE_NAME
     End If
     Logger.LogError "DbManager.ImportData", "Could not import table " _
                         & tblName & " data from CSV file " & csvPath, Err
@@ -209,7 +253,7 @@ OnExit:
     If check = True Then
         If Ultilities.ifTableExists(desTable & "_tmp") Then
             Logger.LogDebug "DbManager.ImportSqlTable", "Delete cached table " & desTable & "_tmp"
-            DeleteTable (desTable & "_tmp")
+            DoCmd.DeleteObject acTable, desTable & "_tmp"
         End If
     Else
         If Ultilities.ifTableExists(desTable & "_tmp") Then

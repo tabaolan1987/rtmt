@@ -9,7 +9,7 @@ Private mQuery As String
 Private mValid As Boolean
 
 Public Function Init(name As String)
-    mQuery = FileHelper.readFile(Constants.RP_ROOT_FOLDER & name & ".sql")
+    mQuery = FileHelper.ReadFile(Constants.RP_ROOT_FOLDER & name & ".sql")
     If Len(mQuery) <> 0 Then
         mValid = True
     End If
