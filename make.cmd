@@ -8,5 +8,4 @@ goto end
 :okHome
 cscript ".\scripts\make.vbs
 iscc ".\target\inno-setup-script.iss"
-pause
 :end

@@ -2,6 +2,15 @@
 ' General utilities function
 Option Compare Database
 
+Private mIniReader As IniReader
+Public Function SystemIniReader() As IniReader
+    If mIniReader Is Nothing Then
+        Set mIniReader = New IniReader
+        mIniReader.Init FileHelper.CurrentDbPath & Constants.SETTINGS_FILE
+    End If
+    Set SystemIniReader = mIniReader
+End Function
+
 Public Sub MakeAccde()
     Dim sourcedb As String, targetdb As String
     sourcedb = FileHelper.CurrentDbPath & "target\rolemapping.accdb"
@@ -17,6 +26,7 @@ Public Sub MakeAccde()
         .SysCmd 603, sourcedb, targetdb 'this makes the ACCDE file
         .Quit
     End With
+    
 End Sub
 
 Public Function ifTableExists(tblName As String) As Boolean

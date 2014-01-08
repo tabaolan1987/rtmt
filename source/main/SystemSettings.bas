@@ -6,14 +6,6 @@ Attribute VB_Exposed = False
 ' To read & write Settings.ini
 Option Explicit
 
-#If VBA7 Then
-    Private Declare PtrSafe Function GetPrivateProfileString Lib "kernel32" Alias "GetPrivateProfileStringA" (ByVal lpApplicationName As String, ByVal lpKeyName As Any, ByVal lpDefault As String, ByVal lpReturnedString As String, ByVal nSize As Long, ByVal lpFileName As String) As Long
-    Private Declare PtrSafe Function WritePrivateProfileString Lib "kernel32" Alias "WritePrivateProfileStringA" (ByVal lpApplicationName As String, ByVal lpKeyName As Any, ByVal lpString As Any, ByVal lpFileName As String) As Long
-#Else
-    Private Declare Function GetPrivateProfileString Lib "kernel32" Alias "GetPrivateProfileStringA" (ByVal lpApplicationName As String, ByVal lpKeyName As Any, ByVal lpDefault As String, ByVal lpReturnedString As String, ByVal nSize As Long, ByVal lpFileName As String) As Long
-    Private Declare Function WritePrivateProfileString Lib "kernel32" Alias "WritePrivateProfileStringA" (ByVal lpApplicationName As String, ByVal lpKeyName As Any, ByVal lpString As Any, ByVal lpFileName As String) As Long
-#End If
-
 Private mServerName As String
 Private mDatabaseName As String
 Private mPort As String
@@ -26,63 +18,18 @@ Private mTableNames() As String
 Private mRegionName As String
 Private mLogLevel As String
 
-Private Function IniFileName() As String
-  IniFileName = FileHelper.CurrentDbPath & Constants.SETTINGS_FILE
-End Function
-
-Private Function ReadIniFileString(ByVal Sect As String, ByVal Keyname As String) As String
-    Dim Worked As Long
-    Dim RetStr As String * 128
-    Dim StrSize As Long
-    Dim iNoOfCharInIni As Long
-    Dim sIniString As String
-  iNoOfCharInIni = 0
-  sIniString = ""
-  If Sect = "" Or Keyname = "" Then
-    Logger.LogError "Utilities.ReadIniFileString", "Section Or Key To Read Not Specified !!!", Nothing
-    MsgBox "Section Or Key To Read Not Specified !!!", vbExclamation, "INI"
-  Else
-    RetStr = Space(128)
-    StrSize = Len(RetStr)
-    Worked = GetPrivateProfileString(Sect, Keyname, "", RetStr, StrSize, IniFileName)
-    If Worked Then
-      iNoOfCharInIni = Worked
-      sIniString = Left$(RetStr, Worked)
-    End If
-  End If
-  ReadIniFileString = sIniString
-End Function
-
-Private Function WriteIniFileString(ByVal Sect As String, ByVal Keyname As String, ByVal Wstr As String) As String
-Dim Worked As Long
-    Dim iNoOfCharInIni As Long
-    Dim sIniString As String
-  iNoOfCharInIni = 0
-  sIniString = ""
-  If Sect = "" Or Keyname = "" Then
-    Logger.LogError "Utilities.WriteIniFileString", "Section Or Key To Write Not Specified !!!", Nothing
-    'MsgBox "Section Or Key To Write Not Specified !!!", vbExclamation, "INI"
-  Else
-    Worked = WritePrivateProfileString(Sect, Keyname, Wstr, IniFileName)
-    If Worked Then
-      iNoOfCharInIni = Worked
-      sIniString = Wstr
-    End If
-    WriteIniFileString = sIniString
-  End If
-End Function
-
 Public Function Init()
-    mServerName = ReadIniFileString(Constants.SECTION_REMOTE_DATABASE, Constants.KEY_SERVER_NAME)
-    mDatabaseName = ReadIniFileString(Constants.SECTION_REMOTE_DATABASE, Constants.KEY_DATABASE_NAME)
-    mPort = ReadIniFileString(Constants.SECTION_REMOTE_DATABASE, Constants.KEY_PORT)
-    mUsername = ReadIniFileString(Constants.SECTION_REMOTE_DATABASE, Constants.KEY_USERNAME)
-    mPassword = ReadIniFileString(Constants.SECTION_REMOTE_DATABASE, Constants.KEY_PASSWORD)
+    Dim ir As IniReader: Set ir = Ultilities.SystemIniReader
+    mServerName = ir.ReadKey(Constants.SECTION_REMOTE_DATABASE, Constants.KEY_SERVER_NAME)
+    mDatabaseName = ir.ReadKey(Constants.SECTION_REMOTE_DATABASE, Constants.KEY_DATABASE_NAME)
+    mPort = ir.ReadKey(Constants.SECTION_REMOTE_DATABASE, Constants.KEY_PORT)
+    mUsername = ir.ReadKey(Constants.SECTION_REMOTE_DATABASE, Constants.KEY_USERNAME)
+    mPassword = ir.ReadKey(Constants.SECTION_REMOTE_DATABASE, Constants.KEY_PASSWORD)
     
     mSyncTables = FileHelper.ReadSSFile(Constants.SS_SYNC_TABLES)
     
     Dim source As String, tmpList() As String, ln As String, arraySize As Integer, i As Integer
-    source = ReadIniFileString(Constants.SECTION_USER_DATA, Constants.KEY_LINE_TO_REMOVE)
+    source = ir.ReadKey(Constants.SECTION_USER_DATA, Constants.KEY_LINE_TO_REMOVE)
     tmpList = Split(source, ",")
     For i = LBound(tmpList) To UBound(tmpList)
         ln = Trim(tmpList(i))
@@ -102,12 +49,12 @@ Public Function Init()
             mSyncUsers.Add Trim(tl(0)), Trim(tl(1))
         End If
     Next
-    mRegionName = ReadIniFileString(Constants.SECTION_USER_DATA, Constants.KEY_REGION_NAME)
+    mRegionName = ir.ReadKey(Constants.SECTION_USER_DATA, Constants.KEY_REGION_NAME)
     
-    source = ReadIniFileString(Constants.SECTION_USER_DATA, Constants.KEY_TABLE_NAME)
+    source = ir.ReadKey(Constants.SECTION_USER_DATA, Constants.KEY_TABLE_NAME)
     mTableNames = Split(source, ",")
     
-    mLogLevel = ReadIniFileString(Constants.SECTION_APPLICATION, Constants.KEY_LOG_LEVEL)
+    mLogLevel = ir.ReadKey(Constants.SECTION_APPLICATION, Constants.KEY_LOG_LEVEL)
 End Function
 
 Public Property Get ServerName() As String

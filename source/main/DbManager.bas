@@ -44,10 +44,10 @@ OnError:
     Resume OnExit
 End Function
 
-Public Function ExecuteQuery(query As String, Optional params As Scripting.Dictionary)
+Public Function ExecuteQuery(Query As String, Optional params As Scripting.Dictionary)
     On Error GoTo OnError
     Dim key As String, value As Variant
-    Set qdf = dbs.CreateQueryDef("", query)
+    Set qdf = dbs.CreateQueryDef("", Query)
     If Not params Is Nothing Then
         'Logger.LogDebug "DbManager.OpenRecordSet", "Param cound: " & params.count
         For i = 0 To params.count - 1
@@ -64,14 +64,14 @@ Public Function ExecuteQuery(query As String, Optional params As Scripting.Dicti
 OnExit:
     Exit Function
 OnError:
-    Logger.LogError "DbManager.ExecuteQuery", "Could execute query: " & query, Err
+    Logger.LogError "DbManager.ExecuteQuery", "Could execute query: " & Query, Err
     Resume OnExit
 End Function
 
-Public Function OpenRecordSet(query As String, Optional params As Scripting.Dictionary)
+Public Function OpenRecordSet(Query As String, Optional params As Scripting.Dictionary)
     Dim prm As DAO.Parameter, i As Integer, key As String
     On Error GoTo OnError
-    Set qdf = dbs.CreateQueryDef("", query)
+    Set qdf = dbs.CreateQueryDef("", Query)
     If Not params Is Nothing Then
         
         'Logger.LogDebug "DbManager.OpenRecordSet", "Param cound: " & params.count
@@ -89,7 +89,7 @@ Public Function OpenRecordSet(query As String, Optional params As Scripting.Dict
 OnExit:
     Exit Function
 OnError:
-    Logger.LogError "DbManager.OpenRecordSet", "Could execute query: " & query, Err
+    Logger.LogError "DbManager.OpenRecordSet", "Could execute query: " & Query, Err
     Resume OnExit
 End Function
 
@@ -100,7 +100,7 @@ Public Function RecycleTable(s As SystemSettings)
     
     TableNames = s.TableNames
     Logger.LogDebug "DbManager.RecycleTable", "Start check table. Size: " & CStr(UBound(TableNames))
-    Dim query As String
+    Dim Query As String
     
     For i = LBound(TableNames) To UBound(TableNames)
         tmp = Trim(CStr(TableNames(i)))

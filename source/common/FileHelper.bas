@@ -72,7 +72,7 @@ Function CurrentDbPath() As String
     If Len(dbPath) = 0 Then
         Dim cRes As String
         Dim nPos As Long
-        cRes = CurrentDb.name
+        cRes = CurrentDb.Name
         nPos = Len(cRes)
         Do Until Right(cRes, 1) = "\"
             nPos = nPos - 1
@@ -97,7 +97,7 @@ Function Delete(path As String) As Boolean
     End If
 End Function
 
-Public Function ReadSSFile(name As String) As String()
+Public Function ReadSSFile(Name As String) As String()
     Dim path As String
     Dim arraySize As Integer
     Dim sInput As String
@@ -105,7 +105,7 @@ Public Function ReadSSFile(name As String) As String()
     Dim i As Long
     Dim tmpList() As String
     Dim ln As String
-    path = FileHelper.CurrentDbPath & Constants.SS_DIR & name & ".ss"
+    path = FileHelper.CurrentDbPath & Constants.SS_DIR & Name & ".ss"
     If IsExist(path) Then
         Dim FSO As Object
         Dim ReadFile As Object

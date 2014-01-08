@@ -63,7 +63,7 @@ For Each strKey In dicProps.Keys()
 Next
 issSource = Replace(issSource, "%root.dir%", curDir)
 issSource = Replace(issSource, "%output.dir%", curDir & "\target")  
-issSource = Replace(issSource, "%source.file%", curDir & "\" & dicProps("app.db.file")) 
+issSource = Replace(issSource, "%source.file%", curDir & "\" & dicProps("app.db.compress.file")) 
 issSource = Replace(issSource, "%base.filename%", dicProps("app.file.name") & "-v" & version)
 
 foOut.Write issSource

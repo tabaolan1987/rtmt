@@ -65,12 +65,12 @@ Public Function Init(raw As String)
     End If
 End Function
 
-Private Function GenerateQuery(query As String) As String
+Private Function GenerateQuery(Query As String) As String
     Dim dbm As New DbManager
     Dim l As Long, r As Long, q As String, length As Long, strTemp As String
     Dim tmp As String, cQuery, tmpSplit() As String, qOut As String, qIn As String, tmpVal As String, tmpQuery As String
 
-    q = query
+    q = Query
     length = 0
     
     Do While Not InStr(q, "{%") = 0
@@ -117,8 +117,8 @@ Private Function GenerateQuery(query As String) As String
 End Function
 
 
-Public Property Get query() As String
-    query = mQuery
+Public Property Get Query() As String
+    Query = mQuery
 End Property
 
 Public Property Get Header() As String()

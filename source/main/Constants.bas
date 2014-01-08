@@ -14,7 +14,7 @@ Public Const Q_UPDATE = 3
 Public Const Q_DELETE_ALL = 4
 Public Const Q_CUSTOM = 0
 
-' Settings.ini
+' settings ini
 Public Const SETTINGS_FILE = "data\config\settings.ini"
 Public Const SECTION_REMOTE_DATABASE = "central database"
 Public Const KEY_SERVER_NAME = "serverName"
@@ -32,17 +32,26 @@ Public Const KEY_REGION_NAME = "regionName"
 Public Const SECTION_APPLICATION = "application"
 Public Const KEY_LOG_LEVEL = "logLevel"
 
+Public Const SECTION_GENERAL = "General"
+Public Const KEY_NAME = "name"
+Public Const KEY_QUERY_TYPE = "queryType"
+Public Const SECTION_FORMAT = "Format"
+Public Const KEY_START_ROW = "startRow"
+Public Const KEY_START_COL = "startCol"
+
 ' System setting file
 Public Const SS_DIR = "data\config\"
 Public Const SS_SYNC_TABLES = "synctables"
 Public Const SS_SYNC_USERS = "syncusers"
 
 ' Reporting
+Public Const RP_QUERY_TYPE_SECTION = "section"
+Public Const RP_QUERY_TYPE_SIMPLE = "simple"
 Public Const RP_SPLIT_LEVEL_1 = "====="
 Public Const RP_SPLIT_LEVEL_2 = "==="
 Public Const RP_SECTION_TYPE_FIXED = "fixed"
 Public Const RP_SECTION_TYPE_AUTO = "auto"
-Public Const RP_CONFIG_FILE_EXTENSION = ".cfg"
+Public Const RP_CONFIG_FILE_EXTENSION = ".ini"
 Public Const RP_QUERY_FILE_EXTENSION = ".sql"
 Public Const RP_TEMPLATE_FILE_EXTENSION = ".xlsx"
 Public Const RP_ROOT_FOLDER = "data\reporting\"
