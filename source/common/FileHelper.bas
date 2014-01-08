@@ -3,6 +3,8 @@
 Option Explicit
 Const ForReading = 1
 
+Private dbPath As String
+
 Function GetCSVFile() As String
     Dim fDialog As Object
     Set fDialog = Application.FileDialog(3)
@@ -21,7 +23,7 @@ End Function
 
 Public Sub CheckDir(strDirPath As String)
     strDirPath = Replace(strDirPath, "/", "\")
-    Dim listStr() As String, strTemp As String, Str As String
+    Dim listStr() As String, strTemp As String, str As String
     listStr = Split(strDirPath, "\")
     strTemp = ""
     Dim i As Integer
@@ -49,30 +51,36 @@ Public Function ReadQuery(stName As String, Optional qType As Integer)
     ReadQuery = ReadFile(queryPath)
 End Function
 
-
-Public Function ReadFile(strFilePath As String) As String
-   
-   Dim nSourceFile As Integer, sText As String
+Public Function ReadFileFullPath(strFileFullPath As String) As String
+    Dim nSourceFile As Integer, sText As String
    Close
    ''Get the number of the next free text file
    nSourceFile = FreeFile
    ''Write the entire file to sText
-   Open CurrentDbPath & strFilePath For Input As #nSourceFile
+   Open strFileFullPath For Input As #nSourceFile
         sText = Input$(LOF(1), 1)
    Close
-   ReadFile = sText
+   ReadFileFullPath = sText
+End Function
+
+Public Function ReadFile(strFilePath As String) As String
+   ReadFile = ReadFileFullPath(CurrentDbPath & strFilePath)
+   
 End Function
 
 Function CurrentDbPath() As String
-    Dim cRes As String
-    Dim nPos As Long
-    cRes = CurrentDb.name
-    nPos = Len(cRes)
-    Do Until Right(cRes, 1) = "\"
-        nPos = nPos - 1
-        cRes = Left(cRes, nPos)
-    Loop
-    CurrentDbPath = cRes
+    If Len(dbPath) = 0 Then
+        Dim cRes As String
+        Dim nPos As Long
+        cRes = CurrentDb.name
+        nPos = Len(cRes)
+        Do Until Right(cRes, 1) = "\"
+            nPos = nPos - 1
+            cRes = Left(cRes, nPos)
+        Loop
+        dbPath = cRes
+    End If
+    CurrentDbPath = dbPath
 End Function
 
 Function IsExist(path As String) As Boolean

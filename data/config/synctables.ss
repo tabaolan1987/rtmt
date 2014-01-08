@@ -1,6 +1,7 @@
 # IMPORTANT
 Activity
-BpRoleStandardBPRoleStandardCategory
+BpRoleStandard
+BPRoleStandardCategory
 MappingAcitivityBpStandardRole
 MappingRegionSystemRole
 MappingSystemRoleBpStandardRole

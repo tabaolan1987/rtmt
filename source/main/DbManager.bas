@@ -185,7 +185,7 @@ Public Function SyncUserData()
                             tmpDict.Add dictParams.Keys(k), dictParams.Items(k)
                         Next k
                         tmpDict.Add "value", tmpValue
-                        tmpDict.Add "idRegion", "6"
+                        tmpDict.Add "region_name", s.RegionName
                         ExecuteQuery queryCustomInsert, tmpDict
                     End If
                 Next j

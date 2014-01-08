@@ -5,9 +5,9 @@ Public Sub OnTest()
 End Sub
 
 Public Sub Run(Optional TestClassName As String)
-    Dim R As TestRunner
-    Set R = New TestRunner
-    R.Run TestClassName
+    Dim r As TestRunner
+    Set r = New TestRunner
+    r.Run TestClassName
 End Sub
 
 Public Sub Prep(Optional className As String)

@@ -23,6 +23,8 @@ Private mSyncTables() As String
 Private mSyncUsers As Scripting.Dictionary
 Private mLineToRemove() As Integer
 Private mTableNames() As String
+Private mRegionName As String
+Private mLogLevel As String
 
 Private Function IniFileName() As String
   IniFileName = FileHelper.CurrentDbPath & Constants.SETTINGS_FILE
@@ -100,10 +102,12 @@ Public Function Init()
             mSyncUsers.Add Trim(tl(0)), Trim(tl(1))
         End If
     Next
-    
+    mRegionName = ReadIniFileString(Constants.SECTION_USER_DATA, Constants.KEY_REGION_NAME)
     
     source = ReadIniFileString(Constants.SECTION_USER_DATA, Constants.KEY_TABLE_NAME)
     mTableNames = Split(source, ",")
+    
+    mLogLevel = ReadIniFileString(Constants.SECTION_APPLICATION, Constants.KEY_LOG_LEVEL)
 End Function
 
 Public Property Get ServerName() As String
@@ -140,4 +144,12 @@ End Property
 
 Public Property Get TableNames() As String()
     TableNames = mTableNames
+End Property
+
+Public Property Get RegionName() As String
+    RegionName = mRegionName
+End Property
+
+Public Property Get LogLevel() As String
+    LogLevel = mLogLevel
 End Property

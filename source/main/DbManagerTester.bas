@@ -38,9 +38,24 @@ Public Sub TestImportData()
 End Sub
 
 Public Sub TestImportSqlTable()
-    Dim im As DbManager: Set im = New DbManager
-    im.Init
-    im.ImportSqlTable "CMGSRV2\SQLEXPRESS,1433", "upstream_role_mapping", "BpRoleStandard", "BpRoleStandard", "sa", "admincmg@3f"
+    Dim dbm As DbManager, _
+        SyncTables() As String, _
+        prop As SystemSettings, _
+        isEmpty As Boolean, _
+        stTable As String
+    Set dbm = New DbManager
+    Set prop = New SystemSettings
+    prop.Init
+    SyncTables = prop.SyncTables
+    isEmpty = Ultilities.IsVarArrayEmpty(SyncTables)
+    If isEmpty = False Then
+        Dim i As Integer
+        For i = LBound(SyncTables) To UBound(SyncTables)
+            stTable = Trim(SyncTables(i))
+            Logger.LogDebug "Form_Main.btnSync_Click", "Start sync table: " & stTable
+            dbm.ImportSqlTable prop.ServerName & "," & prop.Port, prop.DatabaseName, stTable, stTable, prop.Username, prop.Password
+        Next i
+    End If
 End Sub
 
 Public Sub TestExecuteQuery()

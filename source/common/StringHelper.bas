@@ -74,3 +74,9 @@ OnError:
     Resume OnExit
     Resume 0
 End Function
+
+Function EscapeQueryString(str As String) As String
+    str = Replace(str, "'", "''")
+    str = Replace(str, Chr(13) & Chr(10), "")
+    EscapeQueryString = str
+End Function

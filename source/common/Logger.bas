@@ -4,6 +4,17 @@ Option Compare Database
 Private Const L_INFO = 1
 Private Const L_DEBUG = 2
 Private Const L_ERROR = 3
+Private logLevelCfg As String
+
+Private Sub GetLogLevelCfg()
+    If Len(logLevelCfg) = 0 Then
+        Dim s As New SystemSettings
+        s.Init
+        logLevelCfg = s.LogLevel
+        Debug.Print "Log level config: " & logLevelCfg
+    End If
+End Sub
+
 
 Public Sub LogInfo(caller As String, log As String)
     CallLog caller, L_INFO, log
@@ -30,6 +41,9 @@ Public Sub LogError(caller As String, log As String, errX As ErrObject)
 End Sub
 
 Private Sub CallLog(caller As String, lvl As Integer, log As String)
+    GetLogLevelCfg
+    If StringHelper.IsEqual(logLevelCfg, "INFO", True) And lvl = L_DEBUG Then GoTo QuitLog
+    If StringHelper.IsEqual(logLevelCfg, "ERROR", True) And lvl < L_ERROR Then GoTo QuitLog
     Dim fn As Integer, logPath As String, line As String
     fn = FreeFile
     logPath = FileHelper.CurrentDbPath & "logs"
@@ -47,4 +61,6 @@ Private Sub CallLog(caller As String, lvl As Integer, log As String)
     Debug.Print line
     Print #fn, line
     Close #fn
+QuitLog:
+    Exit Sub
 End Sub

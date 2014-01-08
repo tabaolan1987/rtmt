@@ -27,6 +27,10 @@ Public Const KEY_PASSWORD = "password"
 Public Const SECTION_USER_DATA = "user data"
 Public Const KEY_LINE_TO_REMOVE = "linesToRemove"
 Public Const KEY_TABLE_NAME = "tableNames"
+Public Const KEY_REGION_NAME = "regionName"
+
+Public Const SECTION_APPLICATION = "application"
+Public Const KEY_LOG_LEVEL = "logLevel"
 
 ' System setting file
 Public Const SS_DIR = "data\config\"
@@ -34,6 +38,13 @@ Public Const SS_SYNC_TABLES = "synctables"
 Public Const SS_SYNC_USERS = "syncusers"
 
 ' Reporting
+Public Const RP_SPLIT_LEVEL_1 = "====="
+Public Const RP_SPLIT_LEVEL_2 = "==="
+Public Const RP_SECTION_TYPE_FIXED = "fixed"
+Public Const RP_SECTION_TYPE_AUTO = "auto"
+Public Const RP_CONFIG_FILE_EXTENSION = ".cfg"
+Public Const RP_QUERY_FILE_EXTENSION = ".sql"
+Public Const RP_TEMPLATE_FILE_EXTENSION = ".xlsx"
 Public Const RP_ROOT_FOLDER = "data\reporting\"
 Public Const RP_END_USER_TO_SYSTEM_ROLE = "end_user_to_system_role_report"
 

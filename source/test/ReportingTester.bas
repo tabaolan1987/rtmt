@@ -48,19 +48,27 @@ OnError:
     Resume OnExit
 End Sub
 
+Public Sub TestGenerateReportMetaData()
+    Dim rpmd As New ReportMetaData
+    rpmd.Init Constants.RP_END_USER_TO_SYSTEM_ROLE
+    mAssert.Equals rpmd.Valid, True
+End Sub
+
 Public Sub TestGenerateReport()
-    Reporting.GenerateReport Constants.RP_END_USER_TO_SYSTEM_ROLE
+    'Reporting.GenerateReport Constants.RP_END_USER_TO_SYSTEM_ROLE
 End Sub
 
 Private Function ITest_Suite() As TestSuite
     Set ITest_Suite = New TestSuite
     ITest_Suite.AddTest ITest_Manager.className, "TestExportReport"
+    ITest_Suite.AddTest ITest_Manager.className, "TestGenerateReportMetaData"
     ITest_Suite.AddTest ITest_Manager.className, "TestGenerateReport"
 End Function
 
 Private Sub ITestCase_RunTest()
     Select Case mManager.MethodName
         Case "TestExportReport": TestExportReport
+        Case "TestGenerateReportMetaData": TestGenerateReportMetaData
         Case "TestGenerateReport": TestGenerateReport
         Case Else: mAssert.Should False, "Invalid test name: " & mManager.MethodName
     End Select

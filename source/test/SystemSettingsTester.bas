@@ -38,8 +38,10 @@ Public Sub TestImportSettings()
     mAssert.Equals s.DatabaseName, "upstream_role_mapping"
     mAssert.Equals s.Username, "sa"
     mAssert.Equals s.Password, "admincmg@3f"
+    mAssert.Equals s.RegionName, "Indo"
+    mAssert.Equals s.LogLevel, "DEBUG"
     mAssert.Equals UBound(s.LineToRemove), 2
-    mAssert.Equals UBound(s.SyncTables), 7
+    mAssert.Equals UBound(s.SyncTables), 8
     mAssert.Equals s.SyncUsers.count > 0, True
     Dim dic As Scripting.Dictionary, i As Integer
     Set dic = s.SyncUsers
