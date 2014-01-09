@@ -44,10 +44,10 @@ OnError:
     Resume OnExit
 End Function
 
-Public Function ExecuteQuery(Query As String, Optional params As Scripting.Dictionary)
+Public Function ExecuteQuery(query As String, Optional params As Scripting.Dictionary)
     On Error GoTo OnError
     Dim key As String, value As Variant
-    Set qdf = dbs.CreateQueryDef("", Query)
+    Set qdf = dbs.CreateQueryDef("", query)
     If Not params Is Nothing Then
         'Logger.LogDebug "DbManager.OpenRecordSet", "Param cound: " & params.count
         For i = 0 To params.count - 1
@@ -64,14 +64,14 @@ Public Function ExecuteQuery(Query As String, Optional params As Scripting.Dicti
 OnExit:
     Exit Function
 OnError:
-    Logger.LogError "DbManager.ExecuteQuery", "Could execute query: " & Query, Err
+    Logger.LogError "DbManager.ExecuteQuery", "Could execute query: " & query, Err
     Resume OnExit
 End Function
 
-Public Function OpenRecordSet(Query As String, Optional params As Scripting.Dictionary)
+Public Function OpenRecordSet(query As String, Optional params As Scripting.Dictionary)
     Dim prm As DAO.Parameter, i As Integer, key As String
     On Error GoTo OnError
-    Set qdf = dbs.CreateQueryDef("", Query)
+    Set qdf = dbs.CreateQueryDef("", query)
     If Not params Is Nothing Then
         
         'Logger.LogDebug "DbManager.OpenRecordSet", "Param cound: " & params.count
@@ -89,7 +89,7 @@ Public Function OpenRecordSet(Query As String, Optional params As Scripting.Dict
 OnExit:
     Exit Function
 OnError:
-    Logger.LogError "DbManager.OpenRecordSet", "Could execute query: " & Query, Err
+    Logger.LogError "DbManager.OpenRecordSet", "Could execute query: " & query, Err
     Resume OnExit
 End Function
 
@@ -100,7 +100,7 @@ Public Function RecycleTable(s As SystemSettings)
     
     TableNames = s.TableNames
     Logger.LogDebug "DbManager.RecycleTable", "Start check table. Size: " & CStr(UBound(TableNames))
-    Dim Query As String
+    Dim query As String
     
     For i = LBound(TableNames) To UBound(TableNames)
         tmp = Trim(CStr(TableNames(i)))
@@ -114,6 +114,17 @@ Public Function RecycleTable(s As SystemSettings)
     Next
 End Function
 
+Private Function GetHeaderIndex(name As String) As Integer
+    Dim index As Integer
+    For i = 0 To rst.Fields.count - 1
+        If StringHelper.IsEqual(Trim(rst.Fields(i).name), Trim(name), True) Then
+            Logger.LogDebug "DbManager.SyncUserData", "## HEADER: " & rst.Fields(i).name
+            index = i
+        End If
+    Next i
+    GetHeaderIndex = index
+End Function
+
 Public Function SyncUserData()
     Dim s As SystemSettings: Set s = New SystemSettings
     Dim flag As Boolean: flag = False
@@ -123,6 +134,7 @@ Public Function SyncUserData()
     Dim queryInsertData As String
     Dim queryCustomInsert As String, checkValue As String, tmpSplit() As String, tmpValues() As String
     Dim tmpValue As String
+    Dim tmpCache As String
     ' Init database
     Init
     ' Init settings
@@ -137,6 +149,7 @@ Public Function SyncUserData()
     OpenRecordSet "select * from " & Constants.TMP_END_USER_TABLE_NAME
 
     If Not (rst.EOF And rst.BOF) Then
+        
         rst.MoveFirst
         Do Until rst.EOF = True
             Dim tmpList() As String, arraySize As Integer
@@ -149,8 +162,14 @@ Public Function SyncUserData()
                  If Not (StringHelper.StartsWith(key, "insert into", True)) Then
                     ' Add params value
                     On Error Resume Next
-                    Logger.LogDebug "DbManager.SyncUserData", key & " = " & rst(key)
-                    dictParams.Add value, rst(key)
+                    If Len(rst.Fields(GetHeaderIndex(key)).value) <> 0 Then
+                        tmpCache = Trim(rst.Fields(GetHeaderIndex(key)).value)
+                    Else
+                        tmpCache = ""
+                    End If
+                    
+                    Logger.LogDebug "DbManager.SyncUserData", key & " = " & tmpCache
+                    dictParams.Add value, tmpCache
                  Else
                     If flag = False Then
                         ' Add custom insert key to list
@@ -170,15 +189,28 @@ Public Function SyncUserData()
                 tmpSplit = Split(key, "|")
                 queryCustomInsert = Trim(tmpSplit(0))
                 checkValue = Trim(tmpSplit(1))
+                Logger.LogDebug "DbManager.SyncUserData", "checkValue: " & checkValue
                 Logger.LogDebug "DbManager.SyncUserData", "custom import query: " & queryCustomInsert & ". Check value: " & checkValue & " . From list: " & value
                 value = dictMapping.Items(key)
                 tmpValues = Split(value, ",")
                 Logger.LogDebug "DbManager.SyncUserData", "Number of column to check: " & CStr(UBound(tmpValues) + 1)
                 ' Loop to check all column
+                'Logger.LogDebug "DbManager.SyncUserData", "====== ITID: " & rst("ntid") & " ======"
                 For j = LBound(tmpValues) To UBound(tmpValues)
                     tmpValue = Trim(tmpValues(j))
+                    Logger.LogDebug "DbManager.SyncUserData", "Column to compare: " & tmpValue
+                    Dim index As Integer
+                    index = GetHeaderIndex(tmpValue)
+                    Logger.LogDebug "DbManager.SyncUserData", "Index: " & index
+                    If Len(rst.Fields(index).value) <> 0 Then
+                        tmpCache = Trim(rst.Fields(index).value)
+                    Else
+                        tmpCache = ""
+                    End If
+                    
+                    Logger.LogDebug "DbManager.SyncUserData", "Value: " & tmpCache
                     'Logger.LogDebug "DbManager.SyncUserData", "column name: " & tmpValue
-                    If StringHelper.IsEqual(rst(tmpValue), checkValue, True) Then
+                    If StringHelper.IsEqual(tmpCache, checkValue, True) Then
                         ' If value is valid, get parameter and execute query
                         Set tmpDict = New Scripting.Dictionary
                         For k = 0 To dictParams.count - 1
@@ -197,7 +229,7 @@ Public Function SyncUserData()
     End If
 End Function
 
-Public Function ImportData(tblName As String, csvPath As String)
+Public Function ImportData(csvPath As String)
     On Error GoTo OnError
     If Ultilities.ifTableExists(Constants.TMP_END_USER_TABLE_NAME) Then
         dbs.TableDefs.Delete Constants.TMP_END_USER_TABLE_NAME
@@ -215,8 +247,7 @@ OnError:
     If Ultilities.ifTableExists(Constants.TMP_END_USER_TABLE_NAME) Then
         DoCmd.DeleteObject acTable, Constants.TMP_END_USER_TABLE_NAME
     End If
-    Logger.LogError "DbManager.ImportData", "Could not import table " _
-                        & tblName & " data from CSV file " & csvPath, Err
+    Logger.LogError "DbManager.ImportData", "Could not import user data from CSV file " & csvPath, Err
     Resume OnExit
 End Function
 

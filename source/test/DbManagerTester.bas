@@ -34,7 +34,8 @@ Public Sub TestImportData()
     csvPath = FileHelper.CurrentDbPath & Constants.END_USER_DATA_CSV_FILE_PATH
     Dim im As DbManager: Set im = New DbManager
     im.Init
-    im.ImportData "END_USER", csvPath
+    im.ImportData csvPath
+    im.Recycle
 End Sub
 
 Public Sub TestImportSqlTable()
@@ -71,11 +72,11 @@ Public Sub TestOpenRecordSet()
     Dim dm As DbManager: Set dm = New DbManager
     Dim rInfo As ReportMetaData: Set rInfo = New ReportMetaData
     dm.Init
-    rInfo.Init (Name)
+    rInfo.Init (name)
     params.Add "SYSTEM_ROLE_NAME", "Procurement Catalogue Approver"
     params.Add "BP_ROLE_STANDARD_NAME", "POQR Approver"
     If rInfo.Valid = True Then
-        dm.OpenRecordSet rInfo.Query, params
+        dm.OpenRecordSet rInfo.query, params
     End If
     dm.Recycle
 End Sub

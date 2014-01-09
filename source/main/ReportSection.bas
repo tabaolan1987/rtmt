@@ -12,45 +12,37 @@ Private mValid As Boolean
 
 Public Function Init(raw As String)
     mValid = False
+    Dim dbm As New DbManager
     Logger.LogDebug "ReportSection.Init", "Prepare raw: " & raw
-    Dim tmpSplit() As String, i As Integer, tmpStr As String, tmpList() As String
+    Dim i As Integer, tmpStr As String, tmpList() As String
     Dim arraySize As Integer
-    tmpSplit = Split(raw, Constants.RP_SPLIT_LEVEL_2)
-    If UBound(tmpSplit) = 2 Then
-            mSectionType = Replace(tmpSplit(0), vbCrLf, " ")
-            mSectionType = Trim(mSectionType)
-            mQuery = Trim(tmpSplit(2))
+    mQuery = raw
+    If InStr(mQuery, "{%") <> 0 And InStr(mQuery, "%}") <> 0 Then
+        mSectionType = Constants.RP_SECTION_TYPE_AUTO
+    Else
+        mSectionType = Constants.RP_SECTION_TYPE_FIXED
+    End If
+    
+    
             Logger.LogDebug "ReportSection.Init", "Section type: " & mSectionType
             
             Select Case mSectionType
                 Case Constants.RP_SECTION_TYPE_AUTO:
-                    tmpStr = tmpSplit(1)
-                    Dim dbm As New DbManager
-                    dbm.Init
-                    dbm.OpenRecordSet tmpStr
-                    If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
-                        dbm.RecordSet.MoveFirst
-                        Do Until dbm.RecordSet.EOF = True
-                            ReDim Preserve mHeader(arraySize)
-                            mHeader(arraySize) = dbm.RecordSet(0)
-                            arraySize = arraySize + 1
-                            dbm.RecordSet.MoveNext
-                        Loop
-                    End If
                     ' Start generate query
-                    mQuery = GenerateQuery(mQuery)
+                    mQuery = PrepareQuery(mQuery)
                 Case Constants.RP_SECTION_TYPE_FIXED:
-                    tmpList = Split(tmpSplit(1), vbCrLf)
-                    Logger.LogDebug "ReportSection.Init", "fixed size: " & CStr(UBound(tmpList))
-                    For i = LBound(tmpList) To UBound(tmpList)
-                        tmpStr = Trim(tmpList(i))
-                        If Len(tmpStr) <> 0 Then
+                    dbm.Init
+                    dbm.OpenRecordSet mQuery
+                    If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
+                        ' Execute query and get all header name
+                        Logger.LogDebug "ReportSection.Init", "Fields count: " & CStr(dbm.RecordSet.Fields.count)
+                        For i = 0 To dbm.RecordSet.Fields.count - 1
                             ReDim Preserve mHeader(arraySize)
-                            mHeader(arraySize) = tmpStr
+                            mHeader(arraySize) = dbm.RecordSet.Fields(i).name
                             arraySize = arraySize + 1
-                        End If
-                    Next i
-                    
+                        Next i
+                    End If
+                    dbm.Recycle
                 Case Else
             End Select
             
@@ -62,15 +54,68 @@ Public Function Init(raw As String)
                     Logger.LogDebug "ReportSection.Init", "- " & mHeader(i)
                 Next i
             End If
-    End If
 End Function
 
-Private Function GenerateQuery(Query As String) As String
+Private Function PrepareQuery(query As String) As String
+    Dim arraySize As Integer
     Dim dbm As New DbManager
     Dim l As Long, r As Long, q As String, length As Long, strTemp As String
     Dim tmp As String, cQuery, tmpSplit() As String, qOut As String, qIn As String, tmpVal As String, tmpQuery As String
 
-    q = Query
+    q = query
+    length = 0
+    
+    Do While Not InStr(q, "{%") = 0
+        length = length + 1
+        'Logger.LogDebug "ReportSection.PrepareQuery", "Raw query: " & q
+        l = InStr(q, "{%")
+        Logger.LogDebug "ReportSection.PrepareQuery", "Found start pos: " & CStr(l)
+        r = InStr(l, q, "%}")
+        Logger.LogDebug "ReportSection.PrepareQuery", "Found end pos: " & CStr(r)
+        cQuery = Mid(q, l, r - l + 2)
+        Logger.LogDebug "ReportSection.PrepareQuery", "Custom query: " & cQuery
+        tmp = Trim(Mid(cQuery, 3, Len(cQuery) - 4))
+        'Logger.LogDebug "ReportSection.PrepareQuery", "Prefix removed query: " & tmp
+        tmpSplit = Split(tmp, "|")
+        qOut = Trim(tmpSplit(0))
+        qIn = Trim(tmpSplit(1))
+        'Logger.LogDebug "ReportSection.PrepareQuery", "Generate query: " & qIn
+        'Logger.LogDebug "ReportSection.PrepareQuery", "Get value query: " & qOut
+        dbm.Init
+        dbm.OpenRecordSet (qOut)
+        
+        If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
+            tmpQuery = ""
+            dbm.RecordSet.MoveFirst
+            Do Until dbm.RecordSet.EOF = True
+                tmpVal = dbm.RecordSet(0)
+                ReDim Preserve mHeader(arraySize)
+                mHeader(arraySize) = tmpVal
+                arraySize = arraySize + 1
+                strTemp = Replace(qIn, "(%VALUE%)", StringHelper.EscapeQueryString(tmpVal))
+                tmpQuery = tmpQuery & qIn & ","
+                'Logger.LogDebug "ReportSection.PrepareQuery", "Found value: " & tmpVal
+                dbm.RecordSet.MoveNext
+            Loop
+        Else
+            
+        End If
+        'If StringHelper.EndsWith(tmpQuery, ",", True) Then
+        '    tmpQuery = Left(tmpQuery, Len(tmpQuery) - 1)
+        'End If
+        'Logger.LogDebug "ReportSection.PrepareQuery", "tmpQuery: " & tmpQuery
+        q = Replace(q, cQuery, qIn)
+        dbm.Recycle
+    Loop
+    PrepareQuery = q
+End Function
+
+Private Function GenerateQuery(query As String) As String
+    Dim dbm As New DbManager
+    Dim l As Long, r As Long, q As String, length As Long, strTemp As String
+    Dim tmp As String, cQuery, tmpSplit() As String, qOut As String, qIn As String, tmpVal As String, tmpQuery As String
+
+    q = query
     length = 0
     
     Do While Not InStr(q, "{%") = 0
@@ -96,9 +141,8 @@ Private Function GenerateQuery(Query As String) As String
             tmpQuery = ""
             dbm.RecordSet.MoveFirst
             Do Until dbm.RecordSet.EOF = True
-                tmpVal = dbm.RecordSet("VAL_OUT")
-                strTemp = Replace(qIn, "(%VAL_IN%)", StringHelper.EscapeQueryString(tmpVal))
-                strTemp = Replace(strTemp, "(%VAL_COL%)", StringHelper.EscapeQueryString(tmpVal) & " " & CStr(length))
+                tmpVal = dbm.RecordSet(0)
+                strTemp = Replace(qIn, "(%VALUE%)", StringHelper.EscapeQueryString(tmpVal))
                 tmpQuery = tmpQuery & strTemp & ","
                 'Logger.LogDebug "ReportSection.GenerateQuery", "Found value: " & tmpVal
                 dbm.RecordSet.MoveNext
@@ -117,8 +161,8 @@ Private Function GenerateQuery(Query As String) As String
 End Function
 
 
-Public Property Get Query() As String
-    Query = mQuery
+Public Property Get query() As String
+    query = mQuery
 End Property
 
 Public Property Get Header() As String()
@@ -127,7 +171,7 @@ End Property
 
 Public Property Get HeaderCount() As Integer
     If Not Ultilities.IsVarArrayEmpty(mHeader) Then
-        HeaderCount = UBound(mHeader)
+        HeaderCount = UBound(mHeader) + 1
     Else
         HeaderCount = 0
     End If
@@ -140,3 +184,9 @@ End Property
 Public Property Get Valid() As Boolean
     Valid = mValid
 End Property
+
+Public Function MakeQuery(colName As String) As String
+    If StringHelper.IsEqual(mSectionType, Constants.RP_SECTION_TYPE_AUTO, True) Then
+        MakeQuery = Replace(mQuery, "(%VALUE%)", StringHelper.EscapeQueryString(colName))
+    End If
+End Function

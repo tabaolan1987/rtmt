@@ -55,7 +55,7 @@ Public Sub TestGenerateReportMetaData()
 End Sub
 
 Public Sub TestGenerateReport()
-    'Reporting.GenerateReport Constants.RP_END_USER_TO_SYSTEM_ROLE
+    Reporting.GenerateReport Constants.RP_END_USER_TO_SYSTEM_ROLE
 End Sub
 
 Private Function ITest_Suite() As TestSuite

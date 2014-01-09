@@ -13,7 +13,9 @@ Function GetCSVFile() As String
         .AllowMultiSelect = False
         .Filters.Clear
         .Filters.Add "CSV Files", "*.csv", 1
-        .Filters.Add "All Files", "*.*", 2
+        .Filters.Add "Excel Workbook", "*.xlsx", 2
+        .Filters.Add "Excel 97-2003 Workbook", "*.xls", 3
+        .Filters.Add "All Files", "*.*", 4
         If .Show = True Then
             GetCSVFile = .SelectedItems(1)
         End If
@@ -72,7 +74,7 @@ Function CurrentDbPath() As String
     If Len(dbPath) = 0 Then
         Dim cRes As String
         Dim nPos As Long
-        cRes = CurrentDb.Name
+        cRes = CurrentDb.name
         nPos = Len(cRes)
         Do Until Right(cRes, 1) = "\"
             nPos = nPos - 1
@@ -97,7 +99,7 @@ Function Delete(path As String) As Boolean
     End If
 End Function
 
-Public Function ReadSSFile(Name As String) As String()
+Public Function ReadSSFile(name As String) As String()
     Dim path As String
     Dim arraySize As Integer
     Dim sInput As String
@@ -105,7 +107,7 @@ Public Function ReadSSFile(Name As String) As String()
     Dim i As Long
     Dim tmpList() As String
     Dim ln As String
-    path = FileHelper.CurrentDbPath & Constants.SS_DIR & Name & ".ss"
+    path = FileHelper.CurrentDbPath & Constants.SS_DIR & name & ".ss"
     If IsExist(path) Then
         Dim FSO As Object
         Dim ReadFile As Object
@@ -153,6 +155,9 @@ Public Function TrimSourceFile(fileToRead As String, fileToWrite As String, Line
     Dim tmpList() As String
     Dim arraySize As Integer
     Dim check As Boolean
+    Dim rowCheck As Boolean
+    Dim tmpCheck() As String
+    Dim i As Integer
     Dim ltm As Variant
     Set FSO = CreateObject("Scripting.FileSystemObject")
     Set ReadFile = FSO.OpenTextFile(fileToRead, ForReading, False)
@@ -169,10 +174,22 @@ Public Function TrimSourceFile(fileToRead As String, fileToWrite As String, Line
             End If
         Next
         If check = False Then
-            Logger.LogDebug "FileHelper.TrimSourceFile", "Readline " & CStr(l) & " . Text: " & ln
-            ReDim Preserve tmpList(arraySize)
-            tmpList(arraySize) = ln
-            arraySize = arraySize + 1
+            If Len(ln) <> 0 Then
+                
+                rowCheck = False
+                tmpCheck = Split(ln, ",")
+                For i = LBound(tmpCheck) To UBound(tmpCheck)
+                    If Len(Trim(tmpCheck(i))) <> 0 Then
+                        rowCheck = True
+                    End If
+                Next i
+                If rowCheck Then
+                    Logger.LogDebug "FileHelper.TrimSourceFile", "Readline " & CStr(l) & " . Text: " & ln
+                    ReDim Preserve tmpList(arraySize)
+                    tmpList(arraySize) = ln
+                    arraySize = arraySize + 1
+                End If
+            End If
         End If
         l = l + 1
     Loop
