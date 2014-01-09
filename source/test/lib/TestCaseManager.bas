@@ -29,6 +29,7 @@ End Function
 
 Private Function ITestManager_Run(Test As ITest, Optional RunManager As IRunManager) As IRunManager
     ' Changed by Hai to control timestamp
+    FileHelper.CheckDir FileHelper.CurrentDbPath & "target"
     Dim TestCase As ITestCase, sngStart As Long, sngEnd As Long, sngElapsed As Long
     If RunManager Is Nothing Then Set RunManager = New RunManager
     

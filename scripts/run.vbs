@@ -18,7 +18,7 @@ End If
 Dim oAccess
 'Start Access and open the database.
 set oAccess = CreateObject("Access.Application")
-'oAccess.Visible = True
+oAccess.Visible = False
 'You will need to put the path to your own database here.
 oAccess.OpenCurrentDatabase(sADPFilename)
 'Run the macro
