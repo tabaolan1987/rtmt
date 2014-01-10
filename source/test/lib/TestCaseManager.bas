@@ -34,7 +34,7 @@ Private Function ITestManager_Run(Test As ITest, Optional RunManager As IRunMana
     If RunManager Is Nothing Then Set RunManager = New RunManager
     
     Set TestCase = Test
-    RunManager.Result.StartTest TestCase
+    RunManager.result.StartTest TestCase
     sngStart = TimerHelper.GetCurrentMillisecond
     
     TestCase.SetUp RunManager.Assert
@@ -44,6 +44,6 @@ Private Function ITestManager_Run(Test As ITest, Optional RunManager As IRunMana
     'debug.print "Run teardown"
     sngEnd = TimerHelper.GetCurrentMillisecond
     sngElapsed = sngEnd - sngStart
-    RunManager.Result.EndTest TestCase, sngElapsed
+    RunManager.result.EndTest TestCase, sngElapsed
     'debug.print "Run endtest"
 End Function

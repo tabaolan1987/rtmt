@@ -8,6 +8,12 @@ Option Compare Database
 Private dbs As DAO.Database
 Private qdf As DAO.QueryDef
 Private rst As DAO.RecordSet
+Private mWarnings() As String
+Private countWarning As Integer
+
+Public Property Get warnings() As String()
+    warnings = mWarnings
+End Property
 
 Public Property Get RecordSet() As DAO.RecordSet
     Set RecordSet = rst
@@ -52,7 +58,7 @@ Public Function ExecuteQuery(query As String, Optional params As Scripting.Dicti
         'Logger.LogDebug "DbManager.OpenRecordSet", "Param cound: " & params.count
         For i = 0 To params.count - 1
             On Error Resume Next
-            key = params.Keys(i)
+            key = params.keys(i)
             value = params.Items(i)
             'Logger.LogDebug "DbManager.OpenRecordSet", "Param key: " & key & ". Value: " & value
             qdf.Parameters(key).value = value
@@ -77,7 +83,7 @@ Public Function OpenRecordSet(query As String, Optional params As Scripting.Dict
         'Logger.LogDebug "DbManager.OpenRecordSet", "Param cound: " & params.count
         For i = 0 To params.count - 1
             On Error Resume Next
-            key = params.Keys(i)
+            key = params.keys(i)
             'Logger.LogDebug "DbManager.OpenRecordSet", "Param key: " & params.Keys(i) & ". Value: " & params.Items(i)
             If params.Exists(key) Then
                 qdf.Parameters(key).value = params.Items(key)
@@ -116,13 +122,89 @@ End Function
 
 Private Function GetHeaderIndex(name As String) As Integer
     Dim index As Integer
-    For i = 0 To rst.Fields.count - 1
-        If StringHelper.IsEqual(Trim(rst.Fields(i).name), Trim(name), True) Then
-            Logger.LogDebug "DbManager.SyncUserData", "## HEADER: " & rst.Fields(i).name
+    For i = 0 To rst.fields.count - 1
+        If StringHelper.IsEqual(Trim(rst.fields(i).name), Trim(name), True) Then
+            Logger.LogDebug "DbManager.SyncUserData", "## HEADER: " & rst.fields(i).name
             index = i
         End If
     Next i
     GetHeaderIndex = index
+End Function
+
+Private Function AddWarning(mes As String)
+    ReDim Preserve mWarnings(countWarning)
+    mWarnings(countWarning) = mes
+    Logger.LogError "DbManager.AddWarning", mes, Nothing
+    countWarning = countWarning + 1
+End Function
+
+Private Function ValidateNtid(s As SystemSettings, ntids As String, Optional userData As Scripting.Dictionary)
+    Dim validatorMapping As Scripting.Dictionary
+    Dim checkList As Collection
+    Dim tmpDict As Scripting.Dictionary
+    Dim fields As String
+    Dim mData As String
+    Dim result As String
+    Dim ntid As String
+    Dim str1 As String, str2 As String, key As String, value As String
+    Dim check As Boolean
+    Dim v As Variant
+    Dim tmpUserData As Scripting.Dictionary
+    Set validatorMapping = s.validatorMapping
+    Dim i As Integer
+    For i = 0 To validatorMapping.count - 1
+        fields = fields & validatorMapping.Items(i) & ","
+    Next i
+    If StringHelper.EndsWith(fields, ",", True) Then
+        fields = Left(fields, Len(fields) - 1)
+    End If
+    
+    If StringHelper.EndsWith(ntids, ",", True) Then
+        ntids = Left(ntids, Len(ntids) - 1)
+    End If
+    mData = "token=" & StringHelper.EncodeURL(s.Token) _
+                & "&fields=" & StringHelper.EncodeURL(fields) _
+                & "&ntids=" & StringHelper.EncodeURL(ntids)
+    Logger.LogDebug "DbManager.SyncUserData", "Post valid ntids: " & ntids
+    result = HttpHelper.PostData(s.ValidatorURL, mData)
+    Logger.LogDebug "DbManager.SyncUserData", "Result: " & result
+    
+    If Len(result) > 0 Then
+        If StringHelper.IsContain(result, "}", True) And StringHelper.IsContain(result, "{", True) Then
+            Set checkList = JSONHelper.parse(result)
+            For Each tmpDict In checkList
+                ntid = tmpDict.Item("ntid")
+                check = tmpDict.Item("isvalid")
+                Logger.LogDebug "DbManager.SyncUserData", "Is valid: " & CStr(check)
+                If check Then
+                    Logger.LogDebug "DbManager.SyncUserData", "check ntid: " & ntid
+                    If Not userData Is Nothing And userData.count > 0 Then
+                        Set tmpUserData = userData.Item(ntid)
+                        For Each v In validatorMapping
+                            key = v
+                            value = validatorMapping.Item(key)
+                            str1 = tmpUserData.Item(key)
+                            str2 = tmpDict.Item(value)
+                            Logger.LogDebug "DbManager.SyncUserData", "User data key: " & key & " = " & str1
+                            Logger.LogDebug "DbManager.SyncUserData", "Mapping data key: " & value & " = " & str2
+                            If StringHelper.IsEqual(str1, str2, True) Then
+                                Logger.LogDebug "DbManager.SyncUserData", "validated!!!"
+                            Else
+                                AddWarning ("Validation failed !!! NTID: " & ntid & " . Field name: " & key & ". Local: " & str1 & ". LDAP: " & str2)
+                            End If
+                        Next v
+                    End If
+                Else
+                    AddWarning ("Validation failed !!! NTID: " & ntid & " not found!")
+                End If
+            Next tmpDict
+        Else
+            Logger.LogDebug "DbManager.SyncUserData", "Error: " & result
+        End If
+    Else
+        
+    End If
+    
 End Function
 
 Public Function SyncUserData()
@@ -147,28 +229,36 @@ Public Function SyncUserData()
     queryInsertData = FileHelper.ReadQuery(Constants.END_USER_DATA_TABLE_NAME, Constants.Q_INSERT)
     ' Open tmp table user data from CSV file
     OpenRecordSet "select * from " & Constants.TMP_END_USER_TABLE_NAME
-
+    
+    Logger.LogDebug "DbManager.SyncUserData", "ntidField: " & s.NtidField
+    Logger.LogDebug "DbManager.SyncUserData", "validatorUrl: " & s.ValidatorURL
+    Logger.LogDebug "DbManager.SyncUserData", "token: " & s.Token
+    Logger.LogDebug "DbManager.SyncUserData", "bulkSize: " & CStr(s.BulkSize)
+    Dim ntids As String, tmpNtid As String, size As Long, userData As Scripting.Dictionary
+    Dim tmpUserData As Scripting.Dictionary
+    size = 0
     If Not (rst.EOF And rst.BOF) Then
-        
         rst.MoveFirst
         Do Until rst.EOF = True
             Dim tmpList() As String, arraySize As Integer
             Logger.LogDebug "DbManager.SyncUserData", "###########################################"
             ' List all mapping column
             Set dictParams = New Scripting.Dictionary
+            Set tmpUserData = New Scripting.Dictionary
             For i = 0 To dictMapping.count - 1
-                 key = dictMapping.Keys(i)
+                 key = dictMapping.keys(i)
                  value = dictMapping.Items(i)
                  If Not (StringHelper.StartsWith(key, "insert into", True)) Then
                     ' Add params value
                     On Error Resume Next
-                    If Len(rst.Fields(GetHeaderIndex(key)).value) <> 0 Then
-                        tmpCache = Trim(rst.Fields(GetHeaderIndex(key)).value)
+                    If Len(rst.fields(GetHeaderIndex(key)).value) <> 0 Then
+                        tmpCache = Trim(rst.fields(GetHeaderIndex(key)).value)
                     Else
                         tmpCache = ""
                     End If
                     
                     Logger.LogDebug "DbManager.SyncUserData", key & " = " & tmpCache
+                    tmpUserData.Add key, tmpCache
                     dictParams.Add value, tmpCache
                  Else
                     If flag = False Then
@@ -202,8 +292,8 @@ Public Function SyncUserData()
                     Dim index As Integer
                     index = GetHeaderIndex(tmpValue)
                     Logger.LogDebug "DbManager.SyncUserData", "Index: " & index
-                    If Len(rst.Fields(index).value) <> 0 Then
-                        tmpCache = Trim(rst.Fields(index).value)
+                    If Len(rst.fields(index).value) <> 0 Then
+                        tmpCache = Trim(rst.fields(index).value)
                     Else
                         tmpCache = ""
                     End If
@@ -214,7 +304,7 @@ Public Function SyncUserData()
                         ' If value is valid, get parameter and execute query
                         Set tmpDict = New Scripting.Dictionary
                         For k = 0 To dictParams.count - 1
-                            tmpDict.Add dictParams.Keys(k), dictParams.Items(k)
+                            tmpDict.Add dictParams.keys(k), dictParams.Items(k)
                         Next k
                         tmpDict.Add "value", tmpValue
                         tmpDict.Add "region_name", s.RegionName
@@ -222,8 +312,35 @@ Public Function SyncUserData()
                     End If
                 Next j
             Next i
+            
+            ' === VALIDATION BLOCK ===
+            If size >= s.BulkSize Then
+                Logger.LogDebug "DbManager.SyncUserData", "check bulk user data size: " & userData.count
+                ValidateNtid s, ntids, userData
+                ntids = ""
+                size = 0
+                Set userData = Nothing
+            End If
+            If userData Is Nothing Then
+                Set userData = New Scripting.Dictionary
+            End If
+            tmpNtid = rst(s.NtidField)
+            userData.Add tmpNtid, tmpUserData
+            Set tmpUserData = Nothing
+            
+            ntids = ntids & tmpNtid & ","
+            size = size + 1
+            ' === VALIDATION BLOCK ===
+            
             rst.MoveNext
         Loop
+        ' === VALIDATION BLOCK ===
+        If Len(ntids) <> 0 And size <> 0 And Not userData Is Nothing And userData.count > 0 Then
+            ValidateNtid s, ntids, userData
+            ntids = ""
+            size = 0
+        End If
+        ' === VALIDATION BLOCK ===
     Else
         Logger.LogInfo "DbManager.SyncUserData", "There are no records in table " & Constants.TMP_END_USER_TABLE_NAME
     End If

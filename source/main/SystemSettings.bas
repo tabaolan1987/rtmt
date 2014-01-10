@@ -6,6 +6,10 @@ Attribute VB_Exposed = False
 ' To read & write Settings.ini
 Option Explicit
 
+Private mValidatorURL As String
+Private mToken As String
+Private mBulkSize As Long
+Private mNtidField As String
 Private mServerName As String
 Private mDatabaseName As String
 Private mPort As String
@@ -13,10 +17,12 @@ Private mUsername As String
 Private mPassword As String
 Private mSyncTables() As String
 Private mSyncUsers As Scripting.Dictionary
+Private mValidatorMapping As Scripting.Dictionary
 Private mLineToRemove() As Integer
 Private mTableNames() As String
 Private mRegionName As String
 Private mLogLevel As String
+
 
 Public Function Init()
     Dim ir As IniReader: Set ir = Ultilities.SystemIniReader
@@ -50,11 +56,24 @@ Public Function Init()
         End If
     Next
     mRegionName = ir.ReadKey(Constants.SECTION_USER_DATA, Constants.KEY_REGION_NAME)
-    
     source = ir.ReadKey(Constants.SECTION_USER_DATA, Constants.KEY_TABLE_NAME)
     mTableNames = Split(source, ",")
     
     mLogLevel = ir.ReadKey(Constants.SECTION_APPLICATION, Constants.KEY_LOG_LEVEL)
+    
+    mValidatorURL = ir.ReadKey(Constants.SECTION_USER_DATA, Constants.KEY_VALIDATOR_URL)
+    mToken = ir.ReadKey(Constants.SECTION_USER_DATA, Constants.KEY_TOKEN)
+    mBulkSize = ir.ReadLongKey(Constants.SECTION_USER_DATA, Constants.KEY_BULK_SIZE)
+    mNtidField = ir.ReadKey(Constants.SECTION_USER_DATA, Constants.KEY_NTID_FIELD)
+    Set mValidatorMapping = New Scripting.Dictionary
+    tmpList = FileHelper.ReadSSFile(Constants.SS_VALIDATOR_MAPPING)
+    For i = LBound(tmpList) To UBound(tmpList)
+        ln = Trim(tmpList(i))
+        If Len(ln) <> 0 Then
+            tl = Split(ln, ":")
+            mValidatorMapping.Add Trim(tl(0)), Trim(tl(1))
+        End If
+    Next
 End Function
 
 Public Property Get ServerName() As String
@@ -99,4 +118,24 @@ End Property
 
 Public Property Get LogLevel() As String
     LogLevel = mLogLevel
+End Property
+
+Public Property Get ValidatorURL() As String
+    ValidatorURL = mValidatorURL
+End Property
+
+Public Property Get Token() As String
+    Token = mToken
+End Property
+
+Public Property Get BulkSize() As Long
+    BulkSize = mBulkSize
+End Property
+
+Public Property Get validatorMapping() As Scripting.Dictionary
+    Set validatorMapping = mValidatorMapping
+End Property
+
+Public Property Get NtidField() As String
+    NtidField = mNtidField
 End Property

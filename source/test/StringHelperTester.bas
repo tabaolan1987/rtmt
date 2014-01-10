@@ -50,6 +50,12 @@ Public Sub TestEncodeXml()
     mAssert.Equals "&amp;&quot;&apos;&lt;&gt;", StringHelper.EncodeXml(src)
 End Sub
 
+Public Sub TestEncodeURL()
+    Dim src As String
+    src = "It's me & nothing"
+    mAssert.Equals "It%27s%20me%20%26%20nothing", StringHelper.EncodeURL(src)
+End Sub
+
 Public Sub TestIsContain()
     Dim checker As Boolean
     On Error GoTo OnError
@@ -84,6 +90,7 @@ End Sub
 Private Function ITest_Suite() As TestSuite
     Set ITest_Suite = New TestSuite
     ITest_Suite.AddTest ITest_Manager.className, "TestEncodeXml"
+    ITest_Suite.AddTest ITest_Manager.className, "TestEncodeURL"
     ITest_Suite.AddTest ITest_Manager.className, "TestIsEqual"
     ITest_Suite.AddTest ITest_Manager.className, "TestIsContain"
     ITest_Suite.AddTest ITest_Manager.className, "TestEndsWith"
@@ -93,6 +100,7 @@ End Function
 Private Sub ITestCase_RunTest()
     Select Case mManager.MethodName
         Case "TestEncodeXml": TestEncodeXml
+        Case "TestEncodeURL": TestEncodeURL
         Case "TestIsEqual": TestIsEqual
         Case "TestIsContain": TestIsContain
         Case "TestEndsWith": TestEndsWith

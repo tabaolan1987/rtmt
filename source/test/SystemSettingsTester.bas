@@ -46,7 +46,7 @@ Public Sub TestImportSettings()
     Dim dic As Scripting.Dictionary, i As Integer
     Set dic = s.SyncUsers
     For i = 0 To dic.count - 1
-        Logger.LogDebug "SystemSettingsTester.TestImportSettings", "key: " & dic.Keys(i) & " | value: " & dic.Items(i)
+        Logger.LogDebug "SystemSettingsTester.TestImportSettings", "key: " & dic.keys(i) & " | value: " & dic.Items(i)
     Next i
 End Sub
 

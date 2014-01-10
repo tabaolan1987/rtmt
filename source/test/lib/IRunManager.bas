@@ -8,7 +8,7 @@ Option Explicit
 Public Property Get Assert() As IAssert
 
 End Property
-Public Property Get Result() As TestResult
+Public Property Get result() As TestResult
 
 End Property
 Public Sub Report()

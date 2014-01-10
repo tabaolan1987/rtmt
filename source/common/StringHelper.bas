@@ -80,3 +80,35 @@ Function EscapeQueryString(str As String) As String
     str = Replace(str, Chr(13) & Chr(10), "")
     EscapeQueryString = str
 End Function
+
+
+Public Function EncodeURL( _
+   StringToEncode As String, _
+   Optional UsePlusRatherThanHexForSpace As Boolean = False _
+) As String
+
+  Dim TempAns As String
+  Dim CurChr As Integer
+  CurChr = 1
+
+  Do Until CurChr - 1 = Len(StringToEncode)
+    Select Case Asc(Mid(StringToEncode, CurChr, 1))
+      Case 48 To 57, 65 To 90, 97 To 122
+        TempAns = TempAns & Mid(StringToEncode, CurChr, 1)
+      Case 32
+        If UsePlusRatherThanHexForSpace = True Then
+          TempAns = TempAns & "+"
+        Else
+          TempAns = TempAns & "%" & Hex(32)
+        End If
+      Case Else
+        TempAns = TempAns & "%" & _
+          Right("0" & Hex(Asc(Mid(StringToEncode, _
+          CurChr, 1))), 2)
+    End Select
+
+    CurChr = CurChr + 1
+  Loop
+
+  EncodeURL = TempAns
+End Function

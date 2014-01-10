@@ -4,9 +4,9 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 
-Public Property Get Result() As TestResult
+Public Property Get result() As TestResult
 
 End Property
-Public Property Set Result(NewResult As TestResult)
+Public Property Set result(NewResult As TestResult)
 
 End Property

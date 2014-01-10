@@ -29,6 +29,11 @@ Public Const KEY_LINE_TO_REMOVE = "linesToRemove"
 Public Const KEY_TABLE_NAME = "tableNames"
 Public Const KEY_REGION_NAME = "regionName"
 
+Public Const KEY_VALIDATOR_URL = "validatorUrl"
+Public Const KEY_TOKEN = "token"
+Public Const KEY_BULK_SIZE = "bulkSize"
+Public Const KEY_NTID_FIELD = "ntidField"
+
 Public Const SECTION_APPLICATION = "application"
 Public Const KEY_LOG_LEVEL = "logLevel"
 
@@ -47,6 +52,7 @@ Public Const KEY_START_COL = "startCol"
 Public Const SS_DIR = "data\config\"
 Public Const SS_SYNC_TABLES = "synctables"
 Public Const SS_SYNC_USERS = "syncusers"
+Public Const SS_VALIDATOR_MAPPING = "validatormapping"
 
 ' Reporting
 Public Const RP_QUERY_TYPE_SECTION = "section"

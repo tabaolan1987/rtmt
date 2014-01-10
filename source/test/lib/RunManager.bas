@@ -12,7 +12,7 @@ Private mAssertAsResultUser As IResultUser
 Private Sub Class_Initialize()
     Set mAssert = New Assert
     Set mAssertAsResultUser = mAssert
-    Set mAssertAsResultUser.Result = New TestResult
+    Set mAssertAsResultUser.result = New TestResult
 End Sub
 
 Private Property Get IRunManager_Assert() As IAssert
@@ -28,9 +28,9 @@ Private Sub IRunManager_Report()
         FileHelper.CheckDir (reportPath)
         reportPath = reportPath & "\reports"
         FileHelper.CheckDir (reportPath)
-        Logger.LogInfo "RunManager.IRunManager_Report", "Tests run: " & Result.TestCasesRun & " Failures: " & Result.Failures.count
-        For Each TCR In Result.TestCaseRows
-            Set Failure = Result.isFailures(TCR.TestCase)
+        Logger.LogInfo "RunManager.IRunManager_Report", "Tests run: " & result.TestCasesRun & " Failures: " & result.Failures.count
+        For Each TCR In result.TestCaseRows
+            Set Failure = result.isFailures(TCR.TestCase)
             Set TestCase = TCR.TestCase
             Set Test = TestCase
             If Not StrComp(lastClass, Test.Manager.className, vbTextCompare) = 0 Then
@@ -44,7 +44,7 @@ Private Sub IRunManager_Report()
                 Set FSO = CreateObject("Scripting.FileSystemObject")
                 Set oFile = FSO.CreateTextFile(reportPath & "\" & lastClass & ".xml")
                 oFile.WriteLine "<?xml version=""1.0"" encoding=""UTF-8""?>"
-                oFile.WriteLine "<testsuite name=""" & lastClass & """ time=""" & TimerHelper.MsToString(Result.TotalTime(lastClass)) & """ errors=""0"" tests=""" & CStr(Result.TestCaseCount(lastClass)) & """ failures=""" & CStr(Result.FailureCount(lastClass)) & """>"
+                oFile.WriteLine "<testsuite name=""" & lastClass & """ time=""" & TimerHelper.MsToString(result.TotalTime(lastClass)) & """ errors=""0"" tests=""" & CStr(result.TestCaseCount(lastClass)) & """ failures=""" & CStr(result.FailureCount(lastClass)) & """>"
             End If
             
            Logger.LogInfo "RunManager.IRunManager_Report", Test.Manager.className & "." & TestCase.Manager.MethodName & ": " & TCR.Time
@@ -71,9 +71,9 @@ Private Sub IRunManager_Report()
 End Sub
 
 Private Property Get IRunManager_Result() As TestResult
-    Set IRunManager_Result = Result
+    Set IRunManager_Result = result
 End Property
 
-Public Property Get Result() As TestResult
-    Set Result = mAssertAsResultUser.Result
+Public Property Get result() As TestResult
+    Set result = mAssertAsResultUser.result
 End Property

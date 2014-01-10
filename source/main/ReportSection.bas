@@ -35,10 +35,10 @@ Public Function Init(raw As String)
                     dbm.OpenRecordSet mQuery
                     If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
                         ' Execute query and get all header name
-                        Logger.LogDebug "ReportSection.Init", "Fields count: " & CStr(dbm.RecordSet.Fields.count)
-                        For i = 0 To dbm.RecordSet.Fields.count - 1
+                        Logger.LogDebug "ReportSection.Init", "Fields count: " & CStr(dbm.RecordSet.fields.count)
+                        For i = 0 To dbm.RecordSet.fields.count - 1
                             ReDim Preserve mHeader(arraySize)
-                            mHeader(arraySize) = dbm.RecordSet.Fields(i).name
+                            mHeader(arraySize) = dbm.RecordSet.fields(i).name
                             arraySize = arraySize + 1
                         Next i
                     End If
