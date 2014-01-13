@@ -16,10 +16,12 @@ INSERT INTO [user_data](
 	[changeNetworkLevel],
 	[dofa],
 	[dofaType],
-	[siteLocation],
-	[purchasOrg],
-	[Optionalfield1],
-	[Optionalfield2]
+	[region],
+	[spare1],
+	[spare2],
+	[spare3],
+	[spare4],
+	[spare5]
 ) VALUES (
 	[ntid],
 	[gpid],
@@ -38,8 +40,10 @@ INSERT INTO [user_data](
 	[changeNetworkLevel],
 	[dofa],
 	[dofaType],
-	[siteLocation],
-	[purchasOrg],
-	[Optionalfield1],
-	[Optionalfield2]
+	[region],
+	[spare1],
+	[spare2],
+	[spare3],
+	[spare4],
+	[spare5]
 )

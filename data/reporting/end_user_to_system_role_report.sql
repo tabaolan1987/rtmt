@@ -16,10 +16,12 @@ SELECT
 	[changeNetworkLevel] AS [Change Network Level],
 	[dofa] AS [DofA (Y/N)],
 	[dofaType] AS [DofA Type  (Indent, Commitment, Sourcing)],
-	[siteLocation] AS [Maximo Site Location],
-	[purchasOrg] AS [Purchasing Org],
-	[Optionalfield1] AS [Optional Field 1],
-	[Optionalfield2] AS [Optional Field 2]
+	[Region],
+	[Spare1],
+	[Spare2],
+	[Spare3],
+	[Spare4],
+	[Spare5]
 FROM user_data ORDER BY [ntid]
 =====
 SELECT {% 
@@ -28,7 +30,7 @@ SELECT {%
 														ON SR.idSystemRoleCategory= SRC.idSystemRoleCategory 
 													ORDER BY SRC.SystemRoleCategory, SR.SystemRoleName 
 			| 
-				(SELECT TOP 1 (IIF(NOT ISNULL(sys.SystemRoleName), "X","")) 
+				(SELECT TOP 1 (IIF(NOT ISNULL(sys.SystemRoleName), "Yes","")) 
 					FROM (((((user_data_mapping_role AS userMapping
 						INNER JOIN user_data AS u
 							ON u.ntid = userMapping.idUserdata)
@@ -56,7 +58,7 @@ SELECT
 							ON BRS.idBpRoleStandardCategory=BRSC.idBpRoleStandardCategory 
 					ORDER BY BRSC.BpRoleStandardCategoryName, BRS.BpRoleStandardName 
 			|
-				(SELECT TOP 1 (IIF(NOT ISNULL(bpRole.BpRoleStandardName),"Y",""))
+				(SELECT TOP 1 (IIF(NOT ISNULL(bpRole.BpRoleStandardName),"X",""))
 					FROM ((user_data_mapping_role AS userMapping
 						INNER JOIN user_data AS u
 							ON u.ntid = userMapping.idUserdata)

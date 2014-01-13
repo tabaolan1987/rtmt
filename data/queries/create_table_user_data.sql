@@ -17,9 +17,10 @@ CREATE TABLE [user_data](
 	[changeNetworkLevel] varchar(100),
 	[dofa] varchar(100),
 	[dofaType] varchar(100),
-	[siteLocation] varchar(100),
-	[purchasOrg] varchar(100),
-	[Optionalfield1] varchar(100),
-	[Optionalfield2] varchar(100),
-	[region] varchar(100)
+	[region] varchar(100),
+	[spare1] varchar(100),
+	[spare2] varchar(100),
+	[spare3] varchar(100),
+	[spare4] varchar(100),
+	[spare5] varchar(100)
 )
