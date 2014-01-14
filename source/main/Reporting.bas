@@ -109,6 +109,8 @@ Public Sub GenerateReport(name As String)
                                         Case Else
                                     End Select
                                 Next
+                        '.PrintOut Copies:=1, Preview:=False, Collate:=True
+                    
                     End With
                     Logger.LogDebug "Reporting.GenerateReport", "Save report as : " & rpm.OutputPath
                     WS.SaveAs (rpm.OutputPath)
