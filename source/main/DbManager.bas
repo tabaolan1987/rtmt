@@ -131,6 +131,20 @@ Private Function GetHeaderIndex(name As String) As Integer
     GetHeaderIndex = index
 End Function
 
+Private Function GetFieldValue(rs As RecordSet, name As String) As String
+    Dim index As Integer
+    For i = 0 To rs.fields.count - 1
+        If StringHelper.IsEqual(Trim(rs.fields(i).name), Trim(name), True) Then
+            index = i
+        End If
+    Next i
+    If Len(rs.fields(index).value) <> 0 Then
+        GetFieldValue = Trim(rs.fields(index).value)
+    Else
+        GetFieldValue = ""
+    End If
+End Function
+
 Private Function AddWarning(mes As String)
     ReDim Preserve mWarnings(countWarning)
     mWarnings(countWarning) = mes
@@ -396,6 +410,8 @@ Public Function ImportSqlTable(Server As String, _
     Logger.LogDebug "DbManager.ImportSqlTable", "Start import table " & desTable & " from table " & fromTable
     DoCmd.TransferDatabase acImport, "ODBC Database", stConnect, acTable, desTable, fromTable, False, True
     check = True
+    Logger.LogDebug "DbManager.ImportSqlTable", "Check: " & check
+    
 OnExit:
     On Error GoTo Quit
     If check = True Then
@@ -415,4 +431,142 @@ OnError:
     Logger.LogError "DbManager.ImportSqlTable", "Could not import table " _
                         & desTable & " data from table " & fromTable, Err
     Resume OnExit
+End Function
+
+Public Function SyncTable(Server As String, _
+                                    DatabaseName As String, _
+                                    fromTable As String, _
+                                    desTable As String, _
+                                    Optional Username As String, _
+                                    Optional Password As String)
+    Logger.LogDebug "DbManager.SyncTable", "Start sync table " & fromTable
+    If Ultilities.ifTableExists(desTable) Then
+        Logger.LogDebug "DbManager.SyncTable", "Table " & fromTable & " is existed!"
+        Dim tblCached As String
+        Dim tmpTimestamp As String
+        Dim tmpRst As RecordSet
+        Dim tmpId As String
+        Dim i As Integer
+        Dim tmpCol As String
+        Dim tmpDataServer As Scripting.Dictionary
+        Dim tmpDataLocal As Scripting.Dictionary
+        Dim tmpCols As Collection
+        Dim str1 As String, str2 As String
+        tblCached = desTable & "_cached"
+        If Ultilities.ifTableExists(tblCached) Then
+            DoCmd.DeleteObject acTable, tblCached
+        End If
+        DoCmd.Rename tblCached, acTable, desTable
+        
+        ImportSqlTable Server, DatabaseName, fromTable, desTable, Username, Password
+        Init
+        OpenRecordSet "SELECT * FROM " & desTable
+        If Not (rst.EOF And rst.BOF) Then
+            rst.MoveFirst
+            Do Until rst.EOF = True
+                Set tmpDataLocal = New Scripting.Dictionary
+                Set tmpDataServer = New Scripting.Dictionary
+                Set tmpCols = New Collection
+                tmpTimestamp = GetFieldValue(rst, Constants.FIELD_TIMESTAMP)
+                tmpId = GetFieldValue(rst, Constants.FIELD_ID)
+                If Len(tmpId) <> 0 And Len(tmpTimestamp) <> 0 Then
+                    'Logger.LogDebug "DbManager.SyncTable", "ID: " & tmpId & " | Timestamp: " & tmpTimestamp
+                    Set qdf = dbs.CreateQueryDef("", "SELECT * FROM " & tblCached & " WHERE ID=[VALUE]")
+                    qdf.Parameters("VALUE").value = tmpId
+                    Set tmpRst = qdf.OpenRecordSet
+                    If Not (tmpRst.EOF And tmpRst.BOF) Then
+                        tmpRst.MoveFirst
+                        For i = 0 To tmpRst.fields.count - 1
+                           ' Logger.LogDebug "field type:", tmpRst.fields(i).Type & " === " & dbBoolean
+                            tmpCol = tmpRst.fields(i).name
+                            str1 = GetFieldValue(tmpRst, tmpCol)
+                            str2 = GetFieldValue(rst, tmpCol)
+                            If (tmpRst.fields(i).Type = dbBoolean) Then
+                                If StringHelper.IsEqual(str1, "True", True) Then
+                                    str1 = "-1"
+                                Else
+                                    str1 = "0"
+                                End If
+                                If StringHelper.IsEqual(str2, "True", True) Then
+                                    str2 = "-1"
+                                Else
+                                    str2 = "0"
+                                End If
+                            End If
+                            tmpDataLocal.Add tmpCol, str1
+                            tmpDataServer.Add tmpCol, str2
+                            tmpCols.Add tmpCol
+                        Next i
+                        UpdateLocalRecord tmpDataServer, tmpCols, tblCached
+                    Else
+                        For i = 0 To rst.fields.count - 1
+                            tmpCol = rst.fields(i).name
+                            str2 = GetFieldValue(rst, tmpCol)
+                            tmpDataServer.Add tmpCol, str2
+                            tmpCols.Add tmpCol
+                        Next i
+                        CreateLocalRecord tmpDataServer, tmpCols, tblCached
+                    End If
+                End If
+                rst.MoveNext
+            Loop
+        Else
+        End If
+        
+        Recycle
+        DoCmd.DeleteObject acTable, desTable
+        DoCmd.Rename desTable, acTable, tblCached
+    Else
+        Logger.LogDebug "DbManager.SyncTable", "Table " & fromTable & " is not existed!" _
+                                    & " . Create new table ..."
+        ImportSqlTable Server, DatabaseName, fromTable, desTable, Username, Password
+    End If
+End Function
+
+Private Function CreateRecordQuery(datas As Scripting.Dictionary, cols As Collection, table As String) As String
+    Dim query As String
+    Dim tmpCol As String
+    Dim i As Integer
+    Dim val As Variant
+    tmpCol = ""
+    For Each val In cols
+        tmpCol = tmpCol & "[" & val & "],"
+    Next
+    tmpCol = Trim(tmpCol)
+    If StringHelper.EndsWith(tmpCol, ",", True) Then
+        tmpCol = Left(tmpCol, Len(tmpCol) - 1)
+    End If
+    query = "INSERT INTO [" & table & "](" & tmpCol & ")" & " VALUES(" & tmpCol & ")"
+    Logger.LogDebug "DbManager.CreateLocalRecord", "Query: " & query
+    CreateRecordQuery = query
+End Function
+
+Private Function UpdateRecordQuery(datas As Scripting.Dictionary, cols As Collection, table As String) As String
+    Dim query As String
+    Dim tmpCol As String
+    Dim i As Integer
+    Dim val As Variant
+    tmpCol = ""
+    For Each val In cols
+        If StringHelper.IsEqual(CStr(val), "id", True) = False Then
+            tmpCol = tmpCol & "[" & CStr(val) & "] = '" & StringHelper.EscapeQueryString(datas.Item(CStr(val))) & "'" & " ,"
+        End If
+    Next
+    tmpCol = Trim(tmpCol)
+    If StringHelper.EndsWith(tmpCol, ",", True) Then
+        tmpCol = Left(tmpCol, Len(tmpCol) - 1)
+    End If
+    query = "UPDATE [" & table & "] SET " & tmpCol & "" & " WHERE [id]='" & StringHelper.EscapeQueryString(datas.Item("id")) & "'"
+    Logger.LogDebug "DbManager.UpdateLocalRecord", "Query: " & query
+    UpdateRecordQuery = query
+End Function
+
+Private Function CreateLocalRecord(datas As Scripting.Dictionary, cols As Collection, table As String)
+    Dim query As String: query = CreateRecordQuery(datas, cols, table)
+    ExecuteQuery query, datas
+End Function
+
+Private Function UpdateLocalRecord(datas As Scripting.Dictionary, cols As Collection, table As String)
+    Dim query As String: query = UpdateRecordQuery(datas, cols, table)
+    ExecuteQuery query, datas
 End Function

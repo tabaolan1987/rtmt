@@ -38,6 +38,27 @@ Public Sub TestImportData()
     im.Recycle
 End Sub
 
+Public Sub TestSyncTable()
+    Dim dbm As DbManager, _
+        SyncTables() As String, _
+        prop As SystemSettings, _
+        isEmpty As Boolean, _
+        stTable As String
+    Set dbm = New DbManager
+    Set prop = New SystemSettings
+    prop.Init
+    SyncTables = prop.SyncTables
+    isEmpty = Ultilities.IsVarArrayEmpty(SyncTables)
+    If isEmpty = False Then
+        Dim i As Integer
+        For i = LBound(SyncTables) To UBound(SyncTables)
+            stTable = Trim(SyncTables(i))
+            Logger.LogDebug "Form_Main.btnSync_Click", "Start sync table: " & stTable
+            dbm.SyncTable prop.ServerName & "," & prop.Port, prop.DatabaseName, stTable, stTable, prop.Username, prop.Password
+        Next i
+    End If
+End Sub
+
 Public Sub TestImportSqlTable()
     Dim dbm As DbManager, _
         SyncTables() As String, _
@@ -98,17 +119,18 @@ End Sub
 Private Function ITest_Suite() As TestSuite
     Set ITest_Suite = New TestSuite
     ITest_Suite.AddTest ITest_Manager.className, "TestImportData"
-    ITest_Suite.AddTest ITest_Manager.className, "TestImportSqlTable"
     ITest_Suite.AddTest ITest_Manager.className, "TestExecuteQuery"
     ITest_Suite.AddTest ITest_Manager.className, "TestSyncUserData"
+    ITest_Suite.AddTest ITest_Manager.className, "TestSyncTable"
+    
 End Function
 
 Private Sub ITestCase_RunTest()
     Select Case mManager.MethodName
         Case "TestImportData": TestImportData
-        Case "TestImportSqlTable": TestImportSqlTable
         Case "TestExecuteQuery": TestExecuteQuery
         Case "TestSyncUserData": TestSyncUserData
+        Case "TestSyncTable": TestSyncTable
         Case Else: mAssert.Should False, "Invalid test name: " & mManager.MethodName
     End Select
 End Sub

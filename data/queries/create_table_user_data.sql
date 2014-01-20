@@ -1,5 +1,5 @@
 CREATE TABLE [user_data](
-	[idUserdata] AUTOINCREMENT PRIMARY KEY,
+	[id] varchar(50) PRIMARY KEY,
 	[ntid] varchar(255),
 	[gpid] varchar(255),
 	[fname] varchar(255),
@@ -22,5 +22,7 @@ CREATE TABLE [user_data](
 	[spare2] varchar(100),
 	[spare3] varchar(100),
 	[spare4] varchar(100),
-	[spare5] varchar(100)
+	[spare5] varchar(100),
+	[Timestamp] datetime,
+	[Deleted] bit
 )

@@ -37,3 +37,25 @@ Function MsToString(ms As Long) As String
         MsToString = "0." & Format(ms, "000")
     End If
 End Function
+
+Function Compare(date1 As String, date2 As String) As Integer
+    Dim dateValue1 As Date, dateValue2 As Date
+    Dim timeValue1 As Date, timeValue2 As Date
+    dateValue1 = DateValue(date1)
+    dateValue2 = DateValue(date2)
+    timeValue1 = TimeValue(date1)
+    timeValue2 = TimeValue(date2)
+    If dateValue1 = dateValue2 Then
+        If timeValue1 = timeValue2 Then
+            Compare = 0
+        ElseIf timeValue1 > timeValue2 Then
+            Compare = 1
+        Else
+            Compare = -1
+        End If
+    ElseIf dateValue1 > dateValue2 Then
+        Compare = 1
+    Else
+        Compare = -1
+    End If
+End Function

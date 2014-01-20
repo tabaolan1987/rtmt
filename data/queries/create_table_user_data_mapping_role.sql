@@ -1,6 +1,8 @@
 CREATE TABLE [user_data_mapping_role](
-	[idMapping]  AUTOINCREMENT PRIMARY KEY,
+	[id]  varchar(50) PRIMARY KEY,
 	[idUserdata] varchar(255),
-	[idRegion] integer,
-	[idBpRoleStandard] integer
+	[idRegion] varchar(50),
+	[idBpRoleStandard] varchar(50),
+	[Timestamp] datetime,
+	[Deleted] bit
 )

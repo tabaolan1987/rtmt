@@ -5,6 +5,110 @@ Const ForReading = 1
 
 Private dbPath As String
 
+#If VBA7 Then
+    Private Declare PtrSafe Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
+    Private Declare PtrSafe Function GetTickCount Lib "kernel32" () As Long
+#Else
+    Private Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
+    Private Declare Function GetTickCount Lib "kernel32" () As Long
+#End If
+
+
+Public Function WaitForFileClose(FileName As String, ByVal TestIntervalMilliseconds As Long, _
+    ByVal TimeOutMilliseconds As Long) As Boolean
+
+Dim StartTickCount As Long
+Dim EndTickCount As Long
+Dim TickCountNow As Long
+Dim FileIsOpen As Boolean
+Dim Done As Boolean
+Dim CancelKeyState As Long
+
+FileIsOpen = IsFileOpen(FileName:=FileName)
+If FileIsOpen = False Then
+    WaitForFileClose = True
+    Exit Function
+End If
+
+If TestIntervalMilliseconds <= 0 Then
+    TestIntervalMilliseconds = 500
+End If
+
+'CancelKeyState = Application.EnableCancelKey
+'Application.EnableCancelKey = xlErrorHandler
+On Error GoTo ErrHandler:
+StartTickCount = GetTickCount()
+If TimeOutMilliseconds <= 0 Then
+    EndTickCount = -1
+Else
+    EndTickCount = StartTickCount + TimeOutMilliseconds
+End If
+
+Done = False
+Do Until Done
+    If IsFileOpen(FileName:=FileName) = False Then
+        WaitForFileClose = True
+   '     Application.EnableCancelKey = CancelKeyState
+        Exit Function
+    End If
+    Sleep dwMilliseconds:=TestIntervalMilliseconds
+    TickCountNow = GetTickCount()
+    If EndTickCount > 0 Then
+        If TickCountNow >= EndTickCount Then
+            WaitForFileClose = Not (IsFileOpen(FileName))
+  '          Application.EnableCancelKey = CancelKeyState
+            Exit Function
+        Else
+        End If
+    Else
+        If IsFileOpen(FileName:=FileName) = False Then
+            WaitForFileClose = True
+ '           Application.EnableCancelKey = CancelKeyState
+            Exit Function
+        End If
+        
+    End If
+    DoEvents
+Loop
+Exit Function
+
+ErrHandler:
+'Application.EnableCancelKey = CancelKeyState
+WaitForFileClose = False
+
+End Function
+
+
+Private Function IsFileOpen(FileName As String) As Boolean
+Dim FileNum As Integer
+Dim ErrNum As Integer
+
+On Error Resume Next
+If FileName = vbNullString Then
+    IsFileOpen = False
+    Exit Function
+End If
+If Dir(FileName) = vbNullString Then
+    IsFileOpen = False
+    Exit Function
+End If
+FileNum = FreeFile()
+Err.Clear
+Open FileName For Input Lock Read As #FileNum
+ErrNum = Err.Number
+On Error GoTo 0
+Close #FileNum
+Select Case ErrNum
+    Case 0
+        IsFileOpen = False
+    Case 70
+        IsFileOpen = True
+    Case Else
+        IsFileOpen = True
+        
+End Select
+End Function
+
 Function GetCSVFile() As String
     Dim fDialog As Object
     Set fDialog = Application.FileDialog(3)

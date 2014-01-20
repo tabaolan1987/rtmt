@@ -6,6 +6,10 @@ Public Const TMP_END_USER_TABLE_NAME = "tblImport"
 '
 Public Const END_USER_DATA_TABLE_NAME = "user_data"
 
+Public Const FIELD_TIMESTAMP = "Timestamp"
+Public Const FIELD_ID = "id"
+Public Const FIELD_DELETED = "Deleted"
+
 ' Queries
 Public Const QUERIES_DIR = "data\queries\"
 Public Const Q_CREATE = 1

@@ -1,7 +1,8 @@
 Option Explicit
 
 Public Sub OnTest()
-    Run '"AutoGenTester"
+    'Logger.LogDebug "VbaUnitMain.OnTest", StringHelper.GetGUID
+    Run "DbManagerTester"
 End Sub
 
 Public Sub Run(Optional TestClassName As String)

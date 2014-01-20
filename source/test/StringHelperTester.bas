@@ -87,6 +87,15 @@ Public Sub TestStartsWith()
     'mAssert.Equals checker, True, "ignoreCase = False"
 End Sub
 
+Public Sub TestCompareStringDate()
+    mAssert.Equals TimerHelper.Compare("1/20/2014 5:12:34 AM", "1/20/2014 11:12:34 PM"), -1, "1/20/2014 5:12:34 AM VS 1/20/2014 11:12:34 PM"
+    mAssert.Equals TimerHelper.Compare("10/20/2014 5:12:34 AM", "12/20/2014 11:12:34 AM"), -1, "10/20/2014 5:12:34 AM VS 12/20/2014 11:12:34 AM"
+    mAssert.Equals TimerHelper.Compare("1/20/2016 5:12:34 AM", "1/20/2015 11:12:34 PM"), 1, "1/20/2016 5:12:34 AM VS 1/20/2015 11:12:34 PM"
+    mAssert.Equals TimerHelper.Compare("11/20/2014 11:12:34 PM", "11/20/2014 11:12:34 PM"), 0, "11/20/2014 11:12:34 PM VS 11/20/2014 11:12:34 PM"
+    mAssert.Equals TimerHelper.Compare("1/20/2014 5:12:34 AM", "1/20/2014 5:12:34 AM"), 0, "1/20/2014 5:12:34 AM VS 1/20/2014 5:12:34 AM"
+    mAssert.Equals TimerHelper.Compare("2/17/2014 5:12:34 AM", "1/20/2014 11:12:34 PM"), 1, "2/17/2014 5:12:34 AM VS 1/20/2014 11:12:34 PM"
+End Sub
+
 Private Function ITest_Suite() As TestSuite
     Set ITest_Suite = New TestSuite
     ITest_Suite.AddTest ITest_Manager.className, "TestEncodeXml"
@@ -95,6 +104,8 @@ Private Function ITest_Suite() As TestSuite
     ITest_Suite.AddTest ITest_Manager.className, "TestIsContain"
     ITest_Suite.AddTest ITest_Manager.className, "TestEndsWith"
     ITest_Suite.AddTest ITest_Manager.className, "TestStartsWith"
+    ITest_Suite.AddTest ITest_Manager.className, "TestCompareStringDate"
+    
 End Function
 
 Private Sub ITestCase_RunTest()
@@ -105,6 +116,7 @@ Private Sub ITestCase_RunTest()
         Case "TestIsContain": TestIsContain
         Case "TestEndsWith": TestEndsWith
         Case "TestStartsWith": TestStartsWith
+        Case "TestCompareStringDate": TestCompareStringDate
         Case Else: mAssert.Should False, "Invalid test name: " & mManager.MethodName
     End Select
 End Sub

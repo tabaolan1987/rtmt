@@ -162,7 +162,7 @@ Private Function parseString(ByRef str As String, ByRef index As Long) As String
             Case "u"
                 index = index + 1
                 code = Mid(str, index, 4)
-                parseString = parseString & ChrW(Val("&h" + code))
+                parseString = parseString & ChrW(val("&h" + code))
                 index = index + 4
             End Select
         Case quote

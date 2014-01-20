@@ -4,3 +4,4 @@ rolemapping.accdb.bak
 rolemapping.laccdb
 buildnumber
 /logs/**
+/database/**
