@@ -51,9 +51,10 @@ Public Sub TestSyncTable()
     isEmpty = Ultilities.IsVarArrayEmpty(SyncTables)
     If isEmpty = False Then
         Dim i As Integer
+        dbm.RecycleTableName Constants.TABLE_SYNC_CONFLICT
         For i = LBound(SyncTables) To UBound(SyncTables)
             stTable = Trim(SyncTables(i))
-            Logger.LogDebug "Form_Main.btnSync_Click", "Start sync table: " & stTable
+            Logger.LogDebug "DbManagerTester.TestSyncTable", "Start sync table: " & stTable
             dbm.SyncTable prop.ServerName & "," & prop.Port, prop.DatabaseName, stTable, stTable, prop.Username, prop.Password
         Next i
     End If
@@ -74,7 +75,7 @@ Public Sub TestImportSqlTable()
         Dim i As Integer
         For i = LBound(SyncTables) To UBound(SyncTables)
             stTable = Trim(SyncTables(i))
-            Logger.LogDebug "Form_Main.btnSync_Click", "Start sync table: " & stTable
+            Logger.LogDebug "DbManagerTester.TestImportSqlTable", "Start import table: " & stTable
             dbm.ImportSqlTable prop.ServerName & "," & prop.Port, prop.DatabaseName, stTable, stTable, prop.Username, prop.Password
         Next i
     End If
@@ -83,7 +84,7 @@ End Sub
 Public Sub TestExecuteQuery()
     Dim im As DbManager: Set im = New DbManager
     im.Init
-    If Ultilities.ifTableExists(Constants.END_USER_DATA_TABLE_NAME) = False Then
+    If Ultilities.IfTableExists(Constants.END_USER_DATA_TABLE_NAME) = False Then
         im.ExecuteQuery FileHelper.ReadQuery(Constants.END_USER_DATA_TABLE_NAME, Constants.Q_CREATE)
     End If
 End Sub

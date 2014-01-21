@@ -65,11 +65,18 @@ Public Sub MakeAccde()
     
 End Sub
 
-Public Function ifTableExists(tblName As String) As Boolean
-    ifTableExists = False
-    If DCount("[Name]", "MSysObjects", "[Name] = '" & tblName & "'") = 1 Then
-    ifTableExists = True
-    End If
+Public Function IfTableExists(tblName As String) As Boolean
+    'ADO Method
+    Dim obj As AccessObject
+    Dim dbs As Object
+    Set dbs = Application.CurrentData
+    IfTableExists = False
+    For Each obj In dbs.AllTables
+        If obj.name = tblName Then
+            IfTableExists = True
+            Exit For
+        End If
+    Next obj
 End Function
 
 Function IsVarArrayEmpty(anArray As Variant)

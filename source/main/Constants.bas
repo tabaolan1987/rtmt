@@ -10,6 +10,7 @@ Public Const FIELD_TIMESTAMP = "Timestamp"
 Public Const FIELD_ID = "id"
 Public Const FIELD_DELETED = "Deleted"
 
+Public Const TABLE_SYNC_CONFLICT = "sync_conflict"
 ' Queries
 Public Const QUERIES_DIR = "data\queries\"
 Public Const Q_CREATE = 1
