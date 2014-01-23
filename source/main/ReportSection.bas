@@ -209,7 +209,8 @@ Public Function MakeQuery(colName As String, Optional ss As SystemSettings) As S
         Dim str As String
         str = Replace(mQuery, "(%VALUE%)", StringHelper.EscapeQueryString(colName))
         If Not ss Is Nothing Then
-            str = Replace(str, "(%RG_F_ID%)", ss.RegionName)
+            str = Replace(str, "(%RG_F_ID%)", ss.RegionFunctionId)
+            str = Replace(str, "(%RG_NAME%)", ss.RegionName)
         End If
         MakeQuery = str
     End If

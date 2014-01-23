@@ -112,10 +112,13 @@ Public Function RecycleTable(s As SystemSettings)
         tmp = Trim(CStr(TableNames(i)))
         Logger.LogDebug "DbManager.RecycleTable", "Check table name " & tmp
         If Ultilities.IfTableExists(tmp) = True Then
-            'ExecuteQuery FileHelper.ReadQuery(tmp, Constants.Q_DELETE_ALL)
-            DoCmd.DeleteObject acTable, tmp
+            Logger.LogDebug "DbManager.RecycleTable", "Delete all records table " & tmp
+            ExecuteQuery FileHelper.ReadQuery(tmp, Constants.Q_DELETE_ALL)
+            'DoCmd.DeleteObject acTable, tmp
+        Else
+            Logger.LogDebug "DbManager.RecycleTable", "Create new table " & tmp
+            ExecuteQuery FileHelper.ReadQuery(tmp, Constants.Q_CREATE)
         End If
-        ExecuteQuery FileHelper.ReadQuery(tmp, Constants.Q_CREATE)
     Next
 End Function
 
@@ -132,6 +135,7 @@ Private Function GetHeaderIndex(name As String) As Integer
 End Function
 
 Public Function GetFieldValue(rs As RecordSet, name As String) As String
+    GetFieldValue = ""
     If Len(name) <> 0 Then
         Dim index As Integer
         index = -1
@@ -140,13 +144,11 @@ Public Function GetFieldValue(rs As RecordSet, name As String) As String
                 index = i
             End If
         Next i
-        If index <> -1 And Len(rs.fields(index).value) <> 0 Then
-            GetFieldValue = Trim(rs.fields(index).value)
-        Else
-            GetFieldValue = ""
+        If index <> -1 Then
+            If Len(rs.fields(index).value) <> 0 Then
+                GetFieldValue = Trim(rs.fields(index).value)
+            End If
         End If
-    Else
-        GetFieldValue = ""
     End If
 End Function
 
@@ -297,7 +299,7 @@ Public Function SyncUserData()
             Logger.LogDebug "DbManager.SyncUserData", "Insert user record"
             tmpCols.Add Constants.FIELD_ID
             dictParams.Add Constants.FIELD_ID, StringHelper.GetGUID
-            CreateLocalRecord dictParams, tmpCols, Constants.END_USER_DATA_TABLE_NAME
+            CreateLocalRecord dictParams, tmpCols, Constants.END_USER_DATA_CACHE_TABLE_NAME
             
             Logger.LogDebug "DbManager.SyncUserData", "Number custom insert: " & CStr(UBound(tmpList) + 1)
             ' Insert mapping data
@@ -427,7 +429,6 @@ Public Function ImportSqlTable(Server As String, _
     DoCmd.TransferDatabase acImport, "ODBC Database", stConnect, acTable, desTable, fromTable, False, True
     check = True
     Logger.LogDebug "DbManager.ImportSqlTable", "Check: " & check
-    
 OnExit:
     On Error GoTo Quit
     If check = True Then
@@ -661,7 +662,6 @@ Public Function SyncTable(Server As String, _
                                     & " . Create new table ..."
         ImportSqlTable Server, DatabaseName, fromTable, desTable, Username, Password
     End If
-    
 End Function
 
 Public Function CreateRecordQuery(datas As Scripting.Dictionary, cols As Collection _

@@ -3,7 +3,10 @@ Option Explicit
 Public Sub OnTest()
     'Logger.LogDebug "VbaUnitMain.OnTest", StringHelper.GetGUID
     'DoCmd.SetWarnings False
-    Run '"ReportingTester"
+
+    'Run "DbManagerTester"
+    Dim um As New UserManagement
+    um.CompareUserData
 End Sub
 
 Public Sub Run(Optional TestClassName As String)

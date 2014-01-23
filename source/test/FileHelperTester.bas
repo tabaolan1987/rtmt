@@ -32,7 +32,7 @@ End Sub
 Public Sub TestReadQuery()
     On Error GoTo OnError
     Dim source As String
-    source = FileHelper.ReadQuery(Constants.END_USER_DATA_TABLE_NAME, Constants.Q_CREATE)
+    source = FileHelper.ReadQuery(Constants.END_USER_DATA_CACHE_TABLE_NAME, Constants.Q_CREATE)
     Logger.LogDebug "FileHelperTester.TestReadQuery", source
     mAssert.Equals Len(source) > 0, True, "Source file length > 0"
 OnExit:
