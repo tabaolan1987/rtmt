@@ -112,10 +112,13 @@ Public Function RecycleTable(s As SystemSettings)
         tmp = Trim(CStr(TableNames(i)))
         Logger.LogDebug "DbManager.RecycleTable", "Check table name " & tmp
         If Ultilities.IfTableExists(tmp) = True Then
-            'ExecuteQuery FileHelper.ReadQuery(tmp, Constants.Q_DELETE_ALL)
-            DoCmd.DeleteObject acTable, tmp
+            Logger.LogDebug "DbManager.RecycleTable", "Delete all records table " & tmp
+            ExecuteQuery FileHelper.ReadQuery(tmp, Constants.Q_DELETE_ALL)
+            'DoCmd.DeleteObject acTable, tmp
+        Else
+            Logger.LogDebug "DbManager.RecycleTable", "Create new table " & tmp
+            ExecuteQuery FileHelper.ReadQuery(tmp, Constants.Q_CREATE)
         End If
-        ExecuteQuery FileHelper.ReadQuery(tmp, Constants.Q_CREATE)
     Next
 End Function
 
@@ -131,7 +134,8 @@ Private Function GetHeaderIndex(name As String) As Integer
     GetHeaderIndex = index
 End Function
 
-Private Function GetFieldValue(rs As RecordSet, name As String) As String
+Public Function GetFieldValue(rs As RecordSet, name As String) As String
+    GetFieldValue = ""
     If Len(name) <> 0 Then
         Dim index As Integer
         index = -1
@@ -140,13 +144,11 @@ Private Function GetFieldValue(rs As RecordSet, name As String) As String
                 index = i
             End If
         Next i
-        If index <> -1 And Len(rs.fields(index).value) <> 0 Then
-            GetFieldValue = Trim(rs.fields(index).value)
-        Else
-            GetFieldValue = ""
+        If index <> -1 Then
+            If Len(rs.fields(index).value) <> 0 Then
+                GetFieldValue = Trim(rs.fields(index).value)
+            End If
         End If
-    Else
-        GetFieldValue = ""
     End If
 End Function
 
@@ -297,7 +299,7 @@ Public Function SyncUserData()
             Logger.LogDebug "DbManager.SyncUserData", "Insert user record"
             tmpCols.Add Constants.FIELD_ID
             dictParams.Add Constants.FIELD_ID, StringHelper.GetGUID
-            CreateLocalRecord dictParams, tmpCols, Constants.END_USER_DATA_TABLE_NAME
+            CreateLocalRecord dictParams, tmpCols, Constants.END_USER_DATA_CACHE_TABLE_NAME
             
             Logger.LogDebug "DbManager.SyncUserData", "Number custom insert: " & CStr(UBound(tmpList) + 1)
             ' Insert mapping data
@@ -427,7 +429,6 @@ Public Function ImportSqlTable(Server As String, _
     DoCmd.TransferDatabase acImport, "ODBC Database", stConnect, acTable, desTable, fromTable, False, True
     check = True
     Logger.LogDebug "DbManager.ImportSqlTable", "Check: " & check
-    
 OnExit:
     On Error GoTo Quit
     If check = True Then
@@ -661,10 +662,9 @@ Public Function SyncTable(Server As String, _
                                     & " . Create new table ..."
         ImportSqlTable Server, DatabaseName, fromTable, desTable, Username, Password
     End If
-    
 End Function
 
-Private Function CreateRecordQuery(datas As Scripting.Dictionary, cols As Collection _
+Public Function CreateRecordQuery(datas As Scripting.Dictionary, cols As Collection _
                                 , table As String, Optional colsType As Scripting.Dictionary _
                                 , Optional IsServer As Boolean) As String
     Dim query As String
@@ -712,7 +712,7 @@ Private Function CreateRecordQuery(datas As Scripting.Dictionary, cols As Collec
     CreateRecordQuery = query
 End Function
 
-Private Function UpdateRecordQuery(datas As Scripting.Dictionary, cols As Collection, table As String, Optional IsServer As Boolean) As String
+Public Function UpdateRecordQuery(datas As Scripting.Dictionary, cols As Collection, table As String, Optional IsServer As Boolean) As String
     Dim query As String
     Dim tmpCol As String
     Dim i As Integer
@@ -736,17 +736,17 @@ Private Function UpdateRecordQuery(datas As Scripting.Dictionary, cols As Collec
     UpdateRecordQuery = query
 End Function
 
-Private Function CreateLocalRecord(datas As Scripting.Dictionary, cols As Collection, table As String)
+Public Function CreateLocalRecord(datas As Scripting.Dictionary, cols As Collection, table As String)
     Dim query As String: query = CreateRecordQuery(datas, cols, table)
     ExecuteQuery query, datas
 End Function
 
-Private Function UpdateLocalRecord(datas As Scripting.Dictionary, cols As Collection, table As String)
+Public Function UpdateLocalRecord(datas As Scripting.Dictionary, cols As Collection, table As String)
     Dim query As String: query = UpdateRecordQuery(datas, cols, table)
     ExecuteQuery query, datas
 End Function
 
-Private Function CreateServerRecord(datas As Scripting.Dictionary, colsType As Scripting.Dictionary, cols As Collection, table As String, _
+Public Function CreateServerRecord(datas As Scripting.Dictionary, colsType As Scripting.Dictionary, cols As Collection, table As String, _
                                             desTable As String, _
                                             Server As String, _
                                     DatabaseName As String, _
@@ -795,7 +795,7 @@ OnError:
     Resume OnExit
 End Function
 
-Private Function UpdateServerRecord(datas As Scripting.Dictionary, cols As Collection, table As String, _
+Public Function UpdateServerRecord(datas As Scripting.Dictionary, cols As Collection, table As String, _
                                             desTable As String, _
                                             Server As String, _
                                     DatabaseName As String, _

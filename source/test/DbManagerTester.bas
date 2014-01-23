@@ -111,8 +111,8 @@ Public Sub TestExecuteQuery()
     On Error GoTo OnError
     Dim im As DbManager: Set im = New DbManager
     im.Init
-    If Ultilities.IfTableExists(Constants.END_USER_DATA_TABLE_NAME) = False Then
-        im.ExecuteQuery FileHelper.ReadQuery(Constants.END_USER_DATA_TABLE_NAME, Constants.Q_CREATE)
+    If Ultilities.IfTableExists(Constants.END_USER_DATA_CACHE_TABLE_NAME) = False Then
+        im.ExecuteQuery FileHelper.ReadQuery(Constants.END_USER_DATA_CACHE_TABLE_NAME, Constants.Q_CREATE)
     End If
 OnExit:
     ' finally

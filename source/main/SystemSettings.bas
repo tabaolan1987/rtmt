@@ -22,6 +22,7 @@ Private mWorkSheet As String
 Private mLineToRemove() As Integer
 Private mTableNames() As String
 Private mRegionName As String
+Private mRegionFunctionId As String
 Private mLogLevel As String
 
 
@@ -57,6 +58,7 @@ Public Function Init()
         End If
     Next
     mRegionName = ir.ReadKey(Constants.SECTION_USER_DATA, Constants.KEY_REGION_NAME)
+    mRegionFunctionId = ir.ReadKey(Constants.SECTION_USER_DATA, Constants.KEY_REGION_FUNCTION_ID)
     source = ir.ReadKey(Constants.SECTION_USER_DATA, Constants.KEY_TABLE_NAME)
     mTableNames = Split(source, ",")
     mWorkSheet = ir.ReadKey(Constants.SECTION_USER_DATA, Constants.KEY_WORK_SHEET)
@@ -143,4 +145,8 @@ End Property
 
 Public Property Get WorkSheet() As String
     WorkSheet = mWorkSheet
+End Property
+
+Public Property Get RegionFunctionId() As String
+    RegionFunctionId = mRegionFunctionId
 End Property

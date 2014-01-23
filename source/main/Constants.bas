@@ -3,14 +3,20 @@
 Option Compare Database
 
 Public Const TMP_END_USER_TABLE_NAME = "tblImport"
+
+Public Const END_USER_DATA_TABLE_NAME = "user_data"
 '
-Public Const END_USER_DATA_TABLE_NAME = "user_data_cache"
+Public Const END_USER_DATA_CACHE_TABLE_NAME = "user_data_cache"
 
 Public Const FIELD_TIMESTAMP = "Timestamp"
 Public Const FIELD_ID = "id"
 Public Const FIELD_DELETED = "Deleted"
+Public Const FIELD_FIRST_NAME = "fname"
+Public Const FIELD_LAST_NAME = "lname"
 
 Public Const TABLE_SYNC_CONFLICT = "sync_conflict"
+Public Const TABLE_USER_DATA_CONFLICT = "user_data_conflict"
+Public Const TABLE_USER_DATA_DUPLICATE = "user_data_duplicate"
 ' Queries
 Public Const QUERIES_DIR = "data\queries\"
 Public Const Q_CREATE = 1
@@ -33,6 +39,7 @@ Public Const SECTION_USER_DATA = "user data"
 Public Const KEY_LINE_TO_REMOVE = "linesToRemove"
 Public Const KEY_TABLE_NAME = "tableNames"
 Public Const KEY_REGION_NAME = "regionName"
+Public Const KEY_REGION_FUNCTION_ID = "regionFunctionId"
 
 Public Const KEY_VALIDATOR_URL = "validatorUrl"
 Public Const KEY_TOKEN = "token"
