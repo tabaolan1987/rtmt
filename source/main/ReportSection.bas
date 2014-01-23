@@ -59,6 +59,7 @@ End Function
 Private Function PrepareQuery(query As String) As String
     Dim arraySize As Integer
     Dim dbm As New DbManager
+    Dim i As Integer
     Dim l As Long, r As Long, q As String, length As Long, strTemp As String
     Dim tmp As String, cQuery, tmpSplit() As String, qOut As String, qIn As String, tmpVal As String, tmpQuery As String
 
@@ -81,25 +82,37 @@ Private Function PrepareQuery(query As String) As String
         qIn = Trim(tmpSplit(1))
         'Logger.LogDebug "ReportSection.PrepareQuery", "Generate query: " & qIn
         'Logger.LogDebug "ReportSection.PrepareQuery", "Get value query: " & qOut
-        dbm.Init
-        dbm.OpenRecordSet (qOut)
-        
-        If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
-            tmpQuery = ""
-            dbm.RecordSet.MoveFirst
-            Do Until dbm.RecordSet.EOF = True
-                tmpVal = dbm.RecordSet(0)
-                ReDim Preserve mHeader(arraySize)
-                mHeader(arraySize) = tmpVal
-                arraySize = arraySize + 1
-                strTemp = Replace(qIn, "(%VALUE%)", StringHelper.EscapeQueryString(tmpVal))
-                tmpQuery = tmpQuery & qIn & ","
-                'Logger.LogDebug "ReportSection.PrepareQuery", "Found value: " & tmpVal
-                dbm.RecordSet.MoveNext
-            Loop
+        If StringHelper.IsContain(qOut, "select", True) And StringHelper.IsContain(qOut, "from", True) Then
+            dbm.Init
+            dbm.OpenRecordSet (qOut)
+            If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
+                tmpQuery = ""
+                dbm.RecordSet.MoveFirst
+                Do Until dbm.RecordSet.EOF = True
+                    tmpVal = dbm.RecordSet(0)
+                    ReDim Preserve mHeader(arraySize)
+                    mHeader(arraySize) = tmpVal
+                    arraySize = arraySize + 1
+                    
+                    'Logger.LogDebug "ReportSection.PrepareQuery", "Found value: " & tmpVal
+                    dbm.RecordSet.MoveNext
+                Loop
+            Else
+            End If
         Else
-            
+            Dim tmpListStr() As String
+            tmpListStr = Split(qOut, ",")
+            For i = LBound(tmpListStr) To UBound(tmpListStr)
+                ReDim Preserve mHeader(arraySize)
+                mHeader(arraySize) = Trim(Replace(Replace(Replace(tmpListStr(i), Chr(10), " "), Chr(13), " "), Chr(9), " "))
+                arraySize = arraySize + 1
+            Next i
         End If
+        Dim tmpStr As String
+        For i = LBound(mHeader) To UBound(mHeader)
+            strTemp = Replace(qIn, "(%VALUE%)", StringHelper.EscapeQueryString(mHeader(i)))
+            tmpQuery = tmpQuery & qIn & ","
+        Next i
         'If StringHelper.EndsWith(tmpQuery, ",", True) Then
         '    tmpQuery = Left(tmpQuery, Len(tmpQuery) - 1)
         'End If

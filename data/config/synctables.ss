@@ -2,9 +2,10 @@
 Activity
 BpRoleStandard
 BPRoleStandardCategory
-MappingAcitivityBpStandardRole
+MappingActivityBpStandardRole
 MappingRegionSystemRole
 MappingSystemRoleBpStandardRole
 Region
 SystemRole
 SystemRoleCategory
+user_data

@@ -55,8 +55,8 @@ Public Sub MakeAccde()
     Logger.LogDebug "Ultilities.MakeAccde", "target db:" & targetdb
     
     Dim AccessApplication As New Access.Application
-    
     With AccessApplication
+        .Visible = False
         .AutomationSecurity = 1 'MsoAutomationSecurityLow
         .UserControl = True
         .SysCmd 603, sourcedb, targetdb 'this makes the ACCDE file

@@ -18,6 +18,7 @@ Private mPassword As String
 Private mSyncTables() As String
 Private mSyncUsers As Scripting.Dictionary
 Private mValidatorMapping As Scripting.Dictionary
+Private mWorkSheet As String
 Private mLineToRemove() As Integer
 Private mTableNames() As String
 Private mRegionName As String
@@ -58,7 +59,7 @@ Public Function Init()
     mRegionName = ir.ReadKey(Constants.SECTION_USER_DATA, Constants.KEY_REGION_NAME)
     source = ir.ReadKey(Constants.SECTION_USER_DATA, Constants.KEY_TABLE_NAME)
     mTableNames = Split(source, ",")
-    
+    mWorkSheet = ir.ReadKey(Constants.SECTION_USER_DATA, Constants.KEY_WORK_SHEET)
     mLogLevel = ir.ReadKey(Constants.SECTION_APPLICATION, Constants.KEY_LOG_LEVEL)
     
     mValidatorURL = ir.ReadKey(Constants.SECTION_USER_DATA, Constants.KEY_VALIDATOR_URL)
@@ -138,4 +139,8 @@ End Property
 
 Public Property Get NtidField() As String
     NtidField = mNtidField
+End Property
+
+Public Property Get WorkSheet() As String
+    WorkSheet = mWorkSheet
 End Property

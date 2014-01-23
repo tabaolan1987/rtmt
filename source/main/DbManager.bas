@@ -115,16 +115,16 @@ Public Function RecycleTable(s As SystemSettings)
             'ExecuteQuery FileHelper.ReadQuery(tmp, Constants.Q_DELETE_ALL)
             DoCmd.DeleteObject acTable, tmp
         End If
-        
         ExecuteQuery FileHelper.ReadQuery(tmp, Constants.Q_CREATE)
     Next
 End Function
 
 Private Function GetHeaderIndex(name As String) As Integer
     Dim index As Integer
+    index = -1
     For i = 0 To rst.fields.count - 1
         If StringHelper.IsEqual(Trim(rst.fields(i).name), Trim(name), True) Then
-            Logger.LogDebug "DbManager.SyncUserData", "## HEADER: " & rst.fields(i).name
+            'Logger.LogDebug "DbManager.SyncUserData", "## HEADER: " & rst.fields(i).name
             index = i
         End If
     Next i
@@ -132,14 +132,19 @@ Private Function GetHeaderIndex(name As String) As Integer
 End Function
 
 Private Function GetFieldValue(rs As RecordSet, name As String) As String
-    Dim index As Integer
-    For i = 0 To rs.fields.count - 1
-        If StringHelper.IsEqual(Trim(rs.fields(i).name), Trim(name), True) Then
-            index = i
+    If Len(name) <> 0 Then
+        Dim index As Integer
+        index = -1
+        For i = 0 To rs.fields.count - 1
+            If StringHelper.IsEqual(Trim(rs.fields(i).name), Trim(name), True) Then
+                index = i
+            End If
+        Next i
+        If index <> -1 And Len(rs.fields(index).value) <> 0 Then
+            GetFieldValue = Trim(rs.fields(index).value)
+        Else
+            GetFieldValue = ""
         End If
-    Next i
-    If Len(rs.fields(index).value) <> 0 Then
-        GetFieldValue = Trim(rs.fields(index).value)
     Else
         GetFieldValue = ""
     End If
@@ -240,7 +245,7 @@ Public Function SyncUserData()
     ' Read the dict mapping
     Set dictMapping = s.SyncUsers
     ' Read query insert user data
-    queryInsertData = FileHelper.ReadQuery(Constants.END_USER_DATA_TABLE_NAME, Constants.Q_INSERT)
+    'queryInsertData = FileHelper.ReadQuery(Constants.END_USER_DATA_TABLE_NAME, Constants.Q_INSERT)
     ' Open tmp table user data from CSV file
     OpenRecordSet "select * from " & Constants.TMP_END_USER_TABLE_NAME
     
@@ -250,81 +255,92 @@ Public Function SyncUserData()
     Logger.LogDebug "DbManager.SyncUserData", "bulkSize: " & CStr(s.BulkSize)
     Dim ntids As String, tmpNtid As String, size As Long, userData As Scripting.Dictionary
     Dim tmpUserData As Scripting.Dictionary
+    Dim tmpCols As Collection
     size = 0
     If Not (rst.EOF And rst.BOF) Then
         rst.MoveFirst
         Do Until rst.EOF = True
             Dim tmpList() As String, arraySize As Integer
             Logger.LogDebug "DbManager.SyncUserData", "###########################################"
+            Set tmpCols = New Collection
             ' List all mapping column
             Set dictParams = New Scripting.Dictionary
             Set tmpUserData = New Scripting.Dictionary
             For i = 0 To dictMapping.count - 1
                  key = dictMapping.keys(i)
                  value = dictMapping.Items(i)
-                 If Not (StringHelper.StartsWith(key, "insert into", True)) Then
-                    ' Add params value
-                    On Error Resume Next
-                    If Len(rst.fields(GetHeaderIndex(key)).value) <> 0 Then
-                        tmpCache = Trim(rst.fields(GetHeaderIndex(key)).value)
-                    Else
-                        tmpCache = ""
-                    End If
-                    
-                    Logger.LogDebug "DbManager.SyncUserData", key & " = " & tmpCache
-                    tmpUserData.Add key, tmpCache
-                    dictParams.Add value, tmpCache
-                 Else
-                    If flag = False Then
+                 tmpCols.Add key
+                 If StringHelper.IsContain(key, "insert into", True) _
+                    And StringHelper.IsContain(key, "|", True) Then
+                    If flag = False And Len(value) <> 0 And Len(key) <> 0 Then
                         ' Add custom insert key to list
                         ReDim Preserve tmpList(arraySize)
+                        Logger.LogDebug "DbManager.SyncUserData", "Why we import that?" & key
                         tmpList(arraySize) = key
                         arraySize = arraySize + 1
                     End If
+                 Else
+                    ' Add params value
+                    On Error Resume Next
+                    tmpCache = GetFieldValue(rst, value)
+                    Logger.LogDebug "DbManager.SyncUserData", key & " = " & tmpCache
+                    If Len(value) <> 0 Then
+                        tmpUserData.Add value, tmpCache
+                    End If
+                    dictParams.Add key, tmpCache
                  End If
             Next i
             ' Add custom insert key one time
             flag = True
             ' Insert data to user_data table
-            ExecuteQuery queryInsertData, dictParams
+            'ExecuteQuery queryInsertData, dictParams
+            Logger.LogDebug "DbManager.SyncUserData", "Insert user record"
+            tmpCols.Add Constants.FIELD_ID
+            dictParams.Add Constants.FIELD_ID, StringHelper.GetGUID
+            CreateLocalRecord dictParams, tmpCols, Constants.END_USER_DATA_TABLE_NAME
+            
+            Logger.LogDebug "DbManager.SyncUserData", "Number custom insert: " & CStr(UBound(tmpList) + 1)
             ' Insert mapping data
             For i = LBound(tmpList) To UBound(tmpList)
-                key = tmpList(i)
-                tmpSplit = Split(key, "|")
-                queryCustomInsert = Trim(tmpSplit(0))
-                checkValue = Trim(tmpSplit(1))
-                Logger.LogDebug "DbManager.SyncUserData", "checkValue: " & checkValue
-                Logger.LogDebug "DbManager.SyncUserData", "custom import query: " & queryCustomInsert & ". Check value: " & checkValue & " . From list: " & value
-                value = dictMapping.Items(key)
-                tmpValues = Split(value, ",")
-                Logger.LogDebug "DbManager.SyncUserData", "Number of column to check: " & CStr(UBound(tmpValues) + 1)
-                ' Loop to check all column
-                'Logger.LogDebug "DbManager.SyncUserData", "====== ITID: " & rst("ntid") & " ======"
-                For j = LBound(tmpValues) To UBound(tmpValues)
-                    tmpValue = Trim(tmpValues(j))
-                    Logger.LogDebug "DbManager.SyncUserData", "Column to compare: " & tmpValue
-                    Dim index As Integer
-                    index = GetHeaderIndex(tmpValue)
-                    Logger.LogDebug "DbManager.SyncUserData", "Index: " & index
-                    If Len(rst.fields(index).value) <> 0 Then
-                        tmpCache = Trim(rst.fields(index).value)
-                    Else
-                        tmpCache = ""
-                    End If
-                    
-                    Logger.LogDebug "DbManager.SyncUserData", "Value: " & tmpCache
-                    'Logger.LogDebug "DbManager.SyncUserData", "column name: " & tmpValue
-                    If StringHelper.IsEqual(tmpCache, checkValue, True) Then
-                        ' If value is valid, get parameter and execute query
-                        Set tmpDict = New Scripting.Dictionary
-                        For k = 0 To dictParams.count - 1
-                            tmpDict.Add dictParams.keys(k), dictParams.Items(k)
-                        Next k
-                        tmpDict.Add "value", tmpValue
-                        tmpDict.Add "region_name", s.RegionName
-                        ExecuteQuery queryCustomInsert, tmpDict
-                    End If
-                Next j
+                If StringHelper.IsContain(key, "insert into", True) _
+                    And StringHelper.IsContain(key, "|", True) Then
+                    key = tmpList(i)
+                    tmpSplit = Split(key, "|")
+                    queryCustomInsert = Trim(tmpSplit(0))
+                    checkValue = Trim(tmpSplit(1))
+                    Logger.LogDebug "DbManager.SyncUserData", "checkValue: " & checkValue
+                    Logger.LogDebug "DbManager.SyncUserData", "custom import query: " & queryCustomInsert & ". Check value: " & checkValue & " . From list: " & value
+                    value = dictMapping.Items(key)
+                    tmpValues = Split(value, ",")
+                    Logger.LogDebug "DbManager.SyncUserData", "Number of column to check: " & CStr(UBound(tmpValues) + 1)
+                    ' Loop to check all column
+                    'Logger.LogDebug "DbManager.SyncUserData", "====== ITID: " & rst("ntid") & " ======"
+                    For j = LBound(tmpValues) To UBound(tmpValues)
+                        tmpValue = Trim(tmpValues(j))
+                        Logger.LogDebug "DbManager.SyncUserData", "Column to compare: " & tmpValue
+                        Dim index As Integer
+                        index = GetHeaderIndex(tmpValue)
+                        Logger.LogDebug "DbManager.SyncUserData", "Index: " & index
+                        If Len(rst.fields(index).value) <> 0 Then
+                            tmpCache = Trim(rst.fields(index).value)
+                        Else
+                            tmpCache = ""
+                        End If
+                        
+                        Logger.LogDebug "DbManager.SyncUserData", "Value: " & tmpCache
+                        'Logger.LogDebug "DbManager.SyncUserData", "column name: " & tmpValue
+                        If StringHelper.IsEqual(tmpCache, checkValue, True) Then
+                            ' If value is valid, get parameter and execute query
+                            Set tmpDict = New Scripting.Dictionary
+                            For k = 0 To dictParams.count - 1
+                                tmpDict.Add dictParams.keys(k), dictParams.Items(k)
+                            Next k
+                            tmpDict.Add "value", tmpValue
+                            tmpDict.Add "region_name", s.RegionName
+                            ExecuteQuery queryCustomInsert, tmpDict
+                        End If
+                    Next j
+                End If
             Next i
             
             ' === VALIDATION BLOCK ===
@@ -455,7 +471,8 @@ Public Function SyncTable(Server As String, _
                                     fromTable As String, _
                                     desTable As String, _
                                     Optional Username As String, _
-                                    Optional Password As String)
+                                    Optional Password As String, _
+                                    Optional CheckConflict As Boolean)
     Logger.LogDebug "DbManager.SyncTable", "Start sync table " & fromTable
     If Ultilities.IfTableExists(desTable) Then
         Init
@@ -467,7 +484,8 @@ Public Function SyncTable(Server As String, _
         Dim tmpId As String
         Dim tmpQuery As String
         Dim i As Integer
-        Dim tmpCol As String
+        Dim tmpCol As String, tmpType As String
+        Dim tmpColType As Scripting.Dictionary
         Dim tmpDataServer As Scripting.Dictionary
         Dim tmpDataLocal As Scripting.Dictionary
         Dim tmpCols As Collection
@@ -501,7 +519,7 @@ Public Function SyncTable(Server As String, _
                         For i = 0 To tmpRst.fields.count - 1
                            ' Logger.LogDebug "field type:", tmpRst.fields(i).Type & " === " & dbBoolean
                             tmpCol = tmpRst.fields(i).name
-                               
+                            tmpType = tmpRst.fields(i).Type
                             str1 = Trim(GetFieldValue(tmpRst, tmpCol))
                             str2 = Trim(GetFieldValue(rst, tmpCol))
                             
@@ -529,32 +547,47 @@ Public Function SyncTable(Server As String, _
                                     And (Not StringHelper.IsEqual(tmpCol, Constants.FIELD_TIMESTAMP, True)) Then
                                     check = True
                                     If c = 0 Then
+                                        '============== UPDATE SERVER RECORD BLOCK ===============
                                         tmpDataLocal.Add tmpCol, str1
                                         tmpCols.Add tmpCol
                                         tmpCols.Add Constants.FIELD_ID
                                         tmpCols.Add Constants.FIELD_TIMESTAMP
                                         tmpDataLocal.Add Constants.FIELD_ID, tmpId
                                         Logger.LogDebug "DbManager.SyncTable", "Update server. Field: " & tmpCol & ". Local: " & str1 & " | Server: " & str2
-                                        ' Check if timestamp is equal -> update server db
                                         UpdateServerRecord tmpDataLocal, tmpCols, fromTable, tblCached, Server, DatabaseName, Username, Password
+                                        '============== UPDATE SERVER RECORD BLOCK ===============
                                     Else
+                                        '============== UPDATE LOCAL RECORD & CONFLICT RECORD BLOCK ===============
                                         ' if local < server -> update local db
+                                        
                                         'UpdateLocalRecord tmpDataServer, tmpCols, tblCached
-                                         tmpDataLocal.Add "Table name", desTable
-                                         tmpDataLocal.Add "Field name", tmpCol
-                                         tmpDataLocal.Add "Local data", str1
-                                         tmpDataLocal.Add "Server data", str2
-                                         tmpDataLocal.Add "Local timestamp", tmpTimestampLocal
-                                         tmpDataLocal.Add "Server timestamp", tmpTimestampServer
-                                         tmpDataLocal.Add "Row ID", tmpId
-                                         Logger.LogDebug "DbManager.SyncTable", "Insert conflict. Field: " & tmpCol & " Local: " & str1 & " | Server: " & str2
-                                         ExecuteQuery FileHelper.ReadQuery(Constants.TABLE_SYNC_CONFLICT, Constants.Q_INSERT), tmpDataLocal
+                                        tmpDataLocal.Add "Table name", desTable
+                                        tmpDataLocal.Add "Field name", tmpCol
+                                        tmpDataLocal.Add "Field type", CStr(tmpType)
+                                        tmpDataLocal.Add "Local data", str1
+                                        tmpDataLocal.Add "Server data", str2
+                                        tmpDataLocal.Add "Local timestamp", tmpTimestampLocal
+                                        tmpDataLocal.Add "Server timestamp", tmpTimestampServer
+                                        tmpDataLocal.Add "Row ID", tmpId
+                                        Logger.LogDebug "DbManager.SyncTable", "Insert conflict. Field: " & tmpCol & " Local: " & str1 & " | Server: " & str2
+                                        ExecuteQuery FileHelper.ReadQuery(Constants.TABLE_SYNC_CONFLICT, Constants.Q_INSERT), tmpDataLocal
+                                        If Not CheckConflict Then
+                                            tmpDataServer.Add Constants.FIELD_TIMESTAMP, tmpTimestampServer
+                                            tmpDataServer.Add Constants.FIELD_ID, tmpId
+                                            tmpCols.Add Constants.FIELD_ID
+                                            tmpCols.Add Constants.FIELD_TIMESTAMP
+                                            tmpCols.Add tmpCol
+                                            tmpDataServer.Add tmpCol, str2
+                                            UpdateLocalRecord tmpDataServer, tmpCols, tblCached
+                                        End If
+                                         '============== UPDATE LOCAL RECORD & CONFLICT RECORD BLOCK ===============
                                     End If
                                 End If
                             End If
                         Next i
                         'Logger.LogDebug "DbManager.SyncTable", "Check: " & check & ". Compare timestamp: " & c
                         If Not check And c <> 0 Then
+                            '============== ONLY UPDATE TIMESTAMP BLOCK ===============
                             ' not equal -> check for update local timestamp
                             Logger.LogDebug "DbManager.SyncTable", "Update local timestamp. Table: " & desTable & ". Row ID: " & tmpId & ". Local timestamp:" & tmpTimestampLocal & ". Server timestamp: " & tmpTimestampServer
                             Set tmpDataServer = New Scripting.Dictionary
@@ -564,8 +597,10 @@ Public Function SyncTable(Server As String, _
                             tmpCols.Add Constants.FIELD_ID
                             tmpCols.Add Constants.FIELD_TIMESTAMP
                             UpdateLocalRecord tmpDataServer, tmpCols, tblCached
+                            '============== ONLY UPDATE TIMESTAMP BLOCK ===============
                         End If
                     Else
+                        '============== ADD NEW LOCAL RECORD BLOCK ===============
                         ' If not exist in local db. Create new record
                         Set tmpCols = New Collection
                         Set tmpDataServer = New Scripting.Dictionary
@@ -576,6 +611,7 @@ Public Function SyncTable(Server As String, _
                             tmpCols.Add tmpCol
                         Next i
                         CreateLocalRecord tmpDataServer, tmpCols, tblCached
+                        '============== ADD NEW LOCAL RECORD BLOCK ===============
                     End If
                 End If
                 rst.MoveNext
@@ -584,6 +620,40 @@ Public Function SyncTable(Server As String, _
         End If
         dbs.TableDefs.Refresh
         Recycle
+        Init
+        '============== ADD NEW SERVER RECORD BLOCK ===============
+        OpenRecordSet "SELECT * FROM [" & tblCached _
+                    & "] WHERE [" & Constants.FIELD_TIMESTAMP & "] IS NULL "
+        If (Not rst Is Nothing) And (Not (rst.EOF And rst.BOF)) Then
+            rst.MoveFirst
+            Do Until rst.EOF = True
+                Set tmpDataLocal = New Scripting.Dictionary
+                Set tmpCols = New Collection
+                Set tmpColType = New Scripting.Dictionary
+                For i = 0 To rst.fields.count - 1
+                    tmpCol = rst.fields(i).name
+                    tmpColType.Add tmpCol, rst.fields(i).Type
+                    If Not StringHelper.IsEqual(tmpCol, Constants.FIELD_TIMESTAMP, True) Then
+                        tmpCols.Add tmpCol
+                        If StringHelper.IsEqual(tmpCol, Constants.FIELD_ID, True) Then
+                            tmpDataLocal.Add tmpCol, StringHelper.GetGUID
+                        Else
+                            tmpDataLocal.Add tmpCol, GetFieldValue(rst, tmpCol)
+                        End If
+                    End If
+                Next i
+                rst.Edit
+                rst(Constants.FIELD_ID).value = CStr(tmpDataLocal.Item(Constants.FIELD_ID))
+                rst.Update
+                CreateServerRecord tmpDataLocal, tmpColType, tmpCols, fromTable, tblCached, Server, DatabaseName, Username, Password
+                rst.MoveNext
+            Loop
+        Else
+            Logger.LogDebug "DbManager.SyncTable", "No new record need to upload to server!"
+        End If
+        Recycle
+        '============== ADD NEW SERVER RECORD BLOCK ===============
+        
         DoCmd.DeleteObject acTable, desTable
         DoCmd.Rename desTable, acTable, tblCached
     Else
@@ -594,21 +664,51 @@ Public Function SyncTable(Server As String, _
     
 End Function
 
-Private Function CreateRecordQuery(datas As Scripting.Dictionary, cols As Collection, table As String) As String
+Private Function CreateRecordQuery(datas As Scripting.Dictionary, cols As Collection _
+                                , table As String, Optional colsType As Scripting.Dictionary _
+                                , Optional IsServer As Boolean) As String
     Dim query As String
-    Dim tmpCol As String
+    Dim tmpCol As String, tmpVal As String
     Dim i As Integer
     Dim val As Variant
+    Dim value As String
     tmpCol = ""
+    tmpVal = ""
     For Each val In cols
         tmpCol = tmpCol & "[" & val & "],"
+        If IsServer Then
+            value = datas.Item(val)
+            If colsType Is Nothing Then
+                tmpVal = tmpVal & "'" & StringHelper.EscapeQueryString(value) & "',"
+            Else
+                If colsType.Item(val) = dbBoolean Then
+                    Logger.LogDebug "DbManager.CreateRecordQuery", "boolean value: " & value
+                    If StringHelper.IsEqual(value, "False", True) Then
+                        tmpVal = tmpVal & "'0',"
+                    Else
+                        tmpVal = tmpVal & "'1',"
+                    End If
+                Else
+                    tmpVal = tmpVal & "'" & StringHelper.EscapeQueryString(value) & "',"
+                End If
+            End If
+        End If
     Next
     tmpCol = Trim(tmpCol)
     If StringHelper.EndsWith(tmpCol, ",", True) Then
         tmpCol = Left(tmpCol, Len(tmpCol) - 1)
     End If
-    query = "INSERT INTO [" & table & "](" & tmpCol & ")" & " VALUES(" & tmpCol & ")"
-    Logger.LogDebug "DbManager.CreateLocalRecord", "Query: " & query
+    tmpVal = Trim(tmpVal)
+    If StringHelper.EndsWith(tmpVal, ",", True) And IsServer Then
+        tmpVal = Left(tmpVal, Len(tmpVal) - 1)
+    End If
+    
+    If IsServer Then
+        query = "INSERT INTO [" & table & "](" & tmpCol & ")" & " VALUES(" & tmpVal & ")"
+    Else
+        query = "INSERT INTO [" & table & "](" & tmpCol & ")" & " VALUES(" & tmpCol & ")"
+    End If
+    Logger.LogDebug "DbManager.CreateRecordQuery", "Query: " & query
     CreateRecordQuery = query
 End Function
 
@@ -644,6 +744,55 @@ End Function
 Private Function UpdateLocalRecord(datas As Scripting.Dictionary, cols As Collection, table As String)
     Dim query As String: query = UpdateRecordQuery(datas, cols, table)
     ExecuteQuery query, datas
+End Function
+
+Private Function CreateServerRecord(datas As Scripting.Dictionary, colsType As Scripting.Dictionary, cols As Collection, table As String, _
+                                            desTable As String, _
+                                            Server As String, _
+                                    DatabaseName As String, _
+                                    Optional Username As String, _
+                                    Optional Password As String)
+    On Error GoTo OnError
+    Dim rs As ADODB.RecordSet
+    Dim cn As ADODB.Connection
+    Set cn = New ADODB.Connection
+    Dim query As String
+    Dim stConnect As String
+    Dim tmpTimestamp As String, tmpId As String
+    If Len(Username) <> 0 Then
+        stConnect = "DRIVER=SQL Server;SERVER=" & Server & ";DATABASE=" & DatabaseName _
+                                                & ";UID=" & Username _
+                                                & ";PWD=" & Password
+    Else
+        stConnect = "DRIVER=SQL Server;SERVER=" & Server & ";DATABASE=" & DatabaseName
+    End If
+    Logger.LogDebug "DbManager.CreateServerRecord", "Connection String: " & stConnect
+    query = CreateRecordQuery(datas, cols, table, colsType, True)
+    cn.Open stConnect
+    cn.BeginTrans
+    cn.Execute query
+    cn.CommitTrans
+    tmpId = datas.Item(Constants.FIELD_ID)
+    query = "SELECT [" & Constants.FIELD_TIMESTAMP & "] FROM " & table & " WHERE [" & Constants.FIELD_ID & "]='" & StringHelper.EscapeQueryString(tmpId) & "'"
+    Logger.LogDebug "DbManager.CreateServerRecord", "Query: " & query
+    Set rs = cn.Execute(query)
+    If Not (rs.EOF And rs.BOF) Then
+        rs.MoveFirst
+        tmpTimestamp = rs(Constants.FIELD_TIMESTAMP)
+        Logger.LogDebug "DbManager.CreateServerRecord", "New timestamp: " & tmpTimestamp
+        query = "UPDATE [" & desTable & "] SET [" _
+                                    & Constants.FIELD_TIMESTAMP & "] = '" & StringHelper.EscapeQueryString(tmpTimestamp) _
+                                    & "' WHERE [" & Constants.FIELD_ID & "] = '" & StringHelper.EscapeQueryString(tmpId) & "'"
+        Logger.LogDebug "DbManager.CreateServerRecord", "Query: " & query
+        ExecuteQuery query
+    End If
+OnExit:
+    On Error Resume Next
+    cn.Close
+    Exit Function
+OnError:
+    Logger.LogError "DbManager.UpdateServerRecord", "Could create table " & table & " records. Query: " & query, Err
+    Resume OnExit
 End Function
 
 Private Function UpdateServerRecord(datas As Scripting.Dictionary, cols As Collection, table As String, _
@@ -692,6 +841,6 @@ OnExit:
     cn.Close
     Exit Function
 OnError:
-    Logger.LogError "DbManager.UpdateServerRecord", "Could update table " & table & " records", Err
+    Logger.LogError "DbManager.UpdateServerRecord", "Could update table " & table & " records. Query: " & query, Err
     Resume OnExit
 End Function

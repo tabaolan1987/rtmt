@@ -2,7 +2,8 @@ Option Explicit
 
 Public Sub OnTest()
     'Logger.LogDebug "VbaUnitMain.OnTest", StringHelper.GetGUID
-    Run "DbManagerTester"
+    'DoCmd.SetWarnings False
+    Run "ReportingTester"
 End Sub
 
 Public Sub Run(Optional TestClassName As String)

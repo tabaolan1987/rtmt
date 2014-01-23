@@ -30,15 +30,25 @@ Private Sub ITestCase_TearDown()
 End Sub
 
 Public Sub TestImportData()
+    On Error GoTo OnError
     Dim csvPath As String
     csvPath = FileHelper.CurrentDbPath & Constants.END_USER_DATA_CSV_FILE_PATH
     Dim im As DbManager: Set im = New DbManager
     im.Init
     im.ImportData csvPath
+    
+OnExit:
     im.Recycle
+    ' finally
+    Exit Sub
+OnError:
+    mAssert.Should False, Logger.GetErrorMessage("", Err)
+    Logger.LogError "DbManagerTester.TestImportData", "", Err
+    Resume OnExit
 End Sub
 
 Public Sub TestSyncTable()
+    On Error GoTo OnError
     Dim dbm As DbManager, _
         SyncTables() As String, _
         prop As SystemSettings, _
@@ -55,9 +65,17 @@ Public Sub TestSyncTable()
         For i = LBound(SyncTables) To UBound(SyncTables)
             stTable = Trim(SyncTables(i))
             Logger.LogDebug "DbManagerTester.TestSyncTable", "Start sync table: " & stTable
-            dbm.SyncTable prop.ServerName & "," & prop.Port, prop.DatabaseName, stTable, stTable, prop.Username, prop.Password
+            dbm.SyncTable prop.ServerName & "," & prop.Port, prop.DatabaseName, stTable, stTable, prop.Username, prop.Password, False
         Next i
     End If
+OnExit:
+    dbm.Recycle
+    ' finally
+    Exit Sub
+OnError:
+    mAssert.Should False, Logger.GetErrorMessage("", Err)
+    Logger.LogError "DbManagerTester.TestSyncTable", "", Err
+    Resume OnExit
 End Sub
 
 Public Sub TestImportSqlTable()
@@ -79,17 +97,35 @@ Public Sub TestImportSqlTable()
             dbm.ImportSqlTable prop.ServerName & "," & prop.Port, prop.DatabaseName, stTable, stTable, prop.Username, prop.Password
         Next i
     End If
+OnExit:
+    dbm.Recycle
+    ' finally
+    Exit Sub
+OnError:
+    mAssert.Should False, Logger.GetErrorMessage("", Err)
+    Logger.LogError "DbManagerTester.TestImportSqlTable", "", Err
+    Resume OnExit
 End Sub
 
 Public Sub TestExecuteQuery()
+    On Error GoTo OnError
     Dim im As DbManager: Set im = New DbManager
     im.Init
     If Ultilities.IfTableExists(Constants.END_USER_DATA_TABLE_NAME) = False Then
         im.ExecuteQuery FileHelper.ReadQuery(Constants.END_USER_DATA_TABLE_NAME, Constants.Q_CREATE)
     End If
+OnExit:
+    ' finally
+    im.Recycle
+    Exit Sub
+OnError:
+    mAssert.Should False, Logger.GetErrorMessage("", Err)
+    Logger.LogError "DbManagerTester.TestExecuteQuery", "", Err
+    Resume OnExit
 End Sub
 
 Public Sub TestOpenRecordSet()
+    On Error GoTo OnError
     Dim params As New Scripting.Dictionary
     Dim dm As DbManager: Set dm = New DbManager
     Dim rInfo As ReportMetaData: Set rInfo = New ReportMetaData
@@ -100,7 +136,15 @@ Public Sub TestOpenRecordSet()
     If rInfo.Valid = True Then
         dm.OpenRecordSet rInfo.query, params
     End If
+    
+OnExit:
+    ' finally
     dm.Recycle
+    Exit Sub
+OnError:
+    mAssert.Should False, Logger.GetErrorMessage("", Err)
+    Logger.LogError "DbManagerTester.TestOpenRecordSet", "", Err
+    Resume OnExit
 End Sub
 
 Public Sub TestSyncUserData()
@@ -108,12 +152,13 @@ Public Sub TestSyncUserData()
     Dim dm As DbManager: Set dm = New DbManager
     dm.Init
     dm.SyncUserData
-    dm.Recycle
 OnExit:
+    dm.Recycle
     ' finally
     Exit Sub
 OnError:
-    Logger.LogError "DbManagerTester.TestSyncUserData", "Error TestSyncUserData", Err
+    mAssert.Should False, Logger.GetErrorMessage("", Err)
+    Logger.LogError "DbManagerTester.TestSyncUserData", "", Err
     Resume OnExit
 End Sub
 
@@ -123,7 +168,6 @@ Private Function ITest_Suite() As TestSuite
     ITest_Suite.AddTest ITest_Manager.className, "TestExecuteQuery"
     ITest_Suite.AddTest ITest_Manager.className, "TestSyncUserData"
     ITest_Suite.AddTest ITest_Manager.className, "TestSyncTable"
-    
 End Function
 
 Private Sub ITestCase_RunTest()

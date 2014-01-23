@@ -24,18 +24,21 @@ Public Sub LogDebug(caller As String, log As String)
     CallLog caller, L_DEBUG, log
 End Sub
 
-Public Sub LogError(caller As String, log As String, errX As ErrObject)
-    If errX Is Nothing Then
-        CallLog caller, L_ERROR, log
-    Else
-        
-        CallLog caller, L_ERROR, "Number: " _
+Public Function GetErrorMessage(message As String, errX As ErrObject) As String
+    GetErrorMessage = "Number: " _
                                 & CStr(errX.Number) _
                                 & ", Description: " _
                                 & errX.Description _
                                 & ", Help Context: " _
                                 & errX.HelpContext _
-                                & ". Message: " & log
+                                & ". Message: " & message
+End Function
+
+Public Sub LogError(caller As String, log As String, errX As ErrObject)
+    If errX Is Nothing Then
+        CallLog caller, L_ERROR, log
+    Else
+        CallLog caller, L_ERROR, GetErrorMessage(log, errX)
         errX.Clear
     End If
 End Sub

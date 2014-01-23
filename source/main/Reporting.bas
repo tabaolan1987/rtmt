@@ -55,7 +55,7 @@ Public Sub GenerateReport(name As String)
         Dim objRs As New ADODB.RecordSet
         Set objConn = CurrentProject.Connection
         With oExcel
-            
+            .DisplayAlerts = False
             .Visible = False
             'Create new workbook from the template file
             Logger.LogDebug "Reporting.GenerateReport", "Open excel template: " & rpm.TemplateFilePath

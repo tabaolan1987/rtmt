@@ -4,6 +4,7 @@ Option Explicit
 Const ForReading = 1
 
 Private dbPath As String
+Private tmpDirPath As String
 
 #If VBA7 Then
     Private Declare PtrSafe Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
@@ -213,10 +214,10 @@ Public Function ReadSSFile(name As String) As String()
     Dim ln As String
     path = FileHelper.CurrentDbPath & Constants.SS_DIR & name & ".ss"
     If IsExist(path) Then
-        Dim FSO As Object
+        Dim fso As Object
         Dim ReadFile As Object
-        Set FSO = CreateObject("Scripting.FileSystemObject")
-        Set ReadFile = FSO.OpenTextFile(path, ForReading, False)
+        Set fso = CreateObject("Scripting.FileSystemObject")
+        Set ReadFile = fso.OpenTextFile(path, ForReading, False)
         Do Until ReadFile.AtEndOfStream = True
             ln = Trim(ReadFile.ReadLine)
             If StringHelper.StartsWith(ln, "#", True) = False And Len(ln) <> 0 Then
@@ -226,22 +227,37 @@ Public Function ReadSSFile(name As String) As String()
             End If
         Loop
         ReadFile.Close
-        Set FSO = Nothing
+        Set fso = Nothing
         Set ReadFile = Nothing
     End If
     
     ReadSSFile = tmpList
 End Function
 
-Public Function SaveAsCSV(filePath As String, desFilePath As String)
+Public Function SaveAsCSV(filePath As String, desFilePath As String, Optional WorkSheet As String)
     Dim oExcel As New Excel.Application
+    Dim i As Integer
     Dim WB As New Excel.Workbook
+    Dim WS As Excel.Sheets
+    Dim name As String
+    Dim v As Variant
     If IsExist(desFilePath) Then
         Delete desFilePath
     End If
     With oExcel
         .Visible = False
+        .DisplayAlerts = False
                     Set WB = .Workbooks.Add(filePath)
+                    ' Remove unused sheets
+                    Logger.LogDebug "FileHelper.SaveAsCSV", "Sheet count: " & .Sheets.count
+                    If .Sheets.count > 1 And Len(WorkSheet) <> 0 Then
+                        For Each v In .Sheets
+                            Logger.LogDebug "FileHelper.SaveAsCSV", "Sheet name: " & v.name
+                            If Not StringHelper.IsEqual(v.name, WorkSheet, True) Then
+                                v.Delete
+                            End If
+                        Next v
+                    End If
                     WB.SaveAs desFilePath, FileFormat:=6 ' Save as CSV
                     WB.Close False
         .Quit
@@ -250,7 +266,7 @@ Public Function SaveAsCSV(filePath As String, desFilePath As String)
 End Function
 
 Public Function TrimSourceFile(fileToRead As String, fileToWrite As String, LineToRemove() As Integer)
-    Dim FSO As Object
+    Dim fso As Object
     Dim ReadFile As Object
     Dim writeFile As Object
     Dim repLine As Variant
@@ -263,9 +279,9 @@ Public Function TrimSourceFile(fileToRead As String, fileToWrite As String, Line
     Dim tmpCheck() As String
     Dim i As Integer
     Dim ltm As Variant
-    Set FSO = CreateObject("Scripting.FileSystemObject")
-    Set ReadFile = FSO.OpenTextFile(fileToRead, ForReading, False)
-    Set writeFile = FSO.CreateTextFile(fileToWrite, True, False)
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    Set ReadFile = fso.OpenTextFile(fileToRead, ForReading, False)
+    Set writeFile = fso.CreateTextFile(fileToWrite, True, False)
     
     '# iterate the array and do the replacement line by line
     Do Until ReadFile.AtEndOfStream = True
@@ -288,7 +304,7 @@ Public Function TrimSourceFile(fileToRead As String, fileToWrite As String, Line
                     End If
                 Next i
                 If rowCheck Then
-                    Logger.LogDebug "FileHelper.TrimSourceFile", "Readline " & CStr(l) & " . Text: " & ln
+                    'Logger.LogDebug "FileHelper.TrimSourceFile", "Readline " & CStr(l) & " . Text: " & ln
                     ReDim Preserve tmpList(arraySize)
                     tmpList(arraySize) = ln
                     arraySize = arraySize + 1
@@ -305,5 +321,40 @@ Public Function TrimSourceFile(fileToRead As String, fileToWrite As String, Line
     '# clean up
     Set ReadFile = Nothing
     Set writeFile = Nothing
-    Set FSO = Nothing
+    Set fso = Nothing
+End Function
+
+Public Function PrepareUserData(filePath As String, ss As SystemSettings) As String
+    Dim tmpStr As String
+    Dim tmpSource As String
+    Dim outputCsv As String
+    Dim fso As New Scripting.FileSystemObject
+    CheckDir tmpDir
+    tmpSource = tmpDir & StringHelper.GetGUID
+    Logger.LogDebug "FileHelper.PrepareUserData", "Copy file " & filePath & " to " & tmpSource
+    fso.CopyFile filePath, tmpSource, True
+    
+    tmpStr = tmpDir & StringHelper.GetGUID & ".csv"
+    Logger.LogDebug "FileHelper.PrepareUserData", "Convert file " & tmpSource & " to CSV file " & tmpStr
+    FileHelper.SaveAsCSV tmpSource, tmpStr, ss.WorkSheet
+    Delete tmpSource
+    outputCsv = tmpDir & StringHelper.GetGUID & ".csv"
+    Logger.LogDebug "FileHelper.PrepareUserData", "Trim unused rows " & tmpStr & " to CSV file " & outputCsv
+    TrimSourceFile tmpStr, outputCsv, ss.LineToRemove
+    Delete tmpStr
+    Set fso = Nothing
+    PrepareUserData = outputCsv
+End Function
+
+Public Function tmpDir() As String
+    If Len(tmpDirPath) = 0 Then
+        Dim fso As New Scripting.FileSystemObject
+        tmpDirPath = fso.GetSpecialFolder(TemporaryFolder).path
+        If Not StringHelper.EndsWith(tmpDirPath, "\", True) Then
+            tmpDirPath = tmpDirPath & "\"
+        End If
+        tmpDirPath = tmpDirPath & "rmt\"
+        Set fso = Nothing
+    End If
+    tmpDir = tmpDirPath
 End Function

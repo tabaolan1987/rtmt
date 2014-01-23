@@ -44,18 +44,35 @@ OnExit:
     mAssert.Equals check, True
     Exit Sub
 OnError:
+    mAssert.Should False, Logger.GetErrorMessage("", Err)
     Logger.LogError "Reporting.TestExportReport", "Error when export report", Err
     Resume OnExit
 End Sub
 
 Public Sub TestGenerateReportMetaData()
+    On Error GoTo OnError
     Dim rpmd As New ReportMetaData
     rpmd.Init Constants.RP_END_USER_TO_SYSTEM_ROLE
     mAssert.Equals rpmd.Valid, True
+OnExit:
+    ' finally
+    Exit Sub
+OnError:
+    mAssert.Should False, Logger.GetErrorMessage("", Err)
+    Logger.LogError "ReportingTester.TestGenerateReportMetaData", "", Err
+    Resume OnExit
 End Sub
 
 Public Sub TestGenerateReport()
+    On Error GoTo OnError
     Reporting.GenerateReport Constants.RP_END_USER_TO_SYSTEM_ROLE
+OnExit:
+    ' finally
+    Exit Sub
+OnError:
+    mAssert.Should False, Logger.GetErrorMessage("", Err)
+    Logger.LogError "ReportingTester.TestGenerateReport", "", Err
+    Resume OnExit
 End Sub
 
 Private Function ITest_Suite() As TestSuite

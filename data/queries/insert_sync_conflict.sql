@@ -1,6 +1,7 @@
 INSERT INTO [sync_conflict](
 	[Table name],
 	[Field name],
+	[Field type],
 	[Local data],
 	[Server data],
 	[Local timestamp],
@@ -10,6 +11,7 @@ INSERT INTO [sync_conflict](
 ) VALUES (
 	[Table name],
 	[Field name],
+	[Field type],
 	[Local data],
 	[Server data],
 	[Local timestamp],
