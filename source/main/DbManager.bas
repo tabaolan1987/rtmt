@@ -131,7 +131,7 @@ Private Function GetHeaderIndex(name As String) As Integer
     GetHeaderIndex = index
 End Function
 
-Private Function GetFieldValue(rs As RecordSet, name As String) As String
+Public Function GetFieldValue(rs As RecordSet, name As String) As String
     If Len(name) <> 0 Then
         Dim index As Integer
         index = -1
@@ -664,7 +664,7 @@ Public Function SyncTable(Server As String, _
     
 End Function
 
-Private Function CreateRecordQuery(datas As Scripting.Dictionary, cols As Collection _
+Public Function CreateRecordQuery(datas As Scripting.Dictionary, cols As Collection _
                                 , table As String, Optional colsType As Scripting.Dictionary _
                                 , Optional IsServer As Boolean) As String
     Dim query As String
@@ -712,7 +712,7 @@ Private Function CreateRecordQuery(datas As Scripting.Dictionary, cols As Collec
     CreateRecordQuery = query
 End Function
 
-Private Function UpdateRecordQuery(datas As Scripting.Dictionary, cols As Collection, table As String, Optional IsServer As Boolean) As String
+Public Function UpdateRecordQuery(datas As Scripting.Dictionary, cols As Collection, table As String, Optional IsServer As Boolean) As String
     Dim query As String
     Dim tmpCol As String
     Dim i As Integer
@@ -736,17 +736,17 @@ Private Function UpdateRecordQuery(datas As Scripting.Dictionary, cols As Collec
     UpdateRecordQuery = query
 End Function
 
-Private Function CreateLocalRecord(datas As Scripting.Dictionary, cols As Collection, table As String)
+Public Function CreateLocalRecord(datas As Scripting.Dictionary, cols As Collection, table As String)
     Dim query As String: query = CreateRecordQuery(datas, cols, table)
     ExecuteQuery query, datas
 End Function
 
-Private Function UpdateLocalRecord(datas As Scripting.Dictionary, cols As Collection, table As String)
+Public Function UpdateLocalRecord(datas As Scripting.Dictionary, cols As Collection, table As String)
     Dim query As String: query = UpdateRecordQuery(datas, cols, table)
     ExecuteQuery query, datas
 End Function
 
-Private Function CreateServerRecord(datas As Scripting.Dictionary, colsType As Scripting.Dictionary, cols As Collection, table As String, _
+Public Function CreateServerRecord(datas As Scripting.Dictionary, colsType As Scripting.Dictionary, cols As Collection, table As String, _
                                             desTable As String, _
                                             Server As String, _
                                     DatabaseName As String, _
@@ -795,7 +795,7 @@ OnError:
     Resume OnExit
 End Function
 
-Private Function UpdateServerRecord(datas As Scripting.Dictionary, cols As Collection, table As String, _
+Public Function UpdateServerRecord(datas As Scripting.Dictionary, cols As Collection, table As String, _
                                             desTable As String, _
                                             Server As String, _
                                     DatabaseName As String, _
