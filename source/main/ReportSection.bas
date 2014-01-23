@@ -10,7 +10,7 @@ Private mHeader() As String
 Private mQuery As String
 Private mValid As Boolean
 
-Public Function Init(raw As String)
+Public Function Init(raw As String, Optional ss As SystemSettings)
     mValid = False
     Dim dbm As New DbManager
     Logger.LogDebug "ReportSection.Init", "Prepare raw: " & raw
@@ -29,7 +29,7 @@ Public Function Init(raw As String)
             Select Case mSectionType
                 Case Constants.RP_SECTION_TYPE_AUTO:
                     ' Start generate query
-                    mQuery = PrepareQuery(mQuery)
+                    mQuery = PrepareQuery(mQuery, ss)
                 Case Constants.RP_SECTION_TYPE_FIXED:
                     dbm.Init
                     dbm.OpenRecordSet mQuery
@@ -56,7 +56,7 @@ Public Function Init(raw As String)
             End If
 End Function
 
-Private Function PrepareQuery(query As String) As String
+Private Function PrepareQuery(query As String, Optional ss As SystemSettings) As String
     Dim arraySize As Integer
     Dim dbm As New DbManager
     Dim i As Integer
@@ -111,6 +111,9 @@ Private Function PrepareQuery(query As String) As String
         Dim tmpStr As String
         For i = LBound(mHeader) To UBound(mHeader)
             strTemp = Replace(qIn, "(%VALUE%)", StringHelper.EscapeQueryString(mHeader(i)))
+            If Not ss Is Nothing Then
+                strTemp = Replace(strTemp, "(%RG_F_ID%)", ss.RegionName)
+            End If
             tmpQuery = tmpQuery & qIn & ","
         Next i
         'If StringHelper.EndsWith(tmpQuery, ",", True) Then
@@ -123,7 +126,7 @@ Private Function PrepareQuery(query As String) As String
     PrepareQuery = q
 End Function
 
-Private Function GenerateQuery(query As String) As String
+Private Function GenerateQuery(query As String, Optional ss As SystemSettings) As String
     Dim dbm As New DbManager
     Dim l As Long, r As Long, q As String, length As Long, strTemp As String
     Dim tmp As String, cQuery, tmpSplit() As String, qOut As String, qIn As String, tmpVal As String, tmpQuery As String
@@ -156,6 +159,9 @@ Private Function GenerateQuery(query As String) As String
             Do Until dbm.RecordSet.EOF = True
                 tmpVal = dbm.RecordSet(0)
                 strTemp = Replace(qIn, "(%VALUE%)", StringHelper.EscapeQueryString(tmpVal))
+                If Not ss Is Nothing Then
+                    strTemp = Replace(strTemp, "(%RG_F_ID%)", ss.RegionName)
+                End If
                 tmpQuery = tmpQuery & strTemp & ","
                 'Logger.LogDebug "ReportSection.GenerateQuery", "Found value: " & tmpVal
                 dbm.RecordSet.MoveNext
@@ -166,7 +172,7 @@ Private Function GenerateQuery(query As String) As String
         If StringHelper.EndsWith(tmpQuery, ",", True) Then
             tmpQuery = Left(tmpQuery, Len(tmpQuery) - 1)
         End If
-        'Logger.LogDebug "ReportSection.GenerateQuery", "tmpQuery: " & tmpQuery
+        Logger.LogDebug "ReportSection.GenerateQuery", "tmpQuery: " & tmpQuery
         q = Replace(q, cQuery, tmpQuery)
         dbm.Recycle
     Loop
@@ -198,8 +204,13 @@ Public Property Get Valid() As Boolean
     Valid = mValid
 End Property
 
-Public Function MakeQuery(colName As String) As String
+Public Function MakeQuery(colName As String, Optional ss As SystemSettings) As String
     If StringHelper.IsEqual(mSectionType, Constants.RP_SECTION_TYPE_AUTO, True) Then
-        MakeQuery = Replace(mQuery, "(%VALUE%)", StringHelper.EscapeQueryString(colName))
+        Dim str As String
+        str = Replace(mQuery, "(%VALUE%)", StringHelper.EscapeQueryString(colName))
+        If Not ss Is Nothing Then
+            str = Replace(str, "(%RG_F_ID%)", ss.RegionName)
+        End If
+        MakeQuery = str
     End If
 End Function

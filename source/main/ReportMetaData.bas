@@ -35,7 +35,7 @@ Public Property Get OutputPath() As String
 End Property
 
 
-Public Function Init(name As String)
+Public Function Init(name As String, Optional ss As SystemSettings)
     rawName = name
     Logger.LogDebug "ReportMetaData.Init", "Start init report meta name: " & rawName
     Dim tmpRawSection() As String, tmpStr As String, i As Integer
@@ -79,7 +79,7 @@ Public Function Init(name As String)
             Logger.LogDebug "ReportMetaData.Init", "Found section " & CStr(i + 1)
             Set rpSection = New ReportSection
             tmpStr = Trim(tmpRawSection(i))
-            rpSection.Init tmpStr
+            rpSection.Init tmpStr, ss
             If Not rpSection.Valid Then
                 mValid = False
             End If
