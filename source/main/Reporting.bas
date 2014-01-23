@@ -36,6 +36,8 @@ Public Sub ExportExcelReport(sSQL As String, sFileNameTemplate As String, output
 End Sub
 
 Public Sub GenerateReport(name As String)
+    Dim ss As New SystemSettings
+    ss.Init
     Dim rpm As New ReportMetaData
     Logger.LogDebug "Reporting.GenerateReport", "Start init report metadata " & name
     rpm.Init name
@@ -85,7 +87,7 @@ Public Sub GenerateReport(name As String)
                                             
                                             For i = LBound(headers) To UBound(headers)
                                                 Dim query As String
-                                                query = rSect.MakeQuery(headers(i))
+                                                query = rSect.MakeQuery(headers(i), ss)
                                                 Logger.LogDebug "Reporting.GenerateReport", "Prepare query: " & query
                                                 objRs.Open query, objConn, adOpenStatic, adLockReadOnly
                                                 'Logger.LogDebug "Reporting.GenerateReport", "Prepare Cells(" & CStr(rpm.StartRow) & "," & CStr(colCount) & ")"
