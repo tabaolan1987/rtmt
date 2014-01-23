@@ -4,7 +4,8 @@ Public Sub OnTest()
     'Logger.LogDebug "VbaUnitMain.OnTest", StringHelper.GetGUID
     'DoCmd.SetWarnings False
     'Run "ReportingTester"
-    Reporting.GenerateReport "End_User_ to_BB_ Job_Role_report"
+
+    Reporting.GenerateReport "End_User_To_Course_Report"
 End Sub
 
 Public Sub Run(Optional TestClassName As String)
