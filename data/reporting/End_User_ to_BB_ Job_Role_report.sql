@@ -84,15 +84,20 @@ on sp.SpecialismName = udata.specialism)
 inner join SpecialismMappingActivity as spAc
 on sp.id = spAc.idSpecialism)
 inner join Activity as ac
-on spAc.idActivity =ac.idActivity)
+on spAc.idActivity = ac.id)
 inner join MappingActivityBpStandardRole as AcBpMapp
-on ac.idActivity = AcBpMapp.idActivity)
+on ac.id = AcBpMapp.idActivity)
 inner join BpRoleStandard as bpRole
 on AcBpMapp.idBpRoleStandard = bpRole.id)
-where udata.ntid = UD.ntid
+where udata.ntid = UD.ntid and udata.Deleted=0
+and sp.Deleted=0 and spAc.Deleted=0
+and ac.Deleted=0 and AcBpMapp.Deleted=0
+and bpRole.Deleted=0
 and bpRole.BpRoleStandardName = '(%VALUE%)'
 and spAc.function_region='(%RG_F_ID%)')
 				AS [(%VALUE%)]
 			%}
-FROM user_data AS UD ORDER BY UD.ntid
+FROM user_data AS UD
+where UD.region='GoM'
+ ORDER BY UD.ntid
 
