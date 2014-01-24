@@ -151,7 +151,7 @@ Public Function ReadQuery(stName As String, Optional qType As Integer)
         Case Constants.Q_INSERT: queryPath = queryPath & "insert_" & stName
         Case Constants.Q_UPDATE: queryPath = queryPath & "update_" & stName
         Case Constants.Q_DELETE_ALL: queryPath = queryPath & "delete_all_" & stName
-        Case Else: queryPath = queryPath & stName
+        Case Constants.Q_CUSTOM: queryPath = queryPath & stName
     End Select
     queryPath = queryPath & ".sql"
     Logger.LogDebug "FileHelper.ReadQuery", "Path: " & queryPath
@@ -179,7 +179,7 @@ Function CurrentDbPath() As String
     If Len(dbPath) = 0 Then
         Dim cRes As String
         Dim nPos As Long
-        cRes = CurrentDb.name
+        cRes = CurrentDb.Name
         nPos = Len(cRes)
         Do Until Right(cRes, 1) = "\"
             nPos = nPos - 1
@@ -204,7 +204,7 @@ Function Delete(path As String) As Boolean
     End If
 End Function
 
-Public Function ReadSSFile(name As String) As String()
+Public Function ReadSSFile(Name As String) As String()
     Dim path As String
     Dim arraySize As Integer
     Dim sInput As String
@@ -212,7 +212,7 @@ Public Function ReadSSFile(name As String) As String()
     Dim i As Long
     Dim tmpList() As String
     Dim ln As String
-    path = FileHelper.CurrentDbPath & Constants.SS_DIR & name & ".ss"
+    path = FileHelper.CurrentDbPath & Constants.SS_DIR & Name & ".ss"
     If IsExist(path) Then
         Dim fso As Object
         Dim ReadFile As Object
@@ -239,7 +239,7 @@ Public Function SaveAsCSV(filePath As String, desFilePath As String, Optional Wo
     Dim i As Integer
     Dim WB As New Excel.Workbook
     Dim WS As Excel.Sheets
-    Dim name As String
+    Dim Name As String
     Dim v As Variant
     If IsExist(desFilePath) Then
         Delete desFilePath
@@ -252,8 +252,8 @@ Public Function SaveAsCSV(filePath As String, desFilePath As String, Optional Wo
                     Logger.LogDebug "FileHelper.SaveAsCSV", "Sheet count: " & .Sheets.count
                     If .Sheets.count > 1 And Len(WorkSheet) <> 0 Then
                         For Each v In .Sheets
-                            Logger.LogDebug "FileHelper.SaveAsCSV", "Sheet name: " & v.name
-                            If Not StringHelper.IsEqual(v.name, WorkSheet, True) Then
+                            Logger.LogDebug "FileHelper.SaveAsCSV", "Sheet name: " & v.Name
+                            If Not StringHelper.IsEqual(v.Name, WorkSheet, True) Then
                                 v.Delete
                             End If
                         Next v
@@ -329,7 +329,6 @@ Public Function PrepareUserData(filePath As String, ss As SystemSettings) As Str
     Dim tmpSource As String
     Dim outputCsv As String
     Dim fso As New Scripting.FileSystemObject
-    CheckDir tmpDir
     tmpSource = tmpDir & StringHelper.GetGUID
     Logger.LogDebug "FileHelper.PrepareUserData", "Copy file " & filePath & " to " & tmpSource
     fso.CopyFile filePath, tmpSource, True
@@ -354,7 +353,17 @@ Public Function tmpDir() As String
             tmpDirPath = tmpDirPath & "\"
         End If
         tmpDirPath = tmpDirPath & "rmt\"
+        CheckDir (tmpDirPath)
         Set fso = Nothing
     End If
     tmpDir = tmpDirPath
+End Function
+
+Public Function DuplicateAsTemporary(file As String) As String
+    Dim desFile As String
+    desFile = tmpDir & StringHelper.GetGUID
+    Dim fso As New Scripting.FileSystemObject
+    fso.CopyFile file, desFile, True
+    fso = Nothing
+    DuplicateAsTemporary = desFile
 End Function

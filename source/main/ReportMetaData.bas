@@ -29,22 +29,27 @@ Public Property Get OutputPath() As String
         Dim tmpDir As String
         tmpDir = FileHelper.CurrentDbPath & Constants.RP_DEFAULT_OUTPUT_FOLDER
         FileHelper.CheckDir tmpDir
-        mOutputPath = tmpDir & "\" & rawName & Constants.RP_REPORT_FILE_EXTENSION
+        mOutputPath = tmpDir & "\" & rawName & Constants.FILE_EXTENSION_REPORT
     End If
     OutputPath = mOutputPath
 End Property
 
+Public Function Recyle()
+    FileHelper.Delete mQueryFilePath
+    FileHelper.Delete mTemplateFilePath
+    FileHelper.Delete mConfigFilePath
+End Function
 
-Public Function Init(name As String, Optional ss As SystemSettings)
-    rawName = name
+Public Function Init(Name As String, Optional ss As SystemSettings)
+    rawName = Name
     Logger.LogDebug "ReportMetaData.Init", "Start init report meta name: " & rawName
     Dim tmpRawSection() As String, tmpStr As String, i As Integer
     Dim rpSection As ReportSection
     Dim ir As New IniReader
     
-    mQueryFilePath = FileHelper.CurrentDbPath & Constants.RP_ROOT_FOLDER & name & Constants.RP_QUERY_FILE_EXTENSION
-    mTemplateFilePath = FileHelper.CurrentDbPath & Constants.RP_ROOT_FOLDER & name & Constants.RP_TEMPLATE_FILE_EXTENSION
-    mConfigFilePath = FileHelper.CurrentDbPath & Constants.RP_ROOT_FOLDER & name & Constants.RP_CONFIG_FILE_EXTENSION
+    mQueryFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.RP_ROOT_FOLDER & Name & Constants.FILE_EXTENSION_QUERY)
+    mTemplateFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.RP_ROOT_FOLDER & Name & Constants.FILE_EXTENSION_TEMPLATE)
+    mConfigFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.RP_ROOT_FOLDER & Name & Constants.FILE_EXTENSION_CONFIG)
     Logger.LogDebug "ReportMetaData.Init", "Read configuration path: " & mConfigFilePath
     ir.Init mConfigFilePath
     
@@ -74,7 +79,7 @@ Public Function Init(name As String, Optional ss As SystemSettings)
     If Len(mQuery) <> 0 Then
         Set mReportSections = New Collection
         mValid = True
-        tmpRawSection = Split(mQuery, Constants.RP_SPLIT_LEVEL_1)
+        tmpRawSection = Split(mQuery, Constants.SPLIT_LEVEL_1)
         For i = LBound(tmpRawSection) To UBound(tmpRawSection)
             Logger.LogDebug "ReportMetaData.Init", "Found section " & CStr(i + 1)
             Set rpSection = New ReportSection
@@ -95,16 +100,16 @@ Public Property Get ReportSections() As Collection
     Set ReportSections = mReportSections
 End Property
 
-Public Property Get query() As String
-    query = mQuery
+Public Property Get Query() As String
+    Query = mQuery
 End Property
 
 Public Property Get Valid() As Boolean
     Valid = mValid
 End Property
 
-Public Property Get name() As String
-    name = mName
+Public Property Get Name() As String
+    Name = mName
 End Property
 
 Public Property Get StartRow() As Long

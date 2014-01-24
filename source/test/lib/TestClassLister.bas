@@ -9,8 +9,8 @@ Public Function TestClasses() As Collection
     Set TestClasses = New Collection
     Set Components = Application.VBE.ActiveVBProject.VBComponents
     For Each Component In Components
-        If IsClassModule(Component.Type) And IsTestClassName(Component.name) Then
-            TestClasses.Add Component.name
+        If IsClassModule(Component.Type) And IsTestClassName(Component.Name) Then
+            TestClasses.Add Component.Name
         End If
     Next
 End Function
@@ -38,6 +38,8 @@ Public Function SelectTestClass(TestClassName As String) As ITest
         Case "StringHelperTester": Set SelectTestClass = New StringHelperTester
         Case "ReportingTester": Set SelectTestClass = New ReportingTester
         Case "SystemSettingsTester": Set SelectTestClass = New SystemSettingsTester
+        Case "UserManagementTester": Set SelectTestClass = New UserManagementTester
+        Case "MappingHelperTester": Set SelectTestClass = New MappingHelperTester
         Case Else:
     End Select
 End Function

@@ -23,6 +23,10 @@ Public Property Get QueryDef() As DAO.QueryDef
     Set QueryDef = qdf
 End Property
 
+Public Property Get Database() As DAO.Database
+    Set Database = dbs
+End Property
+
 Public Function Init()
     If dbs Is Nothing Then
         Set dbs = CurrentDb
@@ -50,10 +54,10 @@ OnError:
     Resume OnExit
 End Function
 
-Public Function ExecuteQuery(query As String, Optional params As Scripting.Dictionary)
+Public Function ExecuteQuery(Query As String, Optional params As Scripting.Dictionary)
     On Error GoTo OnError
     Dim key As String, value As Variant
-    Set qdf = dbs.CreateQueryDef("", query)
+    Set qdf = dbs.CreateQueryDef("", Query)
     If Not params Is Nothing Then
         'Logger.LogDebug "DbManager.OpenRecordSet", "Param cound: " & params.count
         For i = 0 To params.count - 1
@@ -70,14 +74,14 @@ Public Function ExecuteQuery(query As String, Optional params As Scripting.Dicti
 OnExit:
     Exit Function
 OnError:
-    Logger.LogError "DbManager.ExecuteQuery", "Could execute query: " & query, Err
+    Logger.LogError "DbManager.ExecuteQuery", "Could execute query: " & Query, Err
     Resume OnExit
 End Function
 
-Public Function OpenRecordSet(query As String, Optional params As Scripting.Dictionary)
+Public Function OpenRecordSet(Query As String, Optional params As Scripting.Dictionary)
     Dim prm As DAO.Parameter, i As Integer, key As String
     On Error GoTo OnError
-    Set qdf = dbs.CreateQueryDef("", query)
+    Set qdf = dbs.CreateQueryDef("", Query)
     If Not params Is Nothing Then
         
         'Logger.LogDebug "DbManager.OpenRecordSet", "Param cound: " & params.count
@@ -95,7 +99,7 @@ Public Function OpenRecordSet(query As String, Optional params As Scripting.Dict
 OnExit:
     Exit Function
 OnError:
-    Logger.LogError "DbManager.OpenRecordSet", "Could execute query: " & query, Err
+    Logger.LogError "DbManager.OpenRecordSet", "Could execute query: " & Query, Err
     Resume OnExit
 End Function
 
@@ -106,7 +110,7 @@ Public Function RecycleTable(s As SystemSettings)
     
     TableNames = s.TableNames
     Logger.LogDebug "DbManager.RecycleTable", "Start check table. Size: " & CStr(UBound(TableNames))
-    Dim query As String
+    Dim Query As String
     
     For i = LBound(TableNames) To UBound(TableNames)
         tmp = Trim(CStr(TableNames(i)))
@@ -122,11 +126,11 @@ Public Function RecycleTable(s As SystemSettings)
     Next
 End Function
 
-Private Function GetHeaderIndex(name As String) As Integer
+Private Function GetHeaderIndex(Name As String) As Integer
     Dim index As Integer
     index = -1
     For i = 0 To rst.fields.count - 1
-        If StringHelper.IsEqual(Trim(rst.fields(i).name), Trim(name), True) Then
+        If StringHelper.IsEqual(Trim(rst.fields(i).Name), Trim(Name), True) Then
             'Logger.LogDebug "DbManager.SyncUserData", "## HEADER: " & rst.fields(i).name
             index = i
         End If
@@ -134,13 +138,13 @@ Private Function GetHeaderIndex(name As String) As Integer
     GetHeaderIndex = index
 End Function
 
-Public Function GetFieldValue(rs As RecordSet, name As String) As String
+Public Function GetFieldValue(rs As RecordSet, Name As String) As String
     GetFieldValue = ""
-    If Len(name) <> 0 Then
+    If Len(Name) <> 0 Then
         Dim index As Integer
         index = -1
         For i = 0 To rs.fields.count - 1
-            If StringHelper.IsEqual(Trim(rs.fields(i).name), Trim(name), True) Then
+            If StringHelper.IsEqual(Trim(rs.fields(i).Name), Trim(Name), True) Then
                 index = i
             End If
         Next i
@@ -171,7 +175,11 @@ Private Function ValidateNtid(s As SystemSettings, ntids As String, Optional use
     Dim check As Boolean
     Dim v As Variant
     Dim tmpUserData As Scripting.Dictionary
+    Dim tmpInsertCols As Collection
+    Dim tmpInsertData As Scripting.Dictionary
     Set validatorMapping = s.validatorMapping
+    Dim tmpStr As String
+    Dim fullName As String
     Dim i As Integer
     For i = 0 To validatorMapping.count - 1
         fields = fields & validatorMapping.Items(i) & ","
@@ -197,10 +205,15 @@ Private Function ValidateNtid(s As SystemSettings, ntids As String, Optional use
                 ntid = tmpDict.Item("ntid")
                 check = tmpDict.Item("isvalid")
                 Logger.LogDebug "DbManager.SyncUserData", "Is valid: " & CStr(check)
+                Logger.LogDebug "DbManager.SyncUserData", s.SyncUsers.Item(Constants.FIELD_FIRST_NAME) & " | " & s.SyncUsers.Item(Constants.FIELD_LAST_NAME)
+                fullName = tmpUserData.Item(Constants.FIELD_FIRST_NAME) _
+                                            & " " _
+                                            & tmpUserData.Item(Constants.FIELD_LAST_NAME)
                 If check Then
                     Logger.LogDebug "DbManager.SyncUserData", "check ntid: " & ntid
                     If Not userData Is Nothing And userData.count > 0 Then
                         Set tmpUserData = userData.Item(ntid)
+                        
                         For Each v In validatorMapping
                             key = v
                             value = validatorMapping.Item(key)
@@ -212,11 +225,40 @@ Private Function ValidateNtid(s As SystemSettings, ntids As String, Optional use
                                 Logger.LogDebug "DbManager.SyncUserData", "validated!!!"
                             Else
                                 AddWarning ("Validation failed !!! NTID: " & ntid & " . Field name: " & key & ". Local: " & str1 & ". LDAP: " & str2)
+                                tmpStr = StringHelper.GetDictKey(s.SyncUsers, key)
+                                Logger.LogDebug "DbManager.SyncUserData", "Db column: " & tmpStr
+                                Set tmpInsertCols = New Collection
+                                tmpInsertCols.Add "NTID"
+                                tmpInsertCols.Add "Name"
+                                tmpInsertCols.Add "Field heading"
+                                tmpInsertCols.Add "Db field"
+                                tmpInsertCols.Add "Upload file"
+                                tmpInsertCols.Add "LDAP"
+                                tmpInsertCols.Add "Select"
+                                Set tmpInsertData = New Scripting.Dictionary
+                                tmpInsertData.Add "NTID", ntid
+                                tmpInsertData.Add "Name", fullName
+                                tmpInsertData.Add "Field heading", key
+                                tmpInsertData.Add "Db field", tmpStr
+                                tmpInsertData.Add "Upload file", str1
+                                tmpInsertData.Add "LDAP", str2
+                                tmpInsertData.Add "Select", "-1"
+                                CreateLocalRecord tmpInsertData, tmpInsertCols, Constants.TABLE_USER_DATA_LDAP_CONFLICT
                             End If
                         Next v
                     End If
                 Else
                     AddWarning ("Validation failed !!! NTID: " & ntid & " not found!")
+                    
+                    Set tmpInsertCols = New Collection
+                    tmpInsertCols.Add "NTID"
+                    tmpInsertCols.Add "Name"
+                    tmpInsertCols.Add "Select"
+                    Set tmpInsertData = New Scripting.Dictionary
+                    tmpInsertData.Add "NTID", ntid
+                    tmpInsertData.Add "Name", fullName
+                    tmpInsertData.Add "Select", "-1"
+                    CreateLocalRecord tmpInsertData, tmpInsertCols, Constants.TABLE_USER_DATA_LDAP_NOTFOUND
                 End If
             Next tmpDict
         Else
@@ -450,17 +492,17 @@ OnError:
     Resume OnExit
 End Function
 
-Public Function RecycleTableName(name As String)
+Public Function RecycleTableName(Name As String)
     Init
-        Logger.LogDebug "DbManager.SyncTable", "Recycle table name " & name
+        Logger.LogDebug "DbManager.SyncTable", "Recycle table name " & Name
         dbs.TableDefs.Refresh
-        If Ultilities.IfTableExists(name) Then
-            Logger.LogDebug "DbManager.SyncTable", "Delete all record table " & name
-            ExecuteQuery FileHelper.ReadQuery(name, Constants.Q_DELETE_ALL)
+        If Ultilities.IfTableExists(Name) Then
+            Logger.LogDebug "DbManager.SyncTable", "Delete all record table " & Name
+            ExecuteQuery FileHelper.ReadQuery(Name, Constants.Q_DELETE_ALL)
             'DoCmd.DeleteObject acTable, name
         Else
-            Logger.LogDebug "DbManager.SyncTable", "Create new table " & name
-            ExecuteQuery FileHelper.ReadQuery(name, Constants.Q_CREATE)
+            Logger.LogDebug "DbManager.SyncTable", "Create new table " & Name
+            ExecuteQuery FileHelper.ReadQuery(Name, Constants.Q_CREATE)
         End If
         
         dbs.TableDefs.Refresh
@@ -519,7 +561,7 @@ Public Function SyncTable(Server As String, _
                         tmpRst.MoveFirst
                         For i = 0 To tmpRst.fields.count - 1
                            ' Logger.LogDebug "field type:", tmpRst.fields(i).Type & " === " & dbBoolean
-                            tmpCol = tmpRst.fields(i).name
+                            tmpCol = tmpRst.fields(i).Name
                             tmpType = tmpRst.fields(i).Type
                             str1 = Trim(GetFieldValue(tmpRst, tmpCol))
                             str2 = Trim(GetFieldValue(rst, tmpCol))
@@ -606,7 +648,7 @@ Public Function SyncTable(Server As String, _
                         Set tmpCols = New Collection
                         Set tmpDataServer = New Scripting.Dictionary
                         For i = 0 To rst.fields.count - 1
-                            tmpCol = rst.fields(i).name
+                            tmpCol = rst.fields(i).Name
                             str2 = GetFieldValue(rst, tmpCol)
                             tmpDataServer.Add tmpCol, str2
                             tmpCols.Add tmpCol
@@ -632,7 +674,7 @@ Public Function SyncTable(Server As String, _
                 Set tmpCols = New Collection
                 Set tmpColType = New Scripting.Dictionary
                 For i = 0 To rst.fields.count - 1
-                    tmpCol = rst.fields(i).name
+                    tmpCol = rst.fields(i).Name
                     tmpColType.Add tmpCol, rst.fields(i).Type
                     If Not StringHelper.IsEqual(tmpCol, Constants.FIELD_TIMESTAMP, True) Then
                         tmpCols.Add tmpCol
@@ -667,7 +709,7 @@ End Function
 Public Function CreateRecordQuery(datas As Scripting.Dictionary, cols As Collection _
                                 , table As String, Optional colsType As Scripting.Dictionary _
                                 , Optional IsServer As Boolean) As String
-    Dim query As String
+    Dim Query As String
     Dim tmpCol As String, tmpVal As String
     Dim i As Integer
     Dim val As Variant
@@ -704,16 +746,16 @@ Public Function CreateRecordQuery(datas As Scripting.Dictionary, cols As Collect
     End If
     
     If IsServer Then
-        query = "INSERT INTO [" & table & "](" & tmpCol & ")" & " VALUES(" & tmpVal & ")"
+        Query = "INSERT INTO [" & table & "](" & tmpCol & ")" & " VALUES(" & tmpVal & ")"
     Else
-        query = "INSERT INTO [" & table & "](" & tmpCol & ")" & " VALUES(" & tmpCol & ")"
+        Query = "INSERT INTO [" & table & "](" & tmpCol & ")" & " VALUES(" & tmpCol & ")"
     End If
-    Logger.LogDebug "DbManager.CreateRecordQuery", "Query: " & query
-    CreateRecordQuery = query
+    Logger.LogDebug "DbManager.CreateRecordQuery", "Query: " & Query
+    CreateRecordQuery = Query
 End Function
 
 Public Function UpdateRecordQuery(datas As Scripting.Dictionary, cols As Collection, table As String, Optional IsServer As Boolean) As String
-    Dim query As String
+    Dim Query As String
     Dim tmpCol As String
     Dim i As Integer
     Dim val As Variant
@@ -731,19 +773,19 @@ Public Function UpdateRecordQuery(datas As Scripting.Dictionary, cols As Collect
     If StringHelper.EndsWith(tmpCol, ",", True) Then
         tmpCol = Left(tmpCol, Len(tmpCol) - 1)
     End If
-    query = "UPDATE [" & table & "] SET " & tmpCol & "" & " WHERE [id]='" & StringHelper.EscapeQueryString(datas.Item("id")) & "'"
-    Logger.LogDebug "DbManager.UpdateLocalRecord", "Query: " & query
-    UpdateRecordQuery = query
+    Query = "UPDATE [" & table & "] SET " & tmpCol & "" & " WHERE [id]='" & StringHelper.EscapeQueryString(datas.Item("id")) & "'"
+    Logger.LogDebug "DbManager.UpdateLocalRecord", "Query: " & Query
+    UpdateRecordQuery = Query
 End Function
 
 Public Function CreateLocalRecord(datas As Scripting.Dictionary, cols As Collection, table As String)
-    Dim query As String: query = CreateRecordQuery(datas, cols, table)
-    ExecuteQuery query, datas
+    Dim Query As String: Query = CreateRecordQuery(datas, cols, table)
+    ExecuteQuery Query, datas
 End Function
 
 Public Function UpdateLocalRecord(datas As Scripting.Dictionary, cols As Collection, table As String)
-    Dim query As String: query = UpdateRecordQuery(datas, cols, table)
-    ExecuteQuery query, datas
+    Dim Query As String: Query = UpdateRecordQuery(datas, cols, table)
+    ExecuteQuery Query, datas
 End Function
 
 Public Function CreateServerRecord(datas As Scripting.Dictionary, colsType As Scripting.Dictionary, cols As Collection, table As String, _
@@ -756,7 +798,7 @@ Public Function CreateServerRecord(datas As Scripting.Dictionary, colsType As Sc
     Dim rs As ADODB.RecordSet
     Dim cn As ADODB.Connection
     Set cn = New ADODB.Connection
-    Dim query As String
+    Dim Query As String
     Dim stConnect As String
     Dim tmpTimestamp As String, tmpId As String
     If Len(Username) <> 0 Then
@@ -767,31 +809,31 @@ Public Function CreateServerRecord(datas As Scripting.Dictionary, colsType As Sc
         stConnect = "DRIVER=SQL Server;SERVER=" & Server & ";DATABASE=" & DatabaseName
     End If
     Logger.LogDebug "DbManager.CreateServerRecord", "Connection String: " & stConnect
-    query = CreateRecordQuery(datas, cols, table, colsType, True)
+    Query = CreateRecordQuery(datas, cols, table, colsType, True)
     cn.Open stConnect
     cn.BeginTrans
-    cn.Execute query
+    cn.Execute Query
     cn.CommitTrans
     tmpId = datas.Item(Constants.FIELD_ID)
-    query = "SELECT [" & Constants.FIELD_TIMESTAMP & "] FROM " & table & " WHERE [" & Constants.FIELD_ID & "]='" & StringHelper.EscapeQueryString(tmpId) & "'"
-    Logger.LogDebug "DbManager.CreateServerRecord", "Query: " & query
-    Set rs = cn.Execute(query)
+    Query = "SELECT [" & Constants.FIELD_TIMESTAMP & "] FROM " & table & " WHERE [" & Constants.FIELD_ID & "]='" & StringHelper.EscapeQueryString(tmpId) & "'"
+    Logger.LogDebug "DbManager.CreateServerRecord", "Query: " & Query
+    Set rs = cn.Execute(Query)
     If Not (rs.EOF And rs.BOF) Then
         rs.MoveFirst
         tmpTimestamp = rs(Constants.FIELD_TIMESTAMP)
         Logger.LogDebug "DbManager.CreateServerRecord", "New timestamp: " & tmpTimestamp
-        query = "UPDATE [" & desTable & "] SET [" _
+        Query = "UPDATE [" & desTable & "] SET [" _
                                     & Constants.FIELD_TIMESTAMP & "] = '" & StringHelper.EscapeQueryString(tmpTimestamp) _
                                     & "' WHERE [" & Constants.FIELD_ID & "] = '" & StringHelper.EscapeQueryString(tmpId) & "'"
-        Logger.LogDebug "DbManager.CreateServerRecord", "Query: " & query
-        ExecuteQuery query
+        Logger.LogDebug "DbManager.CreateServerRecord", "Query: " & Query
+        ExecuteQuery Query
     End If
 OnExit:
     On Error Resume Next
     cn.Close
     Exit Function
 OnError:
-    Logger.LogError "DbManager.UpdateServerRecord", "Could create table " & table & " records. Query: " & query, Err
+    Logger.LogError "DbManager.UpdateServerRecord", "Could create table " & table & " records. Query: " & Query, Err
     Resume OnExit
 End Function
 
@@ -805,7 +847,7 @@ Public Function UpdateServerRecord(datas As Scripting.Dictionary, cols As Collec
     Dim rs As ADODB.RecordSet
     Dim cn As ADODB.Connection
     Set cn = New ADODB.Connection
-    Dim query As String
+    Dim Query As String
     Dim stConnect As String
     Dim tmpTimestamp As String, tmpId As String
     If Len(Username) <> 0 Then
@@ -816,31 +858,31 @@ Public Function UpdateServerRecord(datas As Scripting.Dictionary, cols As Collec
         stConnect = "DRIVER=SQL Server;SERVER=" & Server & ";DATABASE=" & DatabaseName
     End If
     Logger.LogDebug "DbManager.UpdateServerRecord", "Connection String: " & stConnect
-    query = UpdateRecordQuery(datas, cols, table, True)
+    Query = UpdateRecordQuery(datas, cols, table, True)
     
     cn.Open stConnect
     cn.BeginTrans
-    cn.Execute query
+    cn.Execute Query
     cn.CommitTrans
     tmpId = datas.Item(Constants.FIELD_ID)
-    query = "SELECT [" & Constants.FIELD_TIMESTAMP & "] FROM " & table & " WHERE [id]='" & StringHelper.EscapeQueryString(tmpId) & "'"
-    Logger.LogDebug "DbManager.UpdateServerRecord", "Query: " & query
-    Set rs = cn.Execute(query)
+    Query = "SELECT [" & Constants.FIELD_TIMESTAMP & "] FROM " & table & " WHERE [id]='" & StringHelper.EscapeQueryString(tmpId) & "'"
+    Logger.LogDebug "DbManager.UpdateServerRecord", "Query: " & Query
+    Set rs = cn.Execute(Query)
     If Not (rs.EOF And rs.BOF) Then
         rs.MoveFirst
         tmpTimestamp = rs(Constants.FIELD_TIMESTAMP)
         Logger.LogDebug "DbManager.UpdateServerRecord", "New timestamp: " & tmpTimestamp
-        query = "UPDATE [" & desTable & "] SET [" _
+        Query = "UPDATE [" & desTable & "] SET [" _
                                     & Constants.FIELD_TIMESTAMP & "] = '" & StringHelper.EscapeQueryString(tmpTimestamp) _
                                     & "' WHERE [id] = '" & StringHelper.EscapeQueryString(tmpId) & "'"
-        Logger.LogDebug "DbManager.UpdateServerRecord", "Query: " & query
-        ExecuteQuery query
+        Logger.LogDebug "DbManager.UpdateServerRecord", "Query: " & Query
+        ExecuteQuery Query
     End If
 OnExit:
     On Error Resume Next
     cn.Close
     Exit Function
 OnError:
-    Logger.LogError "DbManager.UpdateServerRecord", "Could update table " & table & " records. Query: " & query, Err
+    Logger.LogError "DbManager.UpdateServerRecord", "Could update table " & table & " records. Query: " & Query, Err
     Resume OnExit
 End Function

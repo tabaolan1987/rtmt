@@ -17,6 +17,8 @@ Public Const FIELD_LAST_NAME = "lname"
 Public Const TABLE_SYNC_CONFLICT = "sync_conflict"
 Public Const TABLE_USER_DATA_CONFLICT = "user_data_conflict"
 Public Const TABLE_USER_DATA_DUPLICATE = "user_data_duplicate"
+Public Const TABLE_USER_DATA_LDAP_CONFLICT = "user_data_ldap_conflict"
+Public Const TABLE_USER_DATA_LDAP_NOTFOUND = "user_data_ldap_notfound"
 ' Queries
 Public Const QUERIES_DIR = "data\queries\"
 Public Const Q_CREATE = 1
@@ -24,6 +26,20 @@ Public Const Q_INSERT = 2
 Public Const Q_UPDATE = 3
 Public Const Q_DELETE_ALL = 4
 Public Const Q_CUSTOM = 0
+
+Public Const Q_KEY_VALUE = "VALUE"
+Public Const Q_KEY_CHECK = "CHECK"
+Public Const Q_KEY_COMMENT = "COMMENT"
+Public Const Q_KEY_ID = "ID"
+Public Const Q_KEY_ID_TOP = "ID_TOP"
+Public Const Q_KEY_ID_LEFT = "ID_LEFT"
+Public Const Q_KEY_FUNCTION_REGION_ID = "RG_F_ID"
+Public Const Q_KEY_REGION_NAME = "RG_NAME"
+
+' for mapping section
+Public Const Q_TOP = 5
+Public Const Q_LEFT = 6
+Public Const Q_CHECK = 7
 
 ' settings ini
 Public Const SETTINGS_FILE = "data\config\settings.ini"
@@ -60,23 +76,33 @@ Public Const KEY_START_HEADER_COL = "startHeaderCol"
 Public Const KEY_START_ROW = "startRow"
 Public Const KEY_START_COL = "startCol"
 
+Public Const SECTION_TOP = "Top"
+Public Const SECTION_LEFT = "Left"
+
 ' System setting file
 Public Const SS_DIR = "data\config\"
 Public Const SS_SYNC_TABLES = "synctables"
 Public Const SS_SYNC_USERS = "syncusers"
 Public Const SS_VALIDATOR_MAPPING = "validatormapping"
 
+' File
+Public Const FILE_EXTENSION_CONFIG = ".ini"
+Public Const FILE_EXTENSION_QUERY = ".sql"
+Public Const FILE_EXTENSION_TEMPLATE = ".xlsx"
+Public Const FILE_EXTENSION_REPORT = ".xlsx"
+Public Const SPLIT_LEVEL_1 = "====="
+Public Const SPLIT_LEVEL_2 = "==="
+
+' Mapping
+Public Const MAPPING_ACTIVITIES_SPECIALISM = "mapping-activities-specialism"
+Public Const MAPPING_ROOT_FOLDER = "data\mapping\"
+
 ' Reporting
 Public Const RP_QUERY_TYPE_SECTION = "section"
 Public Const RP_QUERY_TYPE_SIMPLE = "simple"
-Public Const RP_SPLIT_LEVEL_1 = "====="
-Public Const RP_SPLIT_LEVEL_2 = "==="
+
 Public Const RP_SECTION_TYPE_FIXED = "fixed"
 Public Const RP_SECTION_TYPE_AUTO = "auto"
-Public Const RP_CONFIG_FILE_EXTENSION = ".ini"
-Public Const RP_QUERY_FILE_EXTENSION = ".sql"
-Public Const RP_TEMPLATE_FILE_EXTENSION = ".xlsx"
-Public Const RP_REPORT_FILE_EXTENSION = ".xlsx"
 Public Const RP_ROOT_FOLDER = "data\reporting\"
 Public Const RP_END_USER_TO_SYSTEM_ROLE = "end_user_to_system_role_report"
 Public Const RP_DEFAULT_OUTPUT_FOLDER = "target\reporting"

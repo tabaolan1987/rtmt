@@ -35,12 +35,12 @@ Public Sub ExportExcelReport(sSQL As String, sFileNameTemplate As String, output
     Set objRs = Nothing
 End Sub
 
-Public Sub GenerateReport(name As String)
+Public Sub GenerateReport(Name As String)
     Dim ss As New SystemSettings
     ss.Init
     Dim rpm As New ReportMetaData
-    Logger.LogDebug "Reporting.GenerateReport", "Start init report metadata " & name
-    rpm.Init name
+    Logger.LogDebug "Reporting.GenerateReport", "Start init report metadata " & Name
+    rpm.Init Name
     If FileHelper.IsExist(rpm.OutputPath) Then
         Logger.LogDebug "Reporting.GenerateReport", "Delete file " & rpm.OutputPath
         FileHelper.Delete rpm.OutputPath
@@ -86,10 +86,10 @@ Public Sub GenerateReport(name As String)
                                             Logger.LogDebug "Reporting.GenerateReport", "Generate section type: Auto"
                                             
                                             For i = LBound(headers) To UBound(headers)
-                                                Dim query As String
-                                                query = rSect.MakeQuery(headers(i), ss)
-                                                Logger.LogDebug "Reporting.GenerateReport", "Prepare query: " & query
-                                                objRs.Open query, objConn, adOpenStatic, adLockReadOnly
+                                                Dim Query As String
+                                                Query = rSect.MakeQuery(headers(i), ss)
+                                                Logger.LogDebug "Reporting.GenerateReport", "Prepare query: " & Query
+                                                objRs.Open Query, objConn, adOpenStatic, adLockReadOnly
                                                 'Logger.LogDebug "Reporting.GenerateReport", "Prepare Cells(" & CStr(rpm.StartRow) & "," & CStr(colCount) & ")"
                                                 
                                                 Set rng = .Cells(rpm.StartRow, colCount) 'Starting point of the data range
@@ -101,7 +101,7 @@ Public Sub GenerateReport(name As String)
                                             Logger.LogDebug "Reporting.GenerateReport", "Complete generate section type: Auto"
                                         Case Constants.RP_SECTION_TYPE_FIXED:
                                             Logger.LogDebug "Reporting.GenerateReport", "Generate section type: Fixed"
-                                            objRs.Open rSect.query, objConn, adOpenStatic, adLockReadOnly
+                                            objRs.Open rSect.Query, objConn, adOpenStatic, adLockReadOnly
                                             'Logger.LogDebug "Reporting.GenerateReport", "Prepare Cells(" & CStr(rpm.StartRow) & "," & CStr(colCount) & ")"
                                             Set rng = .Cells(rpm.StartRow, colCount) 'Starting point of the data range
                                             rng.CopyFromRecordset objRs

@@ -29,23 +29,22 @@ Private Sub ITestCase_TearDown()
 
 End Sub
 
-Public Sub TestCheckConflict()
+Public Sub TestMappingMetaData()
     On Error GoTo OnError
-    Dim um As New UserManagement
-    um.CheckConflict
-OnExit:
-    ' finally
-    Exit Sub
-OnError:
-    mAssert.Should False, Logger.GetErrorMessage("", Err)
-    Logger.LogError "UserManagementTeser.TestCheckConflict", "", Err
-    Resume OnExit
-End Sub
-
-Public Sub TestCheckDuplicate()
-    On Error GoTo OnError
-    Dim um As New UserManagement
-    um.CheckDuplicate
+    Dim mmd As New MappingMetadata
+    mmd.Init Constants.MAPPING_ACTIVITIES_SPECIALISM
+    Dim data As New Scripting.Dictionary
+    data.Add Constants.Q_KEY_ID, "test id 1"
+    data.Add Constants.Q_KEY_ID_LEFT, "test id left 1"
+    data.Add Constants.Q_KEY_ID_TOP, "test id top 1"
+    data.Add Constants.Q_KEY_FUNCTION_REGION_ID, "test funct"
+    data.Add Constants.Q_KEY_REGION_NAME, "GoM"
+    data.Add Constants.Q_KEY_CHECK, "true"
+    mmd.Query Constants.Q_CHECK, data
+    mmd.Query Constants.Q_CREATE, data
+    mmd.Query Constants.Q_UPDATE, data
+    mmd.Query Constants.Q_TOP, data
+    mmd.Query Constants.Q_LEFT, data
 OnExit:
     ' finally
     Exit Sub
@@ -57,14 +56,12 @@ End Sub
 
 Private Function ITest_Suite() As TestSuite
     Set ITest_Suite = New TestSuite
-    ITest_Suite.AddTest ITest_Manager.className, "TestCheckDuplicate"
-    ITest_Suite.AddTest ITest_Manager.className, "TestCheckConflict"
+    ITest_Suite.AddTest ITest_Manager.className, "TestMappingMetaData"
 End Function
 
 Private Sub ITestCase_RunTest()
     Select Case mManager.MethodName
-        Case "TestCheckDuplicate": TestCheckDuplicate
-        Case "TestCheckConflict": TestCheckConflict
+        Case "TestMappingMetaData": TestMappingMetaData
         Case Else: mAssert.Should False, "Invalid test name: " & mManager.MethodName
     End Select
 End Sub

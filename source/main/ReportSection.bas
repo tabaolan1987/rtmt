@@ -38,7 +38,7 @@ Public Function Init(raw As String, Optional ss As SystemSettings)
                         Logger.LogDebug "ReportSection.Init", "Fields count: " & CStr(dbm.RecordSet.fields.count)
                         For i = 0 To dbm.RecordSet.fields.count - 1
                             ReDim Preserve mHeader(arraySize)
-                            mHeader(arraySize) = dbm.RecordSet.fields(i).name
+                            mHeader(arraySize) = dbm.RecordSet.fields(i).Name
                             arraySize = arraySize + 1
                         Next i
                     End If
@@ -56,14 +56,14 @@ Public Function Init(raw As String, Optional ss As SystemSettings)
             End If
 End Function
 
-Private Function PrepareQuery(query As String, Optional ss As SystemSettings) As String
+Private Function PrepareQuery(Query As String, Optional ss As SystemSettings) As String
     Dim arraySize As Integer
     Dim dbm As New DbManager
     Dim i As Integer
     Dim l As Long, r As Long, q As String, length As Long, strTemp As String
     Dim tmp As String, cQuery, tmpSplit() As String, qOut As String, qIn As String, tmpVal As String, tmpQuery As String
 
-    q = query
+    q = Query
     length = 0
     
     Do While Not InStr(q, "{%") = 0
@@ -126,12 +126,12 @@ Private Function PrepareQuery(query As String, Optional ss As SystemSettings) As
     PrepareQuery = q
 End Function
 
-Private Function GenerateQuery(query As String, Optional ss As SystemSettings) As String
+Private Function GenerateQuery(Query As String, Optional ss As SystemSettings) As String
     Dim dbm As New DbManager
     Dim l As Long, r As Long, q As String, length As Long, strTemp As String
     Dim tmp As String, cQuery, tmpSplit() As String, qOut As String, qIn As String, tmpVal As String, tmpQuery As String
 
-    q = query
+    q = Query
     length = 0
     
     Do While Not InStr(q, "{%") = 0
@@ -180,8 +180,8 @@ Private Function GenerateQuery(query As String, Optional ss As SystemSettings) A
 End Function
 
 
-Public Property Get query() As String
-    query = mQuery
+Public Property Get Query() As String
+    Query = mQuery
 End Property
 
 Public Property Get Header() As String()
