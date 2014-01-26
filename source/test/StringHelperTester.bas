@@ -32,7 +32,7 @@ End Sub
 Public Sub TestIsEqual()
     On Error GoTo OnError
         Dim checker As Boolean
-        Dim Test As Integer
+        Dim test As Integer
         checker = StringHelper.IsEqual("a", "A", True)
         mAssert.Equals checker, True, "ignoreCase = True"
         checker = StringHelper.IsEqual("a", "A", False)

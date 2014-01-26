@@ -307,7 +307,7 @@ Public Function toString(ByRef obj As Variant) As String
                 toString = toString & "{"
                 Dim keys
                 keys = obj.keys
-                For i = 0 To obj.count - 1
+                For i = 0 To obj.Count - 1
                     If bFI Then bFI = False Else toString = toString & ","
                     Dim key
                     key = keys(i)

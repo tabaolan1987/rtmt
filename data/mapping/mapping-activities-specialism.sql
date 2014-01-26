@@ -1,9 +1,9 @@
-select id, [SpecialismName] as [VALUE], [SpecialismDescription] As [COMMENT] from specialism where deleted='0'
+select id, [SpecialismName] as [VALUE], [SpecialismDescription] As [COMMENT] from specialism where deleted=0 order by [SpecialismName]
 =====
 select id, 
-		([ActivityDetail] + [DetailPlus]) as [VALUE], 
-		('Group: ' + [ActivityGroup] + CHR(13) + CHR(10) + 'Process: ' + [ActivityProcess] + CHR(13) + CHR(10) + 'Training' + [ActivityTraining]) as [COMMENT]
-		from Activity where deleted='0'
+		(ActivityDetail + DetailPlus) as [VALUE], 
+		('- Group: ' + ActivityGroup + CHR(13) + CHR(10) + '- Process: ' + ActivityProcess + CHR(13) + CHR(10) + '- Training: ' + ActivityTraining) as [COMMENT]
+		from Activity where deleted=0 order by ActivityDetail
 =====
 select * from SpecialismMappingActivity 
 	where idActivity='(%ID_TOP%)' and  idSpecialism='(%ID_LEFT%)' and function_region='(%RG_F_ID%)'

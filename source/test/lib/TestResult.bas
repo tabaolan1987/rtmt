@@ -49,11 +49,11 @@ Public Property Get TestCaseRows() As Collection
 End Property
 
 Public Property Get TotalTime(className As String) As Long
-    Dim total As Long, TC As TestCaseRow, Test As ITest
+    Dim total As Long, TC As TestCaseRow, test As ITest
     total = 0
     For Each TC In mTestCaseRows
-        Set Test = TC.TestCase
-        If StrComp(className, Test.Manager.className, vbTextCompare) = 0 Then
+        Set test = TC.TestCase
+        If StrComp(className, test.Manager.className, vbTextCompare) = 0 Then
             total = total + TC.Time
         End If
     Next
@@ -61,38 +61,38 @@ Public Property Get TotalTime(className As String) As Long
 End Property
 
 Public Property Get TestCaseCount(className As String) As Integer
-    Dim count As Integer, TC As TestCaseRow, Test As ITest
-    count = 0
+    Dim Count As Integer, TC As TestCaseRow, test As ITest
+    Count = 0
     For Each TC In mTestCaseRows
-        Set Test = TC.TestCase
-        If StrComp(className, Test.Manager.className, vbTextCompare) = 0 Then
-            count = count + 1
+        Set test = TC.TestCase
+        If StrComp(className, test.Manager.className, vbTextCompare) = 0 Then
+            Count = Count + 1
         End If
     Next
-    TestCaseCount = count
+    TestCaseCount = Count
 End Property
 
 Public Property Get FailureCount(className As String) As Integer
-    Dim count As Integer, FL As TestFailure, Test As ITest, TC As ITestCase
-    count = 0
+    Dim Count As Integer, FL As TestFailure, test As ITest, TC As ITestCase
+    Count = 0
     For Each FL In mFailures
         Set TC = FL.TestCase
-       Set Test = TC
-        If StrComp(className, Test.Manager.className, vbTextCompare) = 0 Then
-            count = count + 1
+       Set test = TC
+        If StrComp(className, test.Manager.className, vbTextCompare) = 0 Then
+            Count = Count + 1
         End If
    Next
-   FailureCount = count
+   FailureCount = Count
 End Property
 
 Public Property Get isFailures(TestCase As ITestCase) As TestFailure
-    Dim FL As TestFailure, TC As ITestCase, check As Boolean, returnVal As TestFailure, Test As ITest, TE As ITest
+    Dim FL As TestFailure, TC As ITestCase, check As Boolean, returnVal As TestFailure, test As ITest, TE As ITest
     Dim s1 As String, s2 As String
     Set TE = TestCase
     For Each FL In mFailures
         Set TC = FL.TestCase
-        Set Test = TC
-        s1 = TC.Manager.MethodName & "." & Test.Manager.className
+        Set test = TC
+        s1 = TC.Manager.MethodName & "." & test.Manager.className
         s2 = TestCase.Manager.MethodName & "." & TE.Manager.className
        ' Debug.Print s1 & " | "; s2
         If StrComp(s1, s2, vbTextCompare) = 0 Then
@@ -111,5 +111,5 @@ Private Sub Class_Initialize()
 End Sub
 
 Public Property Get WasSuccessful() As Boolean
-    WasSuccessful = Failures.count = 0
+    WasSuccessful = Failures.Count = 0
 End Property

@@ -8,8 +8,8 @@ Public Function CountOfLines(Module As CodeModule) As Long
     CountOfLines = Module.CountOfLines
 End Function
 
-Public Function Lines(Module As CodeModule, StartLine As Long, count As Long) As String
-    Lines = Module.Lines(StartLine, count)
+Public Function Lines(Module As CodeModule, StartLine As Long, Count As Long) As String
+    Lines = Module.Lines(StartLine, Count)
 End Function
 
 Public Function SuiteMethodBody(TestMethodNames As Collection) As String
@@ -83,7 +83,7 @@ Public Function GetCodeModule(className) As CodeModule
     Dim Components As VBComponents, Component As VBComponent
     Set Components = Application.VBE.ActiveVBProject.VBComponents
     For Each Component In Components
-        If Component.Name = className Then
+        If Component.name = className Then
             Set GetCodeModule = Component.CodeModule
             Exit Function
         End If
@@ -171,7 +171,7 @@ Public Sub MakeRunTest(className As String)
 End Sub
 
 Public Sub Prep(Optional className As String)
-    Dim Classes As Collection, Name As Variant
+    Dim Classes As Collection, name As Variant
     MakeTestClassLister
     If className = "" Then
         Set Classes = TestClasses()
@@ -179,9 +179,9 @@ Public Sub Prep(Optional className As String)
         Set Classes = New Collection
         Classes.Add className
     End If
-    For Each Name In Classes
-        MakeSuite CStr(Name)
-        MakeRunTest CStr(Name)
+    For Each name In Classes
+        MakeSuite CStr(name)
+        MakeRunTest CStr(name)
     Next
 End Sub
 
@@ -190,8 +190,8 @@ Public Function TestClasses() As Collection
     Set TestClasses = New Collection
     Set Components = Application.VBE.ActiveVBProject.VBComponents
     For Each Component In Components
-        If IsClassModule(Component.Type) And IsTestClassName(Component.Name) Then
-            TestClasses.Add Component.Name
+        If IsClassModule(Component.Type) And IsTestClassName(Component.name) Then
+            TestClasses.Add Component.name
         End If
     Next
 End Function

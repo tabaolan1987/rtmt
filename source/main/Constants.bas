@@ -13,12 +13,25 @@ Public Const FIELD_ID = "id"
 Public Const FIELD_DELETED = "Deleted"
 Public Const FIELD_FIRST_NAME = "fname"
 Public Const FIELD_LAST_NAME = "lname"
+Public Const FIELD_SELECT = "Select"
+Public Const FIELD_DB_FIELD = "Db field"
 
 Public Const TABLE_SYNC_CONFLICT = "sync_conflict"
 Public Const TABLE_USER_DATA_CONFLICT = "user_data_conflict"
 Public Const TABLE_USER_DATA_DUPLICATE = "user_data_duplicate"
 Public Const TABLE_USER_DATA_LDAP_CONFLICT = "user_data_ldap_conflict"
 Public Const TABLE_USER_DATA_LDAP_NOTFOUND = "user_data_ldap_notfound"
+Public Const TABLE_TMP_TABLE_REPORT = "tmp_table_report"
+
+'Role & Permission
+Public Const P_R_ADMIN = "Admin"
+Public Const P_R_RC = "RC"
+Public Const P_R_TC = "TC"
+Public Const P_R_AM = "AM"
+
+Public Const P_W = "W"
+Public Const P_R = "R"
+
 ' Queries
 Public Const QUERIES_DIR = "data\queries\"
 Public Const Q_CREATE = 1
@@ -79,6 +92,10 @@ Public Const KEY_START_COL = "startCol"
 Public Const SECTION_TOP = "Top"
 Public Const SECTION_LEFT = "Left"
 
+Public Const KEY_MERGE_ENABLE = "mergeEnable"
+Public Const KEY_MERGE_COLUMES = "mergeCols"
+Public Const KEY_MERGE_PRIMARY = "mergePrimary"
+
 ' System setting file
 Public Const SS_DIR = "data\config\"
 Public Const SS_SYNC_TABLES = "synctables"
@@ -103,6 +120,7 @@ Public Const RP_QUERY_TYPE_SIMPLE = "simple"
 
 Public Const RP_SECTION_TYPE_FIXED = "fixed"
 Public Const RP_SECTION_TYPE_AUTO = "auto"
+Public Const RP_SECTION_TYPE_TMP_TABLE = "tmp_table"
 Public Const RP_ROOT_FOLDER = "data\reporting\"
 Public Const RP_END_USER_TO_SYSTEM_ROLE = "end_user_to_system_role_report"
 Public Const RP_DEFAULT_OUTPUT_FOLDER = "target\reporting"

@@ -20,9 +20,13 @@ Private mValid As Boolean
 Private mConfigFilePath As String
 Private mQueryFilePath As String
 Private mTemplateFilePath As String
-
 Private mOutputPath As String
 Private mReportSections As Collection
+
+Private mMergeEnable As Boolean
+Private mMergeColumes As Collection
+Private mMergePrimary As Long
+Private mCount As Long
 
 Public Property Get OutputPath() As String
     If Len(mOutputPath) = 0 Then
@@ -40,16 +44,18 @@ Public Function Recyle()
     FileHelper.Delete mConfigFilePath
 End Function
 
-Public Function Init(Name As String, Optional ss As SystemSettings)
-    rawName = Name
+Public Function Init(name As String, Optional ss As SystemSettings)
+    rawName = name
     Logger.LogDebug "ReportMetaData.Init", "Start init report meta name: " & rawName
     Dim tmpRawSection() As String, tmpStr As String, i As Integer
+    Dim v As Variant
+    Dim tmpList() As String
     Dim rpSection As ReportSection
     Dim ir As New IniReader
     
-    mQueryFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.RP_ROOT_FOLDER & Name & Constants.FILE_EXTENSION_QUERY)
-    mTemplateFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.RP_ROOT_FOLDER & Name & Constants.FILE_EXTENSION_TEMPLATE)
-    mConfigFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.RP_ROOT_FOLDER & Name & Constants.FILE_EXTENSION_CONFIG)
+    mQueryFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.RP_ROOT_FOLDER & name & Constants.FILE_EXTENSION_QUERY)
+    mTemplateFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.RP_ROOT_FOLDER & name & Constants.FILE_EXTENSION_TEMPLATE)
+    mConfigFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.RP_ROOT_FOLDER & name & Constants.FILE_EXTENSION_CONFIG)
     Logger.LogDebug "ReportMetaData.Init", "Read configuration path: " & mConfigFilePath
     ir.Init mConfigFilePath
     
@@ -63,6 +69,20 @@ Public Function Init(Name As String, Optional ss As SystemSettings)
     mFillHeader = ir.ReadBooleanKey(Constants.SECTION_FORMAT, Constants.KEY_FILL_HEADER)
     Logger.LogDebug "ReportMetaData.Init", "Fill header: " & CStr(mFillHeader)
     
+    mMergeEnable = ir.ReadBooleanKey(Constants.SECTION_FORMAT, Constants.KEY_MERGE_ENABLE)
+    Logger.LogDebug "ReportMetaData.Init", "Merge enable: " & CStr(mMergeEnable)
+    If mMergeEnable Then
+        mMergePrimary = ir.ReadKey(Constants.SECTION_FORMAT, Constants.KEY_MERGE_PRIMARY)
+        Logger.LogDebug "ReportMetaData.Init", "Merge primary: " & CStr(mMergePrimary)
+        tmpStr = ir.ReadKey(Constants.SECTION_FORMAT, Constants.KEY_MERGE_COLUMES)
+        If Len(tmpStr) <> 0 Then
+            tmpList = Split(tmpStr, ",")
+            Set mMergeColumes = New Collection
+            For Each v In tmpList
+                mMergeColumes.Add CInt(Trim(CStr(v)))
+            Next v
+        End If
+    End If
     mStartHeaderCol = ir.ReadLongKey(Constants.SECTION_FORMAT, Constants.KEY_START_HEADER_COL)
     Logger.LogDebug "ReportMetaData.Init", "Start header column: " & CStr(mStartHeaderCol)
     mStartHeaderRow = ir.ReadLongKey(Constants.SECTION_FORMAT, Constants.KEY_START_HEADER_ROW)
@@ -71,6 +91,8 @@ Public Function Init(Name As String, Optional ss As SystemSettings)
     Logger.LogDebug "ReportMetaData.Init", "Start column: " & CStr(mStartCol)
     mStartRow = ir.ReadLongKey(Constants.SECTION_FORMAT, Constants.KEY_START_ROW)
     Logger.LogDebug "ReportMetaData.Init", "Start row: " & CStr(mStartRow)
+    
+    
     
     Logger.LogDebug "ReportMetaData.Init", "Read query path: " & mQueryFilePath
     mValid = False
@@ -85,7 +107,11 @@ Public Function Init(Name As String, Optional ss As SystemSettings)
             Set rpSection = New ReportSection
             tmpStr = Trim(tmpRawSection(i))
             rpSection.Init tmpStr, ss
-            If Not rpSection.Valid Then
+            If StringHelper.IsEqual(rpSection.SectionType, Constants.RP_SECTION_TYPE_FIXED, True) _
+                Or StringHelper.IsEqual(rpSection.SectionType, Constants.RP_SECTION_TYPE_TMP_TABLE, True) Then
+                mCount = rpSection.Count
+            End If
+            If Not rpSection.valid Then
                 mValid = False
             End If
             mReportSections.Add rpSection
@@ -104,12 +130,12 @@ Public Property Get Query() As String
     Query = mQuery
 End Property
 
-Public Property Get Valid() As Boolean
-    Valid = mValid
+Public Property Get valid() As Boolean
+    valid = mValid
 End Property
 
-Public Property Get Name() As String
-    Name = mName
+Public Property Get name() As String
+    name = mName
 End Property
 
 Public Property Get StartRow() As Long
@@ -138,4 +164,20 @@ End Property
 
 Public Property Get TemplateFilePath() As String
     TemplateFilePath = mTemplateFilePath
+End Property
+
+Public Property Get MergeEnable() As Boolean
+    MergeEnable = mMergeEnable
+End Property
+
+Public Property Get MergeColumes() As Collection
+    Set MergeColumes = mMergeColumes
+End Property
+
+Public Property Get MergePrimary() As Long
+    MergePrimary = mMergePrimary
+End Property
+
+Public Property Get Count() As Long
+    Count = mCount
 End Property

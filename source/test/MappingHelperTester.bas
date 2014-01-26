@@ -45,23 +45,48 @@ Public Sub TestMappingMetaData()
     mmd.Query Constants.Q_UPDATE, data
     mmd.Query Constants.Q_TOP, data
     mmd.Query Constants.Q_LEFT, data
+    mmd.Recyle
 OnExit:
     ' finally
     Exit Sub
 OnError:
     mAssert.Should False, Logger.GetErrorMessage("", Err)
-    Logger.LogError "UserManagementTeser.TestCheckDuplicate", "", Err
+    Logger.LogError "MappingHelperTester.TestMappingMetaData", "", Err
+    Resume OnExit
+End Sub
+
+Public Sub TestInitMapping()
+    On Error GoTo OnError
+    Dim mmd As New MappingMetadata
+    Dim ss As New SystemSettings
+    ss.Init
+    mmd.Init Constants.MAPPING_ACTIVITIES_SPECIALISM
+    
+    Dim mh As New MappingHelper
+    mh.Init mmd, ss
+    mh.GenerateMapping
+    mh.OpenMapping
+    'mh.ParseMapping
+  '  mmd.Recyle
+OnExit:
+    ' finally
+    Exit Sub
+OnError:
+    mAssert.Should False, Logger.GetErrorMessage("", Err)
+    Logger.LogError "UserManagementTeser.TestInitMapping", "", Err
     Resume OnExit
 End Sub
 
 Private Function ITest_Suite() As TestSuite
     Set ITest_Suite = New TestSuite
     ITest_Suite.AddTest ITest_Manager.className, "TestMappingMetaData"
+    ITest_Suite.AddTest ITest_Manager.className, "TestInitMapping"
 End Function
 
 Private Sub ITestCase_RunTest()
     Select Case mManager.MethodName
         Case "TestMappingMetaData": TestMappingMetaData
+        Case "TestInitMapping": TestInitMapping
         Case Else: mAssert.Should False, "Invalid test name: " & mManager.MethodName
     End Select
 End Sub

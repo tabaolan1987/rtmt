@@ -1,0 +1,1 @@
+CREATE TABLE [tmp_table_report] ( [key] varchar(255), [value] varchar(255))

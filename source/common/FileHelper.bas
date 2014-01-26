@@ -15,15 +15,15 @@ Private tmpDirPath As String
 #End If
 
 
-Public Function WaitForFileClose(FileName As String, ByVal TestIntervalMilliseconds As Long, _
-    ByVal TimeOutMilliseconds As Long) As Boolean
+Public Function WaitForFileClose(FileName As String, ByVal TestIntervalMilliseconds As Double, _
+    ByVal TimeOutMilliseconds As Double) As Boolean
 
-Dim StartTickCount As Long
-Dim EndTickCount As Long
-Dim TickCountNow As Long
+Dim StartTickCount As Double
+Dim EndTickCount As Double
+Dim TickCountNow As Double
 Dim FileIsOpen As Boolean
 Dim Done As Boolean
-Dim CancelKeyState As Long
+Dim CancelKeyState As Double
 
 FileIsOpen = IsFileOpen(FileName:=FileName)
 If FileIsOpen = False Then
@@ -179,7 +179,7 @@ Function CurrentDbPath() As String
     If Len(dbPath) = 0 Then
         Dim cRes As String
         Dim nPos As Long
-        cRes = CurrentDb.Name
+        cRes = CurrentDb.name
         nPos = Len(cRes)
         Do Until Right(cRes, 1) = "\"
             nPos = nPos - 1
@@ -204,7 +204,7 @@ Function Delete(path As String) As Boolean
     End If
 End Function
 
-Public Function ReadSSFile(Name As String) As String()
+Public Function ReadSSFile(name As String) As String()
     Dim path As String
     Dim arraySize As Integer
     Dim sInput As String
@@ -212,7 +212,7 @@ Public Function ReadSSFile(Name As String) As String()
     Dim i As Long
     Dim tmpList() As String
     Dim ln As String
-    path = FileHelper.CurrentDbPath & Constants.SS_DIR & Name & ".ss"
+    path = FileHelper.CurrentDbPath & Constants.SS_DIR & name & ".ss"
     If IsExist(path) Then
         Dim fso As Object
         Dim ReadFile As Object
@@ -239,7 +239,7 @@ Public Function SaveAsCSV(filePath As String, desFilePath As String, Optional Wo
     Dim i As Integer
     Dim WB As New Excel.Workbook
     Dim WS As Excel.Sheets
-    Dim Name As String
+    Dim name As String
     Dim v As Variant
     If IsExist(desFilePath) Then
         Delete desFilePath
@@ -249,11 +249,11 @@ Public Function SaveAsCSV(filePath As String, desFilePath As String, Optional Wo
         .DisplayAlerts = False
                     Set WB = .Workbooks.Add(filePath)
                     ' Remove unused sheets
-                    Logger.LogDebug "FileHelper.SaveAsCSV", "Sheet count: " & .Sheets.count
-                    If .Sheets.count > 1 And Len(WorkSheet) <> 0 Then
+                    Logger.LogDebug "FileHelper.SaveAsCSV", "Sheet count: " & .Sheets.Count
+                    If .Sheets.Count > 1 And Len(WorkSheet) <> 0 Then
                         For Each v In .Sheets
-                            Logger.LogDebug "FileHelper.SaveAsCSV", "Sheet name: " & v.Name
-                            If Not StringHelper.IsEqual(v.Name, WorkSheet, True) Then
+                            Logger.LogDebug "FileHelper.SaveAsCSV", "Sheet name: " & v.name
+                            If Not StringHelper.IsEqual(v.name, WorkSheet, True) Then
                                 v.Delete
                             End If
                         Next v
@@ -364,6 +364,6 @@ Public Function DuplicateAsTemporary(file As String) As String
     desFile = tmpDir & StringHelper.GetGUID
     Dim fso As New Scripting.FileSystemObject
     fso.CopyFile file, desFile, True
-    fso = Nothing
+    Set fso = Nothing
     DuplicateAsTemporary = desFile
 End Function

@@ -65,7 +65,7 @@ Public Sub TestSyncTable()
         For i = LBound(SyncTables) To UBound(SyncTables)
             stTable = Trim(SyncTables(i))
             Logger.LogDebug "DbManagerTester.TestSyncTable", "Start sync table: " & stTable
-            dbm.SyncTable prop.ServerName & "," & prop.Port, prop.DatabaseName, stTable, stTable, prop.Username, prop.Password, False
+            dbm.SyncTable prop.ServerName & "," & prop.Port, prop.DatabaseName, stTable, stTable, prop.userNAme, prop.Password, False
         Next i
     End If
 OnExit:
@@ -94,7 +94,7 @@ Public Sub TestImportSqlTable()
         For i = LBound(SyncTables) To UBound(SyncTables)
             stTable = Trim(SyncTables(i))
             Logger.LogDebug "DbManagerTester.TestImportSqlTable", "Start import table: " & stTable
-            dbm.ImportSqlTable prop.ServerName & "," & prop.Port, prop.DatabaseName, stTable, stTable, prop.Username, prop.Password
+            dbm.ImportSqlTable prop.ServerName & "," & prop.Port, prop.DatabaseName, stTable, stTable, prop.userNAme, prop.Password
         Next i
     End If
 OnExit:
@@ -130,10 +130,10 @@ Public Sub TestOpenRecordSet()
     Dim dm As DbManager: Set dm = New DbManager
     Dim rInfo As ReportMetaData: Set rInfo = New ReportMetaData
     dm.Init
-    rInfo.Init (Name)
+    rInfo.Init (name)
     params.Add "SYSTEM_ROLE_NAME", "Procurement Catalogue Approver"
     params.Add "BP_ROLE_STANDARD_NAME", "POQR Approver"
-    If rInfo.Valid = True Then
+    If rInfo.valid = True Then
         dm.OpenRecordSet rInfo.Query, params
     End If
     

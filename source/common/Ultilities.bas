@@ -1,7 +1,14 @@
 '@author Hai Lu
 ' General utilities function
 Option Explicit
+
+
+Const NoError = 0
+
 #If VBA7 Then
+Declare PtrSafe Function WNetGetUser Lib "mpr.dll" _
+      Alias "WNetGetUserA" (ByVal lpName As String, _
+      ByVal lpUserName As String, lpnLength As Long) As Long
 Private Declare PtrSafe Function GetClassNameA Lib "user32" ( _
     ByVal hwnd As Long, _
     ByVal lpClassName As String, _
@@ -16,6 +23,9 @@ Private Declare PtrSafe Function ShowWindowAsync Lib "user32" ( _
     ByVal nCmdShow As Long) _
     As Boolean
 #Else
+Declare Function WNetGetUser Lib "mpr.dll" _
+      Alias "WNetGetUserA" (ByVal lpName As String, _
+      ByVal lpUserName As String, lpnLength As Long) As Long
 Private Declare Function GetClassNameA Lib "user32" ( _
     ByVal hwnd As Long, _
     ByVal lpClassName As String, _
@@ -72,7 +82,7 @@ Public Function IfTableExists(tblName As String) As Boolean
     Set dbs = Application.CurrentData
     IfTableExists = False
     For Each obj In dbs.AllTables
-        If obj.Name = tblName Then
+        If obj.name = tblName Then
             IfTableExists = True
             Exit For
         End If
@@ -157,5 +167,34 @@ Function ShowToolTip(ShowControl As String)
               ' Optional: Display ToolTip on the Status Bar.
               z = SysCmd(SYSCMD_SETSTATUS, MyToolTip.value)
           End If
+
+End Function
+
+Public Function GetUserName() As String
+    ' Buffer size for the return string.
+    Const lpnLength As Integer = 255
+    ' Get return buffer space.
+    Dim status As Integer
+    ' For getting user information.
+    Dim lpName, lpUserName As String
+    ' Assign the buffer size constant to lpUserName.
+    lpUserName = Space$(lpnLength + 1)
+    ' Get the log-on name of the person using product.
+    status = WNetGetUser(lpName, lpUserName, lpnLength)
+    ' See whether error occurred.
+    If status = NoError Then
+         ' This line removes the null character. Strings in C are null-
+         ' terminated. Strings in Visual Basic are not null-terminated.
+         ' The null character must be removed from the C strings to be used
+         ' cleanly in Visual Basic.
+         lpUserName = Left$(lpUserName, InStr(lpUserName, Chr(0)) - 1)
+    Else
+         ' An error occurred.
+         Logger.LogError "Ultilities.GetUserName", "Unable to get the name.", Nothing
+         End
+    End If
+    ' Display the name of the person logged on to the machine.
+    Logger.LogDebug "Ultilities.GetUserName", "The person logged on this machine is: " & lpUserName
+    GetUserName = lpUserName
 
 End Function

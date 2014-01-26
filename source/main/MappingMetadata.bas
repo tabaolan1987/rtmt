@@ -31,6 +31,7 @@ Public Function Recyle()
     FileHelper.Delete mQueryFilePath
     FileHelper.Delete mTemplateFilePath
     FileHelper.Delete mConfigFilePath
+    FileHelper.Delete mTemplateFilePath & Constants.FILE_EXTENSION_TEMPLATE
 End Function
 
 Public Function Init(mappingName As String, Optional ss As SystemSettings)
@@ -91,12 +92,12 @@ Public Property Get WorkSheet() As String
     WorkSheet = mWorkSheet
 End Property
 
-Public Property Get Name() As String
-    Name = mName
+Public Property Get name() As String
+    name = mName
 End Property
 
-Public Property Get Valid() As Boolean
-    Valid = mValid
+Public Property Get valid() As Boolean
+    valid = mValid
 End Property
 
 Public Property Get StartRowTop() As Long
@@ -115,12 +116,16 @@ Public Property Get StartColTop() As Long
     StartColTop = mStartColTop
 End Property
 
+Public Property Get TemplateFilePath() As String
+    TemplateFilePath = mTemplateFilePath
+End Property
+
 Public Function Query(qType As Integer, Optional data As Scripting.Dictionary) As String
     Dim mQuery As String
     Dim v As Variant
     mQuery = ""
     Select Case qType
-        Case Constants.Q_CREATE:
+        Case Constants.Q_INSERT:
             mQuery = mQueryInsert
         Case Constants.Q_UPDATE:
             mQuery = mQueryUpdate
@@ -134,6 +139,6 @@ Public Function Query(qType As Integer, Optional data As Scripting.Dictionary) A
     If Not data Is Nothing Then
         mQuery = StringHelper.GenerateQuery(mQuery, data)
     End If
-    Logger.LogDebug "MappingMetaData.Query", mQuery
+    'Logger.LogDebug "MappingMetaData.Query", mQuery
     Query = mQuery
 End Function
