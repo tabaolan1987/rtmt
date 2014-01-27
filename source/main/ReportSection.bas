@@ -86,7 +86,7 @@ Public Function Init(raw As String, Optional mss As SystemSetting)
                     dbm.ExecuteQuery "CREATE TABLE [" & tableName & "] ( [key] varchar(255), [value] varchar(255))"
                 End If
 
-                tmpQuery = StringHelper.GenerateQuery(StringHelper.TrimNewLine(queryCache(3)), DataQuery)
+                tmpQuery = StringHelper.GenerateQuery(StringHelper.TrimNewLine(queryCache(1)), DataQuery)
                 Logger.LogDebug "ReportSection.Init", "Get cache value query: " & tmpQuery
                 dbm.OpenRecordSet tmpQuery
                 If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then

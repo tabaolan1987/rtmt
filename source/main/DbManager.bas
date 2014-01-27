@@ -572,7 +572,7 @@ Public Function SyncTable(Server As String, _
                                 Logger.LogDebug "DbManager.SyncTable", tmpCol & " | " & StringHelper.IsEqual(tmpCol, Constants.FIELD_ID, True) & " | " & StringHelper.IsEqual(tmpCol, Constants.FIELD_TIMESTAMP, True)
                                 Logger.LogDebug "DbManager.SyncTable", tmpId & " | " & str1 & " | " & str2
                                 
-                                If (tmpRst.fields(i).Type = dbBoolean) Then
+                                If (tmpType = dbBoolean) Then
                                     If StringHelper.IsEqual(str1, "True", True) Then
                                         str1 = "-1"
                                     Else
@@ -593,7 +593,15 @@ Public Function SyncTable(Server As String, _
                                     check = True
                                     If c = 0 Then
                                         '============== UPDATE SERVER RECORD BLOCK ===============
-                                        tmpDataLocal.Add tmpCol, str1
+                                        If tmpType = dbBoolean Then
+                                            If StringHelper.IsEqual(str1, "0", True) Then
+                                                tmpDataLocal.Add tmpCol, "0"
+                                            Else
+                                                tmpDataLocal.Add tmpCol, "1"
+                                            End If
+                                        Else
+                                            tmpDataLocal.Add tmpCol, str1
+                                        End If
                                         tmpCols.Add tmpCol
                                         tmpCols.Add Constants.FIELD_ID
                                         tmpCols.Add Constants.FIELD_TIMESTAMP

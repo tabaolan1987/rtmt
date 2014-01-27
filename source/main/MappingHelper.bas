@@ -183,9 +183,9 @@ Public Function GenerateMapping()
                                 Logger.LogDebug "MappingHelper.GenerateMapping", "Check: " & check
                                 If StringHelper.IsEqual(check, "false", True) Then
                                     Set rng = .Cells(k, l)
-                                    rng.value = Chr(251)
+                                    rng.value = "x"
                                     'rng.Borders.LineStyle = xlContinuous
-                                    rng.Interior.Color = RGB(255, 255, 0)
+                                    'rng.Interior.Color = RGB(255, 255, 0)
                                 End If
                             End If
                             dbm.Recycle
@@ -199,6 +199,7 @@ Public Function GenerateMapping()
             End With
             .Quit
         End With
+        mmd.RefreshLastModified
         Session.SetFlagMapping (True)
     End If
 End Function

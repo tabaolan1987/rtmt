@@ -5,16 +5,32 @@ Public Sub OnTest()
     'DoCmd.SetWarnings False
     'Run "MappingHelperTester"
    ' Run "UserManagementTester"
-    'Run "DbManagerTester"
+   ' Run "DbManagerTester"
     'Dim um As New UserManagement
     'um.CheckConflict
-    'Reporting.GenerateReport "ROLE_MAPPING_OUTPUT_OF_TOOL_FOR_SECURITY"
+    'Reporting.GenerateReport Constants.RP_ROLE_MAPPING_OUTPUT_OF_TOOL_FOR_SECURITY
     'Session.Init
-    Dim mmd As New MappingMetadata
-    mmd.Init Constants.MAPPING_ACTIVITIES_SPECIALISM
-    Dim mappingHelper As New mappingHelper
-    mappingHelper.Init mmd, Session.Settings
-    Logger.LogDebug "test", mappingHelper.CheckExistMapping
+    
+   ' Logger.LogDebug "test", Session.currentUser.Valid
+    Dim dbm As DbManager, _
+        SyncTables() As String, _
+        prop As SystemSetting, _
+        isEmpty As Boolean, _
+        stTable As String
+    Set dbm = New DbManager
+    Set prop = Session.Settings()
+    SyncTables = prop.SyncTables
+    isEmpty = Ultilities.IsVarArrayEmpty(SyncTables)
+    If isEmpty = False Then
+        Dim i As Integer
+        dbm.RecycleTableName Constants.TABLE_SYNC_CONFLICT
+        For i = LBound(SyncTables) To UBound(SyncTables)
+            stTable = Trim(SyncTables(i))
+            Logger.LogDebug "DbManagerTester.TestSyncTable", "Start sync table: " & stTable
+            dbm.ExecuteQuery "update [" & stTable & "] set timestamp=null"
+        Next i
+    End If
+    
 End Sub
 
 Public Sub Run(Optional TestClassName As String)

@@ -49,7 +49,7 @@ Public Function Init(mappingName As String, Optional ss As SystemSetting)
     mConfigFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.MAPPING_ROOT_FOLDER & rawName & Constants.FILE_EXTENSION_CONFIG)
     Logger.LogDebug "MappingMetaData.Init", "Read configuration path: " & mConfigFilePath
     ir.Init mConfigFilePath
-    RefreshLastModified
+    'RefreshLastModified
     
     mName = ir.ReadKey(Constants.SECTION_GENERAL, Constants.KEY_NAME)
     Logger.LogDebug "MappingMetaData.Init", "Mapping name: " & mName
@@ -128,11 +128,11 @@ Public Property Get LastModified() As String
 End Property
 
 Public Function CurrentModifedDate() As String
-    CurrentModifedDate = FileHelper.FileLastModified(mTemplateFilePath)
+    CurrentModifedDate = FileHelper.FileLastModified(mTemplateFilePath & Constants.FILE_EXTENSION_TEMPLATE)
 End Function
 
 Public Function RefreshLastModified()
-    mLastModified = FileHelper.FileLastModified(mTemplateFilePath)
+    mLastModified = FileHelper.FileLastModified(mTemplateFilePath & Constants.FILE_EXTENSION_TEMPLATE)
 End Function
 
 Public Function query(qType As Integer, Optional data As Scripting.Dictionary) As String

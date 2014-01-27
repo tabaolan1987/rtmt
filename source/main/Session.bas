@@ -7,17 +7,30 @@ Private mFlagReports As Boolean
 Private mMappingMDCol As Scripting.Dictionary
 Private mReportMDCol As Scripting.Dictionary
 
-Public Function Init()
-    Dim mmd As MappingMetadata
-    Dim rmd As ReportMetaData
+Public Function Recycle()
+    Set ss = Nothing
+    
+End Function
+
+Public Function RecycleUser()
+    Set ss = Nothing
+    Set mCurrentUser = Nothing
+End Function
+
+Public Function RecyleMapping()
     mFlagMapping = False
-    mFlagReports = False
-    currentUser
+    Set mMappingMDCol = Nothing
+    Dim mmd As MappingMetadata
     Set mMappingMDCol = New Scripting.Dictionary
     Set mmd = New MappingMetadata
     mmd.Init Constants.MAPPING_ACTIVITIES_SPECIALISM
     mMappingMDCol.Add Constants.MAPPING_ACTIVITIES_SPECIALISM, mmd
-    
+End Function
+
+Public Function RecyleReports()
+    mFlagReports = False
+    Set mReportMDCol = Nothing
+    Dim rmd As ReportMetaData
     Set mReportMDCol = New Scripting.Dictionary
     Set rmd = New ReportMetaData
     rmd.Init Constants.RP_END_USER_TO_BB_JOB_ROLE
@@ -30,6 +43,27 @@ Public Function Init()
     Set rmd = New ReportMetaData
     rmd.Init Constants.RP_ROLE_MAPPING_OUTPUT_OF_TOOL_FOR_SECURITY
     mReportMDCol.Add Constants.RP_ROLE_MAPPING_OUTPUT_OF_TOOL_FOR_SECURITY, rmd
+
+End Function
+
+Public Function Init()
+    Set mCurrentUser = Nothing
+    currentUser
+    Recycle
+End Function
+
+Public Function MappingMDCol() As Scripting.Dictionary
+    If mMappingMDCol Is Nothing Then
+        RecyleMapping
+    End If
+    Set MappingMDCol = mMappingMDCol
+End Function
+
+Public Function ReportMDCol() As Scripting.Dictionary
+    If mReportMDCol Is Nothing Then
+        RecyleReports
+    End If
+    Set ReportMDCol = mReportMDCol
 End Function
 
 Public Function currentUser() As currentUser

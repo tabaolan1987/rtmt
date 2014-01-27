@@ -198,3 +198,26 @@ Public Function GetUserName() As String
     GetUserName = lpUserName
 
 End Function
+
+Public Function CheckTables() As Boolean
+    Dim check As Boolean, _
+        SyncTables() As String, _
+        prop As SystemSetting, _
+        isEmpty As Boolean, _
+        stTable As String
+    Set prop = Session.Settings()
+    SyncTables = prop.SyncTables
+    isEmpty = Ultilities.IsVarArrayEmpty(SyncTables)
+    check = True
+    If isEmpty = False Then
+        Dim i As Integer
+        For i = LBound(SyncTables) To UBound(SyncTables)
+            stTable = Trim(SyncTables(i))
+            If Not Ultilities.IfTableExists(stTable) Then
+                check = False
+                Exit For
+            End If
+        Next i
+    End If
+    CheckTables = check
+End Function
