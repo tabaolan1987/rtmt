@@ -22,10 +22,10 @@ Public Property Get TestCasesRun() As Long
     TestCasesRun = mTestCasesRun
 End Property
 
-Public Sub EndTest(TestCase As ITestCase, Time As Long)
+Public Sub EndTest(TestCase As ITestCase, time As Long)
     Dim TCR As TestCaseRow
     Set TCR = New TestCaseRow
-    TCR.Init TestCase, Time
+    TCR.Init TestCase, time
     TestCaseRows.Add TCR
     Set mCurrentTestCase = Nothing
 End Sub
@@ -54,7 +54,7 @@ Public Property Get TotalTime(className As String) As Long
     For Each TC In mTestCaseRows
         Set test = TC.TestCase
         If StrComp(className, test.Manager.className, vbTextCompare) = 0 Then
-            total = total + TC.Time
+            total = total + TC.time
         End If
     Next
     TotalTime = total

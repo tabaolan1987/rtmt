@@ -40,11 +40,11 @@ Public Sub TestMappingMetaData()
     data.Add Constants.Q_KEY_FUNCTION_REGION_ID, "test funct"
     data.Add Constants.Q_KEY_REGION_NAME, "GoM"
     data.Add Constants.Q_KEY_CHECK, "true"
-    mmd.Query Constants.Q_CHECK, data
-    mmd.Query Constants.Q_CREATE, data
-    mmd.Query Constants.Q_UPDATE, data
-    mmd.Query Constants.Q_TOP, data
-    mmd.Query Constants.Q_LEFT, data
+    mmd.query Constants.Q_CHECK, data
+    mmd.query Constants.Q_CREATE, data
+    mmd.query Constants.Q_UPDATE, data
+    mmd.query Constants.Q_TOP, data
+    mmd.query Constants.Q_LEFT, data
     mmd.Recyle
 OnExit:
     ' finally
@@ -58,8 +58,8 @@ End Sub
 Public Sub TestInitMapping()
     On Error GoTo OnError
     Dim mmd As New MappingMetadata
-    Dim ss As New SystemSettings
-    ss.Init
+    Dim ss As SystemSetting
+    Set ss = Session.Settings()
     mmd.Init Constants.MAPPING_ACTIVITIES_SPECIALISM
     
     Dim mh As New MappingHelper

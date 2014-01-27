@@ -9,21 +9,18 @@ Private mSectionType As String
 Private mHeader() As String
 Private mQuery As String
 Private mValid As Boolean
-Private ss As SystemSettings
+Private ss As SystemSetting
 Private mCount As Long
 
 Private Property Get DataQuery() As Scripting.Dictionary
     Dim data As New Scripting.Dictionary
-    If ss Is Nothing Then
-       Set ss = New SystemSettings
-       ss.Init
-    End If
+    Set ss = Session.Settings()
     data.Add Constants.Q_KEY_FUNCTION_REGION_ID, ss.RegionFunctionId
-    data.Add Constants.Q_KEY_REGION_NAME, ss.RegionName
+    data.Add Constants.Q_KEY_REGION_NAME, ss.regionName
     Set DataQuery = data
 End Property
 
-Public Function Init(raw As String, Optional mss As SystemSettings)
+Public Function Init(raw As String, Optional mss As SystemSetting)
     mValid = False
     Dim dbm As New DbManager
     Logger.LogDebug "ReportSection.Init", "Prepare raw: " & raw
@@ -57,7 +54,7 @@ Public Function Init(raw As String, Optional mss As SystemSettings)
             Logger.LogDebug "ReportSection.Init", "Fields count: " & CStr(dbm.RecordSet.fields.Count)
             For i = 0 To dbm.RecordSet.fields.Count - 1
                 ReDim Preserve mHeader(arraySize)
-                mHeader(arraySize) = dbm.RecordSet.fields(i).name
+                mHeader(arraySize) = dbm.RecordSet.fields(i).Name
                 arraySize = arraySize + 1
                 Next i
             End If
@@ -129,7 +126,7 @@ Public Function Init(raw As String, Optional mss As SystemSettings)
             Logger.LogDebug "ReportSection.Init", "Fields count: " & CStr(dbm.RecordSet.fields.Count)
             For i = 0 To dbm.RecordSet.fields.Count - 1
                 ReDim Preserve mHeader(arraySize)
-                mHeader(arraySize) = dbm.RecordSet.fields(i).name
+                mHeader(arraySize) = dbm.RecordSet.fields(i).Name
                 arraySize = arraySize + 1
                 Next i
             End If
@@ -147,14 +144,14 @@ Public Function Init(raw As String, Optional mss As SystemSettings)
     End If
 End Function
 
-Private Function PrepareQuery(Query As String, Optional ss As SystemSettings) As String
+Private Function PrepareQuery(query As String, Optional ss As SystemSetting) As String
     Dim arraySize As Integer
     Dim dbm As New DbManager
     Dim i As Integer
     Dim l As Long, r As Long, q As String, length As Long, strTemp As String
     Dim tmp As String, cQuery, tmpSplit() As String, qOut As String, qIn As String, tmpVal As String, tmpQuery As String
 
-    q = Query
+    q = query
     length = 0
     
     Do While Not InStr(q, "{%") = 0
@@ -203,7 +200,7 @@ Private Function PrepareQuery(Query As String, Optional ss As SystemSettings) As
         For i = LBound(mHeader) To UBound(mHeader)
             strTemp = Replace(qIn, "(%VALUE%)", StringHelper.EscapeQueryString(mHeader(i)))
             If Not ss Is Nothing Then
-                strTemp = Replace(strTemp, "(%RG_F_ID%)", ss.RegionName)
+                strTemp = Replace(strTemp, "(%RG_F_ID%)", ss.regionName)
             End If
             tmpQuery = tmpQuery & qIn & ","
         Next i
@@ -217,12 +214,12 @@ Private Function PrepareQuery(Query As String, Optional ss As SystemSettings) As
     PrepareQuery = q
 End Function
 
-Private Function GenerateQuery(Query As String, Optional ss As SystemSettings) As String
+Private Function GenerateQuery(query As String, Optional ss As SystemSetting) As String
     Dim dbm As New DbManager
     Dim l As Long, r As Long, q As String, length As Long, strTemp As String
     Dim tmp As String, cQuery, tmpSplit() As String, qOut As String, qIn As String, tmpVal As String, tmpQuery As String
 
-    q = Query
+    q = query
     length = 0
     
     Do While Not InStr(q, "{%") = 0
@@ -251,7 +248,7 @@ Private Function GenerateQuery(Query As String, Optional ss As SystemSettings) A
                 tmpVal = dbm.RecordSet(0)
                 strTemp = Replace(qIn, "(%VALUE%)", StringHelper.EscapeQueryString(tmpVal))
                 If Not ss Is Nothing Then
-                    strTemp = Replace(strTemp, "(%RG_F_ID%)", ss.RegionName)
+                    strTemp = Replace(strTemp, "(%RG_F_ID%)", ss.regionName)
                 End If
                 tmpQuery = tmpQuery & strTemp & ","
                 'Logger.LogDebug "ReportSection.GenerateQuery", "Found value: " & tmpVal
@@ -271,8 +268,8 @@ Private Function GenerateQuery(Query As String, Optional ss As SystemSettings) A
 End Function
 
 
-Public Property Get Query() As String
-    Query = mQuery
+Public Property Get query() As String
+    query = mQuery
 End Property
 
 Public Property Get Header() As String()
@@ -291,15 +288,15 @@ Public Property Get SectionType() As String
     SectionType = mSectionType
 End Property
 
-Public Property Get valid() As Boolean
-    valid = mValid
+Public Property Get Valid() As Boolean
+    Valid = mValid
 End Property
 
 Public Property Get Count() As Long
     Count = mCount
 End Property
 
-Public Function MakeQuery(colName As String, Optional mss As SystemSettings) As String
+Public Function MakeQuery(colName As String, Optional mss As SystemSetting) As String
     If StringHelper.IsEqual(mSectionType, Constants.RP_SECTION_TYPE_AUTO, True) Then
         Dim data As Scripting.Dictionary
         Set data = DataQuery

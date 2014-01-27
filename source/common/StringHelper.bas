@@ -157,9 +157,9 @@ Public Function GetDictKey(dict As Scripting.Dictionary, value As String) As Str
     GetDictKey = key
 End Function
 
-Public Function GenerateQuery(Query As String, Optional data As Scripting.Dictionary) As String
+Public Function GenerateQuery(query As String, Optional data As Scripting.Dictionary) As String
     Dim mQuery As String
-    mQuery = Query
+    mQuery = query
     If Not data Is Nothing Then
         For Each v In data.keys
             mQuery = Replace(mQuery, "(%" & CStr(v) & "%)", EscapeQueryString(data.Item(CStr(v))))

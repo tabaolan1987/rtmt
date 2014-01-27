@@ -114,8 +114,8 @@ End Sub
 
 Public Sub TestSaveAsCSV()
     On Error GoTo OnError
-    Dim ss As New SystemSettings
-    ss.Init
+    Dim ss As SystemSetting
+    ss = Session.Settings()
     Dim inFile As String
     Dim outFile As String
     inFile = FileHelper.CurrentDbPath & Constants.END_USER_DATA_FILE_XLSX
@@ -133,13 +133,28 @@ End Sub
 
 Public Sub TestPrepareUserData()
     On Error GoTo OnError
-    Dim ss As New SystemSettings
-    ss.Init
+    Dim ss As SystemSetting
+    Set ss = Session.Settings()
     Dim inFile As String
     Dim outFile As String
     inFile = FileHelper.CurrentDbPath & Constants.END_USER_DATA_FILE_XLSX
     outFile = FileHelper.PrepareUserData(inFile, ss)
     mAssert.Equals FileHelper.IsExist(outFile), True
+OnExit:
+    ' finally
+    Exit Sub
+OnError:
+    mAssert.Should False, Logger.GetErrorMessage("", Err)
+    Logger.LogError "FileHelperTester.TestPrepareUserData", "", Err
+    Resume OnExit
+End Sub
+
+Public Sub TestGetFileLastModified()
+        On Error GoTo OnError
+    Dim s As String
+    s = FileHelper.FileLastModified(FileHelper.CurrentDbPath & Constants.END_USER_DATA_FILE_XLSX)
+    Logger.LogDebug "FileHelperTester.TestGetFileLastModified", "Last modified: " & s
+    mAssert.Equals Len(s) <> 0, True
 OnExit:
     ' finally
     Exit Sub
@@ -158,6 +173,7 @@ Private Function ITest_Suite() As TestSuite
     ITest_Suite.AddTest ITest_Manager.className, "TestTrimSourceFile"
     ITest_Suite.AddTest ITest_Manager.className, "TestSaveAsCSV"
     ITest_Suite.AddTest ITest_Manager.className, "TestPrepareUserData"
+    ITest_Suite.AddTest ITest_Manager.className, "TestGetFileLastModified"
 End Function
 
 Private Sub ITestCase_RunTest()
@@ -169,6 +185,7 @@ Private Sub ITestCase_RunTest()
         Case "TestTrimSourceFile": TestTrimSourceFile
         Case "TestSaveAsCSV": TestSaveAsCSV
         Case "TestPrepareUserData": TestPrepareUserData
+        Case "TestGetFileLastModified": TestGetFileLastModified
         Case Else: mAssert.Should False, "Invalid test name: " & mManager.MethodName
     End Select
 End Sub

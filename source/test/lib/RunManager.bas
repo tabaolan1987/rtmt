@@ -47,9 +47,9 @@ Private Sub IRunManager_Report()
                 oFile.WriteLine "<testsuite name=""" & lastClass & """ time=""" & TimerHelper.MsToString(result.TotalTime(lastClass)) & """ errors=""0"" tests=""" & CStr(result.TestCaseCount(lastClass)) & """ failures=""" & CStr(result.FailureCount(lastClass)) & """>"
             End If
             
-           Logger.LogInfo "RunManager.IRunManager_Report", test.Manager.className & "." & TestCase.Manager.MethodName & ": " & TCR.Time
+           Logger.LogInfo "RunManager.IRunManager_Report", test.Manager.className & "." & TestCase.Manager.MethodName & ": " & TCR.time
             
-            oFile.WriteLine "   <testcase time=""" & TimerHelper.MsToString(TCR.Time) & """ name=""" & TestCase.Manager.MethodName & """ >"
+            oFile.WriteLine "   <testcase time=""" & TimerHelper.MsToString(TCR.time) & """ name=""" & TestCase.Manager.MethodName & """ >"
             If Not Failure Is Nothing Then
                 Logger.LogError "RunManager.IRunManager_Report", " #Failure -> " & Failure.Comment, Nothing
                 oFile.WriteLine "       <failure type=""runtime"" message=""" & StringHelper.EncodeXml(Failure.Comment) & """>"

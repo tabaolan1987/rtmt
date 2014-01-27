@@ -31,14 +31,14 @@ End Sub
 
 Public Sub TestImportSettings()
     On Error GoTo OnError
-    Dim s As SystemSettings: Set s = New SystemSettings
-    s.Init
+    Dim s As SystemSetting
+    Set s = Session.Settings()
     mAssert.Equals s.ServerName, "CMGSRV2\SQLEXPRESS"
     mAssert.Equals s.Port, "1433"
     mAssert.Equals s.DatabaseName, "upstream_role_mapping"
     mAssert.Equals s.userNAme, "sa"
     mAssert.Equals s.Password, "admincmg@3f"
-    mAssert.Equals s.RegionName, "Indo"
+    mAssert.Equals s.regionName, "Indo"
     mAssert.Equals s.LogLevel, "DEBUG"
     mAssert.Equals UBound(s.LineToRemove), 2
     mAssert.Equals UBound(s.SyncTables), 9

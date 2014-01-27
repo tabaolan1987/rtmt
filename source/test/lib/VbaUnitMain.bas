@@ -8,8 +8,8 @@ Public Sub OnTest()
     'Run "DbManagerTester"
     'Dim um As New UserManagement
     'um.CheckConflict
-    Reporting.GenerateReport "ROLE_MAPPING_OUTPUT_OF_TOOL_FOR_SECURITY"
-    
+    'Reporting.GenerateReport "ROLE_MAPPING_OUTPUT_OF_TOOL_FOR_SECURITY"
+    'Session.Init
 End Sub
 
 Public Sub Run(Optional TestClassName As String)

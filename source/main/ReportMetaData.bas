@@ -44,8 +44,8 @@ Public Function Recyle()
     FileHelper.Delete mConfigFilePath
 End Function
 
-Public Function Init(name As String, Optional ss As SystemSettings)
-    rawName = name
+Public Function Init(Name As String, Optional ss As SystemSetting)
+    rawName = Name
     Logger.LogDebug "ReportMetaData.Init", "Start init report meta name: " & rawName
     Dim tmpRawSection() As String, tmpStr As String, i As Integer
     Dim v As Variant
@@ -53,9 +53,9 @@ Public Function Init(name As String, Optional ss As SystemSettings)
     Dim rpSection As ReportSection
     Dim ir As New IniReader
     
-    mQueryFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.RP_ROOT_FOLDER & name & Constants.FILE_EXTENSION_QUERY)
-    mTemplateFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.RP_ROOT_FOLDER & name & Constants.FILE_EXTENSION_TEMPLATE)
-    mConfigFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.RP_ROOT_FOLDER & name & Constants.FILE_EXTENSION_CONFIG)
+    mQueryFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.RP_ROOT_FOLDER & Name & Constants.FILE_EXTENSION_QUERY)
+    mTemplateFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.RP_ROOT_FOLDER & Name & Constants.FILE_EXTENSION_TEMPLATE)
+    mConfigFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.RP_ROOT_FOLDER & Name & Constants.FILE_EXTENSION_CONFIG)
     Logger.LogDebug "ReportMetaData.Init", "Read configuration path: " & mConfigFilePath
     ir.Init mConfigFilePath
     
@@ -111,7 +111,7 @@ Public Function Init(name As String, Optional ss As SystemSettings)
                 Or StringHelper.IsEqual(rpSection.SectionType, Constants.RP_SECTION_TYPE_TMP_TABLE, True) Then
                 mCount = rpSection.Count
             End If
-            If Not rpSection.valid Then
+            If Not rpSection.Valid Then
                 mValid = False
             End If
             mReportSections.Add rpSection
@@ -126,16 +126,16 @@ Public Property Get ReportSections() As Collection
     Set ReportSections = mReportSections
 End Property
 
-Public Property Get Query() As String
-    Query = mQuery
+Public Property Get query() As String
+    query = mQuery
 End Property
 
-Public Property Get valid() As Boolean
-    valid = mValid
+Public Property Get Valid() As Boolean
+    Valid = mValid
 End Property
 
-Public Property Get name() As String
-    name = mName
+Public Property Get Name() As String
+    Name = mName
 End Property
 
 Public Property Get StartRow() As Long

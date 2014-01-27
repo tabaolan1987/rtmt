@@ -25,6 +25,8 @@ Private mConfigFilePath As String
 Private mQueryFilePath As String
 Private mTemplateFilePath As String
 
+Private mLastModified As String
+
 Private mOutputPath As String
 
 Public Function Recyle()
@@ -34,7 +36,7 @@ Public Function Recyle()
     FileHelper.Delete mTemplateFilePath & Constants.FILE_EXTENSION_TEMPLATE
 End Function
 
-Public Function Init(mappingName As String, Optional ss As SystemSettings)
+Public Function Init(mappingName As String, Optional ss As SystemSetting)
     rawName = mappingName
     Logger.LogDebug "MappingMetaData.Init", "Start init mapping meta name: " & rawName
     Dim tmpRawSection() As String, tmpStr As String, i As Integer
@@ -47,6 +49,7 @@ Public Function Init(mappingName As String, Optional ss As SystemSettings)
     mConfigFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.MAPPING_ROOT_FOLDER & rawName & Constants.FILE_EXTENSION_CONFIG)
     Logger.LogDebug "MappingMetaData.Init", "Read configuration path: " & mConfigFilePath
     ir.Init mConfigFilePath
+    RefreshLastModified
     
     mName = ir.ReadKey(Constants.SECTION_GENERAL, Constants.KEY_NAME)
     Logger.LogDebug "MappingMetaData.Init", "Mapping name: " & mName
@@ -92,12 +95,12 @@ Public Property Get WorkSheet() As String
     WorkSheet = mWorkSheet
 End Property
 
-Public Property Get name() As String
-    name = mName
+Public Property Get Name() As String
+    Name = mName
 End Property
 
-Public Property Get valid() As Boolean
-    valid = mValid
+Public Property Get Valid() As Boolean
+    Valid = mValid
 End Property
 
 Public Property Get StartRowTop() As Long
@@ -120,7 +123,19 @@ Public Property Get TemplateFilePath() As String
     TemplateFilePath = mTemplateFilePath
 End Property
 
-Public Function Query(qType As Integer, Optional data As Scripting.Dictionary) As String
+Public Property Get LastModified() As String
+    LastModified = mLastModified
+End Property
+
+Public Function CurrentModifedDate() As String
+    CurrentModifedDate = FileHelper.FileLastModified(mTemplateFilePath)
+End Function
+
+Public Function RefreshLastModified()
+    mLastModified = FileHelper.FileLastModified(mTemplateFilePath)
+End Function
+
+Public Function query(qType As Integer, Optional data As Scripting.Dictionary) As String
     Dim mQuery As String
     Dim v As Variant
     mQuery = ""
@@ -140,5 +155,5 @@ Public Function Query(qType As Integer, Optional data As Scripting.Dictionary) A
         mQuery = StringHelper.GenerateQuery(mQuery, data)
     End If
     'Logger.LogDebug "MappingMetaData.Query", mQuery
-    Query = mQuery
+    query = mQuery
 End Function

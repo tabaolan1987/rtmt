@@ -40,6 +40,7 @@ SELECT
 	[Spare19],
 	[Spare20]
 FROM user_data ORDER BY [ntid]
+Where user_data.deleted=0
 =====
 SELECT 
 	{% 

@@ -51,12 +51,11 @@ Public Sub TestSyncTable()
     On Error GoTo OnError
     Dim dbm As DbManager, _
         SyncTables() As String, _
-        prop As SystemSettings, _
+        prop As SystemSetting, _
         isEmpty As Boolean, _
         stTable As String
     Set dbm = New DbManager
-    Set prop = New SystemSettings
-    prop.Init
+    Set prop = Session.Settings()
     SyncTables = prop.SyncTables
     isEmpty = Ultilities.IsVarArrayEmpty(SyncTables)
     If isEmpty = False Then
@@ -81,12 +80,11 @@ End Sub
 Public Sub TestImportSqlTable()
     Dim dbm As DbManager, _
         SyncTables() As String, _
-        prop As SystemSettings, _
+        prop As SystemSetting, _
         isEmpty As Boolean, _
         stTable As String
     Set dbm = New DbManager
-    Set prop = New SystemSettings
-    prop.Init
+    Set prop = Session.Settings()
     SyncTables = prop.SyncTables
     isEmpty = Ultilities.IsVarArrayEmpty(SyncTables)
     If isEmpty = False Then
@@ -130,11 +128,11 @@ Public Sub TestOpenRecordSet()
     Dim dm As DbManager: Set dm = New DbManager
     Dim rInfo As ReportMetaData: Set rInfo = New ReportMetaData
     dm.Init
-    rInfo.Init (name)
+    rInfo.Init (Name)
     params.Add "SYSTEM_ROLE_NAME", "Procurement Catalogue Approver"
     params.Add "BP_ROLE_STANDARD_NAME", "POQR Approver"
-    If rInfo.valid = True Then
-        dm.OpenRecordSet rInfo.Query, params
+    If rInfo.Valid = True Then
+        dm.OpenRecordSet rInfo.query, params
     End If
     
 OnExit:

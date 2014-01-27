@@ -10,3 +10,4 @@ inner join RMT_ROLES as rmt
 on rmt.id = p.idRoleRMT)
 where p.ntid = '(%VALUE%)'
 group by  p.ntid,r.RegionName,rmt.roleName,f.nameFunction,p.permission,f.id
+order by p.ntid, r.RegionName, f.id, rmt.roleName

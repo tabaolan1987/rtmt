@@ -29,10 +29,26 @@ Private Sub ITestCase_TearDown()
 
 End Sub
 
+Public Sub TestCurrentUser()
+    On Error GoTo OnError
+    Dim cUser As New currentUser
+    cUser.Init "Carld0"
+    mAssert.Equals cUser.Auth, True
+    mAssert.Equals cUser.Valid, True
+OnExit:
+    ' finally
+    Exit Sub
+OnError:
+    mAssert.Should False, Logger.GetErrorMessage("", Err)
+    Logger.LogError "UserManagementTeser.TestCurrentUser", "", Err
+    Resume OnExit
+End Sub
+
+
 Public Sub TestCheckConflict()
     On Error GoTo OnError
-    Dim ss As New SystemSettings
-    ss.Init
+    Dim ss As SystemSetting
+    Set ss = Session.Settings()
     Dim um As New UserManagement
     um.Init ss
     um.CheckConflict
@@ -47,8 +63,8 @@ End Sub
 
 Public Sub TestCheckDuplicate()
     On Error GoTo OnError
-    Dim ss As New SystemSettings
-    ss.Init
+    Dim ss As SystemSetting
+    Set ss = Session.Settings()
     Dim um As New UserManagement
     um.Init ss
     um.CheckDuplicate
@@ -63,8 +79,8 @@ End Sub
 
 Public Sub TestResolveLdapNotFounds()
     On Error GoTo OnError
-    Dim ss As New SystemSettings
-    ss.Init
+    Dim ss As SystemSetting
+    Set ss = Session.Settings()
     Dim um As New UserManagement
     um.Init ss
     um.ResolveLdapNotFound
@@ -79,8 +95,8 @@ End Sub
 
 Public Sub TestResolveLdapConflict()
     On Error GoTo OnError
-    Dim ss As New SystemSettings
-    ss.Init
+    Dim ss As SystemSetting
+    Set ss = Session.Settings()
     Dim um As New UserManagement
     um.Init ss
     um.ResolveLdapConflict
@@ -95,8 +111,8 @@ End Sub
 
 Public Sub TestResolveUserDataDuplicate()
     On Error GoTo OnError
-    Dim ss As New SystemSettings
-    ss.Init
+    Dim ss As SystemSetting
+    Set ss = Session.Settings()
     Dim um As New UserManagement
     um.Init ss
     um.ResolveUserDataDuplicate
@@ -111,8 +127,8 @@ End Sub
 
 Public Sub TestResolveUserDataConflict()
     On Error GoTo OnError
-    Dim ss As New SystemSettings
-    ss.Init
+    Dim ss As SystemSetting
+    Set ss = Session.Settings()
     Dim um As New UserManagement
     um.Init ss
     um.ResolveUserDataConflict
@@ -128,8 +144,8 @@ End Sub
 
 Public Sub TestMergeUserData()
     On Error GoTo OnError
-    Dim ss As New SystemSettings
-    ss.Init
+    Dim ss As SystemSetting
+    Set ss = Session.Settings()
     Dim um As New UserManagement
     um.Init ss
     um.MergeUserData
@@ -152,6 +168,8 @@ Private Function ITest_Suite() As TestSuite
     ITest_Suite.AddTest ITest_Manager.className, "TestCheckConflict"
     ITest_Suite.AddTest ITest_Manager.className, "TestResolveUserDataConflict"
     ITest_Suite.AddTest ITest_Manager.className, "TestMergeUserData"
+    ITest_Suite.AddTest ITest_Manager.className, "TestCurrentUser"
+    
 End Function
 
 Private Sub ITestCase_RunTest()
@@ -163,6 +181,7 @@ Private Sub ITestCase_RunTest()
         Case "TestCheckConflict": TestCheckConflict
         Case "TestResolveUserDataConflict": TestResolveUserDataConflict
         Case "TestMergeUserData": TestMergeUserData
+        Case "TestCurrentUser": TestCurrentUser
         Case Else: mAssert.Should False, "Invalid test name: " & mManager.MethodName
     End Select
 End Sub

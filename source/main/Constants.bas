@@ -22,6 +22,9 @@ Public Const TABLE_USER_DATA_DUPLICATE = "user_data_duplicate"
 Public Const TABLE_USER_DATA_LDAP_CONFLICT = "user_data_ldap_conflict"
 Public Const TABLE_USER_DATA_LDAP_NOTFOUND = "user_data_ldap_notfound"
 Public Const TABLE_TMP_TABLE_REPORT = "tmp_table_report"
+Public Const TABLE_USER_PRIVILEGES = "user_privileges"
+
+Public Const TEXT_DEFAULT_SELECT_REGION_FUNCTION = "Select region function"
 
 'Role & Permission
 Public Const P_R_ADMIN = "Admin"
@@ -38,6 +41,7 @@ Public Const Q_CREATE = 1
 Public Const Q_INSERT = 2
 Public Const Q_UPDATE = 3
 Public Const Q_DELETE_ALL = 4
+Public Const Q_SELECT = 5
 Public Const Q_CUSTOM = 0
 
 Public Const Q_KEY_VALUE = "VALUE"
@@ -69,6 +73,7 @@ Public Const KEY_LINE_TO_REMOVE = "linesToRemove"
 Public Const KEY_TABLE_NAME = "tableNames"
 Public Const KEY_REGION_NAME = "regionName"
 Public Const KEY_REGION_FUNCTION_ID = "regionFunctionId"
+Public Const KEY_TEST_NTID = "testNtid"
 
 Public Const KEY_VALIDATOR_URL = "validatorUrl"
 Public Const KEY_TOKEN = "token"
@@ -77,6 +82,8 @@ Public Const KEY_NTID_FIELD = "ntidField"
 
 Public Const SECTION_APPLICATION = "application"
 Public Const KEY_LOG_LEVEL = "logLevel"
+Public Const KEY_ENABLE_TESTING = "enableTesting"
+Public Const KEY_ENABLE_VALIDATION = "enableValidation"
 
 Public Const SECTION_GENERAL = "General"
 Public Const KEY_NAME = "name"
@@ -123,6 +130,10 @@ Public Const RP_SECTION_TYPE_AUTO = "auto"
 Public Const RP_SECTION_TYPE_TMP_TABLE = "tmp_table"
 Public Const RP_ROOT_FOLDER = "data\reporting\"
 Public Const RP_END_USER_TO_SYSTEM_ROLE = "end_user_to_system_role_report"
+Public Const RP_END_USER_TO_BB_JOB_ROLE = "end_user_to_bb_job_role_report"
+Public Const RP_ROLE_MAPPING_OUTPUT_OF_TOOL_FOR_SECURITY = "role_mapping_output_of_tool_for_security"
+Public Const RP_END_USER_TO_COURSE = "end_user_to_course_report"
+
 Public Const RP_DEFAULT_OUTPUT_FOLDER = "target\reporting"
 
 ' For tesing
