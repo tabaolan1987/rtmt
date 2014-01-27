@@ -12,6 +12,7 @@ SELECT
 	'' AS [Invoice Approval ($Limit in Thousands)],
 	'' AS [3rd Party Commitment ($Limit in Thousands)]
 FROM user_data ORDER BY [ntid]
+Where user_data.deleted=0
 =====
 SELECT 
 	{% 
