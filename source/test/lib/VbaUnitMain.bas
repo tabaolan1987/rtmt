@@ -3,9 +3,13 @@ Option Explicit
 Public Sub OnTest()
     'Logger.LogDebug "VbaUnitMain.OnTest", StringHelper.GetGUID
     'DoCmd.SetWarnings False
-    'Run "ReportingTester"
-
-    Reporting.GenerateReport "End_User_To_Course_Report"
+    'Run "MappingHelperTester"
+   ' Run "UserManagementTester"
+    'Run "DbManagerTester"
+    'Dim um As New UserManagement
+    'um.CheckConflict
+    'Reporting.GenerateReport "ROLE_MAPPING_OUTPUT_OF_TOOL_FOR_SECURITY"
+    'Session.Init
 End Sub
 
 Public Sub Run(Optional TestClassName As String)

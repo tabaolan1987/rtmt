@@ -8,8 +8,8 @@ Private logLevelCfg As String
 
 Private Sub GetLogLevelCfg()
     If Len(logLevelCfg) = 0 Then
-        Dim s As New SystemSettings
-        s.Init
+        Dim s As SystemSetting
+        Set s = Session.Settings()
         logLevelCfg = s.LogLevel
         Debug.Print "Log level config: " & logLevelCfg
     End If

@@ -32,7 +32,7 @@ End Sub
 Public Sub TestIsEqual()
     On Error GoTo OnError
         Dim checker As Boolean
-        Dim Test As Integer
+        Dim test As Integer
         checker = StringHelper.IsEqual("a", "A", True)
         mAssert.Equals checker, True, "ignoreCase = True"
         checker = StringHelper.IsEqual("a", "A", False)
@@ -139,6 +139,37 @@ OnError:
     Resume OnExit
 End Sub
 
+Public Sub TestGetDictKey()
+    On Error GoTo OnError
+OnExit:
+    ' finally
+    Dim dict As New Scripting.Dictionary
+    dict.Add "test1", "test1 value"
+    dict.Add "test2", "test2 value"
+    mAssert.Equals StringHelper.GetDictKey(dict, "test2 value"), "test2"
+    Exit Sub
+OnError:
+    mAssert.Should False, Logger.GetErrorMessage("", Err)
+    Logger.LogError "StringHelperTester.TestGetDictKey", "", Err
+    Resume OnExit
+End Sub
+
+Public Sub TestGenerateQuery()
+    On Error GoTo OnError
+OnExit:
+    Dim rawQuery As String: rawQuery = "select * from testing where region='(%RG_NAME%)' and function='(%RG_F_ID%)'"
+    ' finally
+    Dim dict As New Scripting.Dictionary
+    dict.Add Q_KEY_FUNCTION_REGION_ID, "test1 value"
+    dict.Add Q_KEY_REGION_NAME, "GoM"
+    mAssert.Equals StringHelper.GenerateQuery(rawQuery, dict), "select * from testing where region='GoM' and function='test1 value'"
+    Exit Sub
+OnError:
+    mAssert.Should False, Logger.GetErrorMessage("", Err)
+    Logger.LogError "StringHelperTester.TestGetDictKey", "", Err
+    Resume OnExit
+End Sub
+
 Private Function ITest_Suite() As TestSuite
     Set ITest_Suite = New TestSuite
     ITest_Suite.AddTest ITest_Manager.className, "TestEncodeXml"
@@ -148,7 +179,8 @@ Private Function ITest_Suite() As TestSuite
     ITest_Suite.AddTest ITest_Manager.className, "TestEndsWith"
     ITest_Suite.AddTest ITest_Manager.className, "TestStartsWith"
     ITest_Suite.AddTest ITest_Manager.className, "TestCompareStringDate"
-    
+    ITest_Suite.AddTest ITest_Manager.className, "TestGetDictKey"
+    ITest_Suite.AddTest ITest_Manager.className, "TestGenerateQuery"
 End Function
 
 Private Sub ITestCase_RunTest()
@@ -160,6 +192,8 @@ Private Sub ITestCase_RunTest()
         Case "TestEndsWith": TestEndsWith
         Case "TestStartsWith": TestStartsWith
         Case "TestCompareStringDate": TestCompareStringDate
+        Case "TestGetDictKey": TestGetDictKey
+        Case "TestGenerateQuery": TestGenerateQuery
         Case Else: mAssert.Should False, "Invalid test name: " & mManager.MethodName
     End Select
 End Sub

@@ -91,8 +91,8 @@ Public Property Get Port() As String
     Port = mPort
 End Property
 
-Public Property Get Username() As String
-    Username = mUsername
+Public Property Get userNAme() As String
+    userNAme = mUsername
 End Property
 
 Public Property Get Password() As String

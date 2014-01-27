@@ -51,12 +51,11 @@ Public Sub TestSyncTable()
     On Error GoTo OnError
     Dim dbm As DbManager, _
         SyncTables() As String, _
-        prop As SystemSettings, _
+        prop As SystemSetting, _
         isEmpty As Boolean, _
         stTable As String
     Set dbm = New DbManager
-    Set prop = New SystemSettings
-    prop.Init
+    Set prop = Session.Settings()
     SyncTables = prop.SyncTables
     isEmpty = Ultilities.IsVarArrayEmpty(SyncTables)
     If isEmpty = False Then
@@ -65,7 +64,7 @@ Public Sub TestSyncTable()
         For i = LBound(SyncTables) To UBound(SyncTables)
             stTable = Trim(SyncTables(i))
             Logger.LogDebug "DbManagerTester.TestSyncTable", "Start sync table: " & stTable
-            dbm.SyncTable prop.ServerName & "," & prop.Port, prop.DatabaseName, stTable, stTable, prop.Username, prop.Password, False
+            dbm.SyncTable prop.ServerName & "," & prop.Port, prop.DatabaseName, stTable, stTable, prop.userNAme, prop.Password, False
         Next i
     End If
 OnExit:
@@ -81,12 +80,11 @@ End Sub
 Public Sub TestImportSqlTable()
     Dim dbm As DbManager, _
         SyncTables() As String, _
-        prop As SystemSettings, _
+        prop As SystemSetting, _
         isEmpty As Boolean, _
         stTable As String
     Set dbm = New DbManager
-    Set prop = New SystemSettings
-    prop.Init
+    Set prop = Session.Settings()
     SyncTables = prop.SyncTables
     isEmpty = Ultilities.IsVarArrayEmpty(SyncTables)
     If isEmpty = False Then
@@ -94,7 +92,7 @@ Public Sub TestImportSqlTable()
         For i = LBound(SyncTables) To UBound(SyncTables)
             stTable = Trim(SyncTables(i))
             Logger.LogDebug "DbManagerTester.TestImportSqlTable", "Start import table: " & stTable
-            dbm.ImportSqlTable prop.ServerName & "," & prop.Port, prop.DatabaseName, stTable, stTable, prop.Username, prop.Password
+            dbm.ImportSqlTable prop.ServerName & "," & prop.Port, prop.DatabaseName, stTable, stTable, prop.userNAme, prop.Password
         Next i
     End If
 OnExit:
@@ -130,7 +128,7 @@ Public Sub TestOpenRecordSet()
     Dim dm As DbManager: Set dm = New DbManager
     Dim rInfo As ReportMetaData: Set rInfo = New ReportMetaData
     dm.Init
-    rInfo.Init (name)
+    rInfo.Init (Name)
     params.Add "SYSTEM_ROLE_NAME", "Procurement Catalogue Approver"
     params.Add "BP_ROLE_STANDARD_NAME", "POQR Approver"
     If rInfo.Valid = True Then

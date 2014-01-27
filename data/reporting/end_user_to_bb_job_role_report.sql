@@ -40,6 +40,7 @@ SELECT
 	[Spare19],
 	[Spare20]
 FROM user_data ORDER BY [ntid]
+Where user_data.deleted=0
 =====
 SELECT 
 	{% 
@@ -98,6 +99,6 @@ and spAc.function_region='(%RG_F_ID%)')
 				AS [(%VALUE%)]
 			%}
 FROM user_data AS UD
-where UD.region='GoM'
+where UD.region='(%RG_NAME%)'
  ORDER BY UD.ntid
 

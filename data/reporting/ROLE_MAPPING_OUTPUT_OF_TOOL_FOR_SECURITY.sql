@@ -69,6 +69,6 @@ and spAc.function_region='(%RG_F_ID%)')
 				AS [(%VALUE%)]
 			%}
 FROM user_data AS UD 
-where UD.region = 'GoM'
+where UD.region = '(%RG_NAME%)'
 ORDER BY UD.ntid
 

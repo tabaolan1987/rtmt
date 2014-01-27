@@ -54,6 +54,7 @@ Public Sub TestGenerateReportMetaData()
     Dim rpmd As New ReportMetaData
     rpmd.Init Constants.RP_END_USER_TO_SYSTEM_ROLE
     mAssert.Equals rpmd.Valid, True
+    rpmd.Recyle
 OnExit:
     ' finally
     Exit Sub
