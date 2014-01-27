@@ -41,8 +41,21 @@ Public Function Init(md As MappingMetadata, Optional mss As SystemSetting)
     End If
 End Function
 
-Public Function Valid() As Boolean
-    
+Public Function CheckExistMapping() As Boolean
+    Dim query As String
+    query = FileHelper.ReadQuery(Constants.TABLE_MAPPING_SPECIALISM_ACITIVITY, Q_SELECT)
+    Dim data As New Scripting.Dictionary
+    data.Add Constants.Q_KEY_REGION_NAME, Session.Settings.regionName
+    data.Add Constants.Q_KEY_FUNCTION_REGION_ID, Session.Settings.RegionFunctionId
+    query = StringHelper.GenerateQuery(query, data)
+    dbm.Init
+    dbm.OpenRecordSet query
+    If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
+        CheckExistMapping = True
+    Else
+        CheckExistMapping = False
+    End If
+    dbm.Recycle
 End Function
 
 Private Function PrepareData()

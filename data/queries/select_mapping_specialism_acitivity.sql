@@ -1,1 +1,1 @@
-select * from SpecialismMappingActivity where function_region=(%RG_F_ID%) and deleted=0
+select * from SpecialismMappingActivity where function_region='(%RG_F_ID%)' and deleted=0

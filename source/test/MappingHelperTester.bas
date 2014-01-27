@@ -62,7 +62,7 @@ Public Sub TestInitMapping()
     Set ss = Session.Settings()
     mmd.Init Constants.MAPPING_ACTIVITIES_SPECIALISM
     
-    Dim mh As New MappingHelper
+    Dim mh As New mappingHelper
     mh.Init mmd, ss
     mh.GenerateMapping
     mh.OpenMapping

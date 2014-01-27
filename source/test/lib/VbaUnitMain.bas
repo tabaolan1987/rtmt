@@ -10,6 +10,11 @@ Public Sub OnTest()
     'um.CheckConflict
     'Reporting.GenerateReport "ROLE_MAPPING_OUTPUT_OF_TOOL_FOR_SECURITY"
     'Session.Init
+    Dim mmd As New MappingMetadata
+    mmd.Init Constants.MAPPING_ACTIVITIES_SPECIALISM
+    Dim mappingHelper As New mappingHelper
+    mappingHelper.Init mmd, Session.Settings
+    Logger.LogDebug "test", mappingHelper.CheckExistMapping
 End Sub
 
 Public Sub Run(Optional TestClassName As String)

@@ -44,6 +44,7 @@ Public Function Init(raw As String, Optional mss As SystemSetting)
         Case Constants.RP_SECTION_TYPE_AUTO:
             ' Start generate query
             mQuery = PrepareQuery(mQuery, ss)
+            mQuery = StringHelper.GenerateQuery(mQuery, DataQuery)
         Case Constants.RP_SECTION_TYPE_FIXED:
             dbm.Init
             mQuery = StringHelper.GenerateQuery(mQuery, DataQuery)
@@ -72,7 +73,7 @@ Public Function Init(raw As String, Optional mss As SystemSetting)
             queryCache = Split(mQuery, Constants.SPLIT_LEVEL_2)
             
             If UBound(queryCache) > 0 Then
-                tmpQuery = StringHelper.GenerateQuery(StringHelper.TrimNewLine(queryCache(3)), tmpData)
+                tmpQuery = StringHelper.GenerateQuery(StringHelper.TrimNewLine(queryCache(3)), DataQuery)
                 mQuery = tmpQuery
                 Logger.LogDebug "ReportSection.Init", "Primary query: " & mQuery
                 tableName = StringHelper.TrimNewLine(queryCache(0))
@@ -85,7 +86,7 @@ Public Function Init(raw As String, Optional mss As SystemSetting)
                     dbm.ExecuteQuery "CREATE TABLE [" & tableName & "] ( [key] varchar(255), [value] varchar(255))"
                 End If
 
-                tmpQuery = StringHelper.TrimNewLine(queryCache(1))
+                tmpQuery = StringHelper.GenerateQuery(StringHelper.TrimNewLine(queryCache(3)), DataQuery)
                 Logger.LogDebug "ReportSection.Init", "Get cache value query: " & tmpQuery
                 dbm.OpenRecordSet tmpQuery
                 If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then

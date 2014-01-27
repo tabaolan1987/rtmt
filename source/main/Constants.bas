@@ -23,6 +23,7 @@ Public Const TABLE_USER_DATA_LDAP_CONFLICT = "user_data_ldap_conflict"
 Public Const TABLE_USER_DATA_LDAP_NOTFOUND = "user_data_ldap_notfound"
 Public Const TABLE_TMP_TABLE_REPORT = "tmp_table_report"
 Public Const TABLE_USER_PRIVILEGES = "user_privileges"
+Public Const TABLE_MAPPING_SPECIALISM_ACITIVITY = "mapping_specialism_acitivity"
 
 Public Const TEXT_DEFAULT_SELECT_REGION_FUNCTION = "Select region function"
 
