@@ -100,6 +100,9 @@ Public Function Init(iNtid As String, _
                 If (Not StringHelper.IsEqual(regionName, lastRegionName, True)) _
                     Or (Not StringHelper.IsEqual(functionId, lastFunctionId, True)) Then
                     Logger.LogDebug "CurrentUser.Init", "Add to list "
+                    If mFuncRegion Is Nothing Then
+                        Set mFuncRegion = frg
+                    End If
                     mListFuncRg.Add frg
                 End If
                 lastRegionName = regionName
@@ -107,6 +110,7 @@ Public Function Init(iNtid As String, _
                 lastRoleName = roleName
                 dbm.RecordSet.MoveNext
             Loop
+            Logger.LogDebug "CurrentUser.Init", "complete..."
         Else
             Logger.LogDebug "CurrentUser.Init", "Not valid"
         End If

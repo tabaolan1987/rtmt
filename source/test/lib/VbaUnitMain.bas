@@ -12,6 +12,10 @@ Public Sub OnTest()
     'Session.Init
     
    ' Logger.LogDebug "test", Session.currentUser.Valid
+    'Dim rpmd As New ReportMetaData
+    'rpmd.Init Constants.RP_END_USER_TO_BB_JOB_ROLE
+   ' Reporting.GenerateReport Constants.RP_ROLE_MAPPING_OUTPUT_OF_TOOL_FOR_SECURITY
+   
     Dim dbm As DbManager, _
         SyncTables() As String, _
         prop As SystemSetting, _
@@ -27,10 +31,9 @@ Public Sub OnTest()
         For i = LBound(SyncTables) To UBound(SyncTables)
             stTable = Trim(SyncTables(i))
             Logger.LogDebug "DbManagerTester.TestSyncTable", "Start sync table: " & stTable
-            dbm.ExecuteQuery "update [" & stTable & "] set timestamp=null"
+            dbm.SyncTable prop.ServerName & "," & prop.Port, prop.DatabaseName, stTable, stTable, prop.userNAme, prop.Password, False
         Next i
     End If
-    
 End Sub
 
 Public Sub Run(Optional TestClassName As String)

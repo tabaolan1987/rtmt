@@ -53,6 +53,7 @@ Public Const Q_KEY_ID_TOP = "ID_TOP"
 Public Const Q_KEY_ID_LEFT = "ID_LEFT"
 Public Const Q_KEY_FUNCTION_REGION_ID = "RG_F_ID"
 Public Const Q_KEY_REGION_NAME = "RG_NAME"
+Public Const Q_KEY_FUNCTION_REGION_NAME = "RG_F_NAME"
 
 ' for mapping section
 Public Const Q_TOP = 5

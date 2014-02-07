@@ -6,6 +6,10 @@ Option Compare Database
 
 Private ss As SystemSetting
 Private dbm As DbManager
+Private mIsConflict As Boolean
+Private mIsDuplicate As Boolean
+Private mIsLdapConflict As Boolean
+Private mIsLdapNotfound As Boolean
 
 Public Function Init(Optional mss As SystemSetting)
     If mss Is Nothing Then
@@ -14,6 +18,33 @@ Public Function Init(Optional mss As SystemSetting)
         Set ss = mss
     End If
     Set dbm = New DbManager
+End Function
+
+Public Function CheckLdapNotFound()
+    Dim ntid As String
+    Dim query As String
+    Dim tmpSelect As String
+    query = "SELECT * FROM " & Constants.TABLE_USER_DATA_LDAP_NOTFOUND
+    dbm.Init
+    dbm.OpenRecordSet query
+    mIsLdapNotfound = False
+    If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
+        mIsLdapNotfound = True
+    End If
+    dbm.Recycle
+End Function
+
+Public Function CheckLdapConfict()
+    Dim query As String
+    Dim tmpSelect As String
+    query = "SELECT * FROM " & Constants.TABLE_USER_DATA_LDAP_CONFLICT
+    dbm.Init
+    dbm.OpenRecordSet query
+    mIsLdapConflict = False
+    If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
+        mIsLdapConflict = True
+    End If
+    dbm.Recycle
 End Function
 
 Public Function CheckConflict()
@@ -32,7 +63,7 @@ Public Function CheckConflict()
     Dim tmpRst As DAO.RecordSet
     Dim qdf As DAO.QueryDef
     Dim query As String
-    
+    mIsConflict = False
     query = "SELECT * FROM " & Constants.END_USER_DATA_CACHE_TABLE_NAME
     Logger.LogDebug "UserManagement.CheckConflict", "Start check conflict records. Query: " & query
     dbm.RecycleTableName Constants.TABLE_USER_DATA_CONFLICT
@@ -83,6 +114,7 @@ Public Function CheckConflict()
                         tmpInsertData.Add "Data held", str2
                         tmpInsertData.Add "Select", "-1"
                         dbm.CreateLocalRecord tmpInsertData, tmpInsertCols, Constants.TABLE_USER_DATA_CONFLICT
+                        mIsConflict = True
                     End If
                 Next v
             End If
@@ -109,7 +141,7 @@ Public Function CheckDuplicate()
     Dim Name As String
     Dim check As Boolean
     Dim query As String
-    
+    mIsDuplicate = False
     query = "SELECT * FROM (" _
                     & Constants.END_USER_DATA_CACHE_TABLE_NAME & " INNER JOIN ( SELECT  " _
                     & ss.NtidField & " FROM " _
@@ -165,6 +197,7 @@ Public Function CheckDuplicate()
                             tmpInsertData.Add "Upload file", str2
                             tmpInsertData.Add "Select", "0"
                             dbm.CreateLocalRecord tmpInsertData, tmpInsertCols, Constants.TABLE_USER_DATA_DUPLICATE
+                            mIsDuplicate = True
                             If checkDict Is Nothing Then
                                 Set checkDict = New Scripting.Dictionary
                             End If
@@ -177,6 +210,7 @@ Public Function CheckDuplicate()
                                 tmpInsertData.Add "Upload file", str1
                                 tmpInsertData.Add "Select", "-1"
                                 dbm.CreateLocalRecord tmpInsertData, tmpInsertCols, Constants.TABLE_USER_DATA_DUPLICATE
+                                mIsDuplicate = True
                                 checkDict.Add CStr(v), True
                             End If
                         End If
@@ -432,3 +466,19 @@ Public Function MergeUserData()
     End If
     dbm.Recycle
 End Function
+
+Public Property Get IsConflict() As Boolean
+    IsConflict = mIsConflict
+End Property
+
+Public Property Get IsDuplicate() As Boolean
+    IsDuplicate = mIsDuplicate
+End Property
+
+Public Property Get IsLdapConflict() As Boolean
+    IsLdapConflict = mIsLdapConflict
+End Property
+
+Public Property Get IsLdapNotfound() As Boolean
+    IsLdapNotfound = mIsLdapNotfound
+End Property

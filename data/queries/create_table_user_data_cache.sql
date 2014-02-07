@@ -41,5 +41,8 @@ CREATE TABLE [user_data_cache](
 	[spare19] varchar(255),
 	[spare20] varchar(255),
 	[Timestamp] datetime,
-	[Deleted] bit
+	[Deleted] bit,
+	SFunction varchar(255),
+	SdSubFunction varchar(255),
+	STeam varchar(255)
 )

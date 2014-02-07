@@ -39,7 +39,10 @@ INSERT INTO [user_data_cache](
 	[spare17],
 	[spare18],
 	[spare19],
-	[spare20]
+	[spare20],
+	SFunction,
+	SdSubFunction,
+	STeam
 ) VALUES (
 	[id],
 	[ntid],
@@ -81,5 +84,8 @@ INSERT INTO [user_data_cache](
 	[spare17],
 	[spare18],
 	[spare19],
-	[spare20]
+	[spare20],
+	SFunction,
+	SdSubFunction,
+	STeam
 )

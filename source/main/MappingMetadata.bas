@@ -2,6 +2,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+' @author Hai Lu
 Option Compare Database
 Private rawName As String
 Private mName As String

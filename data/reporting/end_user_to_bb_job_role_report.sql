@@ -13,12 +13,9 @@ SELECT
 	[VTA],
 	[Country],
 	[contractor] AS [Contractor?],
-	[changeNetworkLevel] AS [Change Network Level],
-	[dofa] AS [DofA (Y/N)],
-	[dofaType] AS [DofA Type  (Indent, Commitment, Sourcing)],
-	[siteLocation] AS[Maximo Site Location],
-	[purchasingOrg] AS [Purchasing Org],
-	[changeNetworkLevel] AS [Change Network Level 2],
+	[SFunction] AS [Standard Function],
+	[SdSubFunction] AS [Standard Sub Function],
+	[STeam] AS [Standard Team],
 	[Spare1],
 	[Spare2],
 	[Spare3],
@@ -41,6 +38,7 @@ SELECT
 	[Spare20]
 FROM user_data
 Where user_data.deleted=0
+and user_data.SFunction='(%RG_F_NAME%)'
 ORDER BY [ntid]
 =====
 SELECT 
@@ -60,7 +58,7 @@ SELECT
 		Materials Fabrication Requestor,MM Financial Approver,
 		Materials Management Display & Reporting ,CRP Processor,
 		Cost Allocation Administrator (GoM),Shipment Specialist,
-		Rental Specialist,Materials Expediter,Inventory Optimisation Analyst,
+		Rental Specialist,Materials Expediter,Inventory Optimization Analyst,Inventory Optimisation Analyst,
 		POQR Library Administrator,POQR Document Reviewer,
 		POQR Approver,WM Supervisor,WM Scheduler ,WM Planner,
 		WM Advanced Planner 1,WM Advanced Planner 2,WM Technician,
@@ -100,6 +98,6 @@ and spAc.function_region='(%RG_F_ID%)')
 				AS [(%VALUE%)]
 			%}
 FROM user_data AS UD
-where UD.region='(%RG_NAME%)'
- ORDER BY UD.ntid
+where UD.SFunction='(%RG_F_NAME%)'
+ORDER BY UD.ntid
 

@@ -221,3 +221,18 @@ Public Function CheckTables() As Boolean
     End If
     CheckTables = check
 End Function
+
+Function IsLoaded(ByVal strFormName As String) As Boolean
+' Returns True if the specified form is open in Form view or Datasheet view.
+' Use form name according to Access, not VBA.
+' Only works for Access
+    Dim oAccessObject As AccessObject
+
+    Set oAccessObject = CurrentProject.AllForms(strFormName)
+    If oAccessObject.IsLoaded Then
+        If oAccessObject.CurrentView <> acCurViewDesign Then
+            IsLoaded = True
+        End If
+    End If
+
+End Function

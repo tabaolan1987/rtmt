@@ -117,9 +117,9 @@ Function GetCSVFile() As String
         .Title = "Select the CSV file to import"
         .AllowMultiSelect = False
         .Filters.Clear
-        .Filters.Add "CSV Files", "*.csv", 1
-        .Filters.Add "Excel Workbook", "*.xlsx", 2
-        .Filters.Add "Excel 97-2003 Workbook", "*.xls", 3
+        .Filters.Add "Excel Workbook", "*.xlsx", 1
+        .Filters.Add "Excel 97-2003 Workbook", "*.xls", 2
+        .Filters.Add "CSV Files", "*.csv", 3
         .Filters.Add "All Files", "*.*", 4
         If .Show = True Then
             GetCSVFile = .SelectedItems(1)
@@ -235,7 +235,7 @@ Public Function ReadSSFile(Name As String) As String()
     ReadSSFile = tmpList
 End Function
 
-Public Function SaveAsCSV(filePath As String, desFilePath As String, Optional WorkSheet As String)
+Public Function SaveAsCSV(filePath As String, desFilePath As String, Optional WorkSheet As String) As Boolean
     Dim oExcel As New Excel.Application
     Dim i As Integer
     Dim WB As New Excel.Workbook
@@ -245,6 +245,8 @@ Public Function SaveAsCSV(filePath As String, desFilePath As String, Optional Wo
     If IsExist(desFilePath) Then
         Delete desFilePath
     End If
+    Dim check As Boolean
+    check = False
     With oExcel
         .Visible = False
         .DisplayAlerts = False
@@ -255,15 +257,28 @@ Public Function SaveAsCSV(filePath As String, desFilePath As String, Optional Wo
                         For Each v In .Sheets
                             Logger.LogDebug "FileHelper.SaveAsCSV", "Sheet name: " & v.Name
                             If Not StringHelper.IsEqual(v.Name, WorkSheet, True) Then
-                                v.Delete
+                                check = True
+                                'v.Delete
                             End If
                         Next v
+                        If check Then
+                            For Each v In .Sheets
+                                'Logger.LogDebug "FileHelper.SaveAsCSV", "Sheet name: " & v.Name
+                                If Not StringHelper.IsEqual(v.Name, WorkSheet, True) Then
+                                
+                                    v.Delete
+                                End If
+                            Next v
+                        End If
                     End If
-                    WB.SaveAs desFilePath, FileFormat:=6 ' Save as CSV
+                  
+                        WB.SaveAs desFilePath, FileFormat:=6 ' Save as CSV
+                   
                     WB.Close False
         .Quit
     End With
     Set oExcel = Nothing
+    SaveAsCSV = check
 End Function
 
 Public Function TrimSourceFile(fileToRead As String, fileToWrite As String, LineToRemove() As Integer)
@@ -337,13 +352,13 @@ Public Function PrepareUserData(filePath As String, ss As SystemSetting) As Stri
     tmpStr = tmpDir & StringHelper.GetGUID & ".csv"
     Logger.LogDebug "FileHelper.PrepareUserData", "Convert file " & tmpSource & " to CSV file " & tmpStr
     FileHelper.SaveAsCSV tmpSource, tmpStr, ss.WorkSheet
-    Delete tmpSource
-    outputCsv = tmpDir & StringHelper.GetGUID & ".csv"
-    Logger.LogDebug "FileHelper.PrepareUserData", "Trim unused rows " & tmpStr & " to CSV file " & outputCsv
-    TrimSourceFile tmpStr, outputCsv, ss.LineToRemove
-    Delete tmpStr
+        outputCsv = tmpDir & StringHelper.GetGUID & ".csv"
+        Logger.LogDebug "FileHelper.PrepareUserData", "Trim unused rows " & tmpStr & " to CSV file " & outputCsv
+        TrimSourceFile tmpStr, outputCsv, ss.LineToRemove
+        PrepareUserData = outputCsv
     Set fso = Nothing
-    PrepareUserData = outputCsv
+    Delete tmpSource
+    Delete tmpStr
 End Function
 
 Public Function tmpDir() As String
@@ -379,4 +394,8 @@ Public Function FileLastModified(strFullFileName As String)
     Else
         FileLastModified = ""
     End If
+End Function
+
+Public Function ImageLoaderSource() As String
+    ImageLoaderSource = "=""" & FileHelper.CurrentDbPath & "data\images\loader.html"""
 End Function

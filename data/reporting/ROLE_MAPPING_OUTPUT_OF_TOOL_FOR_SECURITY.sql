@@ -13,6 +13,7 @@ SELECT
 	'' AS [3rd Party Commitment ($Limit in Thousands)]
 FROM user_data
 Where user_data.deleted=0
+and user_data.SFunction='(%RG_F_NAME%)'
 ORDER BY [ntid]
 =====
 SELECT 
@@ -32,7 +33,7 @@ SELECT
 		CRP Processor,Cost Allocation Administrator,
 		Shipment Specialist,Rental Specialist,Materials Expediter,
 		POQR Library Administrator,POQR Approver,POQR Document Reviewer,
-		Inventory Optimisation Analyst,WM Supervisor,WM Scheduler,
+		Inventory Optimisation Analyst,WM Supervisor,WM Scheduler,Inventory Optimization Analyst,Inventory Optimization Analyst,
 		WM Planner,WM Advanced Planner 1,WM Advanced Planner 2,
 		WM Technician,WM Non-Planning Technician,WM Mobile Technician,
 		WM Microsoft Project (MSP),WM Senior Leadership,
@@ -71,6 +72,6 @@ and spAc.function_region='(%RG_F_ID%)')
 				AS [(%VALUE%)]
 			%}
 FROM user_data AS UD 
-where UD.region = '(%RG_NAME%)'
+where UD.SFunction='(%RG_F_NAME%)'
 ORDER BY UD.ntid
 

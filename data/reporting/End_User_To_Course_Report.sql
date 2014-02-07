@@ -22,7 +22,7 @@ inner join course as cou
 on cou.id = courseMapp.idCourse)
 where cou.deleted=0 and courseMapp.deleted=0 and bpRole.deleted=0 and AcBpMapp.deleted=0
  and ac.deleted=0 and spAc.deleted=0 and sp.deleted=0 and udata.deleted=0 and
-spAc.function_region='(%RG_F_ID%)'
+spAc.function_region='(%RG_F_ID%)' and udata.SFunction='(%RG_F_NAME%)'
 group by udata.ntid,cou.courseId, cou.courseTitle, cou.courseType,
 udata.fname,cou.courseDuration,cou.courseDelivery,cou.courseArena,cou.id,
 udata.lname,udata.omsSubfunction,courseMapp.ps,udata.region) as tbl_cached where tbl_cached.ntid = udata.ntid and tbl_cached.courseId=cou.courseId
@@ -44,16 +44,15 @@ inner join course as cou
 on cou.id = courseMapp.idCourse)
 where cou.deleted=0 and courseMapp.deleted=0 and bpRole.deleted=0 and AcBpMapp.deleted=0
  and ac.deleted=0 and spAc.deleted=0 and sp.deleted=0 and udata.deleted=0 and
-spAc.function_region='(%RG_F_ID%)'
+spAc.function_region='(%RG_F_ID%)' and udata.SFunction='(%RG_F_NAME%)'
 group by udata.ntid,cou.courseId, cou.courseTitle, cou.courseType,
 udata.fname,cou.courseDuration,cou.courseDelivery,cou.courseArena,cou.id,
 udata.lname,udata.omsSubfunction,courseMapp.ps,udata.region) as rpc
  where (rpc.count_conflict > 1 and rpc.ps = 'P') or rpc.count_conflict =1
- and rpc.region='(%RG_NAME%)'
 =====
 tmp_table_report
 ===
-select ntid from user_data where deleted = 0
+select ntid from user_data where deleted = 0 and SFunction='(%RG_F_NAME%)'
 ===
 select bpRole.BpRoleStandardName as [Job Role] 
 		from (((((((user_data as udata  
@@ -65,7 +64,7 @@ select bpRole.BpRoleStandardName as [Job Role]
 			inner join CourseMappingBpRoleStandard as courseMapp on courseMapp.idBpRole = bpRole.id) 
 			inner join course as cou on cou.id = courseMapp.idCourse ) 
 		where udata.ntid='(%VALUE%)' 
-			and udata.region='(%RG_NAME%)' 
+			and udata.SFunction='(%RG_F_NAME%)'
 			and udata.Deleted = 0 and spAc.Deleted=0 
 			and sp.Deleted=0 and ac.Deleted = 0 
 			and AcBpMapp.Deleted = 0 
@@ -99,7 +98,7 @@ inner join course as cou
 on cou.id = courseMapp.idCourse)
 where cou.deleted=0 and courseMapp.deleted=0 and bpRole.deleted=0 and AcBpMapp.deleted=0
  and ac.deleted=0 and spAc.deleted=0 and sp.deleted=0 and udata.deleted=0 and
-spAc.function_region='(%RG_F_ID%)'
+spAc.function_region='(%RG_F_ID%)' and udata.SFunction='(%RG_F_NAME%)'
 group by udata.ntid,cou.courseId, cou.courseTitle, cou.courseType,
 udata.fname,cou.courseDuration,cou.courseDelivery,cou.courseArena,cou.id,
 udata.lname,udata.omsSubfunction,courseMapp.ps,udata.region) as tbl_cached where tbl_cached.ntid = udata.ntid and tbl_cached.courseId=cou.courseId
@@ -121,12 +120,11 @@ inner join course as cou
 on cou.id = courseMapp.idCourse)
 where cou.deleted=0 and courseMapp.deleted=0 and bpRole.deleted=0 and AcBpMapp.deleted=0
  and ac.deleted=0 and spAc.deleted=0 and sp.deleted=0 and udata.deleted=0 and
-spAc.function_region='(%RG_F_ID%)'
+spAc.function_region='(%RG_F_ID%)' and udata.SFunction='(%RG_F_NAME%)'
 group by udata.ntid,cou.courseId, cou.courseTitle, cou.courseType,
 udata.fname,cou.courseDuration,cou.courseDelivery,cou.courseArena,cou.id,
 udata.lname,udata.omsSubfunction,courseMapp.ps,udata.region) as rpc
- where (rpc.count_conflict > 1 and rpc.ps = 'P') or rpc.count_conflict =1
- and rpc.region='(%RG_NAME%)') as tbl_data inner join tmp_table_report as tmp_table on tmp_table.[key] = tbl_data.ntid)
+ where (rpc.count_conflict > 1 and rpc.ps = 'P') or rpc.count_conflict =1) as tbl_data inner join tmp_table_report as tmp_table on tmp_table.[key] = tbl_data.ntid)
 =====
 select rpc.courseArena,rpc.courseId,
 rpc.courseTitle,rpc.courseType,rpc.courseDuration,rpc.ps,rpc.courseDelivery
@@ -153,7 +151,7 @@ inner join course as cou
 on cou.id = courseMapp.idCourse)
 where cou.deleted=0 and courseMapp.deleted=0 and bpRole.deleted=0 and AcBpMapp.deleted=0
  and ac.deleted=0 and spAc.deleted=0 and sp.deleted=0 and udata.deleted=0 and
-spAc.function_region='(%RG_F_ID%)'
+spAc.function_region='(%RG_F_ID%)' and udata.SFunction='(%RG_F_NAME%)'
 group by udata.ntid,cou.courseId, cou.courseTitle, cou.courseType,
 udata.fname,cou.courseDuration,cou.courseDelivery,cou.courseArena,cou.id,
 udata.lname,udata.omsSubfunction,courseMapp.ps,udata.region) as tbl_cached where tbl_cached.ntid = udata.ntid and tbl_cached.courseId=cou.courseId
@@ -175,9 +173,8 @@ inner join course as cou
 on cou.id = courseMapp.idCourse)
 where cou.deleted=0 and courseMapp.deleted=0 and bpRole.deleted=0 and AcBpMapp.deleted=0
  and ac.deleted=0 and spAc.deleted=0 and sp.deleted=0 and udata.deleted=0 and
-spAc.function_region='(%RG_F_ID%)'
+spAc.function_region='(%RG_F_ID%)' and udata.SFunction='(%RG_F_NAME%)'
 group by udata.ntid,cou.courseId, cou.courseTitle, cou.courseType,
 udata.fname,cou.courseDuration,cou.courseDelivery,cou.courseArena,cou.id,
 udata.lname,udata.omsSubfunction,courseMapp.ps,udata.region) as rpc
  where (rpc.count_conflict > 1 and rpc.ps = 'P') or rpc.count_conflict =1
- and rpc.region='(%RG_NAME%)'
