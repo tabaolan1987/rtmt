@@ -27,6 +27,11 @@ Public Const TABLE_MAPPING_SPECIALISM_ACITIVITY = "mapping_specialism_acitivity"
 
 Public Const TEXT_DEFAULT_SELECT_REGION_FUNCTION = "Select Region & Function"
 
+' Environment
+Public Const ENV_DEV = "DEV"
+Public Const ENV_INT = "INT"
+Public Const ENV_PROD = "PROD"
+
 'Role & Permission
 Public Const P_R_ADMIN = "Admin"
 Public Const P_R_RC = "RC"
@@ -83,6 +88,7 @@ Public Const KEY_BULK_SIZE = "bulkSize"
 Public Const KEY_NTID_FIELD = "ntidField"
 
 Public Const SECTION_APPLICATION = "application"
+Public Const KEY_ENV = "env"
 Public Const KEY_LOG_LEVEL = "logLevel"
 Public Const KEY_ENABLE_TESTING = "enableTesting"
 Public Const KEY_ENABLE_VALIDATION = "enableValidation"

@@ -27,7 +27,7 @@ Private mLogLevel As String
 Private mEnableTesting As Boolean
 Private mEnableValidation As Boolean
 Private mTestNtid As String
-
+Private mEnv As String
 
 Public Function Init()
     Dim ir As IniReader: Set ir = Ultilities.SystemIniReader
@@ -67,6 +67,8 @@ Public Function Init()
     mWorkSheet = ir.ReadKey(Constants.SECTION_USER_DATA, Constants.KEY_WORK_SHEET)
     mLogLevel = ir.ReadKey(Constants.SECTION_APPLICATION, Constants.KEY_LOG_LEVEL)
     mTestNtid = ir.ReadKey(Constants.SECTION_APPLICATION, Constants.KEY_TEST_NTID)
+    mEnv = ir.ReadKey(Constants.SECTION_APPLICATION, Constants.KEY_ENV)
+    
     mEnableTesting = ir.ReadBooleanKey(Constants.SECTION_APPLICATION, Constants.KEY_ENABLE_TESTING)
     mEnableValidation = ir.ReadBooleanKey(Constants.SECTION_USER_DATA, Constants.KEY_ENABLE_VALIDATION)
     mValidatorURL = ir.ReadKey(Constants.SECTION_USER_DATA, Constants.KEY_VALIDATOR_URL)
@@ -174,4 +176,8 @@ End Property
 
 Public Property Get TestNtid() As String
     TestNtid = mTestNtid
+End Property
+
+Public Property Get Env() As String
+    Env = mEnv
 End Property
