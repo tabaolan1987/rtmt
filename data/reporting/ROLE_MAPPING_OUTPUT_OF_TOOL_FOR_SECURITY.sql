@@ -1,21 +1,19 @@
 SELECT 
-	UD.[NTID],
-	UD.[fname] AS [First Name],
-	UD.[lname] AS [Last Name],
-	UD.[jobTitle] AS [Job Title],
+	[NTID],
+	[fname] AS [First Name],
+	[lname] AS [Last Name],
+	[jobTitle] AS [Job Title],
 	'' AS [Performace Unit],
-	UD.[purchasingOrg] AS [Purchasing Org],
-	UD.[jobTitle] AS [Job Title 2],
-	UD.[siteLocation] AS[Location-Site],
+	[purchasingOrg] AS [Purchasing Org],
+	[jobTitle] AS [Job Title 2],
+	[siteLocation] AS[Location-Site],
 	'' AS [HR Status],
 	'' AS [Requisition/Indent ($Limit in Thousands)],
 	'' AS [Invoice Approval ($Limit in Thousands)],
 	'' AS [3rd Party Commitment ($Limit in Thousands)]
-FROM user_data_mapping_role as UMR
-inner join user_data as UD
-on URM.ntid = UD.ntid
-Where UMR.deleted=0
-and UMR.idFunction='(%RG_F_ID%)'
+FROM user_data
+Where user_data.deleted=0
+and user_data.SFunction='(%RG_F_NAME%)'
 ORDER BY [ntid]
 =====
 =====
@@ -59,13 +57,12 @@ SELECT
 from (user_data_mapping_role as UMR 
 inner join BpRoleStandard as bpRole
 on UMR.idBpRoleStandard = bpRole.id)
-where UMR.ntid = UD.ntid and UMR.Deleted=0
+where UMR.idUserdata = UD.ntid and UMR.Deleted=0
 and bpRole.Deleted = 0
 and bpRole.BpRoleStandardName = '(%VALUE%)'
 and UMR.idFunction='(%RG_F_ID%)')
 				AS [(%VALUE%)]
 			%}
-FROM user_data_mapping_role as UD
-where UD.idFunction='(%RG_F_ID%)'
+FROM user_data AS UD 
+where UD.SFunction='(%RG_F_NAME%)'
 ORDER BY UD.ntid
-

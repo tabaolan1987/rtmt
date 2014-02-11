@@ -9,15 +9,15 @@ UDT.fname,UDT.lname,UDT.omsSubfunction,
 Course.courseArena,Course.courseId,
 Course.courseTitle,Course.courseType,
 Course.courseDuration,CMR.ps,Course.courseDelivery
-from user_data_mapping_role as UMR
+from ((((user_data_mapping_role as UMR
 inner join user_data as UDT
-on UMR.idUserdata = UDT.ntid
+on UMR.idUserdata = UDT.ntid)
 inner join BpRoleStandard as BPROLE
-on UMR.idBpRoleStandard = BPROLE.id
+on UMR.idBpRoleStandard = BPROLE.id)
 inner join CourseMappingBpRoleStandard as CMR
-on UMR.idBpRoleStandard = CMR.idBpRole
+on UMR.idBpRoleStandard = CMR.idBpRole)
 inner join Course as Course
-on CMR.idCourse = Course.id
+on CMR.idCourse = Course.id)
 where UMR.deleted=0 and  UDT.deleted =0 and
 BPROLE.deleted=0 and CMR.deleted=0 and
 Course.deleted=0 and UMR.idFunction='(%RG_F_ID%)'
@@ -27,15 +27,15 @@ Course.courseTitle,Course.courseType,
 Course.courseDuration,CMR.ps,Course.courseDelivery
 ) as tbl_cached where tbl_cached.ntid = UDT.ntid and tbl_cached.courseId = Course.courseId )
  as count_conflict
-from user_data_mapping_role as UMR
+from ((((user_data_mapping_role as UMR
 inner join user_data as UDT
-on UMR.idUserdata = UDT.ntid
+on UMR.idUserdata = UDT.ntid)
 inner join BpRoleStandard as BPROLE
-on UMR.idBpRoleStandard = BPROLE.id
+on UMR.idBpRoleStandard = BPROLE.id)
 inner join CourseMappingBpRoleStandard as CMR
-on UMR.idBpRoleStandard = CMR.idBpRole
+on UMR.idBpRoleStandard = CMR.idBpRole)
 inner join Course as Course
-on CMR.idCourse = Course.id
+on CMR.idCourse = Course.id)
 where UMR.deleted=0 and  UDT.deleted =0 and
 BPROLE.deleted=0 and CMR.deleted=0 and
 Course.deleted=0 and UMR.idFunction='(%RG_F_ID%)'
@@ -48,7 +48,7 @@ Course.courseDuration,CMR.ps,Course.courseDelivery
 =====
 tmp_table_report
 ===
-select ntid from  user_data_mapping_role where deleted = 0 and idFunction='(%RG_F_ID%)'
+select idUserdata from  user_data_mapping_role where deleted = 0 and idFunction='(%RG_F_ID%)'
 ===
 select bpRole.BpRoleStandardName as [Job Role] 
 		from (user_data_mapping_role as udata   
@@ -71,15 +71,15 @@ UDT.fname,UDT.lname,UDT.omsSubfunction,
 Course.courseArena,Course.courseId,
 Course.courseTitle,Course.courseType,
 Course.courseDuration,CMR.ps,Course.courseDelivery
-from user_data_mapping_role as UMR
+from ((((user_data_mapping_role as UMR
 inner join user_data as UDT
-on UMR.idUserdata = UDT.ntid
+on UMR.idUserdata = UDT.ntid)
 inner join BpRoleStandard as BPROLE
-on UMR.idBpRoleStandard = BPROLE.id
+on UMR.idBpRoleStandard = BPROLE.id)
 inner join CourseMappingBpRoleStandard as CMR
-on UMR.idBpRoleStandard = CMR.idBpRole
+on UMR.idBpRoleStandard = CMR.idBpRole)
 inner join Course as Course
-on CMR.idCourse = Course.id
+on CMR.idCourse = Course.id)
 where UMR.deleted=0 and  UDT.deleted =0 and
 BPROLE.deleted=0 and CMR.deleted=0 and
 Course.deleted=0 and UMR.idFunction='(%RG_F_ID%)'
@@ -89,15 +89,15 @@ Course.courseTitle,Course.courseType,
 Course.courseDuration,CMR.ps,Course.courseDelivery
 ) as tbl_cached where tbl_cached.ntid = UDT.ntid and tbl_cached.courseId = Course.courseId )
  as count_conflict
-from user_data_mapping_role as UMR
+from ((((user_data_mapping_role as UMR
 inner join user_data as UDT
-on UMR.idUserdata = UDT.ntid
+on UMR.idUserdata = UDT.ntid)
 inner join BpRoleStandard as BPROLE
-on UMR.idBpRoleStandard = BPROLE.id
+on UMR.idBpRoleStandard = BPROLE.id)
 inner join CourseMappingBpRoleStandard as CMR
-on UMR.idBpRoleStandard = CMR.idBpRole
+on UMR.idBpRoleStandard = CMR.idBpRole)
 inner join Course as Course
-on CMR.idCourse = Course.id
+on CMR.idCourse = Course.id)
 where UMR.deleted=0 and  UDT.deleted =0 and
 BPROLE.deleted=0 and CMR.deleted=0 and
 Course.deleted=0 and UMR.idFunction='(%RG_F_ID%)'
@@ -122,15 +122,15 @@ UDT.fname,UDT.lname,UDT.omsSubfunction,
 Course.courseArena,Course.courseId,
 Course.courseTitle,Course.courseType,
 Course.courseDuration,CMR.ps,Course.courseDelivery
-from user_data_mapping_role as UMR
+from ((((user_data_mapping_role as UMR
 inner join user_data as UDT
-on UMR.idUserdata = UDT.ntid
+on UMR.idUserdata = UDT.ntid)
 inner join BpRoleStandard as BPROLE
-on UMR.idBpRoleStandard = BPROLE.id
+on UMR.idBpRoleStandard = BPROLE.id)
 inner join CourseMappingBpRoleStandard as CMR
-on UMR.idBpRoleStandard = CMR.idBpRole
+on UMR.idBpRoleStandard = CMR.idBpRole)
 inner join Course as Course
-on CMR.idCourse = Course.id
+on CMR.idCourse = Course.id)
 where UMR.deleted=0 and  UDT.deleted =0 and
 BPROLE.deleted=0 and CMR.deleted=0 and
 Course.deleted=0 and UMR.idFunction='(%RG_F_ID%)'
@@ -140,15 +140,15 @@ Course.courseTitle,Course.courseType,
 Course.courseDuration,CMR.ps,Course.courseDelivery
 ) as tbl_cached where tbl_cached.ntid = UDT.ntid and tbl_cached.courseId = Course.courseId )
  as count_conflict
-from user_data_mapping_role as UMR
+from ((((user_data_mapping_role as UMR
 inner join user_data as UDT
-on UMR.idUserdata = UDT.ntid
+on UMR.idUserdata = UDT.ntid)
 inner join BpRoleStandard as BPROLE
-on UMR.idBpRoleStandard = BPROLE.id
+on UMR.idBpRoleStandard = BPROLE.id)
 inner join CourseMappingBpRoleStandard as CMR
-on UMR.idBpRoleStandard = CMR.idBpRole
+on UMR.idBpRoleStandard = CMR.idBpRole)
 inner join Course as Course
-on CMR.idCourse = Course.id
+on CMR.idCourse = Course.id)
 where UMR.deleted=0 and  UDT.deleted =0 and
 BPROLE.deleted=0 and CMR.deleted=0 and
 Course.deleted=0 and UMR.idFunction='(%RG_F_ID%)'
