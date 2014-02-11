@@ -38,7 +38,7 @@ Public Sub TestImportSettings()
     mAssert.Equals s.DatabaseName, "upstream_role_mapping"
     mAssert.Equals s.userNAme, "sa"
     mAssert.Equals s.Password, "admincmg@3f"
-    mAssert.Equals s.regionName, "Indo"
+    mAssert.Equals s.RegionName, "Indo"
     mAssert.Equals s.LogLevel, "DEBUG"
     mAssert.Equals UBound(s.LineToRemove), 2
     mAssert.Equals UBound(s.SyncTables), 9

@@ -152,9 +152,22 @@ Public Function query(qType As Integer, Optional data As Scripting.Dictionary) A
         Case Constants.Q_LEFT:
             mQuery = mQueryLeft
     End Select
-    If Not data Is Nothing Then
-        mQuery = StringHelper.GenerateQuery(mQuery, data)
+    If data Is Nothing Then
+        Set data = New Scripting.Dictionary
     End If
+    If Not data.Exists(Constants.Q_KEY_FILTER) Then
+        data.Add Constants.Q_KEY_FILTER, ""
+    End If
+    If Not data.Exists(Constants.Q_KEY_FUNCTION_REGION_ID) Then
+        data.Add Constants.Q_KEY_FUNCTION_REGION_ID, Session.Settings.RegionFunctionId
+    End If
+    If Not data.Exists(Constants.Q_KEY_REGION_NAME) Then
+        data.Add Constants.Q_KEY_REGION_NAME, Session.Settings.RegionName
+    End If
+    If Not data.Exists(Constants.Q_KEY_FUNCTION_REGION_NAME) Then
+        data.Add Constants.Q_KEY_FUNCTION_REGION_NAME, Session.CurrentUser.FuncRegion.Name
+    End If
+    mQuery = StringHelper.GenerateQuery(mQuery, data)
     'Logger.LogDebug "MappingMetaData.Query", mQuery
     query = mQuery
 End Function

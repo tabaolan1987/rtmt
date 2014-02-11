@@ -16,7 +16,8 @@ Private ss As SystemSetting
 Private Valid As Boolean
 Private mWorkingFile As String
 
-Public Function Init(md As MappingMetadata, Optional mss As SystemSetting)
+Public Function Init(md As MappingMetadata, Optional mss As SystemSetting, Optional filterTop As String, _
+                            Optional filterLeft As String)
     Set mmd = md
     Set ss = mss
     If mmd.Valid Then
@@ -25,7 +26,7 @@ Public Function Init(md As MappingMetadata, Optional mss As SystemSetting)
         If ss Is Nothing Then
             Set ss = Session.Settings()
         End If
-        PrepareData
+        PrepareData filterTop, filterLeft
         If dictTop.Count <> 0 And dictTopComment.Count <> 0 _
             And dictLeft.Count <> 0 And dictLeftComment.Count <> 0 Then
             Valid = True
@@ -45,7 +46,7 @@ Public Function CheckExistMapping() As Boolean
     Dim query As String
     query = FileHelper.ReadQuery(Constants.TABLE_MAPPING_SPECIALISM_ACITIVITY, Q_SELECT)
     Dim data As New Scripting.Dictionary
-    data.Add Constants.Q_KEY_REGION_NAME, Session.Settings.regionName
+    data.Add Constants.Q_KEY_REGION_NAME, Session.Settings.RegionName
     data.Add Constants.Q_KEY_FUNCTION_REGION_ID, Session.Settings.RegionFunctionId
     query = StringHelper.GenerateQuery(query, data)
     dbm.Init
@@ -58,16 +59,22 @@ Public Function CheckExistMapping() As Boolean
     dbm.Recycle
 End Function
 
-Private Function PrepareData()
-    
+Private Function PrepareData(Optional filterTop As String, _
+                            Optional filterLeft As String)
     Dim tmpId As String, tmpIdLeft As String
+    Dim query As String
     Dim tmpComment As String
     Dim tmpValue As String
+    Dim data As Scripting.Dictionary
     '========= TOP FIELD DATA BLOCK ========
     Set dictTop = New Scripting.Dictionary
     Set dictTopComment = New Scripting.Dictionary
     dbm.Init
-    dbm.OpenRecordSet mmd.query(Q_TOP)
+    Set data = New Scripting.Dictionary
+    data.Add Constants.Q_KEY_FILTER, filterTop
+    query = mmd.query(Q_TOP, data)
+    Logger.LogDebug "MappingHelper.PrepareData", "Query top: " & query
+    dbm.OpenRecordSet query
     If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
         
         dbm.RecordSet.MoveFirst
@@ -91,7 +98,11 @@ Private Function PrepareData()
     Set dictLeft = New Scripting.Dictionary
     Set dictLeftComment = New Scripting.Dictionary
     dbm.Init
-    dbm.OpenRecordSet mmd.query(Q_LEFT)
+    Set data = New Scripting.Dictionary
+    data.Add Constants.Q_KEY_FILTER, filterLeft
+    query = mmd.query(Q_LEFT, data)
+    Logger.LogDebug "MappingHelper.PrepareData", "Query left: " & query
+    dbm.OpenRecordSet query
     If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
         
         dbm.RecordSet.MoveFirst
