@@ -1,77 +1,71 @@
 SELECT 
-	[NTID],
-	[fname] AS [First Name],
-	[lname] AS [Last Name],
-	[jobTitle] AS [Job Title],
+	UD.[NTID],
+	UD.[fname] AS [First Name],
+	UD.[lname] AS [Last Name],
+	UD.[jobTitle] AS [Job Title],
 	'' AS [Performace Unit],
-	[purchasingOrg] AS [Purchasing Org],
-	[jobTitle] AS [Job Title 2],
-	[siteLocation] AS[Location-Site],
+	UD.[purchasingOrg] AS [Purchasing Org],
+	UD.[jobTitle] AS [Job Title 2],
+	UD.[siteLocation] AS[Location-Site],
 	'' AS [HR Status],
 	'' AS [Requisition/Indent ($Limit in Thousands)],
 	'' AS [Invoice Approval ($Limit in Thousands)],
 	'' AS [3rd Party Commitment ($Limit in Thousands)]
-FROM user_data
-Where user_data.deleted=0
-and user_data.SFunction='(%RG_F_NAME%)'
+FROM user_data_mapping_role as UMR
+inner join user_data as UD
+on URM.ntid = UD.ntid
+Where UMR.deleted=0
+and UMR.idFunction='(%RG_F_ID%)'
 ORDER BY [ntid]
+=====
 =====
 SELECT 
 	{% 
-		SRM Lead Requestor,Backbone Reviewer/Approver,
-		Procurement Display & Reporting,
-		Contract Display & Reporting,Service Entry Sheet Creator,
-		Operational Buyer,Contract Owner,Procurement Catalogue Processor,
-		PSCM Specialist,PSCM Team Leader,Sourcing Coordinator,
-		T&C Supressor,AVL Suppressor,Confidential Contracts Management,
-		PSCM Approver,Bidder Creator,Goods Receiver,
-		Title Transfer Receiver,Warehouse / Logistics Specialist,
-		MRP Specialist,Inventory Scrapper,Inventory Transfer Specialist,
-		Stock Count Administrator,Stock Count Variance Processor,
-		Inventory Requester,Materials Fabrication Requestor,
-		MM Financial Approver,Materials Management Display & Reporting,
-		CRP Processor,Cost Allocation Administrator,
-		Shipment Specialist,Rental Specialist,Materials Expediter,
-		POQR Library Administrator,POQR Approver,POQR Document Reviewer,
-		Inventory Optimisation Analyst,WM Supervisor,WM Scheduler,Inventory Optimization Analyst,Inventory Optimization Analyst,
-		WM Planner,WM Advanced Planner 1,WM Advanced Planner 2,
-		WM Technician,WM Non-Planning Technician,WM Mobile Technician,
-		WM Microsoft Project (MSP),WM Senior Leadership,
-		WM Display & Reporting,AP Invoice Processor,
-		WM Occasional Work Request Creator,
+		SRM Lead Requester,Standard Desktop Confirmation Requester,
+		Central Desktop Confirmation Requester,Backbone Reviewer/Approver,
+		Procurement Display & Reporting,Contract Display & Reporting,
+		Service Entry Sheet Creator,Operational Buyer,Contract Owner,
+		Procurement Catalogue Processor,PSCM Specialist,PSCM Team Leader,
+		Sourcing Coordinator,T&C Suppressor,Confidential Contracts Management,
+		PSCM Approver,Bidder Creator,Goods Receiver,Title Transfer Receiver,
+		Warehouse / Logistics Specialist,MRP Specialist,
+		Strategic Materials Planner,Demand Planning MRP Specialist,
+		VMI Administrator,Third Party Inventory Administrator,Inventory Scrapper,
+		Inventory Transfer Specialist,Stock Count Administrator,
+		Stock Count Variance Processor,Inventory Requestor,
+		Materials Fabrication Requestor,MM Financial Approver,
+		Materials Management Display & Reporting ,CRP Processor,
+		Cost Allocation Administrator (GoM),Shipment Specialist,
+		Rental Specialist,Materials Expediter,Inventory Optimization Analyst,Inventory Optimisation Analyst,
+		POQR Library Administrator,POQR Document Reviewer,
+		POQR Approver,WM Supervisor,WM Scheduler ,WM Planner,
+		WM Advanced Planner 1,WM Advanced Planner 2,WM Technician,
+		WM Mobile Technician,WM Microsoft Project,
+		WM Senior Leadership,WM Display & Reporting,
 		WM Local Work Management Administrator,
 		WM Regional Work Management Administrator,
-		WM Regional Maximo Labour Data Steward,Master Data Administrator - Item,
-		Master Data Steward - MDM Team,Master Data Administrator - Warehouse,
+		Master Data Administrator - Item,Master Data Administrator - Warehouse,
 		Master Data Administrator - BOM/Product Structure,
-		Master Data Administrator - Service,Master Data Administrator - PSCM,
-		Cost Approver Maintainer,Material Master Technical Approver,
-		AVL Co-ordinator,Vendor Maintainer - SQM,Vendor Maintainer - HSSE,
-		Tax Maintainer,Order Settlement,Accruals Co-ordinator,Tax Expert,
-		Finance Integration Display and Reporting,Accounting Object Analyst,
-		Invoice Exception and Workflow Analyst,MI Query Writer,Regional Backbone Administrator
+		Master Data Administrator - Service,MDM - Global Data Steward,
+		MDM - Local Data Steward,MDM - Display,Master Data Administrator - PSCM,
+		Cost Approver Maintainer,Vendor Data Requestor (Egypt only),
+		Vendor Maintainer - HSSE,GWO Data Maintainer,GWO Data Display,
+		Order Settlement,Invoice Exception and Workflow Analyst,
+		Tax Maintainer,Accounting Object Analyst,Tax Expert,
+		AP Invoice Processor (GFT Job Role),Finance Integration Display and Reporting,
+		MI Query Writer,Regional Maximo Labor Data Steward,Regional Backbone Administrator
 		| 
 		(select top 1 IIF(NOT ISNULL(bpRole.BpRoleStandardName), "Y","") 
-from (((((user_data as udata 
-inner join specialism as sp
-on sp.SpecialismName = udata.specialism)
-inner join SpecialismMappingActivity as spAc
-on sp.id = spAc.idSpecialism)
-inner join Activity as ac
-on spAc.idActivity =ac.id)
-inner join MappingActivityBpStandardRole as AcBpMapp
-on ac.id = AcBpMapp.idActivity)
+from (user_data_mapping_role as UMR 
 inner join BpRoleStandard as bpRole
-on AcBpMapp.idBpRoleStandard = bpRole.id)
-where udata.ntid = UD.ntid
-and udata.Deleted = 0 and sp.Deleted = 0
-and spAc.Deleted = 0 and ac.Deleted = 0
-and AcBpMapp.Deleted = 0 and bpRole.Deleted = 0
+on UMR.idBpRoleStandard = bpRole.id)
+where UMR.ntid = UD.ntid and UMR.Deleted=0
+and bpRole.Deleted = 0
 and bpRole.BpRoleStandardName = '(%VALUE%)'
-and spAc.function_region='(%RG_F_ID%)')
+and UMR.idFunction='(%RG_F_ID%)')
 				AS [(%VALUE%)]
 			%}
-FROM user_data AS UD 
-where UD.SFunction='(%RG_F_NAME%)'
+FROM user_data_mapping_role as UD
+where UD.idFunction='(%RG_F_ID%)'
 ORDER BY UD.ntid
 
