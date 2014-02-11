@@ -48,12 +48,12 @@ Course.courseDuration,CMR.ps,Course.courseDelivery
 =====
 tmp_table_report
 ===
-select idUserdata from  user_data_mapping_role where deleted = 0 and idFunction='(%RG_F_ID%)'
+select ntid from user_data where deleted = 0 and SFunction='(%RG_F_NAME%)'
 ===
 select bpRole.BpRoleStandardName as [Job Role] 
 		from (user_data_mapping_role as udata   
 			inner join BpRoleStandard as bpRole on udata.idBpRoleStandard = bpRole.id) 
-		where udata.ntid = '(%VALUE%)' 
+		where udata.idUserdata = '(%VALUE%)' 
 			and udata.idFunction='(%RG_F_ID%)'
 			and udata.Deleted = 0 and bpRole.Deleted = 0 
 		group by bpRole.BpRoleStandardName
