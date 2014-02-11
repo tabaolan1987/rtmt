@@ -122,11 +122,11 @@ Public Property Get TableNames() As String()
     TableNames = mTableNames
 End Property
 
-Public Property Get regionName() As String
+Public Property Get RegionName() As String
     If Len(mRegionName) <> 0 Then
-        regionName = mRegionName
+        RegionName = mRegionName
     Else
-        regionName = Session.CurrentUser.FuncRegion.Region
+        RegionName = Session.CurrentUser.FuncRegion.Region
     End If
 End Property
 

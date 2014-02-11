@@ -16,7 +16,7 @@ Private Property Get DataQuery() As Scripting.Dictionary
     Dim data As New Scripting.Dictionary
     Set ss = Session.Settings()
     data.Add Constants.Q_KEY_FUNCTION_REGION_ID, ss.RegionFunctionId
-    data.Add Constants.Q_KEY_REGION_NAME, ss.regionName
+    data.Add Constants.Q_KEY_REGION_NAME, ss.RegionName
     data.Add Constants.Q_KEY_FUNCTION_REGION_NAME, Session.CurrentUser.FuncRegion.Name
     Set DataQuery = data
 End Property
@@ -54,16 +54,13 @@ Public Function Init(raw As String, Optional mss As SystemSetting)
            
             dbm.OpenRecordSet mQuery
             mCount = dbm.RecordSet.RecordCount
-            
-            If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
-                ' Execute query and get all header name
-                Logger.LogDebug "ReportSection.Init", "Fields count: " & CStr(dbm.RecordSet.fields.Count)
-                For i = 0 To dbm.RecordSet.fields.Count - 1
-                    ReDim Preserve mHeader(arraySize)
-                    mHeader(arraySize) = dbm.RecordSet.fields(i).Name
-                    arraySize = arraySize + 1
-                    Next i
-            End If
+            ' Execute query and get all header name
+            Logger.LogDebug "ReportSection.Init", "Fields count: " & CStr(dbm.RecordSet.fields.Count)
+            For i = 0 To dbm.RecordSet.fields.Count - 1
+                ReDim Preserve mHeader(arraySize)
+                mHeader(arraySize) = dbm.RecordSet.fields(i).Name
+                arraySize = arraySize + 1
+            Next i
             Logger.LogDebug "ReportSection.Init", "Complete RP_SECTION_TYPE_FIXED"
             dbm.Recycle
         Case Constants.RP_SECTION_TYPE_TMP_TABLE:
@@ -129,15 +126,14 @@ Public Function Init(raw As String, Optional mss As SystemSetting)
             mQuery = StringHelper.GenerateQuery(mQuery, DataQuery)
             dbm.OpenRecordSet mQuery
             mCount = dbm.RecordSet.RecordCount
-            If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
             ' Execute query and get all header name
             Logger.LogDebug "ReportSection.Init", "Fields count: " & CStr(dbm.RecordSet.fields.Count)
             For i = 0 To dbm.RecordSet.fields.Count - 1
                 ReDim Preserve mHeader(arraySize)
                 mHeader(arraySize) = dbm.RecordSet.fields(i).Name
                 arraySize = arraySize + 1
-                Next i
-            End If
+            Next i
+
             dbm.Recycle
         Case Else
     End Select
@@ -208,7 +204,7 @@ Private Function PrepareQuery(query As String, Optional ss As SystemSetting) As 
         For i = LBound(mHeader) To UBound(mHeader)
             strTemp = Replace(qIn, "(%VALUE%)", StringHelper.EscapeQueryString(mHeader(i)))
             If Not ss Is Nothing Then
-                strTemp = Replace(strTemp, "(%RG_F_ID%)", ss.regionName)
+                strTemp = Replace(strTemp, "(%RG_F_ID%)", ss.RegionName)
             End If
             tmpQuery = tmpQuery & qIn & ","
         Next i
@@ -256,7 +252,7 @@ Private Function GenerateQuery(query As String, Optional ss As SystemSetting) As
                 tmpVal = dbm.RecordSet(0)
                 strTemp = Replace(qIn, "(%VALUE%)", StringHelper.EscapeQueryString(tmpVal))
                 If Not ss Is Nothing Then
-                    strTemp = Replace(strTemp, "(%RG_F_ID%)", ss.regionName)
+                    strTemp = Replace(strTemp, "(%RG_F_ID%)", ss.RegionName)
                 End If
                 tmpQuery = tmpQuery & strTemp & ","
                 'Logger.LogDebug "ReportSection.GenerateQuery", "Found value: " & tmpVal

@@ -15,6 +15,7 @@ Public Const FIELD_FIRST_NAME = "fname"
 Public Const FIELD_LAST_NAME = "lname"
 Public Const FIELD_SELECT = "Select"
 Public Const FIELD_DB_FIELD = "Db field"
+Public Const FIELD_SPECIALISM = "specialism"
 
 Public Const TABLE_SYNC_CONFLICT = "sync_conflict"
 Public Const TABLE_USER_DATA_CONFLICT = "user_data_conflict"
@@ -59,6 +60,7 @@ Public Const Q_KEY_ID_LEFT = "ID_LEFT"
 Public Const Q_KEY_FUNCTION_REGION_ID = "RG_F_ID"
 Public Const Q_KEY_REGION_NAME = "RG_NAME"
 Public Const Q_KEY_FUNCTION_REGION_NAME = "RG_F_NAME"
+Public Const Q_KEY_FILTER = "FILTER"
 
 ' for mapping section
 Public Const Q_TOP = 5
@@ -120,6 +122,7 @@ Public Const SS_VALIDATOR_MAPPING = "validatormapping"
 ' File
 Public Const FILE_EXTENSION_CONFIG = ".ini"
 Public Const FILE_EXTENSION_QUERY = ".sql"
+Public Const FILE_EXTENSION_QUERY_MAPPING = ".sqlm"
 Public Const FILE_EXTENSION_TEMPLATE = ".xlsx"
 Public Const FILE_EXTENSION_REPORT = ".xlsx"
 Public Const SPLIT_LEVEL_1 = "====="
@@ -130,6 +133,9 @@ Public Const MAPPING_ACTIVITIES_SPECIALISM = "mapping-activities-specialism"
 Public Const MAPPING_ROOT_FOLDER = "data\mapping\"
 
 ' Reporting
+Public Const RP_TYPE_DEFAULT = "default"
+Public Const RP_TYPE_MAPPING = "mapping"
+
 Public Const RP_QUERY_TYPE_SECTION = "section"
 Public Const RP_QUERY_TYPE_SIMPLE = "simple"
 

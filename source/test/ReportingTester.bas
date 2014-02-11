@@ -66,7 +66,9 @@ End Sub
 
 Public Sub TestGenerateReport()
     On Error GoTo OnError
-    Reporting.GenerateReport Constants.RP_END_USER_TO_SYSTEM_ROLE
+    Dim rpmd As New ReportMetaData
+    rpmd.Init Constants.RP_END_USER_TO_SYSTEM_ROLE
+    Reporting.GenerateReport rpmd
 OnExit:
     ' finally
     Exit Sub

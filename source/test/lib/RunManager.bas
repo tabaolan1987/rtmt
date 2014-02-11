@@ -20,7 +20,7 @@ Private Property Get IRunManager_Assert() As IAssert
 End Property
 
 Private Sub IRunManager_Report()
-    Dim Failure As TestFailure, RM As IRunManager, test As ITest, TestCase As ITestCase, TCR As TestCaseRow
+    Dim Failure As TestFailure, rm As IRunManager, test As ITest, TestCase As ITestCase, TCR As TestCaseRow
         ' Added by Hai to create Unit test report
         Dim fso As Object, oFile As Object, reportPath As String, lastClass As String
         lastClass = ""

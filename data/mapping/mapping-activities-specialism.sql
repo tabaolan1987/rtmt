@@ -1,4 +1,4 @@
-select id, [SpecialismName] as [VALUE], [SpecialismDescription] As [COMMENT] from specialism where deleted=0 order by [SpecialismName]
+select id, [SpecialismName] as [VALUE], [SpecialismDescription] As [COMMENT] from specialism where deleted=0 and [SpecialismName] in ((%FILTER%)) order by [SpecialismName]
 =====
 select id, 
 		(ActivityDetail + DetailPlus) as [VALUE], 

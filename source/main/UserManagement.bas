@@ -10,6 +10,7 @@ Private mIsConflict As Boolean
 Private mIsDuplicate As Boolean
 Private mIsLdapConflict As Boolean
 Private mIsLdapNotfound As Boolean
+Private mIs
 
 Public Function Init(Optional mss As SystemSetting)
     If mss Is Nothing Then
@@ -18,6 +19,10 @@ Public Function Init(Optional mss As SystemSetting)
         Set ss = mss
     End If
     Set dbm = New DbManager
+End Function
+
+Public Function CheckRegionFunction()
+    
 End Function
 
 Public Function CheckLdapNotFound()
@@ -402,6 +407,39 @@ Public Function ResolveUserDataDuplicate()
     
     dbm.RecycleTableName Constants.TABLE_USER_DATA_DUPLICATE
     dbm.Recycle
+End Function
+
+Public Function ListSpecialism() As Collection
+    Dim list As New Collection
+    Dim query As String
+    query = "SELECT [" & Constants.FIELD_SPECIALISM & "] from " & Constants.END_USER_DATA_CACHE_TABLE_NAME _
+                    & " group by [" & Constants.FIELD_SPECIALISM & "]"
+    dbm.Init
+    dbm.OpenRecordSet query
+    If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
+        dbm.RecordSet.MoveFirst
+        Do Until dbm.RecordSet.EOF = True
+            list.Add dbm.GetFieldValue(dbm.RecordSet, Constants.FIELD_SPECIALISM)
+            dbm.RecordSet.MoveNext
+        Loop
+    End If
+    dbm.Recycle
+    Set ListSpecialism = list
+End Function
+
+Public Function GenereateSpecialismFilter() As String
+    Dim list As Collection
+    Set list = ListSpecialism
+    Dim v As Variant
+    Dim filter As String
+    filter = ""
+    For Each v In list
+        filter = filter & "'" & StringHelper.EscapeQueryString(CStr(v)) & "',"
+    Next v
+    If StringHelper.EndsWith(filter, ",", True) Then
+        filter = Left(filter, Len(filter) - 1)
+    End If
+    GenereateSpecialismFilter = filter
 End Function
 
 Public Function MergeUserData()
