@@ -5,6 +5,8 @@ Attribute VB_Exposed = False
 ' @author Hai Lu
 ' Report meta data object
 Option Explicit
+
+Private mType As String
 Private rawName As String
 Private mName As String
 Private mWorkSheet As String
@@ -28,23 +30,13 @@ Private mMergeColumes As Collection
 Private mMergePrimary As Long
 Private mCount As Long
 
-Public Property Get OutputPath() As String
-    If Len(mOutputPath) = 0 Then
-        Dim tmpDir As String
-        tmpDir = FileHelper.CurrentDbPath & Constants.RP_DEFAULT_OUTPUT_FOLDER
-        FileHelper.CheckDir tmpDir
-        mOutputPath = tmpDir & "\" & rawName & Constants.FILE_EXTENSION_REPORT
+
+Public Function Init(Name As String, Optional ss As SystemSetting, Optional rpType As String)
+    If Len(rpType) > 0 Then
+        mType = rpType
+    Else
+        mType = Constants.RP_TYPE_DEFAULT
     End If
-    OutputPath = mOutputPath
-End Property
-
-Public Function Recyle()
-    FileHelper.Delete mQueryFilePath
-    FileHelper.Delete mTemplateFilePath
-    FileHelper.Delete mConfigFilePath
-End Function
-
-Public Function Init(Name As String, Optional ss As SystemSetting)
     rawName = Name
     Logger.LogDebug "ReportMetaData.Init", "Start init report meta name: " & rawName
     Dim tmpRawSection() As String, tmpStr As String, i As Integer
@@ -52,8 +44,12 @@ Public Function Init(Name As String, Optional ss As SystemSetting)
     Dim tmpList() As String
     Dim rpSection As ReportSection
     Dim ir As New IniReader
+    If StringHelper.IsEqual(mType, Constants.RP_TYPE_DEFAULT, True) Then
+        mQueryFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.RP_ROOT_FOLDER & Name & Constants.FILE_EXTENSION_QUERY)
+    Else
+        mQueryFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.RP_ROOT_FOLDER & Name & Constants.FILE_EXTENSION_QUERY_MAPPING)
+    End If
     
-    mQueryFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.RP_ROOT_FOLDER & Name & Constants.FILE_EXTENSION_QUERY)
     mTemplateFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.RP_ROOT_FOLDER & Name & Constants.FILE_EXTENSION_TEMPLATE)
     mConfigFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.RP_ROOT_FOLDER & Name & Constants.FILE_EXTENSION_CONFIG)
     Logger.LogDebug "ReportMetaData.Init", "Read configuration path: " & mConfigFilePath
@@ -117,6 +113,42 @@ Public Function Init(Name As String, Optional ss As SystemSetting)
             mReportSections.Add rpSection
         Next i
     End If
+End Function
+
+Public Property Get OutputPath() As String
+    If Len(mOutputPath) = 0 Then
+        Dim tmpDir As String
+        tmpDir = FileHelper.tmpDir
+        FileHelper.CheckDir tmpDir
+        mOutputPath = tmpDir & StringHelper.GetGUID & Constants.FILE_EXTENSION_REPORT
+    End If
+    OutputPath = mOutputPath
+End Property
+
+Public Function OpenReport()
+    Dim oExcel As New Excel.Application
+    Dim WB As New Excel.Workbook
+    Dim WS As Excel.WorkSheet
+    Dim rng As Excel.range
+    With oExcel
+        .Visible = True
+        If .CommandBars("Ribbon").Height >= 150 Then
+            oExcel.SendKeys "^{F1}"
+        End If
+        Set WB = .Workbooks.Open(mOutputPath)
+    End With
+End Function
+
+Public Function Wait()
+    ' Waiting forever :)
+    WaitForFileClose mOutputPath, 0, 0
+End Function
+
+Public Function Recyle()
+    FileHelper.Delete mQueryFilePath
+    FileHelper.Delete mTemplateFilePath
+    FileHelper.Delete mConfigFilePath
+    FileHelper.Delete mOutputPath
 End Function
 
 Public Property Get ReportSections() As Collection

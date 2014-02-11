@@ -10,6 +10,7 @@ Private mIsConflict As Boolean
 Private mIsDuplicate As Boolean
 Private mIsLdapConflict As Boolean
 Private mIsLdapNotfound As Boolean
+Private mIs
 
 Public Function Init(Optional mss As SystemSetting)
     If mss Is Nothing Then
@@ -18,6 +19,10 @@ Public Function Init(Optional mss As SystemSetting)
         Set ss = mss
     End If
     Set dbm = New DbManager
+End Function
+
+Public Function CheckRegionFunction()
+    
 End Function
 
 Public Function CheckLdapNotFound()

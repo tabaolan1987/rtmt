@@ -35,12 +35,9 @@ Public Sub ExportExcelReport(sSQL As String, sFileNameTemplate As String, output
     Set objRs = Nothing
 End Sub
 
-Public Sub GenerateReport(Name As String)
+Public Sub GenerateReport(rpm As ReportMetaData)
     Dim ss As SystemSetting
     Set ss = Session.Settings()
-    Dim rpm As New ReportMetaData
-    Logger.LogDebug "Reporting.GenerateReport", "Start init report metadata " & Name
-    rpm.Init Name
     If FileHelper.IsExist(rpm.OutputPath) Then
         Logger.LogDebug "Reporting.GenerateReport", "Delete file " & rpm.OutputPath
         FileHelper.Delete rpm.OutputPath

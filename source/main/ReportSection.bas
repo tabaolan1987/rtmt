@@ -54,16 +54,13 @@ Public Function Init(raw As String, Optional mss As SystemSetting)
            
             dbm.OpenRecordSet mQuery
             mCount = dbm.RecordSet.RecordCount
-            
-            If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
-                ' Execute query and get all header name
-                Logger.LogDebug "ReportSection.Init", "Fields count: " & CStr(dbm.RecordSet.fields.Count)
-                For i = 0 To dbm.RecordSet.fields.Count - 1
-                    ReDim Preserve mHeader(arraySize)
-                    mHeader(arraySize) = dbm.RecordSet.fields(i).Name
-                    arraySize = arraySize + 1
-                    Next i
-            End If
+            ' Execute query and get all header name
+            Logger.LogDebug "ReportSection.Init", "Fields count: " & CStr(dbm.RecordSet.fields.Count)
+            For i = 0 To dbm.RecordSet.fields.Count - 1
+                ReDim Preserve mHeader(arraySize)
+                mHeader(arraySize) = dbm.RecordSet.fields(i).Name
+                arraySize = arraySize + 1
+            Next i
             Logger.LogDebug "ReportSection.Init", "Complete RP_SECTION_TYPE_FIXED"
             dbm.Recycle
         Case Constants.RP_SECTION_TYPE_TMP_TABLE:
@@ -129,15 +126,14 @@ Public Function Init(raw As String, Optional mss As SystemSetting)
             mQuery = StringHelper.GenerateQuery(mQuery, DataQuery)
             dbm.OpenRecordSet mQuery
             mCount = dbm.RecordSet.RecordCount
-            If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
             ' Execute query and get all header name
             Logger.LogDebug "ReportSection.Init", "Fields count: " & CStr(dbm.RecordSet.fields.Count)
             For i = 0 To dbm.RecordSet.fields.Count - 1
                 ReDim Preserve mHeader(arraySize)
                 mHeader(arraySize) = dbm.RecordSet.fields(i).Name
                 arraySize = arraySize + 1
-                Next i
-            End If
+            Next i
+
             dbm.Recycle
         Case Else
     End Select
