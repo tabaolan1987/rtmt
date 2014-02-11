@@ -1,44 +1,46 @@
 SELECT 
-	[NTID],
-	[GPID],
-	[fname] AS [First Name],
-	[lname] AS [Last Name],
-	[email] AS [E-mail address],
-	[omsSubfunction] AS [Function (OMS)/ Sub-function],
-	[departmentBusiness] AS [Department or Business Unit],
-	[Specialism],
-	[jobTitle] AS [Job Title],
-	[sponsorForeName] AS [Line Manager/ Sponsor Forename],
-	[sponsorSurname] AS [Line Manager/ Sponsor Surname],
-	[VTA],
-	[Country],
-	[contractor] AS [Contractor?],
-	[SFunction] AS [Standard Function],
-	[SdSubFunction] AS [Standard Sub Function],
-	[STeam] AS [Standard Team],
-	[Spare1],
-	[Spare2],
-	[Spare3],
-	[Spare4],
-	[Spare5],
-	[Spare6],
-	[Spare7],
-	[Spare8],
-	[Spare9],
-	[Spare10],
-	[Spare11],
-	[Spare12],
-	[Spare13],
-	[Spare14],
-	[Spare15],
-	[Spare16],
-	[Spare17],
-	[Spare18],
-	[Spare19],
-	[Spare20]
-FROM user_data
-Where user_data.deleted=0
-and user_data.SFunction='(%RG_F_NAME%)'
+	UD.[NTID],
+	UD.[GPID],
+	UD.[fname] AS [First Name],
+	UD.[lname] AS [Last Name],
+	UD.[email] AS [E-mail address],
+	UD.[omsSubfunction] AS [Function (OMS)/ Sub-function],
+	UD.[departmentBusiness] AS [Department or Business Unit],
+	UD.[Specialism],
+	UD.[jobTitle] AS [Job Title],
+	UD.[sponsorForeName] AS [Line Manager/ Sponsor Forename],
+	UD.[sponsorSurname] AS [Line Manager/ Sponsor Surname],
+	UD.[VTA],
+	UD.[Country],
+	UD.[contractor] AS [Contractor?],
+	UD.[SFunction] AS [Standard Function],
+	UD.[SdSubFunction] AS [Standard Sub Function],
+	UD.[STeam] AS [Standard Team],
+	UD.[Spare1],
+	UD.[Spare2],
+	UD.[Spare3],
+	UD.[Spare4],
+	UD.[Spare5],
+	UD.[Spare6],
+	UD.[Spare7],
+	UD.[Spare8],
+	UD.[Spare9],
+	UD.[Spare10],
+	UD.[Spare11],
+	UD.[Spare12],
+	UD.[Spare13],
+	UD.[Spare14],
+	UD.[Spare15],
+	UD.[Spare16],
+	UD.[Spare17],
+	UD.[Spare18],
+	UD.[Spare19],
+	UD.[Spare20]
+FROM user_data_mapping_role as UMR
+inner join user_data as UD
+on URM.ntid = UD.ntid
+Where UMR.deleted=0
+and UMR.idFunction='(%RG_F_ID%)'
 ORDER BY [ntid]
 =====
 SELECT 
@@ -78,26 +80,16 @@ SELECT
 		MI Query Writer,Regional Maximo Labor Data Steward,Regional Backbone Administrator
 		| 
 		(select top 1 IIF(NOT ISNULL(bpRole.BpRoleStandardName), "Y","") 
-from (((((user_data as udata 
-inner join specialism as sp
-on sp.SpecialismName = udata.specialism)
-inner join SpecialismMappingActivity as spAc
-on sp.id = spAc.idSpecialism)
-inner join Activity as ac
-on spAc.idActivity = ac.id)
-inner join MappingActivityBpStandardRole as AcBpMapp
-on ac.id = AcBpMapp.idActivity)
+from (user_data_mapping_role as UMR 
 inner join BpRoleStandard as bpRole
-on AcBpMapp.idBpRoleStandard = bpRole.id)
-where udata.ntid = UD.ntid and udata.Deleted=0
-and sp.Deleted=0 and spAc.Deleted=0
-and ac.Deleted=0 and AcBpMapp.Deleted=0
-and bpRole.Deleted=0
+on UMR.idBpRoleStandard = bpRole.id)
+where UMR.ntid = UD.ntid and UMR.Deleted=0
+and bpRole.Deleted = 0
 and bpRole.BpRoleStandardName = '(%VALUE%)'
-and spAc.function_region='(%RG_F_ID%)')
+and UMR.idFunction='(%RG_F_ID%)')
 				AS [(%VALUE%)]
 			%}
-FROM user_data AS UD
-where UD.SFunction='(%RG_F_NAME%)'
+FROM user_data_mapping_role as UD
+where UD.idFunction='(%RG_F_ID%)'
 ORDER BY UD.ntid
 

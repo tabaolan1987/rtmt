@@ -1,23 +1,45 @@
 SELECT 
-	UD.[NTID],
-	UD.[fname] AS [First Name],
-	UD.[lname] AS [Last Name],
-	UD.[jobTitle] AS [Job Title],
-	'' AS [Performace Unit],
-	UD.[purchasingOrg] AS [Purchasing Org],
-	UD.[jobTitle] AS [Job Title 2],
-	UD.[siteLocation] AS[Location-Site],
-	'' AS [HR Status],
-	'' AS [Requisition/Indent ($Limit in Thousands)],
-	'' AS [Invoice Approval ($Limit in Thousands)],
-	'' AS [3rd Party Commitment ($Limit in Thousands)]
-FROM user_data_mapping_role as UMR
-inner join user_data as UD
-on URM.ntid = UD.ntid
-Where UMR.deleted=0
-and UMR.idFunction='(%RG_F_ID%)'
+	[NTID],
+	[GPID],
+	[fname] AS [First Name],
+	[lname] AS [Last Name],
+	[email] AS [E-mail address],
+	[omsSubfunction] AS [Function (OMS)/ Sub-function],
+	[departmentBusiness] AS [Department or Business Unit],
+	[Specialism],
+	[jobTitle] AS [Job Title],
+	[sponsorForeName] AS [Line Manager/ Sponsor Forename],
+	[sponsorSurname] AS [Line Manager/ Sponsor Surname],
+	[VTA],
+	[Country],
+	[contractor] AS [Contractor?],
+	[SFunction] AS [Standard Function],
+	[SdSubFunction] AS [Standard Sub Function],
+	[STeam] AS [Standard Team],
+	[Spare1],
+	[Spare2],
+	[Spare3],
+	[Spare4],
+	[Spare5],
+	[Spare6],
+	[Spare7],
+	[Spare8],
+	[Spare9],
+	[Spare10],
+	[Spare11],
+	[Spare12],
+	[Spare13],
+	[Spare14],
+	[Spare15],
+	[Spare16],
+	[Spare17],
+	[Spare18],
+	[Spare19],
+	[Spare20]
+FROM user_data
+Where user_data.deleted=0
+and user_data.SFunction='(%RG_F_NAME%)'
 ORDER BY [ntid]
-=====
 =====
 SELECT 
 	{% 
@@ -56,16 +78,26 @@ SELECT
 		MI Query Writer,Regional Maximo Labor Data Steward,Regional Backbone Administrator
 		| 
 		(select top 1 IIF(NOT ISNULL(bpRole.BpRoleStandardName), "Y","") 
-from (user_data_mapping_role as UMR 
+from (((((user_data as udata 
+inner join specialism as sp
+on sp.SpecialismName = udata.specialism)
+inner join SpecialismMappingActivity as spAc
+on sp.id = spAc.idSpecialism)
+inner join Activity as ac
+on spAc.idActivity = ac.id)
+inner join MappingActivityBpStandardRole as AcBpMapp
+on ac.id = AcBpMapp.idActivity)
 inner join BpRoleStandard as bpRole
-on UMR.idBpRoleStandard = bpRole.id)
-where UMR.ntid = UD.ntid and UMR.Deleted=0
-and bpRole.Deleted = 0
+on AcBpMapp.idBpRoleStandard = bpRole.id)
+where udata.ntid = UD.ntid and udata.Deleted=0
+and sp.Deleted=0 and spAc.Deleted=0
+and ac.Deleted=0 and AcBpMapp.Deleted=0
+and bpRole.Deleted=0
 and bpRole.BpRoleStandardName = '(%VALUE%)'
-and UMR.idFunction='(%RG_F_ID%)')
+and spAc.function_region='(%RG_F_ID%)')
 				AS [(%VALUE%)]
 			%}
-FROM user_data_mapping_role as UD
-where UD.idFunction='(%RG_F_ID%)'
+FROM user_data AS UD
+where UD.SFunction='(%RG_F_NAME%)'
 ORDER BY UD.ntid
 
