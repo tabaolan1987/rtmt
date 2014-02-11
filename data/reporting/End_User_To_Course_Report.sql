@@ -44,7 +44,7 @@ Course.courseArena,Course.courseId,
 Course.courseTitle,Course.courseType,
 Course.courseDuration,CMR.ps,Course.courseDelivery
 ) as rpc
- where (rpc.count_conflict > 1 and rpc.ps = 'P') or rpc.count_conflict =1
+ where  rpc.count_conflict =1 or (rpc.count_conflict > 1 and rpc.ps = 'P') 
 =====
 tmp_table_report
 ===
@@ -107,7 +107,7 @@ Course.courseTitle,Course.courseType,
 Course.courseDuration,CMR.ps,Course.courseDelivery
 )
 as rpc
-where (rpc.count_conflict > 1 and rpc.ps = 'P') or rpc.count_conflict =1) as tbl_data inner join tmp_table_report as tmp_table on tmp_table.[key] = tbl_data.ntid)
+where rpc.count_conflict =1 or (rpc.count_conflict > 1 and rpc.ps = 'P') ) as tbl_data inner join tmp_table_report as tmp_table on tmp_table.[key] = tbl_data.ntid)
 =====
 select rpc.courseArena,rpc.courseId,
 rpc.courseTitle,rpc.courseType,
@@ -157,4 +157,4 @@ Course.courseArena,Course.courseId,
 Course.courseTitle,Course.courseType,
 Course.courseDuration,CMR.ps,Course.courseDelivery
 ) as rpc
- where (rpc.count_conflict > 1 and rpc.ps = 'P') or rpc.count_conflict =1
+ where rpc.count_conflict =1 or (rpc.count_conflict > 1 and rpc.ps = 'P')
