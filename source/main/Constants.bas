@@ -16,6 +16,7 @@ Public Const FIELD_LAST_NAME = "lname"
 Public Const FIELD_SELECT = "Select"
 Public Const FIELD_DB_FIELD = "Db field"
 Public Const FIELD_SPECIALISM = "specialism"
+Public Const FIELD_REGION_FUNCTION = "SFunction"
 
 Public Const TABLE_SYNC_CONFLICT = "sync_conflict"
 Public Const TABLE_USER_DATA_CONFLICT = "user_data_conflict"
@@ -25,6 +26,7 @@ Public Const TABLE_USER_DATA_LDAP_NOTFOUND = "user_data_ldap_notfound"
 Public Const TABLE_TMP_TABLE_REPORT = "tmp_table_report"
 Public Const TABLE_USER_PRIVILEGES = "user_privileges"
 Public Const TABLE_MAPPING_SPECIALISM_ACITIVITY = "mapping_specialism_acitivity"
+Public Const TABLE_USER_DATA_MAPPING_ROLE = "user_data_mapping_role"
 
 Public Const TEXT_DEFAULT_SELECT_REGION_FUNCTION = "Select Region & Function"
 
@@ -116,8 +118,15 @@ Public Const KEY_MERGE_PRIMARY = "mergePrimary"
 ' System setting file
 Public Const SS_DIR = "data\config\"
 Public Const SS_SYNC_TABLES = "synctables"
+Public Const SS_SYNC_ROLE_TABLES = "syncroletables"
+Public Const SS_SYNC_MAPPING_TABLES = "syncmappingtables"
 Public Const SS_SYNC_USERS = "syncusers"
 Public Const SS_VALIDATOR_MAPPING = "validatormapping"
+
+
+Public Const SYNC_TYPE_DEFAULT = 0
+Public Const SYNC_TYPE_ROLE = 1
+Public Const SYNC_TYPE_MAPPING = 2
 
 ' File
 Public Const FILE_EXTENSION_CONFIG = ".ini"

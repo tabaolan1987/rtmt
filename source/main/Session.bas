@@ -31,11 +31,6 @@ End Function
 Public Function RecyleMapping()
     mFlagMapping = False
     Set mMappingMDCol = Nothing
-    Dim mmd As MappingMetadata
-    Set mMappingMDCol = New Scripting.Dictionary
-    Set mmd = New MappingMetadata
-    mmd.Init Constants.MAPPING_ACTIVITIES_SPECIALISM
-    mMappingMDCol.Add Constants.MAPPING_ACTIVITIES_SPECIALISM, mmd
 End Function
 
 Public Function RecyleReports()

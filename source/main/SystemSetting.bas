@@ -16,6 +16,8 @@ Private mPort As String
 Private mUsername As String
 Private mPassword As String
 Private mSyncTables() As String
+Private mSyncMappingTables() As String
+Private mSyncRoleTables() As String
 Private mSyncUsers As Scripting.Dictionary
 Private mValidatorMapping As Scripting.Dictionary
 Private mWorkSheet As String
@@ -38,6 +40,8 @@ Public Function Init()
     mPassword = ir.ReadKey(Constants.SECTION_REMOTE_DATABASE, Constants.KEY_PASSWORD)
     
     mSyncTables = FileHelper.ReadSSFile(Constants.SS_SYNC_TABLES)
+    mSyncRoleTables = FileHelper.ReadSSFile(Constants.SS_SYNC_ROLE_TABLES)
+    mSyncMappingTables = FileHelper.ReadSSFile(Constants.SS_SYNC_MAPPING_TABLES)
     
     Dim source As String, tmpList() As String, ln As String, arraySize As Integer, i As Integer
     source = ir.ReadKey(Constants.SECTION_USER_DATA, Constants.KEY_LINE_TO_REMOVE)
@@ -108,6 +112,14 @@ End Property
 
 Public Property Get SyncTables() As String()
     SyncTables = mSyncTables
+End Property
+
+Public Property Get SyncRoleTables() As String()
+    SyncRoleTables = mSyncRoleTables
+End Property
+
+Public Property Get SyncMappingTables() As String()
+    SyncMappingTables = mSyncMappingTables
 End Property
 
 Public Property Get SyncUsers() As Scripting.Dictionary

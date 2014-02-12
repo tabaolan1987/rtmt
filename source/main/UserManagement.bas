@@ -10,7 +10,7 @@ Private mIsConflict As Boolean
 Private mIsDuplicate As Boolean
 Private mIsLdapConflict As Boolean
 Private mIsLdapNotfound As Boolean
-Private mIs
+Private mIsFunctionRegionConflict As Boolean
 
 Public Function Init(Optional mss As SystemSetting)
     If mss Is Nothing Then
@@ -22,7 +22,16 @@ Public Function Init(Optional mss As SystemSetting)
 End Function
 
 Public Function CheckRegionFunction()
-    
+    Dim query As String
+    query = "SELECT * FROM " & Constants.END_USER_DATA_CACHE_TABLE_NAME & " WHERE [" & Constants.FIELD_REGION_FUNCTION & "] not like '" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Name) & "'"
+    dbm.Init
+    dbm.OpenRecordSet query
+    mIsFunctionRegionConflict = False
+    If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
+        mIsFunctionRegionConflict = True
+    End If
+    dbm.ExecuteQuery "DELETE FROM " & Constants.END_USER_DATA_CACHE_TABLE_NAME & " WHERE [" & Constants.FIELD_REGION_FUNCTION & "] not like '" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Name) & "'"
+    dbm.Recycle
 End Function
 
 Public Function CheckLdapNotFound()
@@ -442,6 +451,125 @@ Public Function GenereateSpecialismFilter() As String
     GenereateSpecialismFilter = filter
 End Function
 
+Public Function GenerateRoleMapping(rm As ReportMetaData)
+    Dim i As Integer, j As Long, l As Long, k As Long
+    Dim v As Variant, y As Variant
+    Dim startMappingCol As Long
+    Dim mappingCount As Long
+    Dim tmpNtid As String
+    Dim tmpRoleId As String
+    Dim tmpStr As String
+    Dim tmpRole As String
+    Dim tmpQuery As String
+    Dim oExcel As New Excel.Application
+    Dim WB As New Excel.Workbook
+    Dim WS As Excel.WorkSheet
+    Dim rng As Excel.range
+    Dim tmpRps As ReportSection
+    Dim header() As String
+    Dim isUpdate As Boolean
+    i = 0
+    For Each tmpRps In rm.ReportSections
+        If i = 0 Then
+            startMappingCol = rm.StartCol + tmpRps.HeaderCount
+        ElseIf i = 1 Then
+            header = tmpRps.header
+            mappingCount = tmpRps.HeaderCount
+        Else
+        End If
+        i = i + 1
+    Next
+    
+    Logger.LogDebug "UserManagement.GenerateRoleMapping", "Mapping Cols count : " & CStr(mappingCount) _
+                                    & ". Start Mapping col: " & CStr(startMappingCol)
+    
+    With oExcel
+            .DisplayAlerts = False
+            .Visible = False
+            Logger.LogDebug "UserManagement.GenerateRoleMapping", "Open excel : " & rm.OutputPath
+            Set WB = .Workbooks.Open(rm.OutputPath)
+            With WB
+                Logger.LogDebug "UserManagement.GenerateRoleMapping", "Select worksheet: " & rm.WorkSheet
+                Set WS = WB.workSheets(rm.WorkSheet)
+                l = rm.StartCol
+                k = rm.StartRow
+                With WS
+                    Do While k < 65536
+                        Set rng = .Cells(k, l)
+                        tmpNtid = rng.value
+                        If Len(Trim(tmpNtid)) = 0 Then
+                            Exit Do
+                        End If
+                        Logger.LogDebug "UserManagement.GenerateRoleMapping", "Found ntid: " & tmpNtid
+                        
+                        dbm.Init
+                        ' Remove all mapping
+                        dbm.ExecuteQuery "update user_data_mapping_role set Deleted=-1 where idUserdata='" & StringHelper.EscapeQueryString(tmpNtid) _
+                                            & "' and idFunction='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.FuncRgID) & "'"
+                        
+                        dbm.Recycle
+                        For i = 0 To mappingCount - 1
+                            j = startMappingCol + i
+                            Set rng = .Cells(rm.StartHeaderRow, j)
+                            tmpRole = rng.value
+                            'Logger.LogDebug "UserManagement.GenerateRoleMapping", "Found role: " & tmpRole
+                            ' Get mapping check
+                            Set rng = .Cells(k, j)
+                            tmpStr = Trim(rng.value)
+                            If Len(tmpStr) <> 0 Then
+                                dbm.Init
+                                dbm.OpenRecordSet "select BR.[id] from BpRoleStandard As BR Where BR.BpRoleStandardName='" _
+                                        & StringHelper.EscapeQueryString(tmpRole) & "' and BR.deleted=0"
+                                If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
+                                    tmpRoleId = dbm.GetFieldValue(dbm.RecordSet, "id")
+                                Else
+                                    tmpRoleId = ""
+                                End If
+                                dbm.Recycle
+                                If Len(tmpRoleId) <> 0 Then
+                                    Logger.LogDebug "UserManagement.GenerateRoleMapping", "Found mapping Ntid: " & tmpNtid & " to Role: " & tmpRole
+                                    
+                                    dbm.Init
+                                    tmpQuery = "select * from user_data_mapping_role where idUserdata='" & StringHelper.EscapeQueryString(tmpNtid) _
+                                                & "' and idFunction='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.FuncRgID) & "'" _
+                                                & " and idBpRoleStandard='" & StringHelper.EscapeQueryString(tmpRoleId) & "'"
+                                    dbm.OpenRecordSet tmpQuery
+                                    If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
+                                        tmpQuery = "update user_data_mapping_role set Deleted=0 where idUserdata='" & StringHelper.EscapeQueryString(tmpNtid) _
+                                                & "' and idFunction='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.FuncRgID) & "'" _
+                                                & " and idBpRoleStandard='" & StringHelper.EscapeQueryString(tmpRoleId) & "'"
+                                        ' Update mapping
+                                        Logger.LogDebug "UserManagement.GenerateRoleMapping", "Update mapping. Query: " & tmpQuery
+                                        dbm.ExecuteQuery tmpQuery
+                                    Else
+                                        ' Insert mapping
+                                        tmpQuery = "insert into user_data_mapping_role(id, idUserdata, idFunction, idBpRoleStandard, Deleted) values('" _
+                                                & StringHelper.EscapeQueryString(StringHelper.GetGUID) & "', '" _
+                                                & StringHelper.EscapeQueryString(tmpNtid) & "', '" _
+                                                & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.FuncRgID) & "', '" _
+                                                & StringHelper.EscapeQueryString(tmpRoleId) & "', 0)"
+                                                
+                                        Logger.LogDebug "UserManagement.GenerateRoleMapping", "Insert mapping. Query: " & tmpQuery
+                                        dbm.ExecuteQuery tmpQuery
+                                    End If
+                                    dbm.Recycle
+                                    
+                                Else
+                                    Logger.LogError "UserManagement.GenerateRoleMapping", "Found mapping Ntid: " & tmpNtid & " to Role: " & tmpRole & ". But role ID not found", Nothing
+                                End If
+                                
+                            End If
+                        Next i
+                        k = k + 1
+                    Loop
+                End With
+                Logger.LogDebug "UserManagement.GenerateRoleMapping", "Close excel file " & rm.OutputPath
+            End With
+            .Quit
+        End With
+    dbm.Recycle
+End Function
+ 
 Public Function MergeUserData()
     Dim ntid As String
     Dim v As Variant
@@ -482,6 +610,7 @@ Public Function MergeUserData()
             ntid = dbm.GetFieldValue(dbm.RecordSet, ss.NtidField)
             query = "SELECT * FROM " & Constants.END_USER_DATA_TABLE_NAME & " WHERE " & ss.NtidField _
                     & " = '" & StringHelper.EscapeQueryString(ntid) & "'"
+                    
             Set tmpQdf = dbm.Database.CreateQueryDef("", query)
             Set tmpRst = tmpQdf.OpenRecordSet
             
@@ -519,4 +648,8 @@ End Property
 
 Public Property Get IsLdapNotfound() As Boolean
     IsLdapNotfound = mIsLdapNotfound
+End Property
+
+Public Property Get IsFunctionRegionConflict() As Boolean
+    IsFunctionRegionConflict = mIsFunctionRegionConflict
 End Property

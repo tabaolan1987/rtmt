@@ -11,10 +11,6 @@ SystemRoleCategory
 user_data
 CourseMappingBpRoleStandard
 course
-privileges
-Functions
-Region_Function
-RMT_ROLES
 SpecialismMappingActivity
 Specialism
 user_data_mapping_role
