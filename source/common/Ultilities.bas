@@ -199,14 +199,22 @@ Public Function GetUserName() As String
 
 End Function
 
-Public Function CheckTables() As Boolean
+Public Function CheckTables(mType As Integer) As Boolean
     Dim check As Boolean, _
         SyncTables() As String, _
         prop As SystemSetting, _
         isEmpty As Boolean, _
         stTable As String
     Set prop = Session.Settings()
-    SyncTables = prop.SyncTables
+    Select Case mType
+        Case Constants.SYNC_TYPE_DEFAULT:
+            SyncTables = prop.SyncTables
+        Case Constants.SYNC_TYPE_ROLE:
+            SyncTables = prop.SyncRoleTables
+        Case Constants.SYNC_TYPE_MAPPING:
+            SyncTables = prop.SyncMappingTables
+    End Select
+    
     isEmpty = Ultilities.IsVarArrayEmpty(SyncTables)
     check = True
     If isEmpty = False Then

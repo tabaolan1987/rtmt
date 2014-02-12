@@ -54,7 +54,7 @@ Public Function Init(iNtid As String, _
             End If
         End If
     End If
-    If Ultilities.CheckTables Then
+    If Ultilities.CheckTables(Constants.SYNC_TYPE_ROLE) Then
         mValid = False
         Dim dbm As New DbManager
         Dim frg As FunctionRegion

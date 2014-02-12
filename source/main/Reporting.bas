@@ -70,7 +70,7 @@ Public Sub GenerateReport(rpm As ReportMetaData)
                         colHeadCount = rpm.StartHeaderCol
                         For Each rSect In rpm.ReportSections
                             Dim headers() As String
-                            headers = rSect.Header
+                            headers = rSect.header
                             If rpm.FillHeader Then
                                 For i = LBound(headers) To UBound(headers)
                                     Set rng = .Cells(rpm.StartHeaderRow, colHeadCount)

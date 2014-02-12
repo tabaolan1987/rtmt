@@ -276,8 +276,8 @@ Public Property Get query() As String
     query = mQuery
 End Property
 
-Public Property Get Header() As String()
-    Header = mHeader
+Public Property Get header() As String()
+    header = mHeader
 End Property
 
 Public Property Get HeaderCount() As Integer
