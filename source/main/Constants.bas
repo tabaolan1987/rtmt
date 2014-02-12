@@ -114,6 +114,8 @@ Public Const SECTION_LEFT = "Left"
 Public Const KEY_MERGE_ENABLE = "mergeEnable"
 Public Const KEY_MERGE_COLUMES = "mergeCols"
 Public Const KEY_MERGE_PRIMARY = "mergePrimary"
+Public Const KEY_CUSTOM_MODE = "customMode"
+
 
 ' System setting file
 Public Const SS_DIR = "data\config\"

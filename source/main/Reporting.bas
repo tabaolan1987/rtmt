@@ -105,6 +105,25 @@ Public Sub GenerateReport(rpm As ReportMetaData)
                                 Case Else
                             End Select
                         Next
+                        If rpm.CustomMode Then
+                           k = rpm.StartRow
+                           Dim psValue As String
+                           Dim countValue As String
+                            Do While k < 65536
+                                psValue = .Cells(k, 12).value
+                                countValue = .Cells(k, 14).value
+                                If StringHelper.IsEqual(psValue, "s", True) And CInt(countValue) > 1 Then
+                                    Rows(k).Delete
+                                Else
+                                    k = k + 1
+                                End If
+                                If Len(Trim(psValue)) = 0 Then
+                                    Exit Do
+                                End If
+                             Loop
+                             .Cells(rpm.StartRow, 14).EntireColumn.Delete
+                        End If
+                        
                         If rpm.MergeEnable Then
                             Dim tmpPrimaryValue As String
                             Dim tmpValue As String

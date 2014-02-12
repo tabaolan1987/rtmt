@@ -30,6 +30,8 @@ Private mMergeColumes As Collection
 Private mMergePrimary As Long
 Private mCount As Long
 
+Private mCustomMode As Boolean
+
 
 Public Function Init(Name As String, Optional ss As SystemSetting, Optional rpType As String)
     If Len(rpType) > 0 Then
@@ -66,6 +68,7 @@ Public Function Init(Name As String, Optional ss As SystemSetting, Optional rpTy
     Logger.LogDebug "ReportMetaData.Init", "Fill header: " & CStr(mFillHeader)
     
     mMergeEnable = ir.ReadBooleanKey(Constants.SECTION_FORMAT, Constants.KEY_MERGE_ENABLE)
+    mCustomMode = ir.ReadBooleanKey(Constants.SECTION_FORMAT, Constants.KEY_CUSTOM_MODE)
     Logger.LogDebug "ReportMetaData.Init", "Merge enable: " & CStr(mMergeEnable)
     If mMergeEnable Then
         mMergePrimary = ir.ReadKey(Constants.SECTION_FORMAT, Constants.KEY_MERGE_PRIMARY)
@@ -200,6 +203,10 @@ End Property
 
 Public Property Get MergeEnable() As Boolean
     MergeEnable = mMergeEnable
+End Property
+
+Public Property Get CustomMode() As Boolean
+    CustomMode = mCustomMode
 End Property
 
 Public Property Get MergeColumes() As Collection
