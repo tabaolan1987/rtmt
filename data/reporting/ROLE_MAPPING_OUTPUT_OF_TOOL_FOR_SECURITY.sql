@@ -20,7 +20,7 @@ ORDER BY [ntid]
 
 SELECT 
 	{% 
-		SRM Lead Requestor,
+		SRM Lead Requester,
 		Backbone Reviewer/Approver,
 		Procurement Display & Reporting,
 		Contract Display & Reporting,
