@@ -28,7 +28,8 @@ Public Const TABLE_USER_PRIVILEGES = "user_privileges"
 Public Const TABLE_MAPPING_SPECIALISM_ACITIVITY = "mapping_specialism_acitivity"
 Public Const TABLE_USER_DATA_MAPPING_ROLE = "user_data_mapping_role"
 
-Public Const TEXT_DEFAULT_SELECT_REGION_FUNCTION = "Select Region & Function"
+Public Const TEXT_DEFAULT_SELECT_REGION = "Select Region"
+Public Const TEXT_DEFAULT_SELECT_FUNCTION = "Select Function"
 
 ' Environment
 Public Const ENV_DEV = "DEV"
@@ -114,6 +115,8 @@ Public Const SECTION_LEFT = "Left"
 Public Const KEY_MERGE_ENABLE = "mergeEnable"
 Public Const KEY_MERGE_COLUMES = "mergeCols"
 Public Const KEY_MERGE_PRIMARY = "mergePrimary"
+Public Const KEY_CUSTOM_MODE = "customMode"
+
 
 ' System setting file
 Public Const SS_DIR = "data\config\"

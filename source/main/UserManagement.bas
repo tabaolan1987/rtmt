@@ -23,12 +23,20 @@ End Function
 
 Public Function CheckRegionFunction()
     Dim query As String
+    Dim tmpNtid As String
     query = "SELECT * FROM " & Constants.END_USER_DATA_CACHE_TABLE_NAME & " WHERE [" & Constants.FIELD_REGION_FUNCTION & "] not like '" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Name) & "'"
     dbm.Init
     dbm.OpenRecordSet query
     mIsFunctionRegionConflict = False
     If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
         mIsFunctionRegionConflict = True
+        dbm.RecordSet.MoveFirst
+        Do Until dbm.RecordSet.EOF = True
+            tmpNtid = dbm.GetFieldValue(dbm.RecordSet, Session.Settings.NtidField)
+            dbm.ExecuteQuery "DELETE FROM " & Constants.TABLE_USER_DATA_LDAP_CONFLICT & " WHERE [" & Session.Settings.NtidField & "] = '" & StringHelper.EscapeQueryString(tmpNtid) & "'"
+            dbm.ExecuteQuery "DELETE FROM " & Constants.TABLE_USER_DATA_LDAP_NOTFOUND & " WHERE [" & Session.Settings.NtidField & "] = '" & StringHelper.EscapeQueryString(tmpNtid) & "'"
+            dbm.RecordSet.MoveNext
+        Loop
     End If
     dbm.ExecuteQuery "DELETE FROM " & Constants.END_USER_DATA_CACHE_TABLE_NAME & " WHERE [" & Constants.FIELD_REGION_FUNCTION & "] not like '" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Name) & "'"
     dbm.Recycle

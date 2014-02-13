@@ -117,6 +117,47 @@ Public Function Init(iNtid As String, _
     End If
 End Function
 
+Public Function ListRegions() As Collection
+    Dim frg As FunctionRegion
+    Dim list As New Collection
+    Dim v As Variant
+    Dim check As Boolean
+    Dim tmpName As String
+    If mValid And Not mListFuncRg Is Nothing Then
+        For Each frg In mListFuncRg
+            tmpName = frg.region
+            check = False
+            For Each v In list
+                If StringHelper.IsEqual(CStr(v), tmpName, True) Then
+                    check = True
+                    Exit For
+                End If
+            Next v
+            If Not check Then
+                list.Add tmpName
+            End If
+        Next frg
+    End If
+    Set ListRegions = list
+End Function
+
+Public Function ListFunctions(region As String) As Collection
+    Dim frg As FunctionRegion
+    Dim list As New Collection
+    Dim v As Variant
+    Dim tmpName As String
+    If mValid And Not mListFuncRg Is Nothing Then
+        For Each frg In mListFuncRg
+            tmpName = frg.region
+            If StringHelper.IsEqual(tmpName, region, True) Then
+                list.Add frg.Name
+            End If
+        Next frg
+    End If
+    Set ListFunctions = list
+End Function
+
+
 Public Function SelectFunc(fName As String)
     Dim frg As FunctionRegion
     If mValid And Not mListFuncRg Is Nothing Then
