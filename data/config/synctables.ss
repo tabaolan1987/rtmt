@@ -14,3 +14,4 @@ course
 SpecialismMappingActivity
 Specialism
 user_data_mapping_role
+audit_logs
