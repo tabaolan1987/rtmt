@@ -150,7 +150,7 @@ Public Function ListFunctions(region As String) As Collection
         For Each frg In mListFuncRg
             tmpName = frg.region
             If StringHelper.IsEqual(tmpName, region, True) Then
-                list.Add frg.Name
+                list.Add frg.name
             End If
         Next frg
     End If

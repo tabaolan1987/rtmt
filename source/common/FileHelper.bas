@@ -180,7 +180,7 @@ Function CurrentDbPath() As String
     If Len(dbPath) = 0 Then
         Dim cRes As String
         Dim nPos As Long
-        cRes = CurrentDb.Name
+        cRes = CurrentDb.name
         nPos = Len(cRes)
         Do Until Right(cRes, 1) = "\"
             nPos = nPos - 1
@@ -191,21 +191,39 @@ Function CurrentDbPath() As String
     CurrentDbPath = dbPath
 End Function
 
-Function IsExist(path As String) As Boolean
-    IsExist = Dir(path) <> ""
+Function IsExistFile(path As String) As Boolean
+    Dim fso As New Scripting.FileSystemObject
+    IsExistFile = fso.FileExists(path)
+    'IsExist = Dir(path) <> ""
 End Function
 
-Function Delete(path As String) As Boolean
-    If IsExist(path) Then
+Function IsExistFolder(path As String) As Boolean
+    Dim fso As New Scripting.FileSystemObject
+    IsExistFolder = fso.FolderExists(path)
+    'IsExist = Dir(path) <> ""
+End Function
+
+Function DeleteFile(path As String) As Boolean
+    If IsExistFile(path) Then
         SetAttr path, vbNormal
         Kill path
-        Delete = True
+        DeleteFile = True
     Else
-        Delete = False
+        DeleteFile = False
     End If
 End Function
 
-Public Function ReadSSFile(Name As String) As String()
+Function DeleteFolder(path As String) As Boolean
+    If IsExistFolder(path) Then
+        SetAttr path, vbNormal
+        Kill path
+        DeleteFolder = True
+    Else
+        DeleteFolder = False
+    End If
+End Function
+
+Public Function ReadSSFile(name As String) As String()
     Dim path As String
     Dim arraySize As Integer
     Dim sInput As String
@@ -213,8 +231,8 @@ Public Function ReadSSFile(Name As String) As String()
     Dim i As Long
     Dim tmpList() As String
     Dim ln As String
-    path = FileHelper.CurrentDbPath & Constants.SS_DIR & Name & ".ss"
-    If IsExist(path) Then
+    path = FileHelper.CurrentDbPath & Constants.SS_DIR & name & ".ss"
+    If IsExistFile(path) Then
         Dim fso As Object
         Dim ReadFile As Object
         Set fso = CreateObject("Scripting.FileSystemObject")
@@ -240,10 +258,10 @@ Public Function SaveAsCSV(filePath As String, desFilePath As String, Optional Wo
     Dim i As Integer
     Dim WB As New Excel.Workbook
     Dim WS As Excel.Sheets
-    Dim Name As String
+    Dim name As String
     Dim v As Variant
-    If IsExist(desFilePath) Then
-        Delete desFilePath
+    If IsExistFile(desFilePath) Then
+        DeleteFile desFilePath
     End If
     Dim check As Boolean
     check = False
@@ -255,8 +273,8 @@ Public Function SaveAsCSV(filePath As String, desFilePath As String, Optional Wo
                     Logger.LogDebug "FileHelper.SaveAsCSV", "Sheet count: " & .Sheets.Count
                     If .Sheets.Count > 1 And Len(WorkSheet) <> 0 Then
                         For Each v In .Sheets
-                            Logger.LogDebug "FileHelper.SaveAsCSV", "Sheet name: " & v.Name
-                            If Not StringHelper.IsEqual(v.Name, WorkSheet, True) Then
+                            Logger.LogDebug "FileHelper.SaveAsCSV", "Sheet name: " & v.name
+                            If Not StringHelper.IsEqual(v.name, WorkSheet, True) Then
                                 check = True
                                 'v.Delete
                             End If
@@ -264,7 +282,7 @@ Public Function SaveAsCSV(filePath As String, desFilePath As String, Optional Wo
                         If check Then
                             For Each v In .Sheets
                                 'Logger.LogDebug "FileHelper.SaveAsCSV", "Sheet name: " & v.Name
-                                If Not StringHelper.IsEqual(v.Name, WorkSheet, True) Then
+                                If Not StringHelper.IsEqual(v.name, WorkSheet, True) Then
                                 
                                     v.Delete
                                 End If
@@ -345,20 +363,26 @@ Public Function PrepareUserData(filePath As String, ss As SystemSetting) As Stri
     Dim tmpSource As String
     Dim outputCsv As String
     Dim fso As New Scripting.FileSystemObject
-    tmpSource = tmpDir & StringHelper.GetGUID
-    Logger.LogDebug "FileHelper.PrepareUserData", "Copy file " & filePath & " to " & tmpSource
-    fso.CopyFile filePath, tmpSource, True
-    
-    tmpStr = tmpDir & StringHelper.GetGUID & ".csv"
-    Logger.LogDebug "FileHelper.PrepareUserData", "Convert file " & tmpSource & " to CSV file " & tmpStr
-    FileHelper.SaveAsCSV tmpSource, tmpStr, ss.WorkSheet
-        outputCsv = tmpDir & StringHelper.GetGUID & ".csv"
-        Logger.LogDebug "FileHelper.PrepareUserData", "Trim unused rows " & tmpStr & " to CSV file " & outputCsv
-        TrimSourceFile tmpStr, outputCsv, ss.LineToRemove
-        PrepareUserData = outputCsv
-    Set fso = Nothing
-    Delete tmpSource
-    Delete tmpStr
+    If StringHelper.EndsWith(filePath, ".xlsx", True) Or _
+        StringHelper.EndsWith(filePath, ".xls", True) Or _
+        StringHelper.EndsWith(filePath, ".csv", True) Then
+        tmpSource = tmpDir & StringHelper.GetGUID
+        Logger.LogDebug "FileHelper.PrepareUserData", "Copy file " & filePath & " to " & tmpSource
+        fso.CopyFile filePath, tmpSource, True
+        
+        tmpStr = tmpDir & StringHelper.GetGUID & ".csv"
+        Logger.LogDebug "FileHelper.PrepareUserData", "Convert file " & tmpSource & " to CSV file " & tmpStr
+        FileHelper.SaveAsCSV tmpSource, tmpStr, ss.WorkSheet
+            outputCsv = tmpDir & StringHelper.GetGUID & ".csv"
+            Logger.LogDebug "FileHelper.PrepareUserData", "Trim unused rows " & tmpStr & " to CSV file " & outputCsv
+            TrimSourceFile tmpStr, outputCsv, ss.LineToRemove
+            PrepareUserData = outputCsv
+        Set fso = Nothing
+        DeleteFile tmpSource
+        DeleteFile tmpStr
+    Else
+        PrepareUserData = ""
+    End If
 End Function
 
 Public Function tmpDir() As String
@@ -375,6 +399,18 @@ Public Function tmpDir() As String
     tmpDir = tmpDirPath
 End Function
 
+Public Function MoveFile(mFrom As String, mTo As String)
+    Dim fso As New Scripting.FileSystemObject
+    fso.MoveFile mFrom, mTo
+    Set fso = Nothing
+End Function
+
+Public Function CopyFile(mFrom As String, mTo As String)
+    Dim fso As New Scripting.FileSystemObject
+    fso.CopyFile mFrom, mTo, True
+    Set fso = Nothing
+End Function
+
 Public Function DuplicateAsTemporary(file As String) As String
     Dim desFile As String
     desFile = tmpDir & StringHelper.GetGUID
@@ -385,7 +421,7 @@ Public Function DuplicateAsTemporary(file As String) As String
 End Function
 
 Public Function FileLastModified(strFullFileName As String)
-    If IsExist(strFullFileName) Then
+    If IsExistFile(strFullFileName) Then
         Dim fs As New Scripting.FileSystemObject, f As Object, s As String
         Set f = fs.GetFile(strFullFileName)
         s = UCase(strFullFileName) & vbCrLf
@@ -398,4 +434,148 @@ End Function
 
 Public Function ImageLoaderSource() As String
     ImageLoaderSource = "=""" & FileHelper.CurrentDbPath & "data\images\loader.html"""
+End Function
+
+
+
+Public Sub Zip( _
+    ZipFile As String, _
+    InputFile As String _
+)
+On Error GoTo ErrHandler
+    Dim fso As Object 'Scripting.FileSystemObject
+    Dim oApp As Object 'Shell32.Shell
+    Dim oFld As Object 'Shell32.Folder
+    Dim oShl As Object 'WScript.Shell
+    Dim i As Long
+    Dim l As Long
+
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    If Not fso.FileExists(ZipFile) Then
+        'Create empty ZIP file
+        fso.CreateTextFile(ZipFile, True).Write _
+            "PK" & Chr(5) & Chr(6) & String(18, vbNullChar)
+    End If
+
+    Set oApp = CreateObject("Shell.Application")
+    Set oFld = oApp.Namespace(CVar(ZipFile))
+    i = oFld.Items.Count
+    oFld.CopyHere (InputFile)
+
+    Set oShl = CreateObject("WScript.Shell")
+
+    'Search for a Compressing dialog
+    Do While oShl.AppActivate("Compressing...") = False
+        If oFld.Items.Count > i Then
+            'There's a file in the zip file now, but
+            'compressing may not be done just yet
+            Exit Do
+        End If
+        If l > 30 Then
+            '3 seconds has elapsed and no Compressing dialog
+            'The zip may have completed too quickly so exiting
+            Exit Do
+        End If
+        DoEvents
+        Sleep 100
+        l = l + 1
+    Loop
+
+    ' Wait for compression to complete before exiting
+    Do While oShl.AppActivate("Compressing...") = True
+        DoEvents
+        Sleep 100
+    Loop
+
+ExitProc:
+    On Error Resume Next
+        Set fso = Nothing
+        Set oFld = Nothing
+        Set oApp = Nothing
+        Set oShl = Nothing
+    Exit Sub
+ErrHandler:
+    Select Case Err.Number
+        Case Else
+            MsgBox "Error " & Err.Number & _
+                   ": " & Err.Description, _
+                   vbCritical, "Unexpected error"
+    End Select
+    Resume ExitProc
+    Resume
+End Sub
+
+Public Sub UnZip( _
+    ZipFile As String, _
+    Optional TargetFolderPath As String = vbNullString, _
+    Optional OverwriteFile As Boolean = False _
+)
+On Error GoTo ErrHandler
+    Dim oApp As Object
+    Dim fso As Object
+    Dim fil As Object
+    Dim DefPath As String
+    Dim strDate As String
+
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    If Len(TargetFolderPath) = 0 Then
+        DefPath = CurrentProject.path & ""
+    Else
+        If fso.FolderExists(TargetFolderPath) Then
+            DefPath = TargetFolderPath & ""
+        Else
+            Err.Raise 53, , "Folder not found"
+        End If
+    End If
+
+    If fso.FileExists(ZipFile) = False Then
+        MsgBox "System could not find " & ZipFile _
+            & " upgrade cancelled.", _
+            vbInformation, "Error Unziping File"
+        Exit Sub
+    Else
+        'Extract the files into the newly created folder
+        Set oApp = CreateObject("Shell.Application")
+
+        With oApp.Namespace(ZipFile & "")
+            If OverwriteFile Then
+                For Each fil In .Items
+                    If fso.FileExists(DefPath & fil.name) Then
+                        Kill DefPath & fil.name
+                    End If
+                Next
+            End If
+            oApp.Namespace(CVar(DefPath)).CopyHere .Items
+        End With
+
+        On Error Resume Next
+        Kill Environ("Temp") & "Temporary Directory*"
+
+        'Kill zip file
+        Kill ZipFile
+    End If
+
+ExitProc:
+    On Error Resume Next
+    Set oApp = Nothing
+    Exit Sub
+ErrHandler:
+    Select Case Err.Number
+        Case Else
+            MsgBox "Error " & Err.Number & ": " & Err.Description, vbCritical, "Unexpected error"
+    End Select
+    Resume ExitProc
+    Resume
+End Sub
+
+Function FileSaveDialog(InitialFileName As String)
+    Dim fd As Office.FileDialog
+    Set fd = Application.FileDialog(msoFileDialogSaveAs)
+    fd.InitialFileName = InitialFileName
+    fd.AllowMultiSelect = False
+    If CBool(fd.Show) Then
+            FileSaveDialog = fd.SelectedItems(fd.SelectedItems.Count)
+    Else
+    
+    End If
 End Function

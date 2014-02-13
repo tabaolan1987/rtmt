@@ -21,10 +21,26 @@ Public Function Init(Optional mss As SystemSetting)
     Set dbm = New DbManager
 End Function
 
+Public Function IsExistUserData() As Boolean
+    Dim query As String
+    query = "select * from " & Constants.END_USER_DATA_TABLE_NAME & " where deleted = 0 and SFunction='" & _
+                Session.CurrentUser.FuncRegion.name & "'"
+                
+    dbm.Init
+    dbm.OpenRecordSet query
+    mIsLdapNotfound = False
+    If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
+        IsExistUserData = True
+    Else
+        IsExistUserData = False
+    End If
+    dbm.Recycle
+End Function
+
 Public Function CheckRegionFunction()
     Dim query As String
     Dim tmpNtid As String
-    query = "SELECT * FROM " & Constants.END_USER_DATA_CACHE_TABLE_NAME & " WHERE [" & Constants.FIELD_REGION_FUNCTION & "] not like '" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Name) & "'"
+    query = "SELECT * FROM " & Constants.END_USER_DATA_CACHE_TABLE_NAME & " WHERE [" & Constants.FIELD_REGION_FUNCTION & "] not like '" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.name) & "'"
     dbm.Init
     dbm.OpenRecordSet query
     mIsFunctionRegionConflict = False
@@ -38,7 +54,7 @@ Public Function CheckRegionFunction()
             dbm.RecordSet.MoveNext
         Loop
     End If
-    dbm.ExecuteQuery "DELETE FROM " & Constants.END_USER_DATA_CACHE_TABLE_NAME & " WHERE [" & Constants.FIELD_REGION_FUNCTION & "] not like '" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Name) & "'"
+    dbm.ExecuteQuery "DELETE FROM " & Constants.END_USER_DATA_CACHE_TABLE_NAME & " WHERE [" & Constants.FIELD_REGION_FUNCTION & "] not like '" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.name) & "'"
     dbm.Recycle
 End Function
 
@@ -80,7 +96,7 @@ Public Function CheckConflict()
     Dim v As Variant
     Dim lastNtid As String, ntid As String
     Dim str1 As String, str2 As String
-    Dim Name As String
+    Dim name As String
     Dim check As Boolean
     Dim tmpRst As DAO.RecordSet
     Dim qdf As DAO.QueryDef
@@ -101,7 +117,7 @@ Public Function CheckConflict()
         tmpInsertCols.Add "Data held"
         tmpInsertCols.Add "Select"
         For i = 0 To dbm.RecordSet.fields.Count - 1
-            tmpCol = dbm.RecordSet.fields(i).Name
+            tmpCol = dbm.RecordSet.fields(i).name
              If (Not StringHelper.IsEqual(tmpCol, Constants.FIELD_ID, True)) _
                    And (Not StringHelper.IsEqual(tmpCol, Constants.FIELD_TIMESTAMP, True)) _
                    And (Not StringHelper.IsEqual(tmpCol, Constants.FIELD_DELETED, True)) _
@@ -160,7 +176,7 @@ Public Function CheckDuplicate()
     Dim v As Variant
     Dim lastNtid As String, ntid As String
     Dim str1 As String, str2 As String
-    Dim Name As String
+    Dim name As String
     Dim check As Boolean
     Dim query As String
     mIsDuplicate = False
@@ -189,7 +205,7 @@ Public Function CheckDuplicate()
         tmpInsertCols.Add "Upload file"
         tmpInsertCols.Add "Select"
         For i = 0 To dbm.RecordSet.fields.Count - 1
-            tmpCol = dbm.RecordSet.fields(i).Name
+            tmpCol = dbm.RecordSet.fields(i).name
              If (Not StringHelper.IsEqual(tmpCol, Constants.FIELD_ID, True)) _
                    And (Not StringHelper.IsEqual(tmpCol, Constants.FIELD_TIMESTAMP, True)) _
                    And (Not StringHelper.IsEqual(tmpCol, Constants.FIELD_DELETED, True)) _
@@ -601,7 +617,7 @@ Public Function MergeUserData()
         Do Until dbm.RecordSet.EOF = True
             Set tmpCols = New Collection
             For i = 0 To dbm.RecordSet.fields.Count - 1
-                tmpCol = dbm.RecordSet.fields(i).Name
+                tmpCol = dbm.RecordSet.fields(i).name
                 If (Not StringHelper.IsEqual(tmpCol, Constants.FIELD_TIMESTAMP, True)) _
                     And (Not StringHelper.IsEqual(tmpCol, Constants.FIELD_DELETED, True)) _
                     And (Not StringHelper.IsEqual(tmpCol, Constants.FIELD_ID, True)) Then

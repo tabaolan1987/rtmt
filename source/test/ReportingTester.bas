@@ -36,10 +36,9 @@ Public Sub TestExportReport()
         Dim output As String: output = FileHelper.CurrentDbPath & Constants.END_USER_DATA_REPORTING_OUTPUT_DIR
         FileHelper.CheckDir output
         output = output & "/" & Constants.END_USER_DATA_REPORTING_OUTPUT_FILE
-        FileHelper.Delete (output)
+        FileHelper.DeleteFile (output)
         Reporting.ExportExcelReport "select * from tblImport", testTempXlsx, output, "Role Mapping Template", "A5"
-        check = FileHelper.IsExist(output)
-        
+        check = FileHelper.IsExistFile(output)
 OnExit:
     mAssert.Equals check, True
     Exit Sub

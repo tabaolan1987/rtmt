@@ -9,6 +9,7 @@ Private mFlagReports As Boolean
 Private mMappingMDCol As Scripting.Dictionary
 Private mReportMDCol As Scripting.Dictionary
 Private mSelectedCSV As String
+Private mAllReportsZip As String
 
 Public Function Recycle()
     Set ss = Nothing
@@ -35,7 +36,21 @@ End Function
 
 Public Function RecyleReports()
     mFlagReports = False
+    Dim rmd As ReportMetaData
+    Dim v As Variant
+    ' Remove all cache report
+    If Not mReportMDCol Is Nothing Then
+        For Each v In mReportMDCol.keys
+            Set rmd = mReportMDCol.Item(CStr(v))
+            rmd.Recyle
+        Next v
+    End If
     Set mReportMDCol = Nothing
+    FileHelper.DeleteFile mAllReportsZip
+    mAllReportsZip = ""
+End Function
+
+Public Function RenewReports()
     Dim rmd As ReportMetaData
     Set mReportMDCol = New Scripting.Dictionary
     Set rmd = New ReportMetaData
@@ -70,7 +85,7 @@ End Function
 
 Public Function ReportMDCol() As Scripting.Dictionary
     If mReportMDCol Is Nothing Then
-        RecyleReports
+        RenewReports
     End If
     Set ReportMDCol = mReportMDCol
 End Function
@@ -109,4 +124,12 @@ End Function
 
 Public Function FlagReports() As Boolean
     FlagReports = mFlagReports
+End Function
+
+Public Function SetAllReportsZip(zipPath As String)
+    mAllReportsZip = zipPath
+End Function
+
+Public Function AllReportsZip() As String
+    AllReportsZip = mAllReportsZip
 End Function

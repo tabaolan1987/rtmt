@@ -38,9 +38,9 @@ End Sub
 Public Sub GenerateReport(rpm As ReportMetaData)
     Dim ss As SystemSetting
     Set ss = Session.Settings()
-    If FileHelper.IsExist(rpm.OutputPath) Then
+    If FileHelper.IsExistFile(rpm.OutputPath) Then
         Logger.LogDebug "Reporting.GenerateReport", "Delete file " & rpm.OutputPath
-        FileHelper.Delete rpm.OutputPath
+        FileHelper.DeleteFile rpm.OutputPath
     End If
     If rpm.Valid Then
         Logger.LogDebug "Reporting.GenerateReport", "Report metadata is valid "
@@ -167,3 +167,17 @@ Public Sub GenerateReport(rpm As ReportMetaData)
         Logger.LogError "Reporting.GenerateReport", "The reporting meta data format is not valid", Nothing
     End If
 End Sub
+
+Public Function CountUncompleteReport() As Integer
+    Dim v As Variant
+    Dim i As Integer
+    Dim rpm As ReportMetaData
+    i = 0
+    For Each v In Session.ReportMDCol.keys
+        Set rpm = Session.ReportMDCol.Item(CStr(v))
+        If Not rpm.Complete Then
+            i = i + 1
+        End If
+    Next v
+    CountUncompleteReport = i
+End Function

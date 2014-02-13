@@ -1,1 +1,5 @@
-This is information before the setup wizard
+Version 1a RTMT 
+
+This will install the BP Role and Training Mapping tool (RTMT). Please 
+Check that you have installed the Access 2010 runtime, available from 
+http://www.microsoft.com/en-gb/download/details.aspx?id=10910

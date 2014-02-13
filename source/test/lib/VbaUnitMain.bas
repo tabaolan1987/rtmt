@@ -16,9 +16,11 @@ Public Sub OnTest()
     'rpmd.Init Constants.RP_END_USER_TO_BB_JOB_ROLE
    ' Reporting.GenerateReport Constants.RP_ROLE_MAPPING_OUTPUT_OF_TOOL_FOR_SECURITY
    
-    Dim um As New UserManagement
-    um.Init Session.Settings
-    Logger.LogDebug "test", um.GenereateSpecialismFilter
+    'FileHelper.Zip "D:\test.zip", "D:\GIT\rolemapping-repo\data\images"
+    Dim s As String
+    s = FileHelper.FileSaveDialog("test.xlsx")
+    Logger.LogDebug "test", s
+    
 End Sub
 
 Public Sub Run(Optional TestClassName As String)

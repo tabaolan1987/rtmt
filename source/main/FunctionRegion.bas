@@ -42,8 +42,8 @@ Public Property Get region() As String
 End Property
 
 
-Public Property Get Name() As String
-    Name = mName
+Public Property Get name() As String
+    name = mName
 End Property
 
 

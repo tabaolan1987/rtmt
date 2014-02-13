@@ -31,10 +31,10 @@ Private mLastModified As String
 Private mOutputPath As String
 
 Public Function Recyle()
-    FileHelper.Delete mQueryFilePath
-    FileHelper.Delete mTemplateFilePath
-    FileHelper.Delete mConfigFilePath
-    FileHelper.Delete mTemplateFilePath & Constants.FILE_EXTENSION_TEMPLATE
+    FileHelper.DeleteFile mQueryFilePath
+    FileHelper.DeleteFile mTemplateFilePath
+    FileHelper.DeleteFile mConfigFilePath
+    FileHelper.DeleteFile mTemplateFilePath & Constants.FILE_EXTENSION_TEMPLATE
 End Function
 
 Public Function Init(mappingName As String, Optional ss As SystemSetting)
@@ -96,8 +96,8 @@ Public Property Get WorkSheet() As String
     WorkSheet = mWorkSheet
 End Property
 
-Public Property Get Name() As String
-    Name = mName
+Public Property Get name() As String
+    name = mName
 End Property
 
 Public Property Get Valid() As Boolean
@@ -165,7 +165,7 @@ Public Function query(qType As Integer, Optional data As Scripting.Dictionary) A
         data.Add Constants.Q_KEY_REGION_NAME, Session.Settings.RegionName
     End If
     If Not data.Exists(Constants.Q_KEY_FUNCTION_REGION_NAME) Then
-        data.Add Constants.Q_KEY_FUNCTION_REGION_NAME, Session.CurrentUser.FuncRegion.Name
+        data.Add Constants.Q_KEY_FUNCTION_REGION_NAME, Session.CurrentUser.FuncRegion.name
     End If
     mQuery = StringHelper.GenerateQuery(mQuery, data)
     'Logger.LogDebug "MappingMetaData.Query", mQuery

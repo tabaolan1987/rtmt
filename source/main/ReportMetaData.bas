@@ -34,13 +34,13 @@ Private mCustomMode As Boolean
 
 Private mComplete As Boolean
 
-Public Function Init(Name As String, Optional ss As SystemSetting, Optional rpType As String)
+Public Function Init(name As String, Optional ss As SystemSetting, Optional rpType As String)
     If Len(rpType) > 0 Then
         mType = rpType
     Else
         mType = Constants.RP_TYPE_DEFAULT
     End If
-    rawName = Name
+    rawName = name
     Logger.LogDebug "ReportMetaData.Init", "Start init report meta name: " & rawName
     Dim tmpRawSection() As String, tmpStr As String, i As Integer
     Dim v As Variant
@@ -48,13 +48,13 @@ Public Function Init(Name As String, Optional ss As SystemSetting, Optional rpTy
     Dim rpSection As ReportSection
     Dim ir As New IniReader
     If StringHelper.IsEqual(mType, Constants.RP_TYPE_DEFAULT, True) Then
-        mQueryFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.RP_ROOT_FOLDER & Name & Constants.FILE_EXTENSION_QUERY)
+        mQueryFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.RP_ROOT_FOLDER & name & Constants.FILE_EXTENSION_QUERY)
     Else
-        mQueryFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.RP_ROOT_FOLDER & Name & Constants.FILE_EXTENSION_QUERY_MAPPING)
+        mQueryFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.RP_ROOT_FOLDER & name & Constants.FILE_EXTENSION_QUERY_MAPPING)
     End If
     
-    mTemplateFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.RP_ROOT_FOLDER & Name & Constants.FILE_EXTENSION_TEMPLATE)
-    mConfigFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.RP_ROOT_FOLDER & Name & Constants.FILE_EXTENSION_CONFIG)
+    mTemplateFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.RP_ROOT_FOLDER & name & Constants.FILE_EXTENSION_TEMPLATE)
+    mConfigFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.RP_ROOT_FOLDER & name & Constants.FILE_EXTENSION_CONFIG)
     Logger.LogDebug "ReportMetaData.Init", "Read configuration path: " & mConfigFilePath
     ir.Init mConfigFilePath
     
@@ -144,16 +144,28 @@ Public Function OpenReport()
     End With
 End Function
 
+Public Function OpenSaveAs()
+    Dim oExcel As New Excel.Application
+    Dim WB As New Excel.Workbook
+    Dim WS As Excel.WorkSheet
+    Dim rng As Excel.range
+    With oExcel
+        .Visible = False
+        .GetSaveAsFilename InitialFileName:=mName, _
+    fileFilter:="Excel Files (*.xlsx), *.xlsx"
+    End With
+End Function
+
 Public Function Wait()
     ' Waiting forever :)
     WaitForFileClose mOutputPath, 0, 0
 End Function
 
 Public Function Recyle()
-    FileHelper.Delete mQueryFilePath
-    FileHelper.Delete mTemplateFilePath
-    FileHelper.Delete mConfigFilePath
-    FileHelper.Delete mOutputPath
+    FileHelper.DeleteFile mQueryFilePath
+    FileHelper.DeleteFile mTemplateFilePath
+    FileHelper.DeleteFile mConfigFilePath
+    FileHelper.DeleteFile mOutputPath
 End Function
 
 Public Property Get ReportSections() As Collection
@@ -171,8 +183,8 @@ Public Property Get Valid() As Boolean
     Valid = mValid
 End Property
 
-Public Property Get Name() As String
-    Name = mName
+Public Property Get name() As String
+    name = mName
 End Property
 
 Public Property Get StartRow() As Long

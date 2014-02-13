@@ -36,7 +36,7 @@ Public Function Init(md As MappingMetadata, Optional mss As SystemSetting, Optio
         End If
         
     Else
-        Logger.LogError "MappingHelper.Init", "Mapping meta data " & mmd.Name & " is not valid", Nothing
+        Logger.LogError "MappingHelper.Init", "Mapping meta data " & mmd.name & " is not valid", Nothing
         ' Add warning here
         Valid = False
     End If

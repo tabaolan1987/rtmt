@@ -126,11 +126,11 @@ Public Function RecycleTable(Optional s As SystemSetting)
     Next
 End Function
 
-Private Function GetHeaderIndex(Name As String) As Integer
+Private Function GetHeaderIndex(name As String) As Integer
     Dim index As Integer
     index = -1
     For i = 0 To rst.fields.Count - 1
-        If StringHelper.IsEqual(Trim(rst.fields(i).Name), Trim(Name), True) Then
+        If StringHelper.IsEqual(Trim(rst.fields(i).name), Trim(name), True) Then
             'Logger.LogDebug "DbManager.SyncUserData", "## HEADER: " & rst.fields(i).name
             index = i
         End If
@@ -138,13 +138,13 @@ Private Function GetHeaderIndex(Name As String) As Integer
     GetHeaderIndex = index
 End Function
 
-Public Function GetFieldValue(rs As RecordSet, Name As String) As String
+Public Function GetFieldValue(rs As RecordSet, name As String) As String
     GetFieldValue = ""
-    If Len(Name) <> 0 Then
+    If Len(name) <> 0 Then
         Dim index As Integer
         index = -1
         For i = 0 To rs.fields.Count - 1
-            If StringHelper.IsEqual(Trim(rs.fields(i).Name), Trim(Name), True) Then
+            If StringHelper.IsEqual(Trim(rs.fields(i).name), Trim(name), True) Then
                 index = i
             End If
         Next i
@@ -494,17 +494,17 @@ OnError:
     Resume OnExit
 End Function
 
-Public Function RecycleTableName(Name As String)
+Public Function RecycleTableName(name As String)
     Init
-        Logger.LogDebug "DbManager.SyncTable", "Recycle table name " & Name
+        Logger.LogDebug "DbManager.SyncTable", "Recycle table name " & name
         dbs.TableDefs.Refresh
-        If Ultilities.IfTableExists(Name) Then
-            Logger.LogDebug "DbManager.SyncTable", "Delete all record table " & Name
-            ExecuteQuery FileHelper.ReadQuery(Name, Constants.Q_DELETE_ALL)
+        If Ultilities.IfTableExists(name) Then
+            Logger.LogDebug "DbManager.SyncTable", "Delete all record table " & name
+            ExecuteQuery FileHelper.ReadQuery(name, Constants.Q_DELETE_ALL)
             'DoCmd.DeleteObject acTable, name
         Else
-            Logger.LogDebug "DbManager.SyncTable", "Create new table " & Name
-            ExecuteQuery FileHelper.ReadQuery(Name, Constants.Q_CREATE)
+            Logger.LogDebug "DbManager.SyncTable", "Create new table " & name
+            ExecuteQuery FileHelper.ReadQuery(name, Constants.Q_CREATE)
         End If
         
         dbs.TableDefs.Refresh
@@ -563,7 +563,7 @@ Public Function SyncTable(Server As String, _
                         tmpRst.MoveFirst
                         For i = 0 To tmpRst.fields.Count - 1
                            ' Logger.LogDebug "field type:", tmpRst.fields(i).Type & " === " & dbBoolean
-                            tmpCol = tmpRst.fields(i).Name
+                            tmpCol = tmpRst.fields(i).name
                             tmpType = tmpRst.fields(i).Type
                             str1 = Trim(GetFieldValue(tmpRst, tmpCol))
                             str2 = Trim(GetFieldValue(rst, tmpCol))
@@ -658,7 +658,7 @@ Public Function SyncTable(Server As String, _
                         Set tmpCols = New Collection
                         Set tmpDataServer = New Scripting.Dictionary
                         For i = 0 To rst.fields.Count - 1
-                            tmpCol = rst.fields(i).Name
+                            tmpCol = rst.fields(i).name
                             str2 = GetFieldValue(rst, tmpCol)
                             tmpDataServer.Add tmpCol, str2
                             tmpCols.Add tmpCol
@@ -684,7 +684,7 @@ Public Function SyncTable(Server As String, _
                 Set tmpCols = New Collection
                 Set tmpColType = New Scripting.Dictionary
                 For i = 0 To rst.fields.Count - 1
-                    tmpCol = rst.fields(i).Name
+                    tmpCol = rst.fields(i).name
                     tmpColType.Add tmpCol, rst.fields(i).Type
                     If Not StringHelper.IsEqual(tmpCol, Constants.FIELD_TIMESTAMP, True) Then
                         tmpCols.Add tmpCol

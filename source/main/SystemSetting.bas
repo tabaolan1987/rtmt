@@ -30,6 +30,7 @@ Private mEnableTesting As Boolean
 Private mEnableValidation As Boolean
 Private mTestNtid As String
 Private mEnv As String
+Private mVersion As String
 
 Public Function Init()
     Dim ir As IniReader: Set ir = Ultilities.SystemIniReader
@@ -71,6 +72,7 @@ Public Function Init()
     mWorkSheet = ir.ReadKey(Constants.SECTION_USER_DATA, Constants.KEY_WORK_SHEET)
     mLogLevel = ir.ReadKey(Constants.SECTION_APPLICATION, Constants.KEY_LOG_LEVEL)
     mTestNtid = ir.ReadKey(Constants.SECTION_APPLICATION, Constants.KEY_TEST_NTID)
+    mVersion = ir.ReadKey(Constants.SECTION_APPLICATION, Constants.KEY_VERSION)
     mEnv = ir.ReadKey(Constants.SECTION_APPLICATION, Constants.KEY_ENV)
     
     mEnableTesting = ir.ReadBooleanKey(Constants.SECTION_APPLICATION, Constants.KEY_ENABLE_TESTING)
@@ -192,4 +194,8 @@ End Property
 
 Public Property Get Env() As String
     Env = mEnv
+End Property
+
+Public Property Get Version() As String
+    Version = mVersion
 End Property

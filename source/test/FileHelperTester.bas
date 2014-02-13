@@ -63,9 +63,9 @@ Public Sub TestIsExist()
     On Error GoTo OnError
     Dim path As String
     path = FileHelper.CurrentDbPath & Constants.END_USER_DATA_CSV_FILE_PATH
-    mAssert.Equals FileHelper.IsExist(path), True
+    mAssert.Equals FileHelper.IsExistFile(path), True
     path = FileHelper.CurrentDbPath & "nothing.test"
-    mAssert.Equals FileHelper.IsExist(path), False
+    mAssert.Equals FileHelper.IsExistFile(path), False
 OnExit:
     ' finally
     Exit Sub
@@ -121,7 +121,7 @@ Public Sub TestSaveAsCSV()
     inFile = FileHelper.CurrentDbPath & Constants.END_USER_DATA_FILE_XLSX
     outFile = FileHelper.CurrentDbPath & Constants.END_USER_DATA_FILE_CSV
     FileHelper.SaveAsCSV inFile, outFile, ss.WorkSheet
-    mAssert.Equals FileHelper.IsExist(outFile), True
+    mAssert.Equals FileHelper.IsExistFile(outFile), True
 OnExit:
     ' finally
     Exit Sub
@@ -139,7 +139,7 @@ Public Sub TestPrepareUserData()
     Dim outFile As String
     inFile = FileHelper.CurrentDbPath & Constants.END_USER_DATA_FILE_XLSX
     outFile = FileHelper.PrepareUserData(inFile, ss)
-    mAssert.Equals FileHelper.IsExist(outFile), True
+    mAssert.Equals FileHelper.IsExistFile(outFile), True
 OnExit:
     ' finally
     Exit Sub

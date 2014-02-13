@@ -128,7 +128,7 @@ Public Sub TestOpenRecordSet()
     Dim dm As DbManager: Set dm = New DbManager
     Dim rInfo As ReportMetaData: Set rInfo = New ReportMetaData
     dm.Init
-    rInfo.Init (Name)
+    rInfo.Init (name)
     params.Add "SYSTEM_ROLE_NAME", "Procurement Catalogue Approver"
     params.Add "BP_ROLE_STANDARD_NAME", "POQR Approver"
     If rInfo.Valid = True Then

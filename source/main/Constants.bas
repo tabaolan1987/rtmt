@@ -8,6 +8,15 @@ Public Const END_USER_DATA_TABLE_NAME = "user_data"
 '
 Public Const END_USER_DATA_CACHE_TABLE_NAME = "user_data_cache"
 
+' Help content
+Public Const HELP_ERROR_EUDL = "data\helps\error-eudl.txt"
+
+Public Const HELP_UPLOAD_EUDL = "data\helps\upload-eudl.txt"
+
+Public Const HELP_REPORTS = "data\helps\reports.txt"
+
+Public Const TEMPLATE_EUDL = "data\template\eudl_template.xlsx"
+
 Public Const FIELD_TIMESTAMP = "Timestamp"
 Public Const FIELD_ID = "id"
 Public Const FIELD_DELETED = "Deleted"
@@ -93,6 +102,7 @@ Public Const KEY_BULK_SIZE = "bulkSize"
 Public Const KEY_NTID_FIELD = "ntidField"
 
 Public Const SECTION_APPLICATION = "application"
+Public Const KEY_VERSION = "version"
 Public Const KEY_ENV = "env"
 Public Const KEY_LOG_LEVEL = "logLevel"
 Public Const KEY_ENABLE_TESTING = "enableTesting"
