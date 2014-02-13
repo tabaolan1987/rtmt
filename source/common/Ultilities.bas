@@ -2,7 +2,7 @@
 ' General utilities function
 Option Explicit
 
-
+Private checkInternetFlag As String
 Const NoError = 0
 
 #If VBA7 Then
@@ -243,4 +243,30 @@ Function IsLoaded(ByVal strFormName As String) As Boolean
         End If
     End If
 
+End Function
+
+Function CheckInternetConnection() As Boolean
+    If Len(checkInternetFlag) = 0 Then
+        On Error Resume Next
+         CheckInternetConnection = False
+         checkInternetFlag = "false"
+         Dim objSvrHTTP As ServerXMLHTTP
+         Dim varProjectID, varCatID, strT As String
+         Set objSvrHTTP = New ServerXMLHTTP
+         objSvrHTTP.Open "GET", "http://www.google.com"
+         objSvrHTTP.setRequestHeader "Accept", "application/xml"
+         objSvrHTTP.setRequestHeader "Content-Type", "application/xml"
+         objSvrHTTP.Send strT
+         If Err = 0 Then
+            CheckInternetConnection = True
+            checkInternetFlag = "true"
+         Else
+         End If
+     Else
+        If StringHelper.IsEqual(checkInternetFlag, "true", True) Then
+            CheckInternetConnection = True
+        Else
+            CheckInternetConnection = False
+        End If
+     End If
 End Function

@@ -114,7 +114,7 @@ Function GetCSVFile() As String
     Dim fDialog As Object
     Set fDialog = Application.FileDialog(3)
     With fDialog
-        .Title = "Select the CSV file to import"
+        .Title = "Select EUDL to upload"
         .AllowMultiSelect = False
         .Filters.Clear
         .Filters.Add "Excel Workbook", "*.xlsx", 1

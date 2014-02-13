@@ -7,8 +7,8 @@ Public Function PostData(url As String, sData As String) As String
     Dim txtRes As String
     With xmlhttp
         .Open "POST", url, False
-        .setrequestheader "Content-Type", "application/x-www-form-urlencoded"
-        .send (sData)
+        .setRequestHeader "Content-Type", "application/x-www-form-urlencoded"
+        .Send (sData)
         txtRes = .responsetext
     End With
     PostData = txtRes

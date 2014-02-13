@@ -164,110 +164,113 @@ Private Function AddWarning(mes As String)
 End Function
 
 Private Function ValidateNtid(s As SystemSetting, ntids As String, Optional userData As Scripting.Dictionary)
-    Dim validatorMapping As Scripting.Dictionary
-    Dim checkList As Collection
-    Dim tmpDict As Scripting.Dictionary
-    Dim fields As String
-    Dim mData As String
-    Dim result As String
-    Dim ntid As String
-    Dim str1 As String, str2 As String, key As String, value As String
-    Dim check As Boolean
-    Dim v As Variant
-    Dim tmpUserData As Scripting.Dictionary
-    Dim tmpInsertCols As Collection
-    Dim tmpInsertData As Scripting.Dictionary
-    Set validatorMapping = s.validatorMapping
-    Dim tmpStr As String
-    Dim FullName As String
-    Dim i As Integer
-    For i = 0 To validatorMapping.Count - 1
-        fields = fields & validatorMapping.Items(i) & ","
-    Next i
-    If StringHelper.EndsWith(fields, ",", True) Then
-        fields = Left(fields, Len(fields) - 1)
-    End If
-    
-    If StringHelper.EndsWith(ntids, ",", True) Then
-        ntids = Left(ntids, Len(ntids) - 1)
-    End If
-    mData = "token=" & StringHelper.EncodeURL(s.Token) _
-                & "&fields=" & StringHelper.EncodeURL(fields) _
-                & "&ntids=" & StringHelper.EncodeURL(ntids)
-    Logger.LogDebug "DbManager.SyncUserData", "Post valid ntids: " & ntids
-    result = HttpHelper.PostData(s.ValidatorURL, mData)
-    Logger.LogDebug "DbManager.SyncUserData", "Result: " & result
-    
-    If Len(result) > 0 Then
-        If StringHelper.IsContain(result, "}", True) And StringHelper.IsContain(result, "{", True) Then
-            Set checkList = JSONHelper.parse(result)
-            For Each tmpDict In checkList
-                ntid = tmpDict.Item("ntid")
-                check = tmpDict.Item("isvalid")
-                Logger.LogDebug "DbManager.SyncUserData", "Is valid: " & CStr(check)
-                Logger.LogDebug "DbManager.SyncUserData", s.SyncUsers.Item(Constants.FIELD_FIRST_NAME) & " | " & s.SyncUsers.Item(Constants.FIELD_LAST_NAME)
-                'fullName = tmpUserData.Item(Constants.FIELD_FIRST_NAME) _
-                                            & " " _
-                                            & tmpUserData.Item(Constants.FIELD_LAST_NAME)
-                If check Then
-                    Logger.LogDebug "DbManager.SyncUserData", "check ntid: " & ntid
-                    If Not userData Is Nothing And userData.Count > 0 Then
-                        Set tmpUserData = userData.Item(ntid)
+    If Ultilities.CheckInternetConnection Then
+        Dim validatorMapping As Scripting.Dictionary
+        Dim checkList As Collection
+        Dim tmpDict As Scripting.Dictionary
+        Dim fields As String
+        Dim mData As String
+        Dim result As String
+        Dim ntid As String
+        Dim str1 As String, str2 As String, key As String, value As String
+        Dim check As Boolean
+        Dim v As Variant
+        Dim tmpUserData As Scripting.Dictionary
+        Dim tmpInsertCols As Collection
+        Dim tmpInsertData As Scripting.Dictionary
+        Set validatorMapping = s.validatorMapping
+        Dim tmpStr As String
+        Dim FullName As String
+        Dim i As Integer
+        For i = 0 To validatorMapping.Count - 1
+            fields = fields & validatorMapping.Items(i) & ","
+        Next i
+        If StringHelper.EndsWith(fields, ",", True) Then
+            fields = Left(fields, Len(fields) - 1)
+        End If
+        
+        If StringHelper.EndsWith(ntids, ",", True) Then
+            ntids = Left(ntids, Len(ntids) - 1)
+        End If
+        mData = "token=" & StringHelper.EncodeURL(s.Token) _
+                    & "&fields=" & StringHelper.EncodeURL(fields) _
+                    & "&ntids=" & StringHelper.EncodeURL(ntids)
+        Logger.LogDebug "DbManager.SyncUserData", "Post valid ntids: " & ntids
+        result = HttpHelper.PostData(s.ValidatorURL, mData)
+        Logger.LogDebug "DbManager.SyncUserData", "Result: " & result
+        
+        If Len(result) > 0 Then
+            If StringHelper.IsContain(result, "}", True) And StringHelper.IsContain(result, "{", True) Then
+                Set checkList = JSONHelper.parse(result)
+                For Each tmpDict In checkList
+                    ntid = tmpDict.Item("ntid")
+                    check = tmpDict.Item("isvalid")
+                    Logger.LogDebug "DbManager.SyncUserData", "Is valid: " & CStr(check)
+                    Logger.LogDebug "DbManager.SyncUserData", s.SyncUsers.Item(Constants.FIELD_FIRST_NAME) & " | " & s.SyncUsers.Item(Constants.FIELD_LAST_NAME)
+                    'fullName = tmpUserData.Item(Constants.FIELD_FIRST_NAME) _
+                                                & " " _
+                                                & tmpUserData.Item(Constants.FIELD_LAST_NAME)
+                    If check Then
+                        Logger.LogDebug "DbManager.SyncUserData", "check ntid: " & ntid
+                        If Not userData Is Nothing And userData.Count > 0 Then
+                            Set tmpUserData = userData.Item(ntid)
+                            
+                            For Each v In validatorMapping
+                                key = v
+                                value = validatorMapping.Item(key)
+                                str1 = tmpUserData.Item(key)
+                                str2 = tmpDict.Item(value)
+                                Logger.LogDebug "DbManager.SyncUserData", "User data key: " & key & " = " & str1
+                                Logger.LogDebug "DbManager.SyncUserData", "Mapping data key: " & value & " = " & str2
+                                If StringHelper.IsEqual(str1, str2, True) Then
+                                    Logger.LogDebug "DbManager.SyncUserData", "validated!!!"
+                                Else
+                                    AddWarning ("Validation failed !!! NTID: " & ntid & " . Field name: " & key & ". Local: " & str1 & ". LDAP: " & str2)
+                                    tmpStr = StringHelper.GetDictKey(s.SyncUsers, key)
+                                    Logger.LogDebug "DbManager.SyncUserData", "Db column: " & tmpStr
+                                    Set tmpInsertCols = New Collection
+                                    tmpInsertCols.Add "NTID"
+                                    tmpInsertCols.Add "Name"
+                                    tmpInsertCols.Add "Field heading"
+                                    tmpInsertCols.Add "Db field"
+                                    tmpInsertCols.Add "Upload file"
+                                    tmpInsertCols.Add "LDAP"
+                                    tmpInsertCols.Add "Select"
+                                    Set tmpInsertData = New Scripting.Dictionary
+                                    tmpInsertData.Add "NTID", ntid
+                                    tmpInsertData.Add "Name", FullName
+                                    tmpInsertData.Add "Field heading", key
+                                    tmpInsertData.Add "Db field", tmpStr
+                                    tmpInsertData.Add "Upload file", str1
+                                    tmpInsertData.Add "LDAP", str2
+                                    tmpInsertData.Add "Select", "-1"
+                                    CreateLocalRecord tmpInsertData, tmpInsertCols, Constants.TABLE_USER_DATA_LDAP_CONFLICT
+                                End If
+                            Next v
+                        End If
+                    Else
+                        AddWarning ("Validation failed !!! NTID: " & ntid & " not found!")
                         
-                        For Each v In validatorMapping
-                            key = v
-                            value = validatorMapping.Item(key)
-                            str1 = tmpUserData.Item(key)
-                            str2 = tmpDict.Item(value)
-                            Logger.LogDebug "DbManager.SyncUserData", "User data key: " & key & " = " & str1
-                            Logger.LogDebug "DbManager.SyncUserData", "Mapping data key: " & value & " = " & str2
-                            If StringHelper.IsEqual(str1, str2, True) Then
-                                Logger.LogDebug "DbManager.SyncUserData", "validated!!!"
-                            Else
-                                AddWarning ("Validation failed !!! NTID: " & ntid & " . Field name: " & key & ". Local: " & str1 & ". LDAP: " & str2)
-                                tmpStr = StringHelper.GetDictKey(s.SyncUsers, key)
-                                Logger.LogDebug "DbManager.SyncUserData", "Db column: " & tmpStr
-                                Set tmpInsertCols = New Collection
-                                tmpInsertCols.Add "NTID"
-                                tmpInsertCols.Add "Name"
-                                tmpInsertCols.Add "Field heading"
-                                tmpInsertCols.Add "Db field"
-                                tmpInsertCols.Add "Upload file"
-                                tmpInsertCols.Add "LDAP"
-                                tmpInsertCols.Add "Select"
-                                Set tmpInsertData = New Scripting.Dictionary
-                                tmpInsertData.Add "NTID", ntid
-                                tmpInsertData.Add "Name", FullName
-                                tmpInsertData.Add "Field heading", key
-                                tmpInsertData.Add "Db field", tmpStr
-                                tmpInsertData.Add "Upload file", str1
-                                tmpInsertData.Add "LDAP", str2
-                                tmpInsertData.Add "Select", "-1"
-                                CreateLocalRecord tmpInsertData, tmpInsertCols, Constants.TABLE_USER_DATA_LDAP_CONFLICT
-                            End If
-                        Next v
+                        Set tmpInsertCols = New Collection
+                        tmpInsertCols.Add "NTID"
+                        tmpInsertCols.Add "Name"
+                        tmpInsertCols.Add "Select"
+                        Set tmpInsertData = New Scripting.Dictionary
+                        tmpInsertData.Add "NTID", ntid
+                        tmpInsertData.Add "Name", FullName
+                        tmpInsertData.Add "Select", "-1"
+                        CreateLocalRecord tmpInsertData, tmpInsertCols, Constants.TABLE_USER_DATA_LDAP_NOTFOUND
                     End If
-                Else
-                    AddWarning ("Validation failed !!! NTID: " & ntid & " not found!")
-                    
-                    Set tmpInsertCols = New Collection
-                    tmpInsertCols.Add "NTID"
-                    tmpInsertCols.Add "Name"
-                    tmpInsertCols.Add "Select"
-                    Set tmpInsertData = New Scripting.Dictionary
-                    tmpInsertData.Add "NTID", ntid
-                    tmpInsertData.Add "Name", FullName
-                    tmpInsertData.Add "Select", "-1"
-                    CreateLocalRecord tmpInsertData, tmpInsertCols, Constants.TABLE_USER_DATA_LDAP_NOTFOUND
-                End If
-            Next tmpDict
+                Next tmpDict
+            Else
+                Logger.LogDebug "DbManager.SyncUserData", "Error: " & result
+            End If
         Else
-            Logger.LogDebug "DbManager.SyncUserData", "Error: " & result
+            
         End If
     Else
-        
+        Logger.LogDebug "DbManager.SyncUserData", "No internet connection found"
     End If
-    
 End Function
 
 Public Function SyncUserData()

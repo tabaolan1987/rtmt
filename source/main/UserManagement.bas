@@ -54,7 +54,7 @@ Public Function CheckRegionFunction()
             dbm.RecordSet.MoveNext
         Loop
     End If
-    dbm.ExecuteQuery "DELETE FROM " & Constants.END_USER_DATA_CACHE_TABLE_NAME & " WHERE [" & Constants.FIELD_REGION_FUNCTION & "] not like '" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.name) & "'"
+    dbm.ExecuteQuery "DELETE FROM " & Constants.END_USER_DATA_CACHE_TABLE_NAME & " WHERE [" & Constants.FIELD_REGION_FUNCTION & "] not like '" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.name) & "' Or " & Session.Settings.NtidField & " is null"
     dbm.Recycle
 End Function
 
