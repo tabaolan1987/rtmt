@@ -32,6 +32,7 @@ Private mCount As Long
 
 Private mCustomMode As Boolean
 
+Private mComplete As Boolean
 
 Public Function Init(Name As String, Optional ss As SystemSetting, Optional rpType As String)
     If Len(rpType) > 0 Then
@@ -116,6 +117,7 @@ Public Function Init(Name As String, Optional ss As SystemSetting, Optional rpTy
             mReportSections.Add rpSection
         Next i
     End If
+    mComplete = False
 End Function
 
 Public Property Get OutputPath() As String
@@ -219,4 +221,12 @@ End Property
 
 Public Property Get Count() As Long
     Count = mCount
+End Property
+
+Public Function SetComplete(done As Boolean)
+    mComplete = done
+End Function
+
+Public Property Get Complete() As Boolean
+    Complete = mComplete
 End Property

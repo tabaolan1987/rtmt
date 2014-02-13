@@ -22,7 +22,7 @@ Dim StartTickCount As Double
 Dim EndTickCount As Double
 Dim TickCountNow As Double
 Dim FileIsOpen As Boolean
-Dim Done As Boolean
+Dim done As Boolean
 Dim CancelKeyState As Double
 
 FileIsOpen = IsFileOpen(FileName:=FileName)
@@ -45,8 +45,8 @@ Else
     EndTickCount = StartTickCount + TimeOutMilliseconds
 End If
 
-Done = False
-Do Until Done
+done = False
+Do Until done
     If IsFileOpen(FileName:=FileName) = False Then
         WaitForFileClose = True
    '     Application.EnableCancelKey = CancelKeyState

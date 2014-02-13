@@ -159,6 +159,7 @@ Public Const RP_END_USER_TO_SYSTEM_ROLE = "end_user_to_system_role_report"
 Public Const RP_END_USER_TO_BB_JOB_ROLE = "end_user_to_bb_job_role_report"
 Public Const RP_ROLE_MAPPING_OUTPUT_OF_TOOL_FOR_SECURITY = "role_mapping_output_of_tool_for_security"
 Public Const RP_END_USER_TO_COURSE = "end_user_to_course_report"
+Public Const RP_AUDIT_LOG = "Audit_Log_Report"
 
 Public Const RP_DEFAULT_OUTPUT_FOLDER = "target\reporting"
 
