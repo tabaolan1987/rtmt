@@ -12,7 +12,7 @@ sponsorForeName : Line Manager/ Sponsor Forename
 sponsorSurname : Line Manager/ Sponsor Surname
 vta : VTA
 country : Country
-contractor : Contractor?(Y/N)
+contractor : Contractor? (Y/N)
 #changeNetworkLevel : Change Network Level
 #dofa : DofA (Y/N)
 #dofaType : DofA Type  (Indent, Commitment, Sourcing)

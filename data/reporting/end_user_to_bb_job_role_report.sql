@@ -12,7 +12,7 @@ SELECT
 	[sponsorSurname] AS [Line Manager/ Sponsor Surname],
 	[VTA],
 	[Country],
-	[contractor] AS [Contractor?],
+	[contractor] AS [Contractor?(Y/N)],
 	[SFunction] AS [Standard Function],
 	[SdSubFunction] AS [Standard Sub Function],
 	[STeam] AS [Standard Team],
