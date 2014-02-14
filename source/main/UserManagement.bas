@@ -25,10 +25,8 @@ Public Function IsExistUserData() As Boolean
     Dim query As String
     query = "select * from " & Constants.END_USER_DATA_TABLE_NAME & " where deleted = 0 and SFunction='" & _
                 Session.CurrentUser.FuncRegion.name & "'"
-                
     dbm.Init
     dbm.OpenRecordSet query
-    mIsLdapNotfound = False
     If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
         IsExistUserData = True
     Else

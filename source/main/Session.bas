@@ -103,11 +103,17 @@ Public Function CurrentUser() As CurrentUser
 End Function
 
 Public Function Settings() As SystemSetting
+    On Error GoTo OnError
     If ss Is Nothing Then
         Set ss = New SystemSetting
         ss.Init
     End If
     Set Settings = ss
+OnExit:
+    Exit Function
+OnError:
+    Set Settings = Nothing
+    Resume OnExit
 End Function
 
 Public Function SetFlagMapping(change As Boolean)

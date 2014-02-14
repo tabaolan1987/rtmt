@@ -164,7 +164,6 @@ Private Function AddWarning(mes As String)
 End Function
 
 Private Function ValidateNtid(s As SystemSetting, ntids As String, Optional userData As Scripting.Dictionary)
-    If Ultilities.CheckInternetConnection Then
         Dim validatorMapping As Scripting.Dictionary
         Dim checkList As Collection
         Dim tmpDict As Scripting.Dictionary
@@ -268,9 +267,6 @@ Private Function ValidateNtid(s As SystemSetting, ntids As String, Optional user
         Else
             
         End If
-    Else
-        Logger.LogDebug "DbManager.SyncUserData", "No internet connection found"
-    End If
 End Function
 
 Public Function SyncUserData()
