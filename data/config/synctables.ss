@@ -2,9 +2,15 @@
 Activity
 BpRoleStandard
 BPRoleStandardCategory
-MappingAcitivityBpStandardRole
+MappingActivityBpStandardRole
 MappingRegionSystemRole
 MappingSystemRoleBpStandardRole
-Region
 SystemRole
 SystemRoleCategory
+user_data
+CourseMappingBpRoleStandard
+course
+SpecialismMappingActivity
+Specialism
+user_data_mapping_role
+audit_logs

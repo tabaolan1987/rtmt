@@ -28,7 +28,7 @@ Function GetCurrentMillisecond() As Long
 End Function
 
 Function MsToString(ms As Long) As String
-    Dim sec As Integer, last As Integer
+    Dim sec As Long, last As Long
     If ms > 999 Then
         sec = Int(ms / 1000)
         last = ms - 1000 * sec

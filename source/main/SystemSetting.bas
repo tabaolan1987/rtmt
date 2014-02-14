@@ -16,13 +16,21 @@ Private mPort As String
 Private mUsername As String
 Private mPassword As String
 Private mSyncTables() As String
+Private mSyncMappingTables() As String
+Private mSyncRoleTables() As String
 Private mSyncUsers As Scripting.Dictionary
 Private mValidatorMapping As Scripting.Dictionary
+Private mWorkSheet As String
 Private mLineToRemove() As Integer
 Private mTableNames() As String
 Private mRegionName As String
+Private mRegionFunctionId As String
 Private mLogLevel As String
-
+Private mEnableTesting As Boolean
+Private mEnableValidation As Boolean
+Private mTestNtid As String
+Private mEnv As String
+Private mVersion As String
 
 Public Function Init()
     Dim ir As IniReader: Set ir = Ultilities.SystemIniReader
@@ -33,6 +41,8 @@ Public Function Init()
     mPassword = ir.ReadKey(Constants.SECTION_REMOTE_DATABASE, Constants.KEY_PASSWORD)
     
     mSyncTables = FileHelper.ReadSSFile(Constants.SS_SYNC_TABLES)
+    mSyncRoleTables = FileHelper.ReadSSFile(Constants.SS_SYNC_ROLE_TABLES)
+    mSyncMappingTables = FileHelper.ReadSSFile(Constants.SS_SYNC_MAPPING_TABLES)
     
     Dim source As String, tmpList() As String, ln As String, arraySize As Integer, i As Integer
     source = ir.ReadKey(Constants.SECTION_USER_DATA, Constants.KEY_LINE_TO_REMOVE)
@@ -56,11 +66,17 @@ Public Function Init()
         End If
     Next
     mRegionName = ir.ReadKey(Constants.SECTION_USER_DATA, Constants.KEY_REGION_NAME)
+    mRegionFunctionId = ir.ReadKey(Constants.SECTION_USER_DATA, Constants.KEY_REGION_FUNCTION_ID)
     source = ir.ReadKey(Constants.SECTION_USER_DATA, Constants.KEY_TABLE_NAME)
     mTableNames = Split(source, ",")
-    
+    mWorkSheet = ir.ReadKey(Constants.SECTION_USER_DATA, Constants.KEY_WORK_SHEET)
     mLogLevel = ir.ReadKey(Constants.SECTION_APPLICATION, Constants.KEY_LOG_LEVEL)
+    mTestNtid = ir.ReadKey(Constants.SECTION_APPLICATION, Constants.KEY_TEST_NTID)
+    mVersion = ir.ReadKey(Constants.SECTION_APPLICATION, Constants.KEY_VERSION)
+    mEnv = ir.ReadKey(Constants.SECTION_APPLICATION, Constants.KEY_ENV)
     
+    mEnableTesting = ir.ReadBooleanKey(Constants.SECTION_APPLICATION, Constants.KEY_ENABLE_TESTING)
+    mEnableValidation = ir.ReadBooleanKey(Constants.SECTION_USER_DATA, Constants.KEY_ENABLE_VALIDATION)
     mValidatorURL = ir.ReadKey(Constants.SECTION_USER_DATA, Constants.KEY_VALIDATOR_URL)
     mToken = ir.ReadKey(Constants.SECTION_USER_DATA, Constants.KEY_TOKEN)
     mBulkSize = ir.ReadLongKey(Constants.SECTION_USER_DATA, Constants.KEY_BULK_SIZE)
@@ -88,8 +104,8 @@ Public Property Get Port() As String
     Port = mPort
 End Property
 
-Public Property Get Username() As String
-    Username = mUsername
+Public Property Get userNAme() As String
+    userNAme = mUsername
 End Property
 
 Public Property Get Password() As String
@@ -98,6 +114,14 @@ End Property
 
 Public Property Get SyncTables() As String()
     SyncTables = mSyncTables
+End Property
+
+Public Property Get SyncRoleTables() As String()
+    SyncRoleTables = mSyncRoleTables
+End Property
+
+Public Property Get SyncMappingTables() As String()
+    SyncMappingTables = mSyncMappingTables
 End Property
 
 Public Property Get SyncUsers() As Scripting.Dictionary
@@ -113,7 +137,11 @@ Public Property Get TableNames() As String()
 End Property
 
 Public Property Get RegionName() As String
-    RegionName = mRegionName
+    If Len(mRegionName) <> 0 Then
+        RegionName = mRegionName
+    Else
+        RegionName = Session.CurrentUser.FuncRegion.region
+    End If
 End Property
 
 Public Property Get LogLevel() As String
@@ -138,4 +166,36 @@ End Property
 
 Public Property Get NtidField() As String
     NtidField = mNtidField
+End Property
+
+Public Property Get WorkSheet() As String
+    WorkSheet = mWorkSheet
+End Property
+
+Public Property Get RegionFunctionId() As String
+    If Len(mRegionFunctionId) <> 0 Then
+        RegionFunctionId = mRegionFunctionId
+    Else
+        RegionFunctionId = Session.CurrentUser.FuncRegion.FuncRgID
+    End If
+End Property
+
+Public Property Get EnableTesting() As Boolean
+    EnableTesting = mEnableTesting
+End Property
+
+Public Property Get EnableValidation() As Boolean
+    EnableValidation = mEnableValidation
+End Property
+
+Public Property Get TestNtid() As String
+    TestNtid = mTestNtid
+End Property
+
+Public Property Get Env() As String
+    Env = mEnv
+End Property
+
+Public Property Get Version() As String
+    Version = mVersion
 End Property

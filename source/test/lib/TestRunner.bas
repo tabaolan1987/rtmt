@@ -5,7 +5,7 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Public Sub Run(Optional TestClassName As String)
-    Dim s As TestSuite, T As ITest, RM As IRunManager, tl As TestClassLister
+    Dim s As TestSuite, T As ITest, rm As IRunManager, tl As TestClassLister
     Dim c As Collection, VName As Variant
     Set tl = New TestClassLister
     If TestClassName <> "" Then
@@ -19,7 +19,7 @@ Public Sub Run(Optional TestClassName As String)
         s.AddTest CStr(VName)
     Next
     Set T = s
-    Set RM = New RunManager
-    T.Manager.Run T, RM
-    RM.Report
+    Set rm = New RunManager
+    T.Manager.Run T, rm
+    rm.Report
 End Sub

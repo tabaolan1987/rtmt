@@ -36,26 +36,45 @@ Public Sub TestExportReport()
         Dim output As String: output = FileHelper.CurrentDbPath & Constants.END_USER_DATA_REPORTING_OUTPUT_DIR
         FileHelper.CheckDir output
         output = output & "/" & Constants.END_USER_DATA_REPORTING_OUTPUT_FILE
-        FileHelper.Delete (output)
+        FileHelper.DeleteFile (output)
         Reporting.ExportExcelReport "select * from tblImport", testTempXlsx, output, "Role Mapping Template", "A5"
-        check = FileHelper.IsExist(output)
-        
+        check = FileHelper.IsExistFile(output)
 OnExit:
     mAssert.Equals check, True
     Exit Sub
 OnError:
+    mAssert.Should False, Logger.GetErrorMessage("", Err)
     Logger.LogError "Reporting.TestExportReport", "Error when export report", Err
     Resume OnExit
 End Sub
 
 Public Sub TestGenerateReportMetaData()
+    On Error GoTo OnError
     Dim rpmd As New ReportMetaData
     rpmd.Init Constants.RP_END_USER_TO_SYSTEM_ROLE
     mAssert.Equals rpmd.Valid, True
+    rpmd.Recyle
+OnExit:
+    ' finally
+    Exit Sub
+OnError:
+    mAssert.Should False, Logger.GetErrorMessage("", Err)
+    Logger.LogError "ReportingTester.TestGenerateReportMetaData", "", Err
+    Resume OnExit
 End Sub
 
 Public Sub TestGenerateReport()
-    Reporting.GenerateReport Constants.RP_END_USER_TO_SYSTEM_ROLE
+    On Error GoTo OnError
+    Dim rpmd As New ReportMetaData
+    rpmd.Init Constants.RP_END_USER_TO_SYSTEM_ROLE
+    Reporting.GenerateReport rpmd
+OnExit:
+    ' finally
+    Exit Sub
+OnError:
+    mAssert.Should False, Logger.GetErrorMessage("", Err)
+    Logger.LogError "ReportingTester.TestGenerateReport", "", Err
+    Resume OnExit
 End Sub
 
 Private Function ITest_Suite() As TestSuite

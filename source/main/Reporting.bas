@@ -35,13 +35,12 @@ Public Sub ExportExcelReport(sSQL As String, sFileNameTemplate As String, output
     Set objRs = Nothing
 End Sub
 
-Public Sub GenerateReport(name As String)
-    Dim rpm As New ReportMetaData
-    Logger.LogDebug "Reporting.GenerateReport", "Start init report metadata " & name
-    rpm.Init name
-    If FileHelper.IsExist(rpm.OutputPath) Then
+Public Sub GenerateReport(rpm As ReportMetaData)
+    Dim ss As SystemSetting
+    Set ss = Session.Settings()
+    If FileHelper.IsExistFile(rpm.OutputPath) Then
         Logger.LogDebug "Reporting.GenerateReport", "Delete file " & rpm.OutputPath
-        FileHelper.Delete rpm.OutputPath
+        FileHelper.DeleteFile rpm.OutputPath
     End If
     If rpm.Valid Then
         Logger.LogDebug "Reporting.GenerateReport", "Report metadata is valid "
@@ -55,7 +54,7 @@ Public Sub GenerateReport(name As String)
         Dim objRs As New ADODB.RecordSet
         Set objConn = CurrentProject.Connection
         With oExcel
-            
+            .DisplayAlerts = False
             .Visible = False
             'Create new workbook from the template file
             Logger.LogDebug "Reporting.GenerateReport", "Open excel template: " & rpm.TemplateFilePath
@@ -65,52 +64,94 @@ Public Sub GenerateReport(name As String)
                     Set WS = WB.workSheets(rpm.WorkSheet) 'Replace with the name of actual sheet
                     With WS
                         Logger.LogDebug "Reporting.GenerateReport", "Detect query type: Section"
-                                Dim rSect As ReportSection
-                                Dim colCount As Long
-                                colCount = rpm.StartCol
-                                colHeadCount = rpm.StartHeaderCol
-                                For Each rSect In rpm.ReportSections
-                                    Dim headers() As String
-                                    headers = rSect.Header
-                                    If rpm.FillHeader Then
-                                        For i = LBound(headers) To UBound(headers)
-                                            Set rng = .Cells(rpm.StartHeaderRow, colHeadCount)
-                                            rng.value = headers(i)
-                                            colHeadCount = colHeadCount + 1
-                                         Next i
+                        Dim rSect As ReportSection
+                        Dim colCount As Long
+                        colCount = rpm.StartCol
+                        colHeadCount = rpm.StartHeaderCol
+                        For Each rSect In rpm.ReportSections
+                            Dim headers() As String
+                            headers = rSect.header
+                            If rpm.FillHeader Then
+                                For i = LBound(headers) To UBound(headers)
+                                    Set rng = .Cells(rpm.StartHeaderRow, colHeadCount)
+                                    rng.value = headers(i)
+                                    colHeadCount = colHeadCount + 1
+                                Next i
+                            End If
+                            Select Case rSect.SectionType
+                                Case Constants.RP_SECTION_TYPE_AUTO:
+                                     Logger.LogDebug "Reporting.GenerateReport", "Generate section type: Auto"
+                                    For i = LBound(headers) To UBound(headers)
+                                        Dim query As String
+                                        query = rSect.MakeQuery(headers(i), ss)
+                                        Logger.LogDebug "Reporting.GenerateReport", "Prepare query: " & query
+                                        objRs.Open query, objConn, adOpenStatic, adLockReadOnly
+                                        'Logger.LogDebug "Reporting.GenerateReport", "Prepare Cells(" & CStr(rpm.StartRow) & "," & CStr(colCount) & ")"
+                                        Set rng = .Cells(rpm.StartRow, colCount) 'Starting point of the data range
+                                        rng.CopyFromRecordset objRs
+                                        objRs.Close
+                                        colCount = colCount + 1
+                                    Next i
+                                    Logger.LogDebug "Reporting.GenerateReport", "Complete generate section type: Auto"
+                                Case Constants.RP_SECTION_TYPE_FIXED, Constants.RP_SECTION_TYPE_TMP_TABLE:
+                                    Logger.LogDebug "Reporting.GenerateReport", "Generate section type: Fixed"
+                                    objRs.Open rSect.query, objConn, adOpenStatic, adLockReadOnly
+                                    'Logger.LogDebug "Reporting.GenerateReport", "Prepare Cells(" & CStr(rpm.StartRow) & "," & CStr(colCount) & ")"
+                                    Set rng = .Cells(rpm.StartRow, colCount) 'Starting point of the data range
+                                    rng.CopyFromRecordset objRs
+                                    colCount = colCount + rSect.HeaderCount
+                                    objRs.Close
+                                    Logger.LogDebug "Reporting.GenerateReport", "Complete generate section type: Fixed"
+                                Case Else
+                            End Select
+                        Next
+                         If rpm.CustomMode Then
+                           k = rpm.StartRow
+                           Dim psValue As String
+                           Dim countValue As String
+                            Do While k < 65536
+                                psValue = .Cells(k, 12).value
+                                countValue = .Cells(k, 14).value
+                                If Len(Trim(psValue)) = 0 Then
+                                    Exit Do
+                                End If
+                                If StringHelper.IsEqual(psValue, "s", True) And CInt(Trim(countValue)) > 1 Then
+                                    .Cells(k, 12).EntireRow.Delete
+                                Else
+                                    k = k + 1
+                                End If
+                             Loop
+                             .Cells(rpm.StartRow, 14).EntireColumn.Delete
+                        End If
+                        
+                        If rpm.MergeEnable Then
+                            Dim tmpPrimaryValue As String
+                            Dim tmpValue As String
+                            Dim startMergeRow As Long
+                            Dim endMergeRow As Long
+                            Dim lastPrimaryValue As String
+                            Dim lastValue As String
+                            Dim v As Variant
+                            For i = rpm.StartRow To (rpm.Count + rpm.StartRow - 1)
+                                Set rng = .Cells(i, rpm.MergePrimary)
+                                tmpPrimaryValue = Trim(rng)
+                                Logger.LogDebug "Reporting.GenerateReport", "tmpPrimaryValue: " & tmpPrimaryValue & ". lastPrimaryValue: " & lastPrimaryValue
+                                If Len(tmpPrimaryValue) <> 0 Then
+                                    If StringHelper.IsEqual(tmpPrimaryValue, lastPrimaryValue, True) Then
+                                        rng.value = ""
+                                    Else
+                                    
                                     End If
-                                    Select Case rSect.SectionType
-                                        Case Constants.RP_SECTION_TYPE_AUTO:
-                                            Logger.LogDebug "Reporting.GenerateReport", "Generate section type: Auto"
-                                            
-                                            For i = LBound(headers) To UBound(headers)
-                                                Dim query As String
-                                                query = rSect.MakeQuery(headers(i))
-                                                Logger.LogDebug "Reporting.GenerateReport", "Prepare query: " & query
-                                                objRs.Open query, objConn, adOpenStatic, adLockReadOnly
-                                                'Logger.LogDebug "Reporting.GenerateReport", "Prepare Cells(" & CStr(rpm.StartRow) & "," & CStr(colCount) & ")"
-                                                
-                                                Set rng = .Cells(rpm.StartRow, colCount) 'Starting point of the data range
-                                                rng.CopyFromRecordset objRs
-                                                objRs.Close
-                                                colCount = colCount + 1
-                                            Next i
-                                            
-                                            Logger.LogDebug "Reporting.GenerateReport", "Complete generate section type: Auto"
-                                        Case Constants.RP_SECTION_TYPE_FIXED:
-                                            Logger.LogDebug "Reporting.GenerateReport", "Generate section type: Fixed"
-                                            objRs.Open rSect.query, objConn, adOpenStatic, adLockReadOnly
-                                            'Logger.LogDebug "Reporting.GenerateReport", "Prepare Cells(" & CStr(rpm.StartRow) & "," & CStr(colCount) & ")"
-                                            Set rng = .Cells(rpm.StartRow, colCount) 'Starting point of the data range
-                                            rng.CopyFromRecordset objRs
-                                            colCount = colCount + rSect.HeaderCount
-                                            objRs.Close
-                                            Logger.LogDebug "Reporting.GenerateReport", "Complete generate section type: Fixed"
-                                        Case Else
-                                    End Select
-                                Next
+                                Else
+                                End If
+                                lastPrimaryValue = tmpPrimaryValue
+                            Next i
+                            For Each v In rpm.MergeColumes
+                                j = CInt(v)
+                                
+                            Next v
+                        End If
                         '.PrintOut Copies:=1, Preview:=False, Collate:=True
-                    
                     End With
                     Logger.LogDebug "Reporting.GenerateReport", "Save report as : " & rpm.OutputPath
                     WS.SaveAs (rpm.OutputPath)
@@ -121,7 +162,22 @@ Public Sub GenerateReport(name As String)
          
         Set objConn = Nothing
         Set objRs = Nothing
+        rpm.SetComplete (True)
     Else
         Logger.LogError "Reporting.GenerateReport", "The reporting meta data format is not valid", Nothing
     End If
 End Sub
+
+Public Function CountUncompleteReport() As Integer
+    Dim v As Variant
+    Dim i As Integer
+    Dim rpm As ReportMetaData
+    i = 0
+    For Each v In Session.ReportMDCol.keys
+        Set rpm = Session.ReportMDCol.Item(CStr(v))
+        If Not rpm.Complete Then
+            i = i + 1
+        End If
+    Next v
+    CountUncompleteReport = i
+End Function

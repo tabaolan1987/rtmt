@@ -2,7 +2,21 @@ Option Explicit
 
 Public Sub OnTest()
     'Logger.LogDebug "VbaUnitMain.OnTest", StringHelper.GetGUID
-    Run "DbManagerTester"
+    'DoCmd.SetWarnings False
+    'Run "MappingHelperTester"
+   ' Run "UserManagementTester"
+   ' Run "DbManagerTester"
+    'Dim um As New UserManagement
+    'um.CheckConflict
+    'Reporting.GenerateReport Constants.RP_ROLE_MAPPING_OUTPUT_OF_TOOL_FOR_SECURITY
+    'Session.Init
+    
+   ' Logger.LogDebug "test", Session.currentUser.Valid
+    'Dim rpmd As New ReportMetaData
+    'rpmd.Init Constants.RP_END_USER_TO_BB_JOB_ROLE
+   ' Reporting.GenerateReport Constants.RP_ROLE_MAPPING_OUTPUT_OF_TOOL_FOR_SECURITY
+   
+    Logger.LogDebug "test", Ultilities.CheckInternetConnection
 End Sub
 
 Public Sub Run(Optional TestClassName As String)

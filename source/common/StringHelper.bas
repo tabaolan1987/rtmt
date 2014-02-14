@@ -142,3 +142,40 @@ Public Function GetGUID() As String
             IIf((udtGUID.Data4(7) < &H10), "0", "") & Hex$(udtGUID.Data4(7))
     End If
 End Function
+
+Public Function GetDictKey(dict As Scripting.Dictionary, value As String) As String
+    Dim i As Integer
+    Dim key As String
+    Dim v As Variant
+    key = ""
+    For Each v In dict.keys
+        If StringHelper.IsEqual(value, dict.Item(CStr(v)), True) Then
+            key = CStr(v)
+            Exit For
+        End If
+    Next v
+    GetDictKey = key
+End Function
+
+Public Function GenerateQuery(query As String, Optional data As Scripting.Dictionary) As String
+    Dim mQuery As String
+    mQuery = query
+    If Not data Is Nothing Then
+        For Each v In data.keys
+            If StringHelper.IsEqual(CStr(v), Constants.Q_KEY_FILTER, True) Then
+                mQuery = Replace(mQuery, "(%" & CStr(v) & "%)", data.Item(CStr(v)))
+            Else
+                mQuery = Replace(mQuery, "(%" & CStr(v) & "%)", EscapeQueryString(data.Item(CStr(v))))
+            End If
+        Next v
+    End If
+    'Logger.LogDebug "StringHelper.GenerateQuery", mQuery
+    GenerateQuery = mQuery
+End Function
+
+Public Function TrimNewLine(str As String) As String
+    Dim tmp As String
+    tmp = Replace(str, Chr(13) & Chr(10), " ")
+    tmp = Replace(tmp, Chr(10) & Chr(13), " ")
+    TrimNewLine = Trim(tmp)
+End Function

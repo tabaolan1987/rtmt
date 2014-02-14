@@ -1,0 +1,5 @@
+Select the Reports button to view and/or download reports from the file that is currently uploaded.
+
+If the Reports button is not available to select,  that means there is no end user file currently held in the tool. In this case, you  will need to upload a file before you can view or download the reports.
+
+Reports will include any data that has been mapped for the selected region && function.

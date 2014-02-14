@@ -1,7 +1,14 @@
 '@author Hai Lu
 ' General utilities function
 Option Explicit
+
+Private checkInternetFlag As String
+Const NoError = 0
+
 #If VBA7 Then
+Declare PtrSafe Function WNetGetUser Lib "mpr.dll" _
+      Alias "WNetGetUserA" (ByVal lpName As String, _
+      ByVal lpUserName As String, lpnLength As Long) As Long
 Private Declare PtrSafe Function GetClassNameA Lib "user32" ( _
     ByVal hwnd As Long, _
     ByVal lpClassName As String, _
@@ -16,6 +23,9 @@ Private Declare PtrSafe Function ShowWindowAsync Lib "user32" ( _
     ByVal nCmdShow As Long) _
     As Boolean
 #Else
+Declare Function WNetGetUser Lib "mpr.dll" _
+      Alias "WNetGetUserA" (ByVal lpName As String, _
+      ByVal lpUserName As String, lpnLength As Long) As Long
 Private Declare Function GetClassNameA Lib "user32" ( _
     ByVal hwnd As Long, _
     ByVal lpClassName As String, _
@@ -55,8 +65,8 @@ Public Sub MakeAccde()
     Logger.LogDebug "Ultilities.MakeAccde", "target db:" & targetdb
     
     Dim AccessApplication As New Access.Application
-    
     With AccessApplication
+        .Visible = False
         .AutomationSecurity = 1 'MsoAutomationSecurityLow
         .UserControl = True
         .SysCmd 603, sourcedb, targetdb 'this makes the ACCDE file
@@ -65,11 +75,18 @@ Public Sub MakeAccde()
     
 End Sub
 
-Public Function ifTableExists(tblName As String) As Boolean
-    ifTableExists = False
-    If DCount("[Name]", "MSysObjects", "[Name] = '" & tblName & "'") = 1 Then
-    ifTableExists = True
-    End If
+Public Function IfTableExists(tblName As String) As Boolean
+    'ADO Method
+    Dim obj As AccessObject
+    Dim dbs As Object
+    Set dbs = Application.CurrentData
+    IfTableExists = False
+    For Each obj In dbs.AllTables
+        If obj.name = tblName Then
+            IfTableExists = True
+            Exit For
+        End If
+    Next obj
 End Function
 
 Function IsVarArrayEmpty(anArray As Variant)
@@ -151,4 +168,84 @@ Function ShowToolTip(ShowControl As String)
               z = SysCmd(SYSCMD_SETSTATUS, MyToolTip.value)
           End If
 
+End Function
+
+Public Function GetUserName() As String
+    ' Buffer size for the return string.
+    Const lpnLength As Integer = 255
+    ' Get return buffer space.
+    Dim status As Integer
+    ' For getting user information.
+    Dim lpName, lpUserName As String
+    ' Assign the buffer size constant to lpUserName.
+    lpUserName = Space$(lpnLength + 1)
+    ' Get the log-on name of the person using product.
+    status = WNetGetUser(lpName, lpUserName, lpnLength)
+    ' See whether error occurred.
+    If status = NoError Then
+         ' This line removes the null character. Strings in C are null-
+         ' terminated. Strings in Visual Basic are not null-terminated.
+         ' The null character must be removed from the C strings to be used
+         ' cleanly in Visual Basic.
+         lpUserName = Left$(lpUserName, InStr(lpUserName, Chr(0)) - 1)
+    Else
+         ' An error occurred.
+         Logger.LogError "Ultilities.GetUserName", "Unable to get the name.", Nothing
+         End
+    End If
+    ' Display the name of the person logged on to the machine.
+    Logger.LogDebug "Ultilities.GetUserName", "The person logged on this machine is: " & lpUserName
+    GetUserName = lpUserName
+
+End Function
+
+Public Function CheckTables(mType As Integer) As Boolean
+    Dim check As Boolean, _
+        SyncTables() As String, _
+        prop As SystemSetting, _
+        isEmpty As Boolean, _
+        stTable As String
+    Set prop = Session.Settings()
+    Select Case mType
+        Case Constants.SYNC_TYPE_DEFAULT:
+            SyncTables = prop.SyncTables
+        Case Constants.SYNC_TYPE_ROLE:
+            SyncTables = prop.SyncRoleTables
+        Case Constants.SYNC_TYPE_MAPPING:
+            SyncTables = prop.SyncMappingTables
+    End Select
+    
+    isEmpty = Ultilities.IsVarArrayEmpty(SyncTables)
+    check = True
+    If isEmpty = False Then
+        Dim i As Integer
+        For i = LBound(SyncTables) To UBound(SyncTables)
+            stTable = Trim(SyncTables(i))
+            If Not Ultilities.IfTableExists(stTable) Then
+                check = False
+                Exit For
+            End If
+        Next i
+    End If
+    CheckTables = check
+End Function
+
+Function IsLoaded(ByVal strFormName As String) As Boolean
+' Returns True if the specified form is open in Form view or Datasheet view.
+' Use form name according to Access, not VBA.
+' Only works for Access
+    Dim oAccessObject As AccessObject
+
+    Set oAccessObject = CurrentProject.AllForms(strFormName)
+    If oAccessObject.IsLoaded Then
+        If oAccessObject.CurrentView <> acCurViewDesign Then
+            IsLoaded = True
+        End If
+    End If
+
+End Function
+
+Function CheckInternetConnection() As Boolean
+    CheckInternetConnection = True
+    
 End Function
