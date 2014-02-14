@@ -17,8 +17,8 @@ contractor : Contractor? (Y/N)
 #dofa : DofA (Y/N)
 #dofaType : DofA Type  (Indent, Commitment, Sourcing)
 #region : Region
-siteLocation : Maximo Site Location
-purchasingOrg : Purchasing Org
+#siteLocation : Maximo Site Location
+#purchasingOrg : Purchasing Org
 SFunction : Standard Function
 SdSubFunction : Standard Sub Function
 STeam : Standard Team

@@ -35,6 +35,19 @@ Public Function IsExistUserData() As Boolean
     dbm.Recycle
 End Function
 
+Public Function IsExistUserDataCache() As Boolean
+    Dim query As String
+    query = "select * from " & Constants.END_USER_DATA_CACHE_TABLE_NAME
+    dbm.Init
+    dbm.OpenRecordSet query
+    If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
+        IsExistUserDataCache = True
+    Else
+        IsExistUserDataCache = False
+    End If
+    dbm.Recycle
+End Function
+
 Public Function CheckRegionFunction()
     Dim query As String
     Dim tmpNtid As String
@@ -160,6 +173,12 @@ Public Function CheckConflict()
     Else
         Logger.LogInfo "UserManagement.CheckConflict", "There are no records in table " & Constants.END_USER_DATA_CACHE_TABLE_NAME
     End If
+    dbm.Recycle
+End Function
+
+Public Function IgnoreAllConflict()
+    dbm.Init
+    dbm.ExecuteQuery "UPDATE [" & Constants.TABLE_USER_DATA_CONFLICT & "] SET [" & Constants.FIELD_SELECT & "] = 'false'"
     dbm.Recycle
 End Function
 
@@ -441,8 +460,11 @@ Public Function ResolveUserDataDuplicate()
 End Function
 
 Public Function ListSpecialism() As Collection
+    Dim tmpRst As DAO.RecordSet
+    Dim tmpQdf As DAO.QueryDef
     Dim list As New Collection
     Dim query As String
+    Dim tmp As String
     query = "SELECT [" & Constants.FIELD_SPECIALISM & "] from " & Constants.END_USER_DATA_CACHE_TABLE_NAME _
                     & " group by [" & Constants.FIELD_SPECIALISM & "]"
     dbm.Init
@@ -450,7 +472,22 @@ Public Function ListSpecialism() As Collection
     If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
         dbm.RecordSet.MoveFirst
         Do Until dbm.RecordSet.EOF = True
-            list.Add dbm.GetFieldValue(dbm.RecordSet, Constants.FIELD_SPECIALISM)
+            tmp = dbm.GetFieldValue(dbm.RecordSet, Constants.FIELD_SPECIALISM)
+            If Len(tmp) > 0 Then
+                list.Add tmp
+                query = "SELECT * FROM Specialism WHERE SpecialismName = '" & StringHelper.EscapeQueryString(tmp) & "'"
+                Set tmpQdf = dbm.Database.CreateQueryDef("", query)
+                Set tmpRst = tmpQdf.OpenRecordSet
+                If Not (tmpRst.EOF And tmpRst.BOF) Then
+                    Logger.LogDebug "UserManagement.ListSpecialism", "Update specialism: " & tmp
+                    dbm.ExecuteQuery "UPDATE Specialism Set Deleted = 'false' WHERE SpecialismName = '" & StringHelper.EscapeQueryString(tmp) & "'"
+                Else
+                    Logger.LogDebug "UserManagement.ListSpecialism", "Create new specialism: " & tmp
+                    dbm.ExecuteQuery "INSERT INTO Specialism([id], [SpecialismName], [deleted]) " _
+                        & "VALUES('" & StringHelper.EscapeQueryString(StringHelper.GetGUID) _
+                                & "', '" & StringHelper.EscapeQueryString(tmp) & "', 'false')"
+                End If
+            End If
             dbm.RecordSet.MoveNext
         Loop
     End If
@@ -470,7 +507,11 @@ Public Function GenereateSpecialismFilter() As String
     If StringHelper.EndsWith(filter, ",", True) Then
         filter = Left(filter, Len(filter) - 1)
     End If
-    GenereateSpecialismFilter = filter
+    If Len(filter) > 0 Then
+        GenereateSpecialismFilter = filter
+    Else
+        GenereateSpecialismFilter = "'" & StringHelper.EscapeQueryString(StringHelper.GetGUID) & "'"
+    End If
 End Function
 
 Public Function GenerateRoleMapping(rm As ReportMetaData)
@@ -654,6 +695,60 @@ Public Function MergeUserData()
         Logger.LogInfo "UserManagement.MergeUserData", "There are no record in table " & Constants.END_USER_DATA_CACHE_TABLE_NAME
     End If
     dbm.Recycle
+End Function
+
+Public Function CheckEUDLFile(filePath As String) As String
+    Logger.LogDebug "UserManagement.CheckEUDLFile", "Start check EUDL format"
+    Dim header As String
+    Dim tmpStr As String
+    Dim fso As Object
+    Dim ReadFile As Object
+    Dim headers() As String
+    Dim mapping As Scripting.Dictionary
+    Set mapping = Session.Settings.SyncUsers
+    Dim tmpHeader As String
+    Dim v As Variant
+    Dim i As Integer
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    Set ReadFile = fso.OpenTextFile(filePath, ForReading, False)
+    tmpStr = ReadFile.ReadLine
+    ReadFile.Close
+    Dim check As Boolean
+    Logger.LogDebug "UserManagement.CheckEUDLFile", "Header row: " & tmpStr
+    Dim IsExist As Boolean
+    check = True
+    Dim field As String
+    If Len(tmpStr) > 0 Then
+        headers = Split(tmpStr, ",")
+        If UBound(headers) > 0 Then
+            For Each v In mapping.keys
+                tmpHeader = mapping.Item(CStr(v))
+                IsExist = False
+                For i = LBound(headers) To UBound(headers)
+                    header = headers(i)
+                    If StringHelper.IsEqual(header, tmpHeader, True) Then
+                        Logger.LogDebug "UserManagement.CheckEUDLFile", "found mapping header " & header
+                        IsExist = True
+                    End If
+                Next i
+                If Not IsExist Then
+                    Logger.LogDebug "UserManagement.CheckEUDLFile", "Cound not found field " & tmpHeader & " in EUDL file"
+                    field = tmpHeader
+                    check = False
+                    Exit For
+                End If
+            Next v
+        Else
+            check = False
+        End If
+    Else
+        check = False
+    End If
+    If check Then
+        CheckEUDLFile = ""
+    Else
+        CheckEUDLFile = "Missing required field: " & field
+    End If
 End Function
 
 Public Property Get IsConflict() As Boolean

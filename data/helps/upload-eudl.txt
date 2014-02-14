@@ -5,5 +5,6 @@ The file must in one of the following formats:
  - CSV (comma delimited)
  with extensions .xls, .xlsx,  or .csv respectively.
 Files must be in the correct format in order to upload successfully.
-Your tool contains a copy of all the regional data from the central store. The End User Data Landscape document you upload  will be added to the regional data already held on your computer.  After you have finished editing the data locally and close the application it will send  all your changes to the central store.
-Headings && explanations…
+Your tool contains a copy of all the regional data from the central store.
+The End User Data Landscape document you upload will be added to the regional data already held on your computer.
+After you have finished editing the data locally and close the application it will send  all your changes to the central store.

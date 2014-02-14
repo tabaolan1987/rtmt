@@ -808,6 +808,7 @@ Public Function CreateServerRecord(datas As Scripting.Dictionary, colsType As Sc
     Dim cn As ADODB.Connection
     Set cn = New ADODB.Connection
     Dim query As String
+    Dim createQuery As String
     Dim stConnect As String
     Dim tmpTimestamp As String, tmpId As String
     If Len(userNAme) <> 0 Then
@@ -818,10 +819,10 @@ Public Function CreateServerRecord(datas As Scripting.Dictionary, colsType As Sc
         stConnect = "DRIVER=SQL Server;SERVER=" & Server & ";DATABASE=" & DatabaseName
     End If
     Logger.LogDebug "DbManager.CreateServerRecord", "Connection String: " & stConnect
-    query = CreateRecordQuery(datas, cols, table, colsType, True)
+    createQuery = CreateRecordQuery(datas, cols, table, colsType, True)
     cn.Open stConnect
     cn.BeginTrans
-    cn.Execute query
+    cn.Execute createQuery
     cn.CommitTrans
     tmpId = datas.Item(Constants.FIELD_ID)
     query = "SELECT [" & Constants.FIELD_TIMESTAMP & "] FROM " & table & " WHERE [" & Constants.FIELD_ID & "]='" & StringHelper.EscapeQueryString(tmpId) & "'"
@@ -836,6 +837,12 @@ Public Function CreateServerRecord(datas As Scripting.Dictionary, colsType As Sc
                                     & "' WHERE [" & Constants.FIELD_ID & "] = '" & StringHelper.EscapeQueryString(tmpId) & "'"
         Logger.LogDebug "DbManager.CreateServerRecord", "Query: " & query
         ExecuteQuery query
+        ExecuteQuery "insert into audit_logs([id], [ntid], [idFunction], [userAction], [description]) values('" _
+            & StringHelper.EscapeQueryString(StringHelper.GetGUID) & "','" _
+            & StringHelper.EscapeQueryString(Session.CurrentUser.ntid) & "','" _
+            & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.FuncRgID) & "','" _
+            & StringHelper.EscapeQueryString("Create central store record") & "','" _
+            & StringHelper.EscapeQueryString(createQuery) & "')"
     End If
 OnExit:
     On Error Resume Next
@@ -857,6 +864,7 @@ Public Function UpdateServerRecord(datas As Scripting.Dictionary, cols As Collec
     Dim cn As ADODB.Connection
     Set cn = New ADODB.Connection
     Dim query As String
+    Dim updateQuery As String
     Dim stConnect As String
     Dim tmpTimestamp As String, tmpId As String
     If Len(userNAme) <> 0 Then
@@ -867,11 +875,11 @@ Public Function UpdateServerRecord(datas As Scripting.Dictionary, cols As Collec
         stConnect = "DRIVER=SQL Server;SERVER=" & Server & ";DATABASE=" & DatabaseName
     End If
     Logger.LogDebug "DbManager.UpdateServerRecord", "Connection String: " & stConnect
-    query = UpdateRecordQuery(datas, cols, table, True)
+    updateQuery = UpdateRecordQuery(datas, cols, table, True)
     
     cn.Open stConnect
     cn.BeginTrans
-    cn.Execute query
+    cn.Execute updateQuery
     cn.CommitTrans
     tmpId = datas.Item(Constants.FIELD_ID)
     query = "SELECT [" & Constants.FIELD_TIMESTAMP & "] FROM " & table & " WHERE [id]='" & StringHelper.EscapeQueryString(tmpId) & "'"
@@ -886,6 +894,13 @@ Public Function UpdateServerRecord(datas As Scripting.Dictionary, cols As Collec
                                     & "' WHERE [id] = '" & StringHelper.EscapeQueryString(tmpId) & "'"
         Logger.LogDebug "DbManager.UpdateServerRecord", "Query: " & query
         ExecuteQuery query
+        ExecuteQuery "insert into audit_logs([id], [ntid], [idFunction], [userAction], [description]) values('" _
+            & StringHelper.EscapeQueryString(StringHelper.GetGUID) & "','" _
+            & StringHelper.EscapeQueryString(Session.CurrentUser.ntid) & "','" _
+            & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.FuncRgID) & "','" _
+            & StringHelper.EscapeQueryString("Update central store record") & "','" _
+            & StringHelper.EscapeQueryString(updateQuery) & "')"
+        
     End If
 OnExit:
     On Error Resume Next
