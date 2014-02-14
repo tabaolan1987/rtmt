@@ -22,6 +22,7 @@ Course1.deleted=0 and UMR1.idFunction='(%RG_F_ID%)'
 group by UDT1.ntid,UDT1.fname,UDT1.lname,UDT1.omsSubfunction,
 Course1.courseId,
 CMR1.ps
+order by UDT1.ntid,Course1.courseId
 ) as tbl_cached where tbl_cached.ntid = UDT.ntid and tbl_cached.courseId = Course.courseId )
  as count_conflict
 from ((((user_data_mapping_role as UMR
@@ -39,11 +40,13 @@ Course.deleted=0 and UMR.idFunction='(%RG_F_ID%)'
 group by UDT.ntid,UDT.fname,UDT.lname,UDT.omsSubfunction,
 Course.courseId,
 CMR.ps
+order by UDT.ntid,Course.courseId
 ) as rpc
+
 =====
 tmp_table_report
 ===
-select ntid from user_data where deleted = 0 and SFunction='(%RG_F_NAME%)'
+select ntid from user_data where deleted = 0 and SFunction='(%RG_F_NAME%)' 
 ===
 select bpRole.BpRoleStandardName as [Job Role] 
 		from (user_data_mapping_role as udata   
@@ -80,6 +83,7 @@ group by UDT1.ntid,
 Course1.courseArena,Course1.courseId,
 Course1.courseTitle,Course1.courseType,
 Course1.courseDuration,CMR1.ps,Course1.courseDelivery
+order by UDT1.ntid,Course1.courseId
 ) as tbl_cached where tbl_cached.ntid = UDT.ntid and tbl_cached.courseId = Course.courseId )
  as count_conflict
 from ((((user_data_mapping_role as UMR
@@ -98,8 +102,11 @@ group by UDT.ntid,
 Course.courseArena,Course.courseId,
 Course.courseTitle,Course.courseType,
 Course.courseDuration,CMR.ps,Course.courseDelivery
+order by UDT.ntid,Course.courseId
 )
-as rpc) as tbl_data inner join tmp_table_report as tmp_table on tmp_table.[key] = tbl_data.ntid)
+as rpc
+) as tbl_data inner join tmp_table_report as tmp_table on tmp_table.[key] = tbl_data.ntid)
+order by tbl_data.ntid,tbl_data.courseId
 =====
 select rpc.courseArena,rpc.courseId,
 rpc.courseTitle,rpc.courseType,
@@ -128,6 +135,7 @@ group by UDT1.ntid,
 Course1.courseArena,Course1.courseId,
 Course1.courseTitle,Course1.courseType,
 Course1.courseDuration,CMR1.ps,Course1.courseDelivery
+order by UDT1.ntid,Course1.courseId
 ) as tbl_cached where tbl_cached.ntid = UDT.ntid and tbl_cached.courseId = Course.courseId )
  as count_conflict
 from ((((user_data_mapping_role as UMR
@@ -146,4 +154,5 @@ group by UDT.ntid,
 Course.courseArena,Course.courseId,
 Course.courseTitle,Course.courseType,
 Course.courseDuration,CMR.ps,Course.courseDelivery
+order by UDT.ntid,Course.courseId
 ) as rpc
