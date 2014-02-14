@@ -93,7 +93,20 @@ SELECT
 		Accounting Object Analyst,
 		Invoice Exception and Workflow Analyst,
 		MI Query Writer,
-		Regional Backbone Administrator
+		Regional Backbone Administrator,
+		Standard Desktop Confirmation Requester,
+        Central Desktop Confirmation Requester,
+        Strategic Materials Planner,
+		Demand Planning MRP Specialist,
+		VMI Administrator,
+		Third Party Inventory Administrator,
+		MDM - Global Data Steward,
+		MDM - Local Data Steward,
+		MDM - Display,
+		Vendor Data Requestor (Egypt only),
+		GWO Data Maintainer,
+		GWO Data Display,
+		Regional Maximo Labor Data Steward
 		| 
 		(select top 1 IIF(NOT ISNULL(bpRole.BpRoleStandardName), "Y","") 
 from (user_data_mapping_role as UMR 
