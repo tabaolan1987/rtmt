@@ -75,7 +75,27 @@ Public Sub MakeAccde()
 End Sub
 
 Public Sub WDeleteAllTables()
-    
+    Dim i As Integer
+    Dim dbm As New DbManager
+    dbm.Init
+    Dim tmpStr As String
+    Dim tables() As String
+    tables = Session.Settings.SyncMappingTables
+    For i = LBound(tables) To UBound(tables)
+        tmpStr = tables(i)
+        dbm.DeleteTable tmpStr
+    Next i
+    tables = Session.Settings.SyncRoleTables
+    For i = LBound(tables) To UBound(tables)
+        tmpStr = tables(i)
+        dbm.DeleteTable tmpStr
+    Next i
+    tables = Session.Settings.SyncTables
+    For i = LBound(tables) To UBound(tables)
+        tmpStr = tables(i)
+        dbm.DeleteTable tmpStr
+    Next i
+    dbm.Recycle
 End Sub
 
 Public Function IfTableExists(tblName As String) As Boolean
@@ -255,5 +275,9 @@ End Function
 
 
 Function IsReadOnly() As Boolean
-    IsReadOnly = False
+    If CurrentDb.Updatable Then
+        IsReadOnly = False
+    Else
+        IsReadOnly = True
+    End If
 End Function

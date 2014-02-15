@@ -8,6 +8,7 @@ goto end
 :okHome
 
 mkdir ".\target"
+cscript ".\scripts\run.vbs" rolemapping.accdb WDeleteAllTables
 copy ".\rolemapping.accdb" ".\target\rolemapping.accdb"
 ping 1.1.1.1 -n 1 -w 5000 > nul
 ".\thirdparty\PSTools\pskill.exe" msaccess.exe
