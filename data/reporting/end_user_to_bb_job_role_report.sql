@@ -111,7 +111,8 @@ SELECT
 		Finance Integration Display and Reporting,
 		MI Query Writer,
 		Regional Maximo Labor Data Steward,
-		Regional Backbone Administrator
+		Regional Backbone Administrator,
+		Vendor Maintainer - SQM
 		| 
 		(select top 1 IIF(NOT ISNULL(bpRole.BpRoleStandardName), "Y","") 
 from (user_data_mapping_role as UMR 
