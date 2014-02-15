@@ -87,7 +87,7 @@ Public Function Init(raw As String, Optional mss As SystemSetting)
                     dbm.ExecuteQuery "DELETE * FROM [" & tableName & "]"
                 Else
                     Logger.LogDebug "ReportSection.Init", "Create new table " & tableName
-                    dbm.ExecuteQuery "CREATE TABLE [" & tableName & "] ( [key] varchar(255), [value] varchar(255))"
+                    dbm.ExecuteQuery FileHelper.ReadQuery(tableName, Constants.Q_CREATE)
                 End If
 
                 tmpQuery = StringHelper.GenerateQuery(StringHelper.TrimNewLine(queryCache(1)), DataQuery)
