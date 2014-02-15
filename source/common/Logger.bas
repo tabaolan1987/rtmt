@@ -49,7 +49,7 @@ Private Sub CallLog(caller As String, lvl As Integer, log As String)
     If StringHelper.IsEqual(logLevelCfg, "ERROR", True) And lvl < L_ERROR Then GoTo QuitLog
     Dim fn As Integer, logPath As String, line As String
     fn = FreeFile
-    logPath = FileHelper.CurrentDbPath & "logs"
+    logPath = FileHelper.tmpDir & "logs"
     FileHelper.CheckDir logPath
     logPath = logPath & "\" & Format(Now, "yyyy-MM-dd") & ".log"
     Open logPath For Append As #fn
