@@ -16,7 +16,8 @@ Public Sub OnTest()
     'rpmd.Init Constants.RP_END_USER_TO_BB_JOB_ROLE
    ' Reporting.GenerateReport Constants.RP_ROLE_MAPPING_OUTPUT_OF_TOOL_FOR_SECURITY
    
-    Logger.LogDebug "test", Ultilities.CheckInternetConnection
+    'Logger.LogDebug "test", Ultilities.CheckInternetConnection
+    MsgBox Ultilities.IsReadOnly
 End Sub
 
 Public Sub Run(Optional TestClassName As String)

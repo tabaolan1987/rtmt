@@ -701,7 +701,7 @@ Public Function CheckEUDLFile(filePath As String) As String
     Logger.LogDebug "UserManagement.CheckEUDLFile", "Start check EUDL format"
     Dim header As String
     Dim tmpStr As String
-    Dim fso As Object
+    Dim Fso As Object
     Dim ReadFile As Object
     Dim headers() As String
     Dim mapping As Scripting.Dictionary
@@ -709,8 +709,8 @@ Public Function CheckEUDLFile(filePath As String) As String
     Dim tmpHeader As String
     Dim v As Variant
     Dim i As Integer
-    Set fso = CreateObject("Scripting.FileSystemObject")
-    Set ReadFile = fso.OpenTextFile(filePath, ForReading, False)
+    Set Fso = CreateObject("Scripting.FileSystemObject")
+    Set ReadFile = Fso.OpenTextFile(filePath, ForReading, False)
     tmpStr = ReadFile.ReadLine
     ReadFile.Close
     Dim check As Boolean

@@ -31,7 +31,18 @@ End Function
 
 Public Function RecyleMapping()
     mFlagMapping = False
-    Set mMappingMDCol = Nothing
+    Dim md As MappingMetadata
+    Dim v As Variant
+    If Not mMappingMDCol Is Nothing Then
+        For Each v In mMappingMDCol.keys
+            Set md = mMappingMDCol.Item(CStr(v))
+            md.Recyle
+        Next v
+    End If
+    Set mMappingMDCol = New Scripting.Dictionary
+    Set md = New MappingMetadata
+    md.Init Constants.MAPPING_ACTIVITIES_BB_JOB_ROLE, Settings
+    mMappingMDCol.Add Constants.MAPPING_ACTIVITIES_BB_JOB_ROLE, md
 End Function
 
 Public Function RecyleReports()

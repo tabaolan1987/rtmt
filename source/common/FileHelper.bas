@@ -192,14 +192,14 @@ Function CurrentDbPath() As String
 End Function
 
 Function IsExistFile(path As String) As Boolean
-    Dim fso As New Scripting.FileSystemObject
-    IsExistFile = fso.FileExists(path)
+    Dim Fso As New Scripting.FileSystemObject
+    IsExistFile = Fso.FileExists(path)
     'IsExist = Dir(path) <> ""
 End Function
 
 Function IsExistFolder(path As String) As Boolean
-    Dim fso As New Scripting.FileSystemObject
-    IsExistFolder = fso.FolderExists(path)
+    Dim Fso As New Scripting.FileSystemObject
+    IsExistFolder = Fso.FolderExists(path)
     'IsExist = Dir(path) <> ""
 End Function
 
@@ -233,10 +233,10 @@ Public Function ReadSSFile(name As String) As String()
     Dim ln As String
     path = FileHelper.CurrentDbPath & Constants.SS_DIR & name & ".ss"
     If IsExistFile(path) Then
-        Dim fso As Object
+        Dim Fso As Object
         Dim ReadFile As Object
-        Set fso = CreateObject("Scripting.FileSystemObject")
-        Set ReadFile = fso.OpenTextFile(path, ForReading, False)
+        Set Fso = CreateObject("Scripting.FileSystemObject")
+        Set ReadFile = Fso.OpenTextFile(path, ForReading, False)
         Do Until ReadFile.AtEndOfStream = True
             ln = Trim(ReadFile.ReadLine)
             If StringHelper.StartsWith(ln, "#", True) = False And Len(ln) <> 0 Then
@@ -246,7 +246,7 @@ Public Function ReadSSFile(name As String) As String()
             End If
         Loop
         ReadFile.Close
-        Set fso = Nothing
+        Set Fso = Nothing
         Set ReadFile = Nothing
     End If
     
@@ -300,7 +300,7 @@ Public Function SaveAsCSV(filePath As String, desFilePath As String, Optional Wo
 End Function
 
 Public Function TrimSourceFile(fileToRead As String, fileToWrite As String, LineToRemove() As Integer)
-    Dim fso As Object
+    Dim Fso As Object
     Dim ReadFile As Object
     Dim writeFile As Object
     Dim repLine As Variant
@@ -313,9 +313,9 @@ Public Function TrimSourceFile(fileToRead As String, fileToWrite As String, Line
     Dim tmpCheck() As String
     Dim i As Integer
     Dim ltm As Variant
-    Set fso = CreateObject("Scripting.FileSystemObject")
-    Set ReadFile = fso.OpenTextFile(fileToRead, ForReading, False)
-    Set writeFile = fso.CreateTextFile(fileToWrite, True, False)
+    Set Fso = CreateObject("Scripting.FileSystemObject")
+    Set ReadFile = Fso.OpenTextFile(fileToRead, ForReading, False)
+    Set writeFile = Fso.CreateTextFile(fileToWrite, True, False)
     
     '# iterate the array and do the replacement line by line
     Do Until ReadFile.AtEndOfStream = True
@@ -355,7 +355,7 @@ Public Function TrimSourceFile(fileToRead As String, fileToWrite As String, Line
     '# clean up
     Set ReadFile = Nothing
     Set writeFile = Nothing
-    Set fso = Nothing
+    Set Fso = Nothing
 End Function
 
 Public Function PrepareUserData(filePath As String, ss As SystemSetting) As String
@@ -363,13 +363,13 @@ Public Function PrepareUserData(filePath As String, ss As SystemSetting) As Stri
     Dim tmpStr As String
     Dim tmpSource As String
     Dim outputCsv As String
-    Dim fso As New Scripting.FileSystemObject
+    Dim Fso As New Scripting.FileSystemObject
     If StringHelper.EndsWith(filePath, ".xlsx", True) Or _
         StringHelper.EndsWith(filePath, ".xls", True) Or _
         StringHelper.EndsWith(filePath, ".csv", True) Then
         tmpSource = tmpDir & StringHelper.GetGUID
         Logger.LogDebug "FileHelper.PrepareUserData", "Copy file " & filePath & " to " & tmpSource
-        fso.CopyFile filePath, tmpSource, True
+        Fso.CopyFile filePath, tmpSource, True
         
         tmpStr = tmpDir & StringHelper.GetGUID & ".csv"
         Logger.LogDebug "FileHelper.PrepareUserData", "Convert file " & tmpSource & " to CSV file " & tmpStr
@@ -378,7 +378,7 @@ Public Function PrepareUserData(filePath As String, ss As SystemSetting) As Stri
             Logger.LogDebug "FileHelper.PrepareUserData", "Trim unused rows " & tmpStr & " to CSV file " & outputCsv
             TrimSourceFile tmpStr, outputCsv, ss.LineToRemove
             PrepareUserData = outputCsv
-        Set fso = Nothing
+        Set Fso = Nothing
         DeleteFile tmpSource
         DeleteFile tmpStr
     Else
@@ -388,46 +388,46 @@ End Function
 
 Public Function tmpDir() As String
     If Len(tmpDirPath) = 0 Then
-        Dim fso As New Scripting.FileSystemObject
-        tmpDirPath = fso.GetSpecialFolder(TemporaryFolder).path
+        Dim Fso As New Scripting.FileSystemObject
+        tmpDirPath = Fso.GetSpecialFolder(TemporaryFolder).path
         If Not StringHelper.EndsWith(tmpDirPath, "\", True) Then
             tmpDirPath = tmpDirPath & "\"
         End If
         tmpDirPath = tmpDirPath & "rmt\"
         CheckDir (tmpDirPath)
-        Set fso = Nothing
+        Set Fso = Nothing
     End If
     tmpDir = tmpDirPath
 End Function
 
 Public Function MoveFile(mFrom As String, mTo As String)
-    Dim fso As New Scripting.FileSystemObject
-    fso.MoveFile mFrom, mTo
-    Set fso = Nothing
+    Dim Fso As New Scripting.FileSystemObject
+    Fso.MoveFile mFrom, mTo
+    Set Fso = Nothing
 End Function
 
 Public Function CopyFile(mFrom As String, mTo As String)
-    Dim fso As New Scripting.FileSystemObject
-    fso.CopyFile mFrom, mTo, True
-    Set fso = Nothing
+    Dim Fso As New Scripting.FileSystemObject
+    Fso.CopyFile mFrom, mTo, True
+    Set Fso = Nothing
 End Function
 
 Public Function DuplicateAsTemporary(file As String) As String
     Dim desFile As String
     desFile = tmpDir & StringHelper.GetGUID
-    Dim fso As New Scripting.FileSystemObject
-    fso.CopyFile file, desFile, True
-    Set fso = Nothing
+    Dim Fso As New Scripting.FileSystemObject
+    Fso.CopyFile file, desFile, True
+    Set Fso = Nothing
     DuplicateAsTemporary = desFile
 End Function
 
 Public Function FileLastModified(strFullFileName As String)
     If IsExistFile(strFullFileName) Then
-        Dim fs As New Scripting.FileSystemObject, f As Object, s As String
-        Set f = fs.GetFile(strFullFileName)
+        Dim fs As New Scripting.FileSystemObject, F As Object, s As String
+        Set F = fs.GetFile(strFullFileName)
         s = UCase(strFullFileName) & vbCrLf
-        FileLastModified = f.DateLastModified
-        Set fs = Nothing: Set f = Nothing
+        FileLastModified = F.DateLastModified
+        Set fs = Nothing: Set F = Nothing
     Else
         FileLastModified = ""
     End If
@@ -444,17 +444,17 @@ Public Sub Zip( _
     InputFile As String _
 )
 On Error GoTo ErrHandler
-    Dim fso As Object 'Scripting.FileSystemObject
+    Dim Fso As Object 'Scripting.FileSystemObject
     Dim oApp As Object 'Shell32.Shell
     Dim oFld As Object 'Shell32.Folder
     Dim oShl As Object 'WScript.Shell
     Dim i As Long
     Dim l As Long
 
-    Set fso = CreateObject("Scripting.FileSystemObject")
-    If Not fso.FileExists(ZipFile) Then
+    Set Fso = CreateObject("Scripting.FileSystemObject")
+    If Not Fso.FileExists(ZipFile) Then
         'Create empty ZIP file
-        fso.CreateTextFile(ZipFile, True).Write _
+        Fso.CreateTextFile(ZipFile, True).Write _
             "PK" & Chr(5) & Chr(6) & String(18, vbNullChar)
     End If
 
@@ -490,7 +490,7 @@ On Error GoTo ErrHandler
 
 ExitProc:
     On Error Resume Next
-        Set fso = Nothing
+        Set Fso = Nothing
         Set oFld = Nothing
         Set oApp = Nothing
         Set oShl = Nothing
@@ -513,23 +513,23 @@ Public Sub UnZip( _
 )
 On Error GoTo ErrHandler
     Dim oApp As Object
-    Dim fso As Object
+    Dim Fso As Object
     Dim fil As Object
     Dim DefPath As String
     Dim strDate As String
 
-    Set fso = CreateObject("Scripting.FileSystemObject")
+    Set Fso = CreateObject("Scripting.FileSystemObject")
     If Len(TargetFolderPath) = 0 Then
         DefPath = CurrentProject.path & ""
     Else
-        If fso.FolderExists(TargetFolderPath) Then
+        If Fso.FolderExists(TargetFolderPath) Then
             DefPath = TargetFolderPath & ""
         Else
             Err.Raise 53, , "Folder not found"
         End If
     End If
 
-    If fso.FileExists(ZipFile) = False Then
+    If Fso.FileExists(ZipFile) = False Then
         MsgBox "System could not find " & ZipFile _
             & " upgrade cancelled.", _
             vbInformation, "Error Unziping File"
@@ -541,7 +541,7 @@ On Error GoTo ErrHandler
         With oApp.Namespace(ZipFile & "")
             If OverwriteFile Then
                 For Each fil In .Items
-                    If fso.FileExists(DefPath & fil.name) Then
+                    If Fso.FileExists(DefPath & fil.name) Then
                         Kill DefPath & fil.name
                     End If
                 Next

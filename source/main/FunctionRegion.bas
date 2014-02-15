@@ -47,6 +47,7 @@ Public Property Get name() As String
 End Property
 
 
+
 Public Property Get role() As Collection
     Set role = mRole
 End Property

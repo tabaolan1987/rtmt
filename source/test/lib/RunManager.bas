@@ -22,7 +22,7 @@ End Property
 Private Sub IRunManager_Report()
     Dim Failure As TestFailure, rm As IRunManager, test As ITest, TestCase As ITestCase, TCR As TestCaseRow
         ' Added by Hai to create Unit test report
-        Dim fso As Object, oFile As Object, reportPath As String, lastClass As String
+        Dim Fso As Object, oFile As Object, reportPath As String, lastClass As String
         lastClass = ""
         reportPath = Application.CurrentProject.path & "\target"
         FileHelper.CheckDir (reportPath)
@@ -34,15 +34,15 @@ Private Sub IRunManager_Report()
             Set TestCase = TCR.TestCase
             Set test = TestCase
             If Not StrComp(lastClass, test.Manager.className, vbTextCompare) = 0 Then
-                If Not fso Is Nothing Then
+                If Not Fso Is Nothing Then
                     oFile.WriteLine "</testsuite>"
                     oFile.Close
-                    Set fso = Nothing
+                    Set Fso = Nothing
                     Set oFile = Nothing
                 End If
                 lastClass = test.Manager.className
-                Set fso = CreateObject("Scripting.FileSystemObject")
-                Set oFile = fso.CreateTextFile(reportPath & "\" & lastClass & ".xml")
+                Set Fso = CreateObject("Scripting.FileSystemObject")
+                Set oFile = Fso.CreateTextFile(reportPath & "\" & lastClass & ".xml")
                 oFile.WriteLine "<?xml version=""1.0"" encoding=""UTF-8""?>"
                 oFile.WriteLine "<testsuite name=""" & lastClass & """ time=""" & TimerHelper.MsToString(result.TotalTime(lastClass)) & """ errors=""0"" tests=""" & CStr(result.TestCaseCount(lastClass)) & """ failures=""" & CStr(result.FailureCount(lastClass)) & """>"
             End If
@@ -64,7 +64,7 @@ Private Sub IRunManager_Report()
         If Not oFile Is Nothing Then
             oFile.WriteLine "</testsuite>"
             oFile.Close
-            Set fso = Nothing
+            Set Fso = Nothing
             Set oFile = Nothing
         End If
 

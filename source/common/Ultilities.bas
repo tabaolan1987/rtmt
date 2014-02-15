@@ -72,6 +72,9 @@ Public Sub MakeAccde()
         .SysCmd 603, sourcedb, targetdb 'this makes the ACCDE file
         .Quit
     End With
+End Sub
+
+Public Sub WDeleteAllTables()
     
 End Sub
 
@@ -248,4 +251,9 @@ End Function
 Function CheckInternetConnection() As Boolean
     CheckInternetConnection = True
     
+End Function
+
+
+Function IsReadOnly() As Boolean
+    IsReadOnly = False
 End Function
