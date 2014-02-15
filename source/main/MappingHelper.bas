@@ -124,6 +124,7 @@ End Function
 
 Public Function GenerateMapping()
     If Not Session.FlagMapping Then
+        Dim mappingChar As String
         Dim i As Long, j As Long, l As Long, k As Long
         Dim tmpId As String, tmpComment As String, tmpValue As String
         Dim tmpData As Scripting.Dictionary
@@ -193,8 +194,13 @@ Public Function GenerateMapping()
                                 check = dbm.GetFieldValue(dbm.RecordSet, Constants.FIELD_DELETED)
                                 Logger.LogDebug "MappingHelper.GenerateMapping", "Check: " & check
                                 If StringHelper.IsEqual(check, "false", True) Then
+                                    If Len(mmd.mappingChar) > 0 Then
+                                        mappingChar = mmd.mappingChar
+                                    Else
+                                        mappingChar = dbm.GetFieldValue(dbm.RecordSet, Constants.FIELD_MAPPING_CHAR)
+                                    End If
                                     Set rng = .Cells(k, l)
-                                    rng.value = "x"
+                                    rng.value = mappingChar
                                     'rng.Borders.LineStyle = xlContinuous
                                     'rng.Interior.Color = RGB(255, 255, 0)
                                 End If
@@ -286,6 +292,7 @@ Public Function ParseMapping()
                             tmpData.Add Q_KEY_FUNCTION_REGION_ID, ss.RegionFunctionId
                             tmpData.Add Q_KEY_ID_LEFT, tmpIdLeft
                             tmpData.Add Q_KEY_ID_TOP, tmpIdTop
+                            
                             dbm.Init
                             dbm.OpenRecordSet mmd.query(Q_CHECK, tmpData)
                             If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
@@ -296,8 +303,9 @@ Public Function ParseMapping()
                             dbm.Recycle
                             ' Check the mapping
                             If Len(tmpValue) <> 0 Then
+                                tmpData.Add Q_KEY_VALUE, tmpValue
                                 Logger.LogDebug "MappingHelper.ParseMapping", "Found check mark. Row: " & CStr(k) & ". Col: " & CStr(l)
-                                Logger.LogDebug "MappingHelper.ParseMapping", "Specialism: " & dictLeft.Item(tmpIdLeft) & ". Activity: " & dictTop.Item(tmpIdTop)
+                                Logger.LogDebug "MappingHelper.ParseMapping", "Left: " & dictLeft.Item(tmpIdLeft) & ". Top: " & dictTop.Item(tmpIdTop)
                                 IsChecked = True
                             Else
                                 IsChecked = False
@@ -308,6 +316,7 @@ Public Function ParseMapping()
                                 Else
                                     tmpData.Add Q_KEY_CHECK, "-1"
                                 End If
+                                
                                 dbm.Init
                                 Logger.LogDebug "MappingHelper.ParseMapping", "Update local database"
                                 dbm.ExecuteQuery mmd.query(Q_UPDATE, tmpData)

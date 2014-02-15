@@ -54,6 +54,12 @@ OnError:
     Resume OnExit
 End Function
 
+Public Function DeleteTable(name As String)
+    If Ultilities.IfTableExists(name) Then
+        DoCmd.DeleteObject acTable, name
+    End If
+End Function
+
 Public Function ExecuteQuery(query As String, Optional params As Scripting.Dictionary)
     On Error GoTo OnError
     Dim key As String, value As Variant

@@ -11,6 +11,20 @@ Private mListFuncRg As Collection
 Private mAuth As Boolean
 Private mValid As Boolean
 
+Public Property Get IsRole(role As String) As Boolean
+    Dim v As Variant
+    IsRole = False
+    If Not mFuncRegion.role Is Nothing Then
+        For Each v In mFuncRegion.role
+            If StringHelper.IsEqual(CStr(v), role, True) Then
+                Logger.LogDebug "CurrentUser.IsRole", "Found role: " & CStr(v)
+                IsRole = True
+                Exit For
+            End If
+        Next v
+    End If
+End Property
+
 Public Function Init(iNtid As String, _
                         Optional ss As SystemSetting)
     Dim mData As String

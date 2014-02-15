@@ -30,6 +30,8 @@ Private mLastModified As String
 
 Private mOutputPath As String
 
+Private mMappingChar As String
+
 Public Function Recyle()
     FileHelper.DeleteFile mQueryFilePath
     FileHelper.DeleteFile mTemplateFilePath
@@ -57,6 +59,8 @@ Public Function Init(mappingName As String, Optional ss As SystemSetting)
     
     mWorkSheet = ir.ReadKey(Constants.SECTION_GENERAL, Constants.KEY_WORK_SHEET)
     Logger.LogDebug "MappingMetaData.Init", "Work sheet: " & mWorkSheet
+    
+    mMappingChar = ir.ReadKey(Constants.SECTION_GENERAL, Constants.KEY_MAPPING_CHAR)
     
     mStartColTop = ir.ReadLongKey(Constants.SECTION_TOP, Constants.KEY_START_COL)
     Logger.LogDebug "MappingMetaData.Init", "Start column top: " & CStr(mStartColTop)
@@ -127,6 +131,10 @@ End Property
 Public Property Get LastModified() As String
     LastModified = mLastModified
 End Property
+Public Property Get mappingChar() As String
+    mappingChar = mMappingChar
+End Property
+
 
 Public Function CurrentModifedDate() As String
     CurrentModifedDate = FileHelper.FileLastModified(mTemplateFilePath & Constants.FILE_EXTENSION_TEMPLATE)

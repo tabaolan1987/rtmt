@@ -26,6 +26,7 @@ Public Const FIELD_SELECT = "Select"
 Public Const FIELD_DB_FIELD = "Db field"
 Public Const FIELD_SPECIALISM = "specialism"
 Public Const FIELD_REGION_FUNCTION = "SFunction"
+Public Const FIELD_MAPPING_CHAR = "MappingChar"
 
 Public Const TABLE_SYNC_CONFLICT = "sync_conflict"
 Public Const TABLE_USER_DATA_CONFLICT = "user_data_conflict"
@@ -127,6 +128,7 @@ Public Const KEY_MERGE_COLUMES = "mergeCols"
 Public Const KEY_MERGE_PRIMARY = "mergePrimary"
 Public Const KEY_CUSTOM_MODE = "customMode"
 
+Public Const KEY_MAPPING_CHAR = "mappingChar"
 
 ' System setting file
 Public Const SS_DIR = "data\config\"
@@ -152,6 +154,7 @@ Public Const SPLIT_LEVEL_2 = "==="
 
 ' Mapping
 Public Const MAPPING_ACTIVITIES_SPECIALISM = "mapping-activities-specialism"
+Public Const MAPPING_ACTIVITIES_BB_JOB_ROLE = "mapping-activities-bb-job-role"
 Public Const MAPPING_ROOT_FOLDER = "data\mapping\"
 
 ' Reporting
