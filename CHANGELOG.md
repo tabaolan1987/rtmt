@@ -1,6 +1,6 @@
 CHANGELOG (notable new features or fixes)
 ---------
-###<a href='https://cmgcode.atlassian.net/browse/DPMO/fixforversion/11401'>Version 0.1.5</a>
+###<a href='https://cmgcode.atlassian.net/browse/DURM/fixforversion/11401'>Version 0.1.5</a>
 Released on: 17/02/2014
 + Critical & major bugs fixed
 + Move change log file to temporary directory        
@@ -27,7 +27,7 @@ Released on: 17/02/2014
 </li>
 </ul>
 
-###<a href='https://cmgcode.atlassian.net/browse/DPMO/fixforversion/11401'>Version 0.1.4</a>
+###<a href='https://cmgcode.atlassian.net/browse/DURM/fixforversion/11401'>Version 0.1.4</a>
 Released on: 15/02/2014
 + Add new Admin role landing page
 + Mapping Activities to Backbone Job Roles
@@ -55,7 +55,7 @@ Released on: 15/02/2014
 </li>
 </ul>
 
-###<a href='https://cmgcode.atlassian.net/browse/DPMO/fixforversion/11400'>Version 0.1.3</a>
+###<a href='https://cmgcode.atlassian.net/browse/DURM/fixforversion/11400'>Version 0.1.3</a>
 Released on: 14/02/2014
     
 <h5>        Bug
@@ -97,7 +97,7 @@ Released on: 14/02/2014
 </li>
 </ul>
 
-###<a href='https://cmgcode.atlassian.net/browse/DPMO/fixforversion/11304'>Version 0.1.2</a>
+###<a href='https://cmgcode.atlassian.net/browse/DURM/fixforversion/11305'>Version 0.1.2</a>
 Released on: 13/02/2014
  
 <h5>        Bug
@@ -175,7 +175,7 @@ Released on: 13/02/2014
 </li>
 </ul>
 
-###<a href='https://cmgcode.atlassian.net/browse/DPMO/fixforversion/11304'>Version 0.1.1</a>
+###<a href='https://cmgcode.atlassian.net/browse/DURM/fixforversion/11304'>Version 0.1.1</a>
 Released on: 12/02/2014
          
 <h5>        Bug
@@ -212,7 +212,7 @@ Released on: 12/02/2014
 </li>
 </ul>
 
-###<a href='https://cmgcode.atlassian.net/browse/DPMO/fixforversion/11303'>Version 0.1</a>
+###<a href='https://cmgcode.atlassian.net/browse/DURM/fixforversion/11303'>Version 0.1</a>
 Released on: 27/01/2014
 
 + First release
