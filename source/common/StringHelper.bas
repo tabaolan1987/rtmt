@@ -179,3 +179,20 @@ Public Function TrimNewLine(str As String) As String
     tmp = Replace(tmp, Chr(10) & Chr(13), " ")
     TrimNewLine = Trim(tmp)
 End Function
+
+Public Function GenerateFilter(source() As String) As String
+    Dim i As Integer
+    Dim filter As String
+    filter = ""
+    For i = LBound(source) To UBound(source)
+        filter = filter & "'" & StringHelper.EscapeQueryString(source(i)) & "',"
+    Next i
+    If StringHelper.EndsWith(filter, ",", True) Then
+        filter = Left(filter, Len(filter) - 1)
+    End If
+    If Len(filter) > 0 Then
+        GenerateFilter = filter
+    Else
+        GenerateFilter = "'" & StringHelper.EscapeQueryString(StringHelper.GetGUID) & "'"
+    End If
+End Function

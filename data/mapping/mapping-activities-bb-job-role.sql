@@ -1,4 +1,4 @@
-select [id], [BpRoleStandardName] As [VALUE], '' As [COMMENT] from BpRoleStandard WHERE deleted=0 order by [BpRoleStandardName]
+select [id], [BpRoleStandardName] As [VALUE], '' As [COMMENT] from BpRoleStandard WHERE deleted=0 and [BpRoleStandardName] in ((%FILTER%)) order by [BpRoleStandardName]
 =====
 select id, 
 		(ActivityDetail + DetailPlus) as [VALUE], 
