@@ -4,6 +4,7 @@ CHANGELOG (notable new features or fixes)
 Released on: 17/02/2014
 + Critical & major bugs fixed
 + Move change log file to temporary directory        
+
 <h5>        Bug
 </h5>
 <ul>
@@ -31,6 +32,7 @@ Released on: 15/02/2014
 + Add new Admin role landing page
 + Mapping Activities to Backbone Job Roles
 + Bugs fixed
+
 <h5>        Bug
 </h5>
 <ul>
