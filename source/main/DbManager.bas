@@ -54,9 +54,9 @@ OnError:
     Resume OnExit
 End Function
 
-Public Function DeleteTable(name As String)
-    If Ultilities.IfTableExists(name) Then
-        DoCmd.DeleteObject acTable, name
+Public Function DeleteTable(Name As String)
+    If Ultilities.IfTableExists(Name) Then
+        DoCmd.DeleteObject acTable, Name
     End If
 End Function
 
@@ -132,11 +132,11 @@ Public Function RecycleTable(Optional s As SystemSetting)
     Next
 End Function
 
-Private Function GetHeaderIndex(name As String) As Integer
+Private Function GetHeaderIndex(Name As String) As Integer
     Dim index As Integer
     index = -1
     For i = 0 To rst.fields.Count - 1
-        If StringHelper.IsEqual(Trim(rst.fields(i).name), Trim(name), True) Then
+        If StringHelper.IsEqual(Trim(rst.fields(i).Name), Trim(Name), True) Then
             'Logger.LogDebug "DbManager.SyncUserData", "## HEADER: " & rst.fields(i).name
             index = i
         End If
@@ -144,13 +144,13 @@ Private Function GetHeaderIndex(name As String) As Integer
     GetHeaderIndex = index
 End Function
 
-Public Function GetFieldValue(rs As RecordSet, name As String) As String
+Public Function GetFieldValue(rs As RecordSet, Name As String) As String
     GetFieldValue = ""
-    If Len(name) <> 0 Then
+    If Len(Name) <> 0 Then
         Dim index As Integer
         index = -1
         For i = 0 To rs.fields.Count - 1
-            If StringHelper.IsEqual(Trim(rs.fields(i).name), Trim(name), True) Then
+            If StringHelper.IsEqual(Trim(rs.fields(i).Name), Trim(Name), True) Then
                 index = i
             End If
         Next i
@@ -176,7 +176,7 @@ Private Function ValidateNtid(s As SystemSetting, ntids As String, Optional user
         Dim fields As String
         Dim mData As String
         Dim result As String
-        Dim ntid As String
+        Dim NTID As String
         Dim str1 As String, str2 As String, key As String, value As String
         Dim check As Boolean
         Dim v As Variant
@@ -208,7 +208,7 @@ Private Function ValidateNtid(s As SystemSetting, ntids As String, Optional user
             If StringHelper.IsContain(result, "}", True) And StringHelper.IsContain(result, "{", True) Then
                 Set checkList = JSONHelper.parse(result)
                 For Each tmpDict In checkList
-                    ntid = tmpDict.Item("ntid")
+                    NTID = tmpDict.Item("ntid")
                     check = tmpDict.Item("isvalid")
                     Logger.LogDebug "DbManager.SyncUserData", "Is valid: " & CStr(check)
                     Logger.LogDebug "DbManager.SyncUserData", s.SyncUsers.Item(Constants.FIELD_FIRST_NAME) & " | " & s.SyncUsers.Item(Constants.FIELD_LAST_NAME)
@@ -216,9 +216,9 @@ Private Function ValidateNtid(s As SystemSetting, ntids As String, Optional user
                                                 & " " _
                                                 & tmpUserData.Item(Constants.FIELD_LAST_NAME)
                     If check Then
-                        Logger.LogDebug "DbManager.SyncUserData", "check ntid: " & ntid
+                        Logger.LogDebug "DbManager.SyncUserData", "check ntid: " & NTID
                         If Not userData Is Nothing And userData.Count > 0 Then
-                            Set tmpUserData = userData.Item(ntid)
+                            Set tmpUserData = userData.Item(NTID)
                             
                             For Each v In validatorMapping
                                 key = v
@@ -230,7 +230,7 @@ Private Function ValidateNtid(s As SystemSetting, ntids As String, Optional user
                                 If StringHelper.IsEqual(str1, str2, True) Then
                                     Logger.LogDebug "DbManager.SyncUserData", "validated!!!"
                                 Else
-                                    AddWarning ("Validation failed !!! NTID: " & ntid & " . Field name: " & key & ". Local: " & str1 & ". LDAP: " & str2)
+                                    AddWarning ("Validation failed !!! NTID: " & NTID & " . Field name: " & key & ". Local: " & str1 & ". LDAP: " & str2)
                                     tmpStr = StringHelper.GetDictKey(s.SyncUsers, key)
                                     Logger.LogDebug "DbManager.SyncUserData", "Db column: " & tmpStr
                                     Set tmpInsertCols = New Collection
@@ -242,7 +242,7 @@ Private Function ValidateNtid(s As SystemSetting, ntids As String, Optional user
                                     tmpInsertCols.Add "LDAP"
                                     tmpInsertCols.Add "Select"
                                     Set tmpInsertData = New Scripting.Dictionary
-                                    tmpInsertData.Add "NTID", ntid
+                                    tmpInsertData.Add "NTID", NTID
                                     tmpInsertData.Add "Name", FullName
                                     tmpInsertData.Add "Field heading", key
                                     tmpInsertData.Add "Db field", tmpStr
@@ -254,14 +254,14 @@ Private Function ValidateNtid(s As SystemSetting, ntids As String, Optional user
                             Next v
                         End If
                     Else
-                        AddWarning ("Validation failed !!! NTID: " & ntid & " not found!")
+                        AddWarning ("Validation failed !!! NTID: " & NTID & " not found!")
                         
                         Set tmpInsertCols = New Collection
                         tmpInsertCols.Add "NTID"
                         tmpInsertCols.Add "Name"
                         tmpInsertCols.Add "Select"
                         Set tmpInsertData = New Scripting.Dictionary
-                        tmpInsertData.Add "NTID", ntid
+                        tmpInsertData.Add "NTID", NTID
                         tmpInsertData.Add "Name", FullName
                         tmpInsertData.Add "Select", "-1"
                         CreateLocalRecord tmpInsertData, tmpInsertCols, Constants.TABLE_USER_DATA_LDAP_NOTFOUND
@@ -499,17 +499,17 @@ OnError:
     Resume OnExit
 End Function
 
-Public Function RecycleTableName(name As String)
+Public Function RecycleTableName(Name As String)
     Init
-        Logger.LogDebug "DbManager.SyncTable", "Recycle table name " & name
+        Logger.LogDebug "DbManager.SyncTable", "Recycle table name " & Name
         dbs.TableDefs.Refresh
-        If Ultilities.IfTableExists(name) Then
-            Logger.LogDebug "DbManager.SyncTable", "Delete all record table " & name
-            ExecuteQuery FileHelper.ReadQuery(name, Constants.Q_DELETE_ALL)
+        If Ultilities.IfTableExists(Name) Then
+            Logger.LogDebug "DbManager.SyncTable", "Delete all record table " & Name
+            ExecuteQuery FileHelper.ReadQuery(Name, Constants.Q_DELETE_ALL)
             'DoCmd.DeleteObject acTable, name
         Else
-            Logger.LogDebug "DbManager.SyncTable", "Create new table " & name
-            ExecuteQuery FileHelper.ReadQuery(name, Constants.Q_CREATE)
+            Logger.LogDebug "DbManager.SyncTable", "Create new table " & Name
+            ExecuteQuery FileHelper.ReadQuery(Name, Constants.Q_CREATE)
         End If
         
         dbs.TableDefs.Refresh
@@ -568,7 +568,7 @@ Public Function SyncTable(Server As String, _
                         tmpRst.MoveFirst
                         For i = 0 To tmpRst.fields.Count - 1
                            ' Logger.LogDebug "field type:", tmpRst.fields(i).Type & " === " & dbBoolean
-                            tmpCol = tmpRst.fields(i).name
+                            tmpCol = tmpRst.fields(i).Name
                             tmpType = tmpRst.fields(i).Type
                             str1 = Trim(GetFieldValue(tmpRst, tmpCol))
                             str2 = Trim(GetFieldValue(rst, tmpCol))
@@ -663,7 +663,7 @@ Public Function SyncTable(Server As String, _
                         Set tmpCols = New Collection
                         Set tmpDataServer = New Scripting.Dictionary
                         For i = 0 To rst.fields.Count - 1
-                            tmpCol = rst.fields(i).name
+                            tmpCol = rst.fields(i).Name
                             str2 = GetFieldValue(rst, tmpCol)
                             tmpDataServer.Add tmpCol, str2
                             tmpCols.Add tmpCol
@@ -689,7 +689,7 @@ Public Function SyncTable(Server As String, _
                 Set tmpCols = New Collection
                 Set tmpColType = New Scripting.Dictionary
                 For i = 0 To rst.fields.Count - 1
-                    tmpCol = rst.fields(i).name
+                    tmpCol = rst.fields(i).Name
                     tmpColType.Add tmpCol, rst.fields(i).Type
                     If Not StringHelper.IsEqual(tmpCol, Constants.FIELD_TIMESTAMP, True) Then
                         tmpCols.Add tmpCol
@@ -845,7 +845,7 @@ Public Function CreateServerRecord(datas As Scripting.Dictionary, colsType As Sc
         ExecuteQuery query
         ExecuteQuery "insert into audit_logs([id], [ntid], [idFunction], [userAction], [description]) values('" _
             & StringHelper.EscapeQueryString(StringHelper.GetGUID) & "','" _
-            & StringHelper.EscapeQueryString(Session.CurrentUser.ntid) & "','" _
+            & StringHelper.EscapeQueryString(Session.CurrentUser.NTID) & "','" _
             & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.FuncRgID) & "','" _
             & StringHelper.EscapeQueryString("Create central store record") & "','" _
             & StringHelper.EscapeQueryString(createQuery) & "')"
@@ -902,7 +902,7 @@ Public Function UpdateServerRecord(datas As Scripting.Dictionary, cols As Collec
         ExecuteQuery query
         ExecuteQuery "insert into audit_logs([id], [ntid], [idFunction], [userAction], [description]) values('" _
             & StringHelper.EscapeQueryString(StringHelper.GetGUID) & "','" _
-            & StringHelper.EscapeQueryString(Session.CurrentUser.ntid) & "','" _
+            & StringHelper.EscapeQueryString(Session.CurrentUser.NTID) & "','" _
             & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.FuncRgID) & "','" _
             & StringHelper.EscapeQueryString("Update central store record") & "','" _
             & StringHelper.EscapeQueryString(updateQuery) & "')"

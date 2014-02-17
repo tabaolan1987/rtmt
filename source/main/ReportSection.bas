@@ -17,7 +17,7 @@ Private Property Get DataQuery() As Scripting.Dictionary
     Set ss = Session.Settings()
     data.Add Constants.Q_KEY_FUNCTION_REGION_ID, ss.RegionFunctionId
     data.Add Constants.Q_KEY_REGION_NAME, ss.RegionName
-    data.Add Constants.Q_KEY_FUNCTION_REGION_NAME, Session.CurrentUser.FuncRegion.name
+    data.Add Constants.Q_KEY_FUNCTION_REGION_NAME, Session.CurrentUser.FuncRegion.Name
     Set DataQuery = data
 End Property
 
@@ -58,7 +58,7 @@ Public Function Init(raw As String, Optional mss As SystemSetting)
             Logger.LogDebug "ReportSection.Init", "Fields count: " & CStr(dbm.RecordSet.fields.Count)
             For i = 0 To dbm.RecordSet.fields.Count - 1
                 ReDim Preserve mHeader(arraySize)
-                mHeader(arraySize) = dbm.RecordSet.fields(i).name
+                mHeader(arraySize) = dbm.RecordSet.fields(i).Name
                 arraySize = arraySize + 1
             Next i
             Logger.LogDebug "ReportSection.Init", "Complete RP_SECTION_TYPE_FIXED"
@@ -130,7 +130,7 @@ Public Function Init(raw As String, Optional mss As SystemSetting)
             Logger.LogDebug "ReportSection.Init", "Fields count: " & CStr(dbm.RecordSet.fields.Count)
             For i = 0 To dbm.RecordSet.fields.Count - 1
                 ReDim Preserve mHeader(arraySize)
-                mHeader(arraySize) = dbm.RecordSet.fields(i).name
+                mHeader(arraySize) = dbm.RecordSet.fields(i).Name
                 arraySize = arraySize + 1
             Next i
 

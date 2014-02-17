@@ -24,7 +24,7 @@ End Function
 Public Function IsExistUserData() As Boolean
     Dim query As String
     query = "select * from " & Constants.END_USER_DATA_TABLE_NAME & " where deleted = 0 and SFunction='" & _
-                Session.CurrentUser.FuncRegion.name & "'"
+                Session.CurrentUser.FuncRegion.Name & "'"
     dbm.Init
     dbm.OpenRecordSet query
     If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
@@ -51,7 +51,7 @@ End Function
 Public Function CheckRegionFunction()
     Dim query As String
     Dim tmpNtid As String
-    query = "SELECT * FROM " & Constants.END_USER_DATA_CACHE_TABLE_NAME & " WHERE [" & Constants.FIELD_REGION_FUNCTION & "] not like '" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.name) & "'"
+    query = "SELECT * FROM " & Constants.END_USER_DATA_CACHE_TABLE_NAME & " WHERE [" & Constants.FIELD_REGION_FUNCTION & "] not like '" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Name) & "'"
     dbm.Init
     dbm.OpenRecordSet query
     mIsFunctionRegionConflict = False
@@ -65,12 +65,12 @@ Public Function CheckRegionFunction()
             dbm.RecordSet.MoveNext
         Loop
     End If
-    dbm.ExecuteQuery "DELETE FROM " & Constants.END_USER_DATA_CACHE_TABLE_NAME & " WHERE [" & Constants.FIELD_REGION_FUNCTION & "] not like '" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.name) & "' Or " & Session.Settings.NtidField & " is null"
+    dbm.ExecuteQuery "DELETE FROM " & Constants.END_USER_DATA_CACHE_TABLE_NAME & " WHERE [" & Constants.FIELD_REGION_FUNCTION & "] not like '" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Name) & "' Or " & Session.Settings.NtidField & " is null"
     dbm.Recycle
 End Function
 
 Public Function CheckLdapNotFound()
-    Dim ntid As String
+    Dim NTID As String
     Dim query As String
     Dim tmpSelect As String
     query = "SELECT * FROM " & Constants.TABLE_USER_DATA_LDAP_NOTFOUND
@@ -105,9 +105,9 @@ Public Function CheckConflict()
     Dim checkDict As Scripting.Dictionary
     Dim i As Integer
     Dim v As Variant
-    Dim lastNtid As String, ntid As String
+    Dim lastNtid As String, NTID As String
     Dim str1 As String, str2 As String
-    Dim name As String
+    Dim Name As String
     Dim check As Boolean
     Dim tmpRst As DAO.RecordSet
     Dim qdf As DAO.QueryDef
@@ -128,7 +128,7 @@ Public Function CheckConflict()
         tmpInsertCols.Add "Data held"
         tmpInsertCols.Add "Select"
         For i = 0 To dbm.RecordSet.fields.Count - 1
-            tmpCol = dbm.RecordSet.fields(i).name
+            tmpCol = dbm.RecordSet.fields(i).Name
              If (Not StringHelper.IsEqual(tmpCol, Constants.FIELD_ID, True)) _
                    And (Not StringHelper.IsEqual(tmpCol, Constants.FIELD_TIMESTAMP, True)) _
                    And (Not StringHelper.IsEqual(tmpCol, Constants.FIELD_DELETED, True)) _
@@ -140,11 +140,11 @@ Public Function CheckConflict()
         Next i
         dbm.RecordSet.MoveFirst
         Do Until dbm.RecordSet.EOF = True
-            ntid = dbm.GetFieldValue(dbm.RecordSet, ss.NtidField)
+            NTID = dbm.GetFieldValue(dbm.RecordSet, ss.NtidField)
             
             query = "SELECT * FROM " & Constants.END_USER_DATA_TABLE_NAME _
                                                         & " WHERE " & ss.NtidField & " = '" _
-                                                        & StringHelper.EscapeQueryString(ntid) & "'"
+                                                        & StringHelper.EscapeQueryString(NTID) & "'"
             'Logger.LogDebug "UserManagement.CheckConflict", "Compare NTID query: " & query
             Set qdf = dbm.Database.CreateQueryDef("", query)
             Set tmpRst = qdf.OpenRecordSet
@@ -155,7 +155,7 @@ Public Function CheckConflict()
                     str2 = dbm.GetFieldValue(tmpRst, CStr(v))
                     If Not StringHelper.IsEqual(str1, str2, True) Then
                         Set tmpInsertData = New Scripting.Dictionary
-                        tmpInsertData.Add "NTID", ntid
+                        tmpInsertData.Add "NTID", NTID
                         tmpInsertData.Add "Name", dbm.GetFieldValue(dbm.RecordSet, Constants.FIELD_LAST_NAME) & " " & dbm.GetFieldValue(dbm.RecordSet, Constants.FIELD_FIRST_NAME)
                         tmpInsertData.Add "Field heading", ss.SyncUsers.Item(CStr(v))
                         tmpInsertData.Add "Db field", CStr(v)
@@ -191,9 +191,9 @@ Public Function CheckDuplicate()
     Dim checkDict As Scripting.Dictionary
     Dim i As Integer
     Dim v As Variant
-    Dim lastNtid As String, ntid As String
+    Dim lastNtid As String, NTID As String
     Dim str1 As String, str2 As String
-    Dim name As String
+    Dim Name As String
     Dim check As Boolean
     Dim query As String
     mIsDuplicate = False
@@ -222,7 +222,7 @@ Public Function CheckDuplicate()
         tmpInsertCols.Add "Upload file"
         tmpInsertCols.Add "Select"
         For i = 0 To dbm.RecordSet.fields.Count - 1
-            tmpCol = dbm.RecordSet.fields(i).name
+            tmpCol = dbm.RecordSet.fields(i).Name
              If (Not StringHelper.IsEqual(tmpCol, Constants.FIELD_ID, True)) _
                    And (Not StringHelper.IsEqual(tmpCol, Constants.FIELD_TIMESTAMP, True)) _
                    And (Not StringHelper.IsEqual(tmpCol, Constants.FIELD_DELETED, True)) _
@@ -236,16 +236,16 @@ Public Function CheckDuplicate()
         dbm.RecordSet.MoveFirst
         Do Until dbm.RecordSet.EOF = True
             If Not lastUserData Is Nothing Then
-                ntid = dbm.GetFieldValue(dbm.RecordSet, Constants.END_USER_DATA_CACHE_TABLE_NAME & "." _
+                NTID = dbm.GetFieldValue(dbm.RecordSet, Constants.END_USER_DATA_CACHE_TABLE_NAME & "." _
                     & ss.NtidField)
-                Logger.LogDebug "UserManagement.CheckDuplicate", "lastNtid: " & lastNtid & ". Current Ntid: " & ntid
-                If StringHelper.IsEqual(ntid, lastNtid, True) Then
+                Logger.LogDebug "UserManagement.CheckDuplicate", "lastNtid: " & lastNtid & ". Current Ntid: " & NTID
+                If StringHelper.IsEqual(NTID, lastNtid, True) Then
                     For Each v In tblCols
                         str1 = lastUserData.Item(CStr(v))
                         str2 = dbm.GetFieldValue(dbm.RecordSet, CStr(v))
                         If Not StringHelper.IsEqual(str1, str2, True) Then
                             Set tmpInsertData = New Scripting.Dictionary
-                            tmpInsertData.Add "NTID", ntid
+                            tmpInsertData.Add "NTID", NTID
                             tmpInsertData.Add "Name", dbm.GetFieldValue(dbm.RecordSet, Constants.FIELD_LAST_NAME) & " " & dbm.GetFieldValue(dbm.RecordSet, Constants.FIELD_FIRST_NAME)
                             tmpInsertData.Add "Field heading", ss.SyncUsers.Item(CStr(v))
                             tmpInsertData.Add "Db field", CStr(v)
@@ -258,7 +258,7 @@ Public Function CheckDuplicate()
                             End If
                             If Not checkDict.Exists(CStr(v)) Then
                                 Set tmpInsertData = New Scripting.Dictionary
-                                tmpInsertData.Add "NTID", ntid
+                                tmpInsertData.Add "NTID", NTID
                                 tmpInsertData.Add "Name", lastUserData.Item(Constants.FIELD_LAST_NAME) & " " & lastUserData.Item(dbm.GetFieldValue(dbm.RecordSet, Constants.FIELD_FIRST_NAME))
                                 tmpInsertData.Add "Field heading", ss.SyncUsers.Item(CStr(v))
                                 tmpInsertData.Add "Db field", CStr(v)
@@ -292,7 +292,7 @@ End Function
 
 
 Public Function ResolveLdapNotFound()
-    Dim ntid As String
+    Dim NTID As String
     Dim query As String
     Dim tmpSelect As String
     query = "SELECT * FROM " & Constants.TABLE_USER_DATA_LDAP_NOTFOUND
@@ -301,12 +301,12 @@ Public Function ResolveLdapNotFound()
     If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
         dbm.RecordSet.MoveFirst
         Do Until dbm.RecordSet.EOF = True
-            ntid = dbm.GetFieldValue(dbm.RecordSet, ss.NtidField)
+            NTID = dbm.GetFieldValue(dbm.RecordSet, ss.NtidField)
             tmpSelect = dbm.GetFieldValue(dbm.RecordSet, Constants.FIELD_SELECT)
             Logger.LogDebug "UserManagement.ResolveLdapNotFound", "Select: " & tmpSelect
             If Not StringHelper.IsEqual(tmpSelect, "false", True) Then
-                Logger.LogDebug "UserManagement.ResolveLdapNotFound", "delete user NTID " & ntid & " from cache"
-                query = "DELETE FROM " & Constants.END_USER_DATA_CACHE_TABLE_NAME & " WHERE " & ss.NtidField & " = '" & StringHelper.EscapeQueryString(ntid) & "'"
+                Logger.LogDebug "UserManagement.ResolveLdapNotFound", "delete user NTID " & NTID & " from cache"
+                query = "DELETE FROM " & Constants.END_USER_DATA_CACHE_TABLE_NAME & " WHERE " & ss.NtidField & " = '" & StringHelper.EscapeQueryString(NTID) & "'"
                 dbm.ExecuteQuery query
             End If
             dbm.RecordSet.MoveNext
@@ -320,7 +320,7 @@ End Function
 
 
 Public Function ResolveLdapConflict()
-    Dim ntid As String
+    Dim NTID As String
     Dim dbField As String
     Dim tmpValue As String
     Dim query As String
@@ -334,12 +334,12 @@ Public Function ResolveLdapConflict()
             tmpSelect = dbm.GetFieldValue(dbm.RecordSet, Constants.FIELD_SELECT)
             Logger.LogDebug "UserManagement.ResolveLdapConflict", "Select: " & tmpSelect
             If Not StringHelper.IsEqual(tmpSelect, "false", True) Then
-                ntid = dbm.GetFieldValue(dbm.RecordSet, ss.NtidField)
+                NTID = dbm.GetFieldValue(dbm.RecordSet, ss.NtidField)
                 dbField = dbm.GetFieldValue(dbm.RecordSet, Constants.FIELD_DB_FIELD)
                 tmpValue = dbm.GetFieldValue(dbm.RecordSet, "LDAP")
-                Logger.LogDebug "UserManagement.ResolveLdapConflict", "Resolve confict user NTID " & ntid & ".Db field: " & dbField & " . New value: " & tmpValue
+                Logger.LogDebug "UserManagement.ResolveLdapConflict", "Resolve confict user NTID " & NTID & ".Db field: " & dbField & " . New value: " & tmpValue
                 query = "UPDATE " & Constants.END_USER_DATA_CACHE_TABLE_NAME & " SET [" & dbField & "] = '" & StringHelper.EscapeQueryString(tmpValue) & "' WHERE " _
-                            & ss.NtidField & " = '" & StringHelper.EscapeQueryString(ntid) & "'"
+                            & ss.NtidField & " = '" & StringHelper.EscapeQueryString(NTID) & "'"
                 dbm.ExecuteQuery query
             End If
             dbm.RecordSet.MoveNext
@@ -353,7 +353,7 @@ End Function
 
 
 Public Function ResolveUserDataConflict()
-    Dim ntid As String
+    Dim NTID As String
     Dim dbField As String
     Dim tmpValue As String
     Dim query As String
@@ -367,12 +367,12 @@ Public Function ResolveUserDataConflict()
             tmpSelect = dbm.GetFieldValue(dbm.RecordSet, Constants.FIELD_SELECT)
             Logger.LogDebug "UserManagement.ResolveUserDataConflict", "Select: " & tmpSelect
             If StringHelper.IsEqual(tmpSelect, "false", True) Then
-                ntid = dbm.GetFieldValue(dbm.RecordSet, ss.NtidField)
+                NTID = dbm.GetFieldValue(dbm.RecordSet, ss.NtidField)
                 dbField = dbm.GetFieldValue(dbm.RecordSet, Constants.FIELD_DB_FIELD)
                 tmpValue = dbm.GetFieldValue(dbm.RecordSet, "Data held")
-                Logger.LogDebug "UserManagement.ResolveUserDataConflict", "Resolve confict user NTID " & ntid & ".Db field: " & dbField & " . New value: " & tmpValue
+                Logger.LogDebug "UserManagement.ResolveUserDataConflict", "Resolve confict user NTID " & NTID & ".Db field: " & dbField & " . New value: " & tmpValue
                 query = "UPDATE " & Constants.END_USER_DATA_CACHE_TABLE_NAME & " SET [" & dbField & "] = '" & StringHelper.EscapeQueryString(tmpValue) & "' WHERE " _
-                                & ss.NtidField & " = '" & StringHelper.EscapeQueryString(ntid) & "'"
+                                & ss.NtidField & " = '" & StringHelper.EscapeQueryString(NTID) & "'"
                 dbm.ExecuteQuery query
             End If
             dbm.RecordSet.MoveNext
@@ -387,7 +387,7 @@ End Function
 
 
 Public Function ResolveUserDataDuplicate()
-    Dim ntid As String
+    Dim NTID As String
     Dim dbField As String
     Dim tmpValue As String
     Dim query As String
@@ -405,12 +405,12 @@ Public Function ResolveUserDataDuplicate()
             tmpSelect = dbm.GetFieldValue(dbm.RecordSet, Constants.FIELD_SELECT)
             Logger.LogDebug "UserManagement.ResolveUserDataDuplicate", "Select: " & tmpSelect
             If StringHelper.IsEqual(tmpSelect, "false", True) Then
-                ntid = dbm.GetFieldValue(dbm.RecordSet, ss.NtidField)
+                NTID = dbm.GetFieldValue(dbm.RecordSet, ss.NtidField)
                 dbField = dbm.GetFieldValue(dbm.RecordSet, Constants.FIELD_DB_FIELD)
                 tmpValue = dbm.GetFieldValue(dbm.RecordSet, "Upload file")
-                Logger.LogDebug "UserManagement.ResolveUserDataDuplicate", "Resolve confict user NTID " & ntid & ".Db field: " & dbField & " . New value: " & tmpValue
+                Logger.LogDebug "UserManagement.ResolveUserDataDuplicate", "Resolve confict user NTID " & NTID & ".Db field: " & dbField & " . New value: " & tmpValue
                 query = "UPDATE " & Constants.END_USER_DATA_CACHE_TABLE_NAME & " SET [" & dbField & "] = '" & StringHelper.EscapeQueryString(tmpValue) & "' WHERE " _
-                            & ss.NtidField & " = '" & StringHelper.EscapeQueryString(ntid) & "'"
+                            & ss.NtidField & " = '" & StringHelper.EscapeQueryString(NTID) & "'"
                 dbm.ExecuteQuery query
             End If
             dbm.RecordSet.MoveNext
@@ -433,9 +433,9 @@ Public Function ResolveUserDataDuplicate()
         dbm.RecordSet.MoveFirst
         c = 0
         Do Until dbm.RecordSet.EOF = True
-            Logger.LogInfo "UserManagement.ResolveUserDataDuplicate", "Duplicate ntid: " & ntid
-            ntid = dbm.GetFieldValue(dbm.RecordSet, ss.NtidField)
-            If StringHelper.IsEqual(ntid, lastNtid, True) Then
+            Logger.LogInfo "UserManagement.ResolveUserDataDuplicate", "Duplicate ntid: " & NTID
+            NTID = dbm.GetFieldValue(dbm.RecordSet, ss.NtidField)
+            If StringHelper.IsEqual(NTID, lastNtid, True) Then
                 If c <> 0 Then
                     tmpCol.Add dbm.GetFieldValue(dbm.RecordSet, Constants.FIELD_ID)
                 End If
@@ -443,7 +443,7 @@ Public Function ResolveUserDataDuplicate()
                 c = 0
             End If
             c = c + 1
-            lastNtid = ntid
+            lastNtid = NTID
             dbm.RecordSet.MoveNext
         Loop
         For Each v In tmpCol
@@ -634,7 +634,7 @@ Public Function GenerateRoleMapping(rm As ReportMetaData)
 End Function
  
 Public Function MergeUserData()
-    Dim ntid As String
+    Dim NTID As String
     Dim v As Variant
     Dim check As Boolean
     Dim tmpNtid As String
@@ -656,7 +656,7 @@ Public Function MergeUserData()
         Do Until dbm.RecordSet.EOF = True
             Set tmpCols = New Collection
             For i = 0 To dbm.RecordSet.fields.Count - 1
-                tmpCol = dbm.RecordSet.fields(i).name
+                tmpCol = dbm.RecordSet.fields(i).Name
                 If (Not StringHelper.IsEqual(tmpCol, Constants.FIELD_TIMESTAMP, True)) _
                     And (Not StringHelper.IsEqual(tmpCol, Constants.FIELD_DELETED, True)) _
                     And (Not StringHelper.IsEqual(tmpCol, Constants.FIELD_ID, True)) Then
@@ -670,9 +670,9 @@ Public Function MergeUserData()
             tmpCols.Add FIELD_DELETED
             tmpCols.Add FIELD_ID
             tmpData.Add Constants.FIELD_DELETED, "0"
-            ntid = dbm.GetFieldValue(dbm.RecordSet, ss.NtidField)
+            NTID = dbm.GetFieldValue(dbm.RecordSet, ss.NtidField)
             query = "SELECT * FROM " & Constants.END_USER_DATA_TABLE_NAME & " WHERE " & ss.NtidField _
-                    & " = '" & StringHelper.EscapeQueryString(ntid) & "'"
+                    & " = '" & StringHelper.EscapeQueryString(NTID) & "'"
                     
             Set tmpQdf = dbm.Database.CreateQueryDef("", query)
             Set tmpRst = tmpQdf.OpenRecordSet

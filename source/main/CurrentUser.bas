@@ -164,7 +164,7 @@ Public Function ListFunctions(region As String) As Collection
         For Each frg In mListFuncRg
             tmpName = frg.region
             If StringHelper.IsEqual(tmpName, region, True) Then
-                list.Add frg.name
+                list.Add frg.Name
             End If
         Next frg
     End If
@@ -192,8 +192,8 @@ Public Property Get Auth() As Boolean
     Auth = mAuth
 End Property
 
-Public Property Get ntid() As String
-    ntid = mNtid
+Public Property Get NTID() As String
+    NTID = mNtid
 End Property
 
 Public Property Get FuncRegion() As FunctionRegion
@@ -204,6 +204,6 @@ Public Property Get ListFuncRg() As Collection
     Set ListFuncRg = mListFuncRg
 End Property
 
-Public Function SetNtid(ntid As String)
-    mNtid = ntid
+Public Function SetNtid(NTID As String)
+    mNtid = NTID
 End Function

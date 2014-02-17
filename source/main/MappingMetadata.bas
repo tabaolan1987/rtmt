@@ -100,8 +100,8 @@ Public Property Get WorkSheet() As String
     WorkSheet = mWorkSheet
 End Property
 
-Public Property Get name() As String
-    name = mName
+Public Property Get Name() As String
+    Name = mName
 End Property
 
 Public Property Get Valid() As Boolean
@@ -173,7 +173,7 @@ Public Function query(qType As Integer, Optional data As Scripting.Dictionary) A
         data.Add Constants.Q_KEY_REGION_NAME, Session.Settings.RegionName
     End If
     If Not data.Exists(Constants.Q_KEY_FUNCTION_REGION_NAME) Then
-        data.Add Constants.Q_KEY_FUNCTION_REGION_NAME, Session.CurrentUser.FuncRegion.name
+        data.Add Constants.Q_KEY_FUNCTION_REGION_NAME, Session.CurrentUser.FuncRegion.Name
     End If
     mQuery = StringHelper.GenerateQuery(mQuery, data)
     'Logger.LogDebug "MappingMetaData.Query", mQuery

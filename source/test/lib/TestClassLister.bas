@@ -9,8 +9,8 @@ Public Function TestClasses() As Collection
     Set TestClasses = New Collection
     Set Components = Application.VBE.ActiveVBProject.VBComponents
     For Each Component In Components
-        If IsClassModule(Component.Type) And IsTestClassName(Component.name) Then
-            TestClasses.Add Component.name
+        If IsClassModule(Component.Type) And IsTestClassName(Component.Name) Then
+            TestClasses.Add Component.Name
         End If
     Next
 End Function

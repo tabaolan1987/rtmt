@@ -105,7 +105,7 @@ Public Function IfTableExists(tblName As String) As Boolean
     Set dbs = Application.CurrentData
     IfTableExists = False
     For Each obj In dbs.AllTables
-        If obj.name = tblName Then
+        If obj.Name = tblName Then
             IfTableExists = True
             Exit For
         End If

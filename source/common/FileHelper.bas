@@ -180,7 +180,7 @@ Function CurrentDbPath() As String
     If Len(dbPath) = 0 Then
         Dim cRes As String
         Dim nPos As Long
-        cRes = CurrentDb.name
+        cRes = CurrentDb.Name
         nPos = Len(cRes)
         Do Until Right(cRes, 1) = "\"
             nPos = nPos - 1
@@ -223,7 +223,7 @@ Function DeleteFolder(path As String) As Boolean
     End If
 End Function
 
-Public Function ReadSSFile(name As String) As String()
+Public Function ReadSSFile(Name As String) As String()
     Dim path As String
     Dim arraySize As Integer
     Dim sInput As String
@@ -231,7 +231,7 @@ Public Function ReadSSFile(name As String) As String()
     Dim i As Long
     Dim tmpList() As String
     Dim ln As String
-    path = FileHelper.CurrentDbPath & Constants.SS_DIR & name & ".ss"
+    path = FileHelper.CurrentDbPath & Constants.SS_DIR & Name & ".ss"
     If IsExistFile(path) Then
         Dim Fso As Object
         Dim ReadFile As Object
@@ -258,7 +258,7 @@ Public Function SaveAsCSV(filePath As String, desFilePath As String, Optional Wo
     Dim i As Integer
     Dim WB As New Excel.Workbook
     Dim WS As Excel.Sheets
-    Dim name As String
+    Dim Name As String
     Dim v As Variant
     If IsExistFile(desFilePath) Then
         DeleteFile desFilePath
@@ -273,8 +273,8 @@ Public Function SaveAsCSV(filePath As String, desFilePath As String, Optional Wo
                     Logger.LogDebug "FileHelper.SaveAsCSV", "Sheet count: " & .Sheets.Count
                     If .Sheets.Count > 1 And Len(WorkSheet) <> 0 Then
                         For Each v In .Sheets
-                            Logger.LogDebug "FileHelper.SaveAsCSV", "Sheet name: " & v.name
-                            If Not StringHelper.IsEqual(v.name, WorkSheet, True) Then
+                            Logger.LogDebug "FileHelper.SaveAsCSV", "Sheet name: " & v.Name
+                            If Not StringHelper.IsEqual(v.Name, WorkSheet, True) Then
                                 check = True
                                 'v.Delete
                             End If
@@ -282,7 +282,7 @@ Public Function SaveAsCSV(filePath As String, desFilePath As String, Optional Wo
                         If check Then
                             For Each v In .Sheets
                                 'Logger.LogDebug "FileHelper.SaveAsCSV", "Sheet name: " & v.Name
-                                If Not StringHelper.IsEqual(v.name, WorkSheet, True) Then
+                                If Not StringHelper.IsEqual(v.Name, WorkSheet, True) Then
                                 
                                     v.Delete
                                 End If
@@ -541,8 +541,8 @@ On Error GoTo ErrHandler
         With oApp.Namespace(ZipFile & "")
             If OverwriteFile Then
                 For Each fil In .Items
-                    If Fso.FileExists(DefPath & fil.name) Then
-                        Kill DefPath & fil.name
+                    If Fso.FileExists(DefPath & fil.Name) Then
+                        Kill DefPath & fil.Name
                     End If
                 Next
             End If
