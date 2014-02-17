@@ -1,6 +1,6 @@
 CHANGELOG (notable new features or fixes)
 ---------
-###<a href='https://cmgcode.atlassian.net/browse/DURM/fixforversion/11401'>Version 0.1.5</a>
+###<a href='https://cmgcode.atlassian.net/browse/DURM/fixforversion/11402'>Version 0.1.5</a>
 Released on: 17/02/2014
 + Critical & major bugs fixed
 + Move change log file to temporary directory        
