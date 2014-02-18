@@ -32,6 +32,8 @@ Private mOutputPath As String
 
 Private mMappingChar As String
 
+Private mComplete As Boolean
+
 Public Function Recyle()
     FileHelper.DeleteFile mQueryFilePath
     FileHelper.DeleteFile mTemplateFilePath
@@ -40,6 +42,7 @@ Public Function Recyle()
 End Function
 
 Public Function Init(mappingName As String, Optional ss As SystemSetting)
+    mComplete = False
     rawName = mappingName
     Logger.LogDebug "MappingMetaData.Init", "Start init mapping meta name: " & rawName
     Dim tmpRawSection() As String, tmpStr As String, i As Integer
@@ -179,3 +182,11 @@ Public Function query(qType As Integer, Optional data As Scripting.Dictionary) A
     'Logger.LogDebug "MappingMetaData.Query", mQuery
     query = mQuery
 End Function
+
+Public Function SetComplete(done As Boolean)
+    mComplete = done
+End Function
+
+Public Property Get Complete() As Boolean
+    Complete = mComplete
+End Property

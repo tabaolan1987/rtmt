@@ -18,7 +18,7 @@ inner join Course as Course1
 on CMR1.idCourse = Course1.id)
 where UMR1.deleted=0 and  UDT1.deleted =0 and
 BPROLE1.deleted=0 and CMR1.deleted=0 and
-Course1.deleted=0 and UMR1.idFunction='(%RG_F_ID%)'
+Course1.deleted=0 and UMR1.idFunction='(%RG_F_ID%)' And UDT1.SFunction='(%RG_F_NAME%)'
 group by UDT1.ntid,UDT1.fname,UDT1.lname,UDT1.omsSubfunction,
 Course1.courseId,
 CMR1.ps
@@ -36,7 +36,7 @@ inner join Course as Course
 on CMR.idCourse = Course.id)
 where UMR.deleted=0 and  UDT.deleted =0 and
 BPROLE.deleted=0 and CMR.deleted=0 and
-Course.deleted=0 and UMR.idFunction='(%RG_F_ID%)'
+Course.deleted=0 and UMR.idFunction='(%RG_F_ID%)' and UDT.SFunction='(%RG_F_NAME%)'
 group by UDT.ntid,UDT.fname,UDT.lname,UDT.omsSubfunction,
 Course.courseId,
 CMR.ps
@@ -78,7 +78,7 @@ inner join Course as Course1
 on CMR1.idCourse = Course1.id)
 where UMR1.deleted=0 and  UDT1.deleted =0 and
 BPROLE1.deleted=0 and CMR1.deleted=0 and
-Course1.deleted=0 and UMR1.idFunction='(%RG_F_ID%)'
+Course1.deleted=0 and UMR1.idFunction='(%RG_F_ID%)' and UDT1.SFunction='(%RG_F_NAME%)'
 group by UDT1.ntid,
 Course1.courseArena,Course1.courseId,
 Course1.courseTitle,Course1.courseType,
@@ -97,7 +97,7 @@ inner join Course as Course
 on CMR.idCourse = Course.id)
 where UMR.deleted=0 and  UDT.deleted =0 and
 BPROLE.deleted=0 and CMR.deleted=0 and
-Course.deleted=0 and UMR.idFunction='(%RG_F_ID%)'
+Course.deleted=0 and UMR.idFunction='(%RG_F_ID%)' and UDT.SFunction='(%RG_F_NAME%)'
 group by UDT.ntid,
 Course.courseArena,Course.courseId,
 Course.courseTitle,Course.courseType,
@@ -130,7 +130,7 @@ inner join Course as Course1
 on CMR1.idCourse = Course1.id)
 where UMR1.deleted=0 and  UDT1.deleted =0 and
 BPROLE1.deleted=0 and CMR1.deleted=0 and
-Course1.deleted=0 and UMR1.idFunction='(%RG_F_ID%)'
+Course1.deleted=0 and UMR1.idFunction='(%RG_F_ID%)' And UDT1.SFunction='(%RG_F_NAME%)'
 group by UDT1.ntid,
 Course1.courseArena,Course1.courseId,
 Course1.courseTitle,Course1.courseType,
@@ -149,7 +149,7 @@ inner join Course as Course
 on CMR.idCourse = Course.id)
 where UMR.deleted=0 and  UDT.deleted =0 and
 BPROLE.deleted=0 and CMR.deleted=0 and
-Course.deleted=0 and UMR.idFunction='(%RG_F_ID%)'
+Course.deleted=0 and UMR.idFunction='(%RG_F_ID%)' And UDT.SFunction='(%RG_F_NAME%)'
 group by UDT.ntid,
 Course.courseArena,Course.courseId,
 Course.courseTitle,Course.courseType,

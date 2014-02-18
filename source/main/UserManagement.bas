@@ -404,13 +404,13 @@ Public Function ResolveUserDataDuplicate()
         Do Until dbm.RecordSet.EOF = True
             tmpSelect = dbm.GetFieldValue(dbm.RecordSet, Constants.FIELD_SELECT)
             Logger.LogDebug "UserManagement.ResolveUserDataDuplicate", "Select: " & tmpSelect
-            If StringHelper.IsEqual(tmpSelect, "false", True) Then
+            If StringHelper.IsEqual(tmpSelect, "true", True) Then
                 NTID = dbm.GetFieldValue(dbm.RecordSet, ss.NtidField)
                 dbField = dbm.GetFieldValue(dbm.RecordSet, Constants.FIELD_DB_FIELD)
                 tmpValue = dbm.GetFieldValue(dbm.RecordSet, "Upload file")
-                Logger.LogDebug "UserManagement.ResolveUserDataDuplicate", "Resolve confict user NTID " & NTID & ".Db field: " & dbField & " . New value: " & tmpValue
-                query = "UPDATE " & Constants.END_USER_DATA_CACHE_TABLE_NAME & " SET [" & dbField & "] = '" & StringHelper.EscapeQueryString(tmpValue) & "' WHERE " _
-                            & ss.NtidField & " = '" & StringHelper.EscapeQueryString(NTID) & "'"
+                Logger.LogDebug "UserManagement.ResolveUserDataDuplicate", "Resolve duplicate data user NTID " & NTID & ".Db field: " & dbField & " . New value: " & tmpValue
+                query = "UPDATE " & Constants.END_USER_DATA_CACHE_TABLE_NAME & " SET [" & dbField & "] = '" & StringHelper.EscapeQueryString(tmpValue) & "' WHERE [" _
+                            & ss.NtidField & "] = '" & StringHelper.EscapeQueryString(NTID) & "'"
                 dbm.ExecuteQuery query
             End If
             dbm.RecordSet.MoveNext

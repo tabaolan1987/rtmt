@@ -14,12 +14,16 @@ Private dbm As DbManager
 Private mmd As MappingMetadata
 Private ss As SystemSetting
 Private Valid As Boolean
+Private mFilterTop As String
+Private mFilterLeft As String
 Private mWorkingFile As String
 
 Public Function Init(md As MappingMetadata, Optional mss As SystemSetting, Optional filterTop As String, _
                             Optional filterLeft As String)
     Set mmd = md
     Set ss = mss
+    mFilterTop = filterTop
+    mFilterLeft = filterLeft
     If mmd.Valid Then
         Set dbm = New DbManager
         Set mmd = md
@@ -124,7 +128,7 @@ Private Function PrepareData(Optional filterTop As String, _
 End Function
 
 Public Function GenerateMapping()
-    If Not Session.FlagMapping Then
+    If Not mmd.Complete Then
         Dim mappingChar As String
         Dim i As Long, j As Long, l As Long, k As Long
         Dim tmpId As String, tmpComment As String, tmpValue As String
@@ -192,19 +196,22 @@ Public Function GenerateMapping()
                             dbm.OpenRecordSet mmd.query(Q_CHECK, tmpData)
                             If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
                                 dbm.RecordSet.MoveFirst
-                                check = dbm.GetFieldValue(dbm.RecordSet, Constants.FIELD_DELETED)
-                                Logger.LogDebug "MappingHelper.GenerateMapping", "Check: " & check
-                                If StringHelper.IsEqual(check, "false", True) Then
-                                    If Len(mmd.mappingChar) > 0 Then
-                                        mappingChar = mmd.mappingChar
-                                    Else
-                                        mappingChar = dbm.GetFieldValue(dbm.RecordSet, Constants.FIELD_MAPPING_CHAR)
+                                Do Until dbm.RecordSet.EOF = True
+                                    check = dbm.GetFieldValue(dbm.RecordSet, Constants.FIELD_DELETED)
+                                    'Logger.LogDebug "MappingHelper.GenerateMapping", "Check: " & check
+                                    If StringHelper.IsEqual(check, "false", True) Then
+                                        If Len(mmd.mappingChar) > 0 Then
+                                            mappingChar = mmd.mappingChar
+                                        Else
+                                            mappingChar = dbm.GetFieldValue(dbm.RecordSet, Constants.FIELD_MAPPING_CHAR)
+                                        End If
+                                        Set rng = .Cells(k, l)
+                                        rng.value = mappingChar
+                                        'rng.Borders.LineStyle = xlContinuous
+                                        'rng.Interior.Color = RGB(255, 255, 0)
                                     End If
-                                    Set rng = .Cells(k, l)
-                                    rng.value = mappingChar
-                                    'rng.Borders.LineStyle = xlContinuous
-                                    'rng.Interior.Color = RGB(255, 255, 0)
-                                End If
+                                    dbm.RecordSet.MoveNext
+                                Loop
                             End If
                             dbm.Recycle
                             k = k + 1
@@ -218,7 +225,7 @@ Public Function GenerateMapping()
             .Quit
         End With
         mmd.RefreshLastModified
-        Session.SetFlagMapping (True)
+        mmd.SetComplete (True)
     End If
 End Function
 
@@ -309,6 +316,7 @@ Public Function ParseMapping()
                                 Logger.LogDebug "MappingHelper.ParseMapping", "Left: " & dictLeft.Item(tmpIdLeft) & ". Top: " & dictTop.Item(tmpIdTop)
                                 IsChecked = True
                             Else
+                                tmpData.Add Q_KEY_VALUE, ""
                                 IsChecked = False
                             End If
                             If NeedUpdate Then
@@ -344,13 +352,21 @@ Public Function PrepareMappingActivitesBBJobRoles()
     Dim str1 As String
     Dim str2 As String
     Dim str3 As String
+    Dim query As String
     Dim tmpRst As DAO.RecordSet
     Dim tmpQdf As DAO.QueryDef
+    query = "select MA.idActivity, MA.idBpRoleStandard, MA.Description from (MappingActivityBpStandardRole as MA inner join BpRoleStandard AS BR on BR.id = MA.idBpRolestandard)" _
+            & " where BR.BpRoleStandardName in (" & mFilterLeft & ")" _
+            & " and MA.deleted = 0 and MA.function_region='" & Session.CurrentUser.FuncRegion.FuncRgID & "'"
     dbm.Init
-    dbm.OpenRecordSet "select * from MappingActivityBpStandardRole where function_region='" & Session.CurrentUser.FuncRegion.FuncRgID & "'"
+    dbm.OpenRecordSet query
     If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
     Else
-        Set tmpQdf = dbm.Database.CreateQueryDef("", "select * from MappingActivityBpStandardRole where deleted = 0 and function_region=''")
+        mmd.SetComplete (False)
+        query = "select MA.idActivity, MA.idBpRoleStandard, MA.Description from (MappingActivityBpStandardRole as MA inner join BpRoleStandard AS BR on BR.id = MA.idBpRolestandard)" _
+            & " where BR.BpRoleStandardName in (" & mFilterLeft & ")" _
+            & " and MA.deleted = 0 and MA.function_region=''"
+        Set tmpQdf = dbm.Database.CreateQueryDef("", query)
         Set tmpRst = tmpQdf.OpenRecordSet
         If Not (tmpRst.EOF And tmpRst.BOF) Then
             tmpRst.MoveFirst

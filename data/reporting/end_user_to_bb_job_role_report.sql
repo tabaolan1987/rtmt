@@ -127,4 +127,5 @@ and UMR.idFunction='(%RG_F_ID%)')
 			%}
 FROM user_data AS UD
 where UD.SFunction='(%RG_F_NAME%)'
+And UD.Deleted=0
 ORDER BY UD.ntid
