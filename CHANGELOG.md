@@ -1,5 +1,25 @@
 CHANGELOG (notable new features or fixes)
 ---------
+
+###<a href='https://cmgcode.atlassian.net/browse/DURM/fixforversion/11403'>Version 0.1.6</a>
+Released on: 18/02/2014
+
++ Add new Administration screen
++ Critical & major bugs fixed
+
+<h5>        Bug
+</h5>
+<ul>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-82'>DURM-82</a>] -         Upload File - Should only allow to choose one option for duplicate entries 
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-93'>DURM-93</a>] -         Specialism to Activities mapping wizard - Strange symbols
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-95'>DURM-95</a>] -         Admin functionality overrides RC role
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-96'>DURM-96</a>] -         Automated mapping of BBJob roles from Activities to Specialism is not working
+</li>
+</ul>
+
 ###<a href='https://cmgcode.atlassian.net/browse/DURM/fixforversion/11402'>Version 0.1.5</a>
 Released on: 17/02/2014
 + Critical & major bugs fixed
