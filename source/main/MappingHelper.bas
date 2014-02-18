@@ -26,6 +26,7 @@ Public Function Init(md As MappingMetadata, Optional mss As SystemSetting, Optio
         If ss Is Nothing Then
             Set ss = Session.Settings()
         End If
+        PrepareMappingActivitesBBJobRoles
         PrepareData filterTop, filterLeft
         If dictTop.Count <> 0 And dictTopComment.Count <> 0 _
             And dictLeft.Count <> 0 And dictLeftComment.Count <> 0 Then
@@ -337,6 +338,38 @@ Public Function ParseMapping()
         End With
         mmd.RefreshLastModified
     End If
+End Function
+
+Public Function PrepareMappingActivitesBBJobRoles()
+    Dim str1 As String
+    Dim str2 As String
+    Dim str3 As String
+    Dim tmpRst As DAO.RecordSet
+    Dim tmpQdf As DAO.QueryDef
+    dbm.Init
+    dbm.OpenRecordSet "select * from MappingActivityBpStandardRole where function_region='" & Session.CurrentUser.FuncRegion.FuncRgID & "'"
+    If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
+    Else
+        Set tmpQdf = dbm.Database.CreateQueryDef("", "select * from MappingActivityBpStandardRole where deleted = 0 and function_region=''")
+        Set tmpRst = tmpQdf.OpenRecordSet
+        If Not (tmpRst.EOF And tmpRst.BOF) Then
+            tmpRst.MoveFirst
+            Do Until tmpRst.EOF = True
+                str1 = dbm.GetFieldValue(tmpRst, "idActivity")
+                str2 = dbm.GetFieldValue(tmpRst, "idBpRoleStandard")
+                str3 = dbm.GetFieldValue(tmpRst, "Description")
+                dbm.ExecuteQuery "insert into MappingActivityBpStandardRole(id, idActivity, idBpRoleStandard,Description, function_region, deleted)" _
+                    & " values('" _
+                    & StringHelper.EscapeQueryString(StringHelper.GetGUID) & "', '" _
+                    & StringHelper.EscapeQueryString(str1) & "', '" _
+                    & StringHelper.EscapeQueryString(str2) & "','" _
+                    & StringHelper.EscapeQueryString(str3) & "', '" _
+                    & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.FuncRgID) & "', '0')"
+                tmpRst.MoveNext
+            Loop
+        End If
+    End If
+    dbm.Recycle
 End Function
 
 Public Property Get WorkingFile() As String
