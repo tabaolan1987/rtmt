@@ -1,6 +1,24 @@
 CHANGELOG (notable new features or fixes)
 ---------
 
+###<a href='https://cmgcode.atlassian.net/browse/DURM/fixforversion/11404'>Version 0.1.7</a>
+Released on: 18/02/2014
+
++ Critical & major bugs fixed
+
+<h5>        Bug
+</h5>
+<ul>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-82'>DURM-82</a>] -         Upload File - Should only allow to choose one option for duplicate entries 
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-96'>DURM-96</a>] -         Automated mapping of BBJob roles from Activities to Specialism is not working
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-97'>DURM-97</a>] -         Reports - List of users between Training and End Users to BB Job roles does not match!
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-98'>DURM-98</a>] -         Training report - Users displayed with Missing BB Job Roles
+</li>
+</ul>
+                            
 ###<a href='https://cmgcode.atlassian.net/browse/DURM/fixforversion/11403'>Version 0.1.6</a>
 Released on: 18/02/2014
 
