@@ -1,6 +1,5 @@
 ' @author Hai Lu
 ' Read system.properties file, generate inno setup compiler script
-
 WScript.Echo "Read project.properties ..."
 Dim oFS : Set oFS = CreateObject( "Scripting.FileSystemObject" )
 Dim sPFSpec : sPFSpec = ".\project.properties"

@@ -1,6 +1,7 @@
 ' @author Hai Lu
 '
 Option Compare Database
+Public Const SKIP_LAUNCH = "skip.launch"
 
 Public Const TMP_END_USER_TABLE_NAME = "tblImport"
 
@@ -184,7 +185,7 @@ Public Const END_USER_DATA_REPORTING_TEMPLATE = "testdata\RoleMappingNewDeployme
 Public Const END_USER_DATA_REPORTING_OUTPUT_DIR = "target\reporting"
 Public Const END_USER_DATA_REPORTING_OUTPUT_FILE = "EndUserRoleMapping.xlsx"
 
-Public Const END_USER_DATA_FILE_XLSX = "testdata\EndUserRoleMapping.xls"
+Public Const END_USER_DATA_FILE_XLSX = "testdata\eudl_template.xlsx"
 Public Const END_USER_DATA_FILE_CSV = "target\EndUserRoleMapping.csv"
 Public Const END_USER_DATA_TMP_FILE_CSV = "user_data_tmp.csv"
 Public Const END_USER_DATA_TMP_FINAL_FILE_CSV = "user_data_tmp_final.csv"

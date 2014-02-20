@@ -5,3 +5,5 @@ rolemapping.laccdb
 buildnumber
 /logs/**
 /database/**
+skip.launch
+/data/config/settings.ini

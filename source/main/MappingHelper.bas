@@ -241,7 +241,7 @@ Public Function OpenMapping()
         End If
         'Create new workbook from the template file
         mWorkingFile = mmd.TemplateFilePath & Constants.FILE_EXTENSION_TEMPLATE
-        Logger.LogDebug "MappingHelper.ParseMapping", "Open excel template: " & mWorkingFile
+        Logger.LogDebug "MappingHelper.OpenMapping", "Open excel template: " & mWorkingFile
         Set WB = .Workbooks.Open(mWorkingFile)
     End With
 End Function
