@@ -1,7 +1,7 @@
 Option Explicit
 
 Public Sub OnTest()
-    Run "FileHelperTester"
+    Run '"FileHelperTester"
     'MsgBox FileHelper.tmpDir
 End Sub
 
