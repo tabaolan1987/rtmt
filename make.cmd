@@ -16,6 +16,7 @@ if "%1" == "" (
 mkdir ".\target"
 echo. 2>skip.launch
 cscript ".\scripts\run.vbs" rolemapping.accdb WDeleteAllTables
+cscript ".\scripts\run.vbs" rolemapping.accdb WDisableShift
 copy ".\rolemapping.accdb" ".\target\rolemapping.accdb"
 ping 1.1.1.1 -n 1 -w 3000 > nul
 ".\thirdparty\PSTools\pskill.exe" msaccess.exe

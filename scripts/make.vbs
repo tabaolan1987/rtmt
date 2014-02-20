@@ -44,9 +44,26 @@ Dim curDir :curDir= oFS.GetAbsolutePathName(".")
 Dim version : version = dicProps("app.version")
 ' Check buildnumer exists, append to app version
 If oFS.FileExists(dicProps("build.number.file")) Then
-   Dim rBN : Set rBN = oFS.OpenTextFile(dicProps("build.number.file"))
-   Dim bn : bn = rBN.ReadLine
-   version = version & "." & Trim(bn)
+	Set oTS = oFS.OpenTextFile(dicProps("build.number.file"))
+	sSect = ""
+	Do Until oTS.AtEndOfStream
+		sLine = Trim( oTS.ReadLine )
+		If "" <> sLine Then
+			If "#" = Left( sLine, 1 ) Then
+				sSect = sLine
+			Else
+				If "" = sSect Then
+				Else
+					aParts = Split( sLine, "=" )
+					If 1 <> UBound( aParts ) Then
+					Else
+						dicProps(Trim( aParts( 0 ) ) ) = Trim( aParts( 1 ) )
+					End If
+				End If
+			End If
+		End If
+	Loop
+   version = version & "." & dicProps("build.number")
 End If
 
 ' loop all key and replace script content

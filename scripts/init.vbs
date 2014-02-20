@@ -71,9 +71,26 @@ Next
 Dim version : version = prjProps("app.version")
 ' Check buildnumer exists, append to app version
 If oFS.FileExists(prjProps("build.number.file")) Then
-   Dim rBN : Set rBN = oFS.OpenTextFile(prjProps("build.number.file"))
-   Dim bn : bn = rBN.ReadLine
-   version = version & "." & Trim(bn)
+	Set oTS = oFS.OpenTextFile(prjProps("build.number.file"))
+	sSect = ""
+	Do Until oTS.AtEndOfStream
+		sLine = Trim( oTS.ReadLine )
+		If "" <> sLine Then
+			If "#" = Left( sLine, 1 ) Then
+				sSect = sLine
+			Else
+				If "" = sSect Then
+				Else
+					aParts = Split( sLine, "=" )
+					If 1 <> UBound( aParts ) Then
+					Else
+						prjProps(Trim( aParts( 0 ) ) ) = Trim( aParts( 1 ) )
+					End If
+				End If
+			End If
+		End If
+	Loop
+   version = version & "." & prjProps("build.number")
 End If
 envProps("env") = env
 envProps("project.version") = version

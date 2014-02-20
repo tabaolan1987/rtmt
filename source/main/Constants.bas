@@ -43,6 +43,7 @@ Public Const TEXT_DEFAULT_SELECT_REGION = "Select Region"
 Public Const TEXT_DEFAULT_SELECT_FUNCTION = "Select Function"
 
 ' Environment
+Public Const ENV_DEVELOP = "DEVELOP"
 Public Const ENV_DEV = "DEV"
 Public Const ENV_INT = "INT"
 Public Const ENV_PROD = "PROD"
@@ -138,6 +139,7 @@ Public Const SS_SYNC_ROLE_TABLES = "syncroletables"
 Public Const SS_SYNC_MAPPING_TABLES = "syncmappingtables"
 Public Const SS_SYNC_USERS = "syncusers"
 Public Const SS_VALIDATOR_MAPPING = "validatormapping"
+Public Const SS_JUNK_TABLES = "junktables"
 
 
 Public Const SYNC_TYPE_DEFAULT = 0

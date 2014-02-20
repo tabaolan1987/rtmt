@@ -105,8 +105,10 @@ Public Function CurrentUser() As CurrentUser
     If mCurrentUser Is Nothing Then
         Set mCurrentUser = New CurrentUser
         If Settings().EnableTesting Then
+            Logger.LogDebug "Session.CurrentUser", "Enable testing mode"
             mCurrentUser.Init Settings().TestNtid, Settings()
         Else
+            Logger.LogDebug "Session.CurrentUser", "Disable testing mode"
             mCurrentUser.Init Ultilities.GetUserName, Settings()
         End If
     End If
