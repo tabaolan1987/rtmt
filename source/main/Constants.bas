@@ -1,6 +1,7 @@
 ' @author Hai Lu
 '
 Option Compare Database
+Public Const SKIP_LAUNCH = "skip.launch"
 
 Public Const TMP_END_USER_TABLE_NAME = "tblImport"
 
@@ -9,6 +10,8 @@ Public Const END_USER_DATA_TABLE_NAME = "user_data"
 Public Const END_USER_DATA_CACHE_TABLE_NAME = "user_data_cache"
 
 ' Help content
+Public Const HELP_FIX_READONLY_PERMISSION = "data\helps\fix-readonly-permission.html"
+
 Public Const HELP_ERROR_EUDL = "data\helps\error-eudl.txt"
 
 Public Const HELP_UPLOAD_EUDL = "data\helps\upload-eudl.txt"
@@ -42,6 +45,7 @@ Public Const TEXT_DEFAULT_SELECT_REGION = "Select Region"
 Public Const TEXT_DEFAULT_SELECT_FUNCTION = "Select Function"
 
 ' Environment
+Public Const ENV_DEVELOP = "DEVELOP"
 Public Const ENV_DEV = "DEV"
 Public Const ENV_INT = "INT"
 Public Const ENV_PROD = "PROD"
@@ -96,6 +100,7 @@ Public Const KEY_TABLE_NAME = "tableNames"
 Public Const KEY_REGION_NAME = "regionName"
 Public Const KEY_REGION_FUNCTION_ID = "regionFunctionId"
 Public Const KEY_TEST_NTID = "testNtid"
+Public Const KEY_CHECK_IP_URL = "checkIpURL"
 
 Public Const KEY_VALIDATOR_URL = "validatorUrl"
 Public Const KEY_TOKEN = "token"
@@ -137,6 +142,7 @@ Public Const SS_SYNC_ROLE_TABLES = "syncroletables"
 Public Const SS_SYNC_MAPPING_TABLES = "syncmappingtables"
 Public Const SS_SYNC_USERS = "syncusers"
 Public Const SS_VALIDATOR_MAPPING = "validatormapping"
+Public Const SS_JUNK_TABLES = "junktables"
 
 
 Public Const SYNC_TYPE_DEFAULT = 0
@@ -184,7 +190,7 @@ Public Const END_USER_DATA_REPORTING_TEMPLATE = "testdata\RoleMappingNewDeployme
 Public Const END_USER_DATA_REPORTING_OUTPUT_DIR = "target\reporting"
 Public Const END_USER_DATA_REPORTING_OUTPUT_FILE = "EndUserRoleMapping.xlsx"
 
-Public Const END_USER_DATA_FILE_XLSX = "testdata\EndUserRoleMapping.xls"
+Public Const END_USER_DATA_FILE_XLSX = "testdata\eudl_template.xlsx"
 Public Const END_USER_DATA_FILE_CSV = "target\EndUserRoleMapping.csv"
 Public Const END_USER_DATA_TMP_FILE_CSV = "user_data_tmp.csv"
 Public Const END_USER_DATA_TMP_FINAL_FILE_CSV = "user_data_tmp_final.csv"

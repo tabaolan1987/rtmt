@@ -3,5 +3,8 @@ rolemapping.accdb
 rolemapping.accdb.bak
 rolemapping.laccdb
 buildnumber
+build-number.txt
 /logs/**
 /database/**
+skip.launch
+/data/config/settings.ini

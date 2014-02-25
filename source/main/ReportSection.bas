@@ -45,7 +45,7 @@ Public Function Init(raw As String, Optional mss As SystemSetting)
         Case Constants.RP_SECTION_TYPE_AUTO:
              Logger.LogDebug "ReportSection.Init", "RP_SECTION_TYPE_AUTO"
             ' Start generate query
-            mQuery = PrepareQuery(mQuery, ss)
+            PrepareQuery mQuery, ss
             mQuery = StringHelper.GenerateQuery(mQuery, DataQuery)
         Case Constants.RP_SECTION_TYPE_FIXED:
             dbm.Init
@@ -300,11 +300,42 @@ Public Property Get Count() As Long
     Count = mCount
 End Property
 
-Public Function MakeQuery(colName As String, Optional mss As SystemSetting) As String
+Public Function MakeQuery(mHeaderCol As Collection, Optional mss As SystemSetting) As String
     If StringHelper.IsEqual(mSectionType, Constants.RP_SECTION_TYPE_AUTO, True) Then
-        Dim data As Scripting.Dictionary
-        Set data = DataQuery
-        data.Add Constants.Q_KEY_VALUE, StringHelper.EscapeQueryString(colName)
-        MakeQuery = StringHelper.GenerateQuery(mQuery, data)
+        Dim arraySize As Integer
+        Dim i As Integer
+        Dim v As Variant
+        Dim l As Long, r As Long, q As String, length As Long, strTemp As String
+        Dim tmp As String, cQuery, tmpSplit() As String, qOut As String, qIn As String, tmpVal As String, tmpQuery As String
+        q = mQuery
+        length = 0
+        Dim tmpStr As String
+        Do While Not InStr(q, "{%") = 0
+            length = length + 1
+            l = InStr(q, "{%")
+            Logger.LogDebug "ReportSection.MakeQuery", "Found start pos: " & CStr(l)
+            r = InStr(l, q, "%}")
+            Logger.LogDebug "ReportSection.MakeQuery", "Found end pos: " & CStr(r)
+            cQuery = Mid(q, l, r - l + 2)
+            Logger.LogDebug "ReportSection.MakeQuery", "Custom query: " & cQuery
+            tmp = Trim(Mid(cQuery, 3, Len(cQuery) - 4))
+            tmpSplit = Split(tmp, "|")
+            qOut = Trim(tmpSplit(0))
+            qIn = Trim(tmpSplit(1))
+            
+            For Each v In mHeaderCol
+                tmpStr = CStr(v)
+                Logger.LogDebug "ReportSection.MakeQuery", "make query for header: " & tmpStr
+                strTemp = Replace(qIn, "(%VALUE%)", StringHelper.EscapeQueryString(tmpStr))
+                tmpQuery = tmpQuery & strTemp & ","
+            Next v
+            If StringHelper.EndsWith(tmpQuery, ",", True) Then
+                tmpQuery = Left(tmpQuery, Len(tmpQuery) - 1)
+            End If
+            
+            q = Replace(q, cQuery, tmpQuery)
+        Loop
+        
+        MakeQuery = q
     End If
 End Function

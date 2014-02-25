@@ -65,9 +65,9 @@ Public Sub TestInitMapping()
     Dim mh As New MappingHelper
     mh.Init mmd, ss
     mh.GenerateMapping
-    mh.OpenMapping
-    'mh.ParseMapping
-  '  mmd.Recyle
+    'mh.OpenMapping
+    mh.ParseMapping
+    mmd.Recyle
 OnExit:
     ' finally
     Exit Sub

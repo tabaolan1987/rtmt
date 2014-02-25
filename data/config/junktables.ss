@@ -1,0 +1,5 @@
+# IMPORTANT
+sync_conflict
+tmp_table_report
+tblImport
+user_data_cache

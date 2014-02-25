@@ -95,6 +95,12 @@ Public Sub WDeleteAllTables()
         tmpStr = tables(i)
         dbm.DeleteTable tmpStr
     Next i
+    tables = Session.Settings.JunkTables
+    For i = LBound(tables) To UBound(tables)
+        tmpStr = tables(i)
+        dbm.DeleteTable tmpStr
+    Next i
+    
     dbm.Recycle
 End Sub
 
@@ -281,3 +287,102 @@ Function IsReadOnly() As Boolean
         IsReadOnly = True
     End If
 End Function
+
+Public Sub WGetAllTables()
+    GetTables Session.Settings.SyncMappingTables
+    GetTables Session.Settings.SyncRoleTables
+    GetTables Session.Settings.SyncTables
+End Sub
+
+Function GetTables(SyncTables() As String)
+    On Error GoTo OnError
+    Dim dbm As DbManager, _
+    prop As SystemSetting, _
+            isEmpty As Boolean, _
+            stTable As String
+    Set dbm = New DbManager
+    Set prop = Session.Settings()
+    isEmpty = Ultilities.IsVarArrayEmpty(SyncTables)
+    If Not isEmpty Then
+        Dim i As Integer
+        dbm.RecycleTableName Constants.TABLE_SYNC_CONFLICT
+        For i = LBound(SyncTables) To UBound(SyncTables)
+            stTable = Trim(SyncTables(i))
+            If Not IfTableExists(stTable) Then
+                dbm.SyncTable prop.ServerName & "," & prop.Port, prop.DatabaseName, stTable, stTable, prop.userNAme, prop.Password, False
+            End If
+        Next i
+    End If
+OnExit:
+    Exit Function
+OnError:
+    Logger.LogError "Ultilities.SyncTables", "An error occurred while processing", Err
+    Resume OnExit
+End Function
+
+
+Sub WDisableShift()
+    'This function disable the shift at startup. This action causes
+    'the Autoexec macro and Startup properties to always be executed.
+    
+    On Error GoTo errDisableShift
+    
+    Dim db As DAO.Database
+    Dim prop As DAO.Property
+    Const conPropNotFound = 3270
+    
+    Set db = CurrentDb()
+    
+    'This next line disables the shift key on startup.
+    db.Properties("AllowByPassKey") = False
+    
+    'The function is successful.
+    Exit Sub
+    
+errDisableShift:
+    'The first part of this error routine creates the "AllowByPassKey
+    'property if it does not exist.
+    If Err = conPropNotFound Then
+    Set prop = db.CreateProperty("AllowByPassKey", _
+    dbBoolean, False)
+    db.Properties.Append prop
+    Resume Next
+    Else
+    MsgBox "Function 'ap_DisableShift' did not complete successfully."
+    Exit Sub
+    End If
+
+End Sub
+
+Sub WEnableShift()
+    'This function enables the SHIFT key at startup. This action causes
+    'the Autoexec macro and the Startup properties to be bypassed
+    'if the user holds down the SHIFT key when the user opens the database.
+    
+    On Error GoTo errEnableShift
+    
+    Dim db As DAO.Database
+    Dim prop As DAO.Property
+    Const conPropNotFound = 3270
+    
+    Set db = CurrentDb()
+    
+    'This next line of code disables the SHIFT key on startup.
+    db.Properties("AllowByPassKey") = True
+    
+    'function successful
+    Exit Sub
+    
+errEnableShift:
+    'The first part of this error routine creates the "AllowByPassKey
+    'property if it does not exist.
+    If Err = conPropNotFound Then
+    Set prop = db.CreateProperty("AllowByPassKey", _
+    dbBoolean, True)
+    db.Properties.Append prop
+    Resume Next
+    Else
+    MsgBox "Function 'ap_DisableShift' did not complete successfully."
+    Exit Sub
+    End If
+End Sub

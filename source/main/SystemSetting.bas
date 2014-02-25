@@ -18,6 +18,7 @@ Private mPassword As String
 Private mSyncTables() As String
 Private mSyncMappingTables() As String
 Private mSyncRoleTables() As String
+Private mJunkTables() As String
 Private mSyncUsers As Scripting.Dictionary
 Private mValidatorMapping As Scripting.Dictionary
 Private mWorkSheet As String
@@ -31,6 +32,7 @@ Private mEnableValidation As Boolean
 Private mTestNtid As String
 Private mEnv As String
 Private mVersion As String
+Private mCheckIpURL As String
 
 Public Function Init()
     Dim ir As IniReader: Set ir = Ultilities.SystemIniReader
@@ -43,6 +45,7 @@ Public Function Init()
     mSyncTables = FileHelper.ReadSSFile(Constants.SS_SYNC_TABLES)
     mSyncRoleTables = FileHelper.ReadSSFile(Constants.SS_SYNC_ROLE_TABLES)
     mSyncMappingTables = FileHelper.ReadSSFile(Constants.SS_SYNC_MAPPING_TABLES)
+    mJunkTables = FileHelper.ReadSSFile(Constants.SS_JUNK_TABLES)
     
     Dim source As String, tmpList() As String, ln As String, arraySize As Integer, i As Integer
     source = ir.ReadKey(Constants.SECTION_USER_DATA, Constants.KEY_LINE_TO_REMOVE)
@@ -74,6 +77,7 @@ Public Function Init()
     mTestNtid = ir.ReadKey(Constants.SECTION_APPLICATION, Constants.KEY_TEST_NTID)
     mVersion = ir.ReadKey(Constants.SECTION_APPLICATION, Constants.KEY_VERSION)
     mEnv = ir.ReadKey(Constants.SECTION_APPLICATION, Constants.KEY_ENV)
+    mCheckIpURL = ir.ReadKey(Constants.SECTION_APPLICATION, Constants.KEY_CHECK_IP_URL)
     
     mEnableTesting = ir.ReadBooleanKey(Constants.SECTION_APPLICATION, Constants.KEY_ENABLE_TESTING)
     mEnableValidation = ir.ReadBooleanKey(Constants.SECTION_USER_DATA, Constants.KEY_ENABLE_VALIDATION)
@@ -122,6 +126,10 @@ End Property
 
 Public Property Get SyncMappingTables() As String()
     SyncMappingTables = mSyncMappingTables
+End Property
+
+Public Property Get JunkTables() As String()
+    JunkTables = mJunkTables
 End Property
 
 Public Property Get SyncUsers() As Scripting.Dictionary
@@ -198,4 +206,8 @@ End Property
 
 Public Property Get Version() As String
     Version = mVersion
+End Property
+
+Public Property Get CheckIpURL() As String
+    CheckIpURL = mCheckIpURL
 End Property
