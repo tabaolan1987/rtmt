@@ -21,9 +21,10 @@ Private Property Get DataQuery() As Scripting.Dictionary
     Set DataQuery = data
 End Property
 
-Public Function Init(raw As String, Optional mss As SystemSetting)
+Public Function Init(raw As String, Optional mss As SystemSetting, Optional SkipCheckHeader As Boolean)
     mValid = False
     Dim dbm As New DbManager
+    Logger.LogDebug "ReportSection.Init", "SkipCheckHeader: " & SkipCheckHeader
     Logger.LogDebug "ReportSection.Init", "Prepare raw: " & raw
     Dim i As Integer, tmpStr As String, tmpList() As String
     Dim arraySize As Integer
@@ -91,13 +92,13 @@ Public Function Init(raw As String, Optional mss As SystemSetting)
                 End If
 
                 tmpQuery = StringHelper.GenerateQuery(StringHelper.TrimNewLine(queryCache(1)), DataQuery)
-                Logger.LogDebug "ReportSection.Init", "Get cache value query: " & tmpQuery
+                'Logger.LogDebug "ReportSection.Init", "Get cache value query: " & tmpQuery
                 dbm.OpenRecordSet tmpQuery
                 If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
                     dbm.RecordSet.MoveFirst
                     Do Until dbm.RecordSet.EOF = True
                         tmpKey = dbm.RecordSet(0)
-                        Logger.LogDebug "ReportSection.Init", " tmpKey: " & tmpKey
+                 '       Logger.LogDebug "ReportSection.Init", " tmpKey: " & tmpKey
                         tmpValue = ""
                         Set tmpData = DataQuery
                         tmpData.Add Constants.Q_KEY_VALUE, tmpKey
@@ -114,7 +115,7 @@ Public Function Init(raw As String, Optional mss As SystemSetting)
                         End If
                         tmpRst.Close
                         Set tmpRst = Nothing
-                        Logger.LogDebug "ReportSection.Init", "tmpValue: " & tmpValue
+                  '      Logger.LogDebug "ReportSection.Init", "tmpValue: " & tmpValue
                         dbm.ExecuteQuery "INSERT INTO [" & tableName & "]([key],[value]) VALUES('" & tmpKey & "','" & tmpValue & "')"
                         dbm.RecordSet.MoveNext
                     Loop
@@ -124,27 +125,31 @@ Public Function Init(raw As String, Optional mss As SystemSetting)
             
             dbm.Init
             mQuery = StringHelper.GenerateQuery(mQuery, DataQuery)
-            dbm.OpenRecordSet mQuery
-            mCount = dbm.RecordSet.RecordCount
-            ' Execute query and get all header name
-            Logger.LogDebug "ReportSection.Init", "Fields count: " & CStr(dbm.RecordSet.fields.Count)
-            For i = 0 To dbm.RecordSet.fields.Count - 1
-                ReDim Preserve mHeader(arraySize)
-                mHeader(arraySize) = dbm.RecordSet.fields(i).Name
-                arraySize = arraySize + 1
-            Next i
-
+            If Not SkipCheckHeader Then
+                dbm.OpenRecordSet mQuery
+                mCount = dbm.RecordSet.RecordCount
+                ' Execute query and get all header name
+                Logger.LogDebug "ReportSection.Init", "Fields count: " & CStr(dbm.RecordSet.fields.Count)
+                For i = 0 To dbm.RecordSet.fields.Count - 1
+                    ReDim Preserve mHeader(arraySize)
+                    mHeader(arraySize) = dbm.RecordSet.fields(i).Name
+                    arraySize = arraySize + 1
+                Next i
+            End If
             dbm.Recycle
         Case Else
     End Select
             
     Logger.LogDebug "ReportSection.Init", "Query: " & mQuery
     If HeaderCount > 0 And Len(mQuery) > 0 Then
-        Logger.LogDebug "ReportSection.Init", "Found " & CStr(HeaderCount) & " header: "
         mValid = True
+        Logger.LogDebug "ReportSection.Init", "Found " & CStr(HeaderCount) & " header: "
         For i = LBound(mHeader) To UBound(mHeader)
             Logger.LogDebug "ReportSection.Init", "- " & mHeader(i)
         Next i
+    End If
+    If SkipCheckHeader Then
+        mValid = True
     End If
 End Function
 
