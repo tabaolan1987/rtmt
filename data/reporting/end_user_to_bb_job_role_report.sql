@@ -41,6 +41,13 @@ Where user_data.deleted=0
 and user_data.SFunction='(%RG_F_NAME%)'
 ORDER BY [ntid]
 =====
+With table_cached as (select bpRole.BpRoleStandardName from (user_data_mapping_role as UMR 
+inner join BpRoleStandard as bpRole
+on UMR.idBpRoleStandard = bpRole.id)
+where UMR.idUserdata = UD.ntid and UMR.Deleted=0
+and UD.deleted = 0
+and bpRole.Deleted = 0
+and UMR.idFunction='(%RG_F_ID%)')
 SELECT 
 	{% 
 		SRM Lead Requester,
@@ -115,14 +122,8 @@ SELECT
 		Vendor Maintainer - SQM
 		| 
 		(select top 1 IIF(NOT ISNULL(bpRole.BpRoleStandardName), "Y","") 
-from (user_data_mapping_role as UMR 
-inner join BpRoleStandard as bpRole
-on UMR.idBpRoleStandard = bpRole.id)
-where UMR.idUserdata = UD.ntid and UMR.Deleted=0
-and UD.deleted = 0
-and bpRole.Deleted = 0
-and bpRole.BpRoleStandardName = '(%VALUE%)'
-and UMR.idFunction='(%RG_F_ID%)')
+from table_cached where
+table_cached.BpRoleStandardName = '(%VALUE%)')
 				AS [(%VALUE%)]
 			%}
 FROM user_data AS UD
