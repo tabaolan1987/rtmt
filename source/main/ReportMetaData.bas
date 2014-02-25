@@ -29,6 +29,7 @@ Private mMergeEnable As Boolean
 Private mMergeColumes As Collection
 Private mMergePrimary As Long
 Private mCount As Long
+Private mBulkSize As Long
 
 Private mCustomMode As Boolean
 
@@ -63,7 +64,7 @@ Public Function Init(Name As String, Optional ss As SystemSetting, Optional rpTy
     
     mWorkSheet = ir.ReadKey(Constants.SECTION_GENERAL, Constants.KEY_WORK_SHEET)
     Logger.LogDebug "ReportMetaData.Init", "Work sheet: " & mWorkSheet
-    
+    mBulkSize = ir.ReadLongKey(Constants.SECTION_FORMAT, Constants.KEY_BULK_SIZE)
     
     mFillHeader = ir.ReadBooleanKey(Constants.SECTION_FORMAT, Constants.KEY_FILL_HEADER)
     Logger.LogDebug "ReportMetaData.Init", "Fill header: " & CStr(mFillHeader)
@@ -241,4 +242,8 @@ End Function
 
 Public Property Get Complete() As Boolean
     Complete = mComplete
+End Property
+
+Public Property Get BulkSize() As Long
+    BulkSize = mBulkSize
 End Property

@@ -49,7 +49,8 @@ Public Sub GenerateReport(rpm As ReportMetaData)
         Dim WB As New Excel.Workbook
         Dim WS As Excel.WorkSheet
         Dim rng As Excel.range
-        
+        Dim c As Long
+        Dim headerCol As Collection
         Dim objConn As New ADODB.Connection
         Dim objRs As New ADODB.RecordSet
         Set objConn = CurrentProject.Connection
@@ -80,18 +81,38 @@ Public Sub GenerateReport(rpm As ReportMetaData)
                             End If
                             Select Case rSect.SectionType
                                 Case Constants.RP_SECTION_TYPE_AUTO:
-                                     Logger.LogDebug "Reporting.GenerateReport", "Generate section type: Auto"
+                                    Dim query As String
+                                    c = 0
+                                    Logger.LogDebug "Reporting.GenerateReport", "Generate section type: Auto"
+                                    
                                     For i = LBound(headers) To UBound(headers)
-                                        Dim query As String
-                                        query = rSect.MakeQuery(headers(i), ss)
+                                        If headerCol Is Nothing Then
+                                            Set headerCol = New Collection
+                                        End If
+                                        headerCol.Add headers(i)
+                                        c = c + 1
+                                        If c = rpm.BulkSize Then
+                                            query = rSect.MakeQuery(headerCol, ss)
+                                            Logger.LogDebug "Reporting.GenerateReport", "Prepare query: " & query
+                                            objRs.Open query, objConn, adOpenStatic, adLockReadOnly
+                                            Set rng = .Cells(rpm.StartRow, colCount)
+                                            rng.CopyFromRecordset objRs
+                                            objRs.Close
+                                            colCount = colCount + c
+                                            c = 0
+                                            Set headerCol = New Collection
+                                        End If
+                                    Next i
+                                    If Not headerCol Is Nothing And headerCol.Count > 0 Then
+                                        query = rSect.MakeQuery(headerCol, ss)
                                         Logger.LogDebug "Reporting.GenerateReport", "Prepare query: " & query
                                         objRs.Open query, objConn, adOpenStatic, adLockReadOnly
-                                        'Logger.LogDebug "Reporting.GenerateReport", "Prepare Cells(" & CStr(rpm.StartRow) & "," & CStr(colCount) & ")"
-                                        Set rng = .Cells(rpm.StartRow, colCount) 'Starting point of the data range
+                                        Set rng = .Cells(rpm.StartRow, colCount)
                                         rng.CopyFromRecordset objRs
                                         objRs.Close
-                                        colCount = colCount + 1
-                                    Next i
+                                        colCount = colCount + headerCol.Count
+                                    End If
+                                    
                                     Logger.LogDebug "Reporting.GenerateReport", "Complete generate section type: Auto"
                                 Case Constants.RP_SECTION_TYPE_FIXED, Constants.RP_SECTION_TYPE_TMP_TABLE:
                                     Logger.LogDebug "Reporting.GenerateReport", "Generate section type: Fixed"

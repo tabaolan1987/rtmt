@@ -32,6 +32,7 @@ Private mEnableValidation As Boolean
 Private mTestNtid As String
 Private mEnv As String
 Private mVersion As String
+Private mCheckIpURL As String
 
 Public Function Init()
     Dim ir As IniReader: Set ir = Ultilities.SystemIniReader
@@ -76,6 +77,7 @@ Public Function Init()
     mTestNtid = ir.ReadKey(Constants.SECTION_APPLICATION, Constants.KEY_TEST_NTID)
     mVersion = ir.ReadKey(Constants.SECTION_APPLICATION, Constants.KEY_VERSION)
     mEnv = ir.ReadKey(Constants.SECTION_APPLICATION, Constants.KEY_ENV)
+    mCheckIpURL = ir.ReadKey(Constants.SECTION_APPLICATION, Constants.KEY_CHECK_IP_URL)
     
     mEnableTesting = ir.ReadBooleanKey(Constants.SECTION_APPLICATION, Constants.KEY_ENABLE_TESTING)
     mEnableValidation = ir.ReadBooleanKey(Constants.SECTION_USER_DATA, Constants.KEY_ENABLE_VALIDATION)
@@ -204,4 +206,8 @@ End Property
 
 Public Property Get Version() As String
     Version = mVersion
+End Property
+
+Public Property Get CheckIpURL() As String
+    CheckIpURL = mCheckIpURL
 End Property

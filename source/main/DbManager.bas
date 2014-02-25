@@ -916,3 +916,44 @@ OnError:
     Logger.LogError "DbManager.UpdateServerRecord", "Could update table " & table & " records. Query: " & query, Err
     Resume OnExit
 End Function
+
+
+Public Function ConnectionTest() As Boolean
+    Dim stConnect As String
+    If Len(Session.Settings.userNAme) <> 0 Then
+        stConnect = "DRIVER=SQL Server;SERVER=" & Session.Settings.ServerName & "," & Session.Settings.Port _
+                                                & ";DATABASE=" & Session.Settings.DatabaseName _
+                                                & ";UID=" & Session.Settings.userNAme _
+                                                & ";PWD=" & Session.Settings.Password
+    Else
+        stConnect = "DRIVER=SQL Server;SERVER=" & Session.Settings.ServerName & "," & Session.Settings.Port _
+                                & ";DATABASE=" & Session.Settings.DatabaseName
+    End If
+    Dim cn As ADODB.Connection
+    Dim vError As Variant
+    Dim sErrors As String
+
+    Set cn = New ADODB.Connection
+
+    On Error Resume Next
+    cn.Open stConnect
+    On Error GoTo 0
+
+    If cn.State = adStateOpen Then
+        cn.Close
+        ConnectionTest = True
+    Else
+        ConnectionTest = False
+        For Each vError In cn.Errors
+            sErrors = sErrors & vError.Description & vbNewLine
+        Next vError
+        If sErrors > "" Then
+            Logger.LogError "DbManager.ConnectionTest", "Could not connect to central db. Error: " & sErrors, Nothing
+            'MsgBox sErrors, vbExclamation
+        Else
+            Logger.LogError "DbManager.ConnectionTest", "Could not connect to central db. Connection Failed", Nothing
+            'MsgBox "Connection Failed", vbExclamation
+        End If
+    End If
+    Set cn = Nothing
+End Function
