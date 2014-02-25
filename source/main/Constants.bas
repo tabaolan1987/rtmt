@@ -100,6 +100,7 @@ Public Const KEY_TABLE_NAME = "tableNames"
 Public Const KEY_REGION_NAME = "regionName"
 Public Const KEY_REGION_FUNCTION_ID = "regionFunctionId"
 Public Const KEY_TEST_NTID = "testNtid"
+Public Const KEY_CHECK_IP_URL = "checkIpURL"
 
 Public Const KEY_VALIDATOR_URL = "validatorUrl"
 Public Const KEY_TOKEN = "token"
