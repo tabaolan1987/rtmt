@@ -30,7 +30,7 @@ Private mMergeColumes As Collection
 Private mMergePrimary As Long
 Private mCount As Long
 Private mBulkSize As Long
-
+Private mSkipCheckHeader As Boolean
 Private mCustomMode As Boolean
 
 Private mComplete As Boolean
@@ -68,7 +68,7 @@ Public Function Init(Name As String, Optional ss As SystemSetting, Optional rpTy
     
     mFillHeader = ir.ReadBooleanKey(Constants.SECTION_FORMAT, Constants.KEY_FILL_HEADER)
     Logger.LogDebug "ReportMetaData.Init", "Fill header: " & CStr(mFillHeader)
-    
+    mSkipCheckHeader = ir.ReadBooleanKey(Constants.SECTION_FORMAT, Constants.KEY_SKIP_CHECK_HEADER)
     mMergeEnable = ir.ReadBooleanKey(Constants.SECTION_FORMAT, Constants.KEY_MERGE_ENABLE)
     mCustomMode = ir.ReadBooleanKey(Constants.SECTION_FORMAT, Constants.KEY_CUSTOM_MODE)
     Logger.LogDebug "ReportMetaData.Init", "Merge enable: " & CStr(mMergeEnable)
@@ -107,7 +107,7 @@ Public Function Init(Name As String, Optional ss As SystemSetting, Optional rpTy
             Logger.LogDebug "ReportMetaData.Init", "Found section " & CStr(i + 1)
             Set rpSection = New ReportSection
             tmpStr = Trim(tmpRawSection(i))
-            rpSection.Init tmpStr, ss
+            rpSection.Init tmpStr, ss, mSkipCheckHeader
             If StringHelper.IsEqual(rpSection.SectionType, Constants.RP_SECTION_TYPE_FIXED, True) _
                 Or StringHelper.IsEqual(rpSection.SectionType, Constants.RP_SECTION_TYPE_TMP_TABLE, True) Then
                 mCount = rpSection.Count
@@ -242,6 +242,10 @@ End Function
 
 Public Property Get Complete() As Boolean
     Complete = mComplete
+End Property
+
+Public Property Get SkipCheckHeader() As Boolean
+    SkipCheckHeader = mSkipCheckHeader
 End Property
 
 Public Property Get BulkSize() As Long

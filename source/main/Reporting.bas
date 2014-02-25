@@ -117,10 +117,11 @@ Public Sub GenerateReport(rpm As ReportMetaData)
                                 Case Constants.RP_SECTION_TYPE_FIXED, Constants.RP_SECTION_TYPE_TMP_TABLE:
                                     Logger.LogDebug "Reporting.GenerateReport", "Generate section type: Fixed"
                                     objRs.Open rSect.query, objConn, adOpenStatic, adLockReadOnly
+                                    
                                     'Logger.LogDebug "Reporting.GenerateReport", "Prepare Cells(" & CStr(rpm.StartRow) & "," & CStr(colCount) & ")"
                                     Set rng = .Cells(rpm.StartRow, colCount) 'Starting point of the data range
                                     rng.CopyFromRecordset objRs
-                                    colCount = colCount + rSect.HeaderCount
+                                    colCount = colCount + objRs.fields.Count
                                     objRs.Close
                                     Logger.LogDebug "Reporting.GenerateReport", "Complete generate section type: Fixed"
                                 Case Else

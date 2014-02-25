@@ -124,6 +124,7 @@ Public Const KEY_START_HEADER_ROW = "startHeaderRow"
 Public Const KEY_START_HEADER_COL = "startHeaderCol"
 Public Const KEY_START_ROW = "startRow"
 Public Const KEY_START_COL = "startCol"
+Public Const KEY_SKIP_CHECK_HEADER = "skipCheckHeader"
 
 Public Const SECTION_TOP = "Top"
 Public Const SECTION_LEFT = "Left"
