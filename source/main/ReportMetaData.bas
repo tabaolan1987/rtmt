@@ -33,6 +33,11 @@ Private mBulkSize As Long
 Private mSkipCheckHeader As Boolean
 Private mCustomMode As Boolean
 
+Private mPivotTable As Boolean
+Private mPivotTableName As String
+Private mPivotTableWorksheet As String
+Private mPivotWordWrapCols As Collection
+
 Private mComplete As Boolean
 
 Public Function Init(Name As String, Optional ss As SystemSetting, Optional rpType As String)
@@ -66,6 +71,10 @@ Public Function Init(Name As String, Optional ss As SystemSetting, Optional rpTy
     Logger.LogDebug "ReportMetaData.Init", "Work sheet: " & mWorkSheet
     mBulkSize = ir.ReadLongKey(Constants.SECTION_FORMAT, Constants.KEY_BULK_SIZE)
     
+    mPivotTable = ir.ReadBooleanKey(Constants.SECTION_GENERAL, Constants.KEY_PIVOT_TABLE)
+    mPivotTableName = ir.ReadKey(Constants.SECTION_GENERAL, Constants.KEY_PIVOT_TABLE_NAME)
+    mPivotTableWorksheet = ir.ReadKey(Constants.SECTION_GENERAL, Constants.KEY_PIVOT_TABLE_WORK_SHEET)
+    
     mFillHeader = ir.ReadBooleanKey(Constants.SECTION_FORMAT, Constants.KEY_FILL_HEADER)
     Logger.LogDebug "ReportMetaData.Init", "Fill header: " & CStr(mFillHeader)
     mSkipCheckHeader = ir.ReadBooleanKey(Constants.SECTION_FORMAT, Constants.KEY_SKIP_CHECK_HEADER)
@@ -81,6 +90,16 @@ Public Function Init(Name As String, Optional ss As SystemSetting, Optional rpTy
             Set mMergeColumes = New Collection
             For Each v In tmpList
                 mMergeColumes.Add CInt(Trim(CStr(v)))
+            Next v
+        End If
+    End If
+    If mPivotTable Then
+        tmpStr = ir.ReadKey(Constants.SECTION_FORMAT, Constants.KEY_PIVOT_WORD_WRAP_COLS)
+        If Len(tmpStr) <> 0 Then
+            tmpList = Split(tmpStr, ",")
+            Set mPivotWordWrapCols = New Collection
+            For Each v In tmpList
+                mPivotWordWrapCols.Add CInt(Trim(CStr(v)))
             Next v
         End If
     End If
@@ -261,4 +280,20 @@ End Property
 
 Public Property Get BulkSize() As Long
     BulkSize = mBulkSize
+End Property
+
+Public Property Get PivotTable() As Boolean
+    PivotTable = mPivotTable
+End Property
+
+Public Property Get PivotTableName() As String
+    PivotTableName = mPivotTableName
+End Property
+
+Public Property Get PivotTableWorksheet() As String
+    PivotTableWorksheet = mPivotTableWorksheet
+End Property
+
+Public Property Get PivotWordWrapCols() As Collection
+    Set PivotWordWrapCols = mPivotWordWrapCols
 End Property

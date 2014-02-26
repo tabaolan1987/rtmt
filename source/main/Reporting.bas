@@ -49,11 +49,13 @@ Public Sub GenerateReport(rpm As ReportMetaData)
         Dim WB As New Excel.Workbook
         Dim WS As Excel.WorkSheet
         Dim rng As Excel.range
+        Dim Pivot As Excel.PivotTable
         Dim c As Long
         Dim headerCol As Collection
         Dim objConn As New ADODB.Connection
         Dim objRs As New ADODB.RecordSet
         Set objConn = CurrentProject.Connection
+        Dim recordCount As Double
         With oExcel
             .DisplayAlerts = False
             .Visible = False
@@ -95,6 +97,7 @@ Public Sub GenerateReport(rpm As ReportMetaData)
                                             query = rSect.MakeQuery(headerCol, ss)
                                             Logger.LogDebug "Reporting.GenerateReport", "Prepare query: " & query
                                             objRs.Open query, objConn, adOpenStatic, adLockReadOnly
+                                            recordCount = objRs.recordCount
                                             Set rng = .Cells(rpm.startRow, colCount)
                                             rng.CopyFromRecordset objRs
                                             objRs.Close
@@ -107,6 +110,7 @@ Public Sub GenerateReport(rpm As ReportMetaData)
                                         query = rSect.MakeQuery(headerCol, ss)
                                         Logger.LogDebug "Reporting.GenerateReport", "Prepare query: " & query
                                         objRs.Open query, objConn, adOpenStatic, adLockReadOnly
+                                        recordCount = objRs.recordCount
                                         Set rng = .Cells(rpm.startRow, colCount)
                                         rng.CopyFromRecordset objRs
                                         objRs.Close
@@ -117,7 +121,7 @@ Public Sub GenerateReport(rpm As ReportMetaData)
                                 Case Constants.RP_SECTION_TYPE_FIXED, Constants.RP_SECTION_TYPE_TMP_TABLE, Constants.RP_SECTION_TYPE_TMP_PILOT_REPORT:
                                     Logger.LogDebug "Reporting.GenerateReport", "Generate section type: " & rSect.SectionType
                                     objRs.Open rSect.query, objConn, adOpenStatic, adLockReadOnly
-                                    
+                                    recordCount = objRs.recordCount
                                     'Logger.LogDebug "Reporting.GenerateReport", "Prepare Cells(" & CStr(rpm.StartRow) & "," & CStr(colCount) & ")"
                                     Set rng = .Cells(rpm.startRow, colCount) 'Starting point of the data range
                                     rng.CopyFromRecordset objRs
@@ -175,8 +179,22 @@ Public Sub GenerateReport(rpm As ReportMetaData)
                         
                         '.PrintOut Copies:=1, Preview:=False, Collate:=True
                     End With
+                    If rpm.PivotTable Then
+                        Logger.LogDebug "Reporting.GenerateReport", "Select pivot worksheet: " & rpm.PivotTableWorksheet
+                        Set WS = WB.workSheets(rpm.PivotTableWorksheet)
+                        Logger.LogDebug "Reporting.GenerateReport", "Select pivot table: " & rpm.PivotTableName
+                        Set Pivot = WS.PivotTables(rpm.PivotTableName)
+                        Pivot.RefreshTable
+                        Pivot.Update
+                        If rpm.PivotWordWrapCols.Count > 0 Then
+                            For Each v In rpm.PivotWordWrapCols
+                                WS.range(WS.Cells(1, CInt(v)), WS.Cells(rpm.startRow + recordCount, CInt(v))).WrapText = True
+                            Next v
+                        End If
+                        WS.Rows.AutoFit
+                    End If
                     Logger.LogDebug "Reporting.GenerateReport", "Save report as : " & rpm.OutputPath
-                    WS.SaveAs (rpm.OutputPath)
+                    .SaveAs (rpm.OutputPath)
                 End With
             Logger.LogDebug "Reporting.GenerateReport", "Close excel"
             .Quit

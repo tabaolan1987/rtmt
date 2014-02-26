@@ -3,3 +3,6 @@ sync_conflict
 tmp_table_report
 tblImport
 user_data_cache
+tmp_pilot_report
+tmp_pilot_report_1
+tmp_pilot_report_2
