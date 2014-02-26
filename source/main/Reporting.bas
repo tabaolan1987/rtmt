@@ -129,19 +129,29 @@ Public Sub GenerateReport(rpm As ReportMetaData)
                         Next
                          If rpm.CustomMode Then
                            k = rpm.StartRow
+                           Dim ntid1 As String
+                           Dim ntid2 As String
+                           Dim courseId1 As String
+                           Dim courseId2 As String
                            Dim psValue As String
                            Dim countValue As String
                             Do While k < 65536
                                 psValue = .Cells(k, 12).value
                                 countValue = .Cells(k, 14).value
+                                ntid1 = .Cells(k, 1).value
+                                courseId1 = .Cells(k, 8).value
                                 If Len(Trim(psValue)) = 0 Then
                                     Exit Do
                                 End If
-                                If StringHelper.IsEqual(psValue, "s", True) And CInt(Trim(countValue)) > 1 Then
+                                If StringHelper.IsEqual(psValue, "s", True) _
+                                    And StringHelper.IsEqual(ntid1, ntid2, True) _
+                                    And StringHelper.IsEqual(courseId1, courseId2, True) Then
                                     .Cells(k, 12).EntireRow.Delete
                                 Else
                                     k = k + 1
                                 End If
+                                courseId2 = courseId1
+                                ntid2 = ntid1
                              Loop
                              .Cells(rpm.StartRow, 14).EntireColumn.Delete
                         End If

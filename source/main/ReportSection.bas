@@ -35,7 +35,11 @@ Public Function Init(raw As String, Optional mss As SystemSetting, Optional Skip
     If InStr(mQuery, "{%") <> 0 And InStr(mQuery, "%}") <> 0 Then
         mSectionType = Constants.RP_SECTION_TYPE_AUTO
     ElseIf InStr(mQuery, Constants.SPLIT_LEVEL_2) <> 0 Then
-        mSectionType = Constants.RP_SECTION_TYPE_TMP_TABLE
+        If InStr(mQuery, Constants.RP_SECTION_TYPE_TMP_PILOT_REPORT) <> 0 Then
+            mSectionType = Constants.RP_SECTION_TYPE_TMP_PILOT_REPORT
+        Else
+            mSectionType = Constants.RP_SECTION_TYPE_TMP_TABLE
+        End If
     Else
         mSectionType = Constants.RP_SECTION_TYPE_FIXED
     End If
@@ -135,6 +139,43 @@ Public Function Init(raw As String, Optional mss As SystemSetting, Optional Skip
                     mHeader(arraySize) = dbm.RecordSet.fields(i).Name
                     arraySize = arraySize + 1
                 Next i
+            End If
+            dbm.Recycle
+        Case RP_SECTION_TYPE_TMP_PILOT_REPORT:
+            dbm.Init
+            queryCache = Split(mQuery, Constants.SPLIT_LEVEL_2)
+            Dim tmpCol As New Collection
+            Dim tmpHeader As String
+            Dim tmpNtid As String
+            Dim tmpDataIn As Scripting.Dictionary
+            tmpCol.Add "ntid"
+            Dim pilotHeader As New Scripting.Dictionary
+            tmpQuery = StringHelper.TrimNewLine(queryCache(0))
+            Logger.LogDebug "ReportSection.Init", "Create new table cache query: " & tmpQuery
+            dbm.ExecuteQuery tmpQuery
+            If UBound(queryCache) > 0 Then
+                tmpList = Split(StringHelper.TrimNewLine(queryCache(1)), ",")
+                For i = LBound(tmpList) To UBound(tmpList)
+                    tmpStr = Trim(Replace(Replace(Replace(tmpList(i), Chr(10), " "), Chr(13), " "), Chr(9), " "))
+                    tmpHeader = "f" & CStr(i + 1)
+                    Logger.LogDebug "ReportSection.Init", "Query: " & mQuery
+                    
+                    pilotHeader.Add tmpHeader, tmpStr
+                    tmpCol.Add tmpHeader
+                Next i
+                mQuery = StringHelper.TrimNewLine(queryCache(4))
+            End If
+            tmpQuery = StringHelper.TrimNewLine(queryCache(2))
+            Logger.LogDebug "ReportSection.Init", "List all key query: " & tmpQuery
+            dbm.OpenRecordSet tmpQuery
+            If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
+                dbm.RecordSet.MoveFirst
+                Do Until dbm.RecordSet.EOF = True
+                    
+                    tmpNtid = dbm.GetFieldValue(dbm.RecordSet, "ntid")
+                    dbm.CreateLocalRecord tmpDataIn, tmpCol, Constants.RP_SECTION_TYPE_TMP_PILOT_REPORT
+                    dbm.RecordSet.MoveNext
+                Loop
             End If
             dbm.Recycle
         Case Else
