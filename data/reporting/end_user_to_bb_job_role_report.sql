@@ -1,86 +1,4 @@
-create table tmp_pilot_report
-(
-	ntid varchar(100),
-	f1 varchar(100),
-	f2 varchar(100),
-	f3 varchar(100),
-	f4 varchar(100),
-	f5 varchar(100),
-	f6 varchar(100),
-	f7 varchar(100),
-	f8 varchar(100),
-	f11 varchar(100),
-	f12 varchar(100),
-	f13 varchar(100),
-	f14 varchar(100),
-	f15 varchar(100),
-	f16 varchar(100),
-	f17 varchar(100),
-	f18 varchar(100),
-	f19 varchar(100),
-	f20 varchar(100),
-	f21 varchar(100),
-	f22 varchar(100),
-	f23 varchar(100),
-	f24 varchar(100),
-	f25 varchar(100),
-	f26 varchar(100),
-	f27 varchar(100),
-	f28 varchar(100),
-	f29 varchar(100),
-	f30 varchar(100),
-	f31 varchar(100),
-	f32 varchar(100),
-	f33 varchar(100),
-	f34 varchar(100),
-	f35 varchar(100),
-	f36 varchar(100),
-	f37 varchar(100),
-	f38 varchar(100),
-	f39 varchar(100),
-	f40 varchar(100),
-	f41 varchar(100),
-	f42 varchar(100),
-	f43 varchar(100),
-	f44 varchar(100),
-	f45 varchar(100),
-	f46 varchar(100),
-	f47 varchar(100),
-	f48 varchar(100),
-	f49 varchar(100),
-	f50 varchar(100),
-	f51 varchar(100),
-	f52 varchar(100),
-	f53 varchar(100),
-	f54 varchar(100),
-	f55 varchar(100),
-	f56 varchar(100),
-	f57 varchar(100),
-	f58 varchar(100),
-	f59 varchar(100),
-	f60 varchar(100),
-	f61 varchar(100),
-	f62 varchar(100),
-	f63 varchar(100),
-	f64 varchar(100),
-	f65 varchar(100),
-	f66 varchar(100),
-	f67 varchar(100),
-	f68 varchar(100),
-	f69 varchar(100),
-	f70 varchar(100),
-	f71 varchar(100),
-	f72 varchar(100),
-	f73 varchar(100),
-	f74 varchar(100),
-	f75 varchar(100),
-	f76 varchar(100),
-	f77 varchar(100),
-	f78 varchar(100),
-	f79 varchar(100),
-	f80 varchar(100),
-	f81 varchar(100)
-)
+tmp_pilot_report
 ===
 		SRM Lead Requester,
 		Standard Desktop Confirmation Requester,
@@ -162,14 +80,13 @@ create table tmp_pilot_report
 		Regional Backbone Administrator,
 		Vendor Maintainer - SQM
 ===
-select ntid from user_data where deleted=0 and SFunction='(%RG_F_NAME%)'
+select ntid as [value] from user_data where deleted=0 and SFunction='(%RG_F_NAME%)'
 ===
-select bpRole.BpRoleStandardName
+select bpRole.BpRoleStandardName AS [value]
 from (user_data_mapping_role as UMR 
 inner join BpRoleStandard as bpRole
 on UMR.idBpRoleStandard = bpRole.id)
 where UMR.idUserdata = '(%VALUE%)' and UMR.Deleted=0
-and UD.deleted = 0
 and bpRole.Deleted = 0
 and UMR.idFunction='(%RG_F_ID%)'
 ===
@@ -219,6 +136,8 @@ SELECT
 	f6,
 	f7,
 	f8,
+	f9,
+	f10,
 	f11,
 	f12,
 	f13,
@@ -287,12 +206,10 @@ SELECT
 	f76,
 	f77,
 	f78,
-	f79,
-	f80,
-	f81
+	f79
 FROM (user_data as UD
 inner join tmp_pilot_report as tbl_cached
-on tbl_cached.ntid = UD.ntid)
+on tbl_cached.[key] = UD.ntid)
 Where UD.deleted=0
 and UD.SFunction='(%RG_F_NAME%)'
 ORDER BY UD.ntid

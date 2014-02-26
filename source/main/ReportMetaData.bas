@@ -163,6 +163,17 @@ Public Function Wait()
 End Function
 
 Public Function Recyle()
+    Dim dbm As New DbManager
+    dbm.Init
+    Dim rps As ReportSection
+    If Not mReportSections Is Nothing Then
+        For Each rps In mReportSections
+            If Len(rps.CachedTable) > 0 Then
+                dbm.DeleteTable rps.CachedTable
+            End If
+        Next rps
+    End If
+    dbm.Recycle
     FileHelper.DeleteFile mQueryFilePath
     FileHelper.DeleteFile mTemplateFilePath
     FileHelper.DeleteFile mConfigFilePath

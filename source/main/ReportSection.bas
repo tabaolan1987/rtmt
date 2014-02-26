@@ -11,6 +11,7 @@ Private mQuery As String
 Private mValid As Boolean
 Private ss As SystemSetting
 Private mCount As Long
+Private mCachedTable As String
 
 Private Property Get DataQuery() As Scripting.Dictionary
     Dim data As New Scripting.Dictionary
@@ -31,7 +32,19 @@ Public Function Init(raw As String, Optional mss As SystemSetting, Optional Skip
     mQuery = raw
     Set ss = mss
     Dim queryCache() As String
-        
+    Dim tmpRst As DAO.RecordSet
+    Dim tmpQdf As DAO.QueryDef
+    Dim valueCache As New Scripting.Dictionary
+    Dim v As Variant
+    Dim m As Variant
+    Dim check As Boolean
+            
+    Dim tmpQuery As String
+    Dim tmpData As Scripting.Dictionary
+    Dim tmpKey As String
+    Dim tmpValue As String
+    Dim tableName As String
+    
     If InStr(mQuery, "{%") <> 0 And InStr(mQuery, "%}") <> 0 Then
         mSectionType = Constants.RP_SECTION_TYPE_AUTO
     ElseIf InStr(mQuery, Constants.SPLIT_LEVEL_2) <> 0 Then
@@ -70,15 +83,7 @@ Public Function Init(raw As String, Optional mss As SystemSetting, Optional Skip
             dbm.Recycle
         Case Constants.RP_SECTION_TYPE_TMP_TABLE:
             Logger.LogDebug "ReportSection.Init", "RP_SECTION_TYPE_TMP_TABLE"
-            Dim valueCache As New Scripting.Dictionary
-            Dim v As Variant
-            Dim tmpRst As DAO.RecordSet
-            Dim tmpQdf As DAO.QueryDef
-            Dim tmpQuery As String
-            Dim tmpData As Scripting.Dictionary
-            Dim tmpKey As String
-            Dim tmpValue As String
-            Dim tableName As String
+            
             queryCache = Split(mQuery, Constants.SPLIT_LEVEL_2)
             
             If UBound(queryCache) > 0 Then
@@ -86,6 +91,7 @@ Public Function Init(raw As String, Optional mss As SystemSetting, Optional Skip
                 mQuery = tmpQuery
                 Logger.LogDebug "ReportSection.Init", "Primary query: " & mQuery
                 tableName = StringHelper.TrimNewLine(queryCache(0))
+                mCachedTable = tableName
                 dbm.Init
                 If Ultilities.IfTableExists(tableName) Then
                     Logger.LogDebug "ReportSection.Init", "Delete all records table " & tableName
@@ -145,39 +151,84 @@ Public Function Init(raw As String, Optional mss As SystemSetting, Optional Skip
             dbm.Init
             queryCache = Split(mQuery, Constants.SPLIT_LEVEL_2)
             Dim tmpCol As New Collection
+            Dim tmpValueCol As Collection
             Dim tmpHeader As String
+            Dim tmpQueryPilot As String
             Dim tmpNtid As String
+            Dim tmpTableName As String
             Dim tmpDataIn As Scripting.Dictionary
-            tmpCol.Add "ntid"
+            Dim tmpDataPara As Scripting.Dictionary
             Dim pilotHeader As New Scripting.Dictionary
-            tmpQuery = StringHelper.TrimNewLine(queryCache(0))
-            Logger.LogDebug "ReportSection.Init", "Create new table cache query: " & tmpQuery
-            dbm.ExecuteQuery tmpQuery
+            tmpCol.Add "key"
             If UBound(queryCache) > 0 Then
+                
+                tmpTableName = StringHelper.TrimNewLine(queryCache(0))
+                mCachedTable = tmpTableName
+                dbm.DeleteTable tmpTableName
+                tmpQuery = "create table [" & tmpTableName & "] ( [key] varchar(255), "
                 tmpList = Split(StringHelper.TrimNewLine(queryCache(1)), ",")
                 For i = LBound(tmpList) To UBound(tmpList)
                     tmpStr = Trim(Replace(Replace(Replace(tmpList(i), Chr(10), " "), Chr(13), " "), Chr(9), " "))
                     tmpHeader = "f" & CStr(i + 1)
-                    Logger.LogDebug "ReportSection.Init", "Query: " & mQuery
-                    
                     pilotHeader.Add tmpHeader, tmpStr
                     tmpCol.Add tmpHeader
+                    tmpQuery = tmpQuery & "[" & tmpHeader & "]" & " varchar(255)" & ","
                 Next i
-                mQuery = StringHelper.TrimNewLine(queryCache(4))
+                If StringHelper.EndsWith(tmpQuery, ",", True) Then
+                    tmpQuery = Left(tmpQuery, Len(tmpQuery) - 1)
+                End If
+                tmpQuery = tmpQuery & ")"
+                Logger.LogDebug "ReportSection.Init", "Create new table cache query: " & tmpQuery
+                dbm.ExecuteQuery tmpQuery
+                
+                tmpQuery = StringHelper.GenerateQuery(StringHelper.TrimNewLine(queryCache(2)), DataQuery)
+                 Logger.LogDebug "ReportSection.Init", "List all key query: " & tmpQuery
+                dbm.OpenRecordSet tmpQuery
+                If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
+                    dbm.RecordSet.MoveFirst
+                    tmpQuery = StringHelper.TrimNewLine(queryCache(3))
+                    Logger.LogDebug "ReportSection.Init", "Get pilot data query: " & tmpQuery
+                    Do Until dbm.RecordSet.EOF = True
+                        Set tmpDataPara = DataQuery
+                        Set tmpDataIn = New Scripting.Dictionary
+                        tmpNtid = dbm.GetFieldValue(dbm.RecordSet, Constants.Q_KEY_VALUE)
+                        tmpDataIn.Add "key", tmpNtid
+                        tmpDataPara.Add Constants.Q_KEY_VALUE, tmpNtid
+                        tmpQueryPilot = StringHelper.GenerateQuery(tmpQuery, tmpDataPara)
+                        Logger.LogDebug "ReportSection.Init", tmpNtid & " | " & tmpQueryPilot
+                        Set tmpQdf = dbm.Database.CreateQueryDef("", tmpQueryPilot)
+                        Set tmpRst = tmpQdf.OpenRecordSet
+                        Set tmpValueCol = New Collection
+                        If Not (tmpRst.EOF And tmpRst.BOF) Then
+                            tmpRst.MoveFirst
+                            Do Until tmpRst.EOF = True
+                                tmpValue = dbm.GetFieldValue(tmpRst, Constants.Q_KEY_VALUE)
+                                tmpValueCol.Add tmpValue
+                                tmpRst.MoveNext
+                            Loop
+                        End If
+                        For Each v In pilotHeader.keys
+                            tmpStr = pilotHeader.Item(CStr(v))
+                            check = False
+                            For Each m In tmpValueCol
+                                If StringHelper.IsEqual(CStr(m), tmpStr, True) Then
+                                    check = True
+                                    Exit For
+                                End If
+                            Next m
+                            If check Then
+                                tmpDataIn.Add CStr(v), "Y"
+                            Else
+                                tmpDataIn.Add CStr(v), ""
+                            End If
+                        Next v
+                        dbm.CreateLocalRecord tmpDataIn, tmpCol, tmpTableName
+                        dbm.RecordSet.MoveNext
+                    Loop
+                End If
+                dbm.Recycle
+                mQuery = StringHelper.GenerateQuery(StringHelper.TrimNewLine(queryCache(4)), DataQuery)
             End If
-            tmpQuery = StringHelper.TrimNewLine(queryCache(2))
-            Logger.LogDebug "ReportSection.Init", "List all key query: " & tmpQuery
-            dbm.OpenRecordSet tmpQuery
-            If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
-                dbm.RecordSet.MoveFirst
-                Do Until dbm.RecordSet.EOF = True
-                    
-                    tmpNtid = dbm.GetFieldValue(dbm.RecordSet, "ntid")
-                    dbm.CreateLocalRecord tmpDataIn, tmpCol, Constants.RP_SECTION_TYPE_TMP_PILOT_REPORT
-                    dbm.RecordSet.MoveNext
-                Loop
-            End If
-            dbm.Recycle
         Case Else
     End Select
             
@@ -385,3 +436,7 @@ Public Function MakeQuery(mHeaderCol As Collection, Optional mss As SystemSettin
         MakeQuery = q
     End If
 End Function
+
+Public Property Get CachedTable() As String
+    CachedTable = mCachedTable
+End Property

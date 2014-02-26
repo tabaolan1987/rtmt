@@ -114,8 +114,8 @@ Public Sub GenerateReport(rpm As ReportMetaData)
                                     End If
                                     
                                     Logger.LogDebug "Reporting.GenerateReport", "Complete generate section type: Auto"
-                                Case Constants.RP_SECTION_TYPE_FIXED, Constants.RP_SECTION_TYPE_TMP_TABLE:
-                                    Logger.LogDebug "Reporting.GenerateReport", "Generate section type: Fixed"
+                                Case Constants.RP_SECTION_TYPE_FIXED, Constants.RP_SECTION_TYPE_TMP_TABLE, Constants.RP_SECTION_TYPE_TMP_PILOT_REPORT:
+                                    Logger.LogDebug "Reporting.GenerateReport", "Generate section type: " & rSect.SectionType
                                     objRs.Open rSect.query, objConn, adOpenStatic, adLockReadOnly
                                     
                                     'Logger.LogDebug "Reporting.GenerateReport", "Prepare Cells(" & CStr(rpm.StartRow) & "," & CStr(colCount) & ")"
@@ -205,8 +205,8 @@ Public Function CountUncompleteReport() As Integer
     Dim i As Integer
     Dim rpm As ReportMetaData
     i = 0
-    For Each v In Session.ReportMDCol.keys
-        Set rpm = Session.ReportMDCol.Item(CStr(v))
+    For Each v In Session.ReportMDCols.keys
+        Set rpm = Session.ReportMetaData(CStr(v))
         If Not rpm.Complete Then
             i = i + 1
         End If

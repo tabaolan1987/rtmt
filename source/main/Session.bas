@@ -64,21 +64,7 @@ End Function
 Public Function RenewReports()
     Dim rmd As ReportMetaData
     Set mReportMDCol = New Scripting.Dictionary
-    Set rmd = New ReportMetaData
-    rmd.Init Constants.RP_END_USER_TO_BB_JOB_ROLE
-    mReportMDCol.Add Constants.RP_END_USER_TO_BB_JOB_ROLE, rmd
     
-    Set rmd = New ReportMetaData
-    rmd.Init Constants.RP_END_USER_TO_COURSE
-    mReportMDCol.Add Constants.RP_END_USER_TO_COURSE, rmd
-    
-    Set rmd = New ReportMetaData
-    rmd.Init Constants.RP_ROLE_MAPPING_OUTPUT_OF_TOOL_FOR_SECURITY
-    mReportMDCol.Add Constants.RP_ROLE_MAPPING_OUTPUT_OF_TOOL_FOR_SECURITY, rmd
-    
-    Set rmd = New ReportMetaData
-    rmd.Init Constants.RP_AUDIT_LOG
-    mReportMDCol.Add Constants.RP_AUDIT_LOG, rmd
 End Function
 
 Public Function Init()
@@ -94,11 +80,24 @@ Public Function MappingMDCol() As Scripting.Dictionary
     Set MappingMDCol = mMappingMDCol
 End Function
 
-Public Function ReportMDCol() As Scripting.Dictionary
+Public Function ReportMetaData(reportName As String) As ReportMetaData
     If mReportMDCol Is Nothing Then
         RenewReports
     End If
-    Set ReportMDCol = mReportMDCol
+    Dim rmd As ReportMetaData
+    If Not mReportMDCol.Exists(reportName) Then
+        Set rmd = New ReportMetaData
+        rmd.Init reportName
+        mReportMDCol.Add reportName, rmd
+    End If
+    Set ReportMetaData = mReportMDCol.Item(reportName)
+End Function
+
+Public Function ReportMDCols() As Scripting.Dictionary
+    If mReportMDCol Is Nothing Then
+        RenewReports
+    End If
+    Set ReportMDCols = mReportMDCol
 End Function
 
 Public Function CurrentUser() As CurrentUser

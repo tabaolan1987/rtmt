@@ -1,26 +1,6 @@
-SELECT 
-	[NTID],
-	[fname] AS [First Name],
-	[lname] AS [Last Name],
-	[jobTitle] AS [Job Title],
-	'' AS [Performace Unit],
-	[purchasingOrg] AS [Purchasing Org],
-	[jobTitle] AS [Job Title 2],
-	[siteLocation] AS[Location-Site],
-	'' AS [HR Status],
-	'' AS [Requisition/Indent ($Limit in Thousands)],
-	'' AS [Invoice Approval ($Limit in Thousands)],
-	'' AS [3rd Party Commitment ($Limit in Thousands)]
-FROM user_data
-Where user_data.deleted=0
-and user_data.SFunction='(%RG_F_NAME%)'
-ORDER BY [ntid]
-
-=====
-
-SELECT 
-	{% 
-		SRM Lead Requester,
+tmp_pilot_report_1
+===
+	SRM Lead Requester,
 		Backbone Reviewer/Approver,
 		Procurement Display & Reporting,
 		Contract Display & Reporting,
@@ -107,17 +87,120 @@ SELECT
 		GWO Data Maintainer,
 		GWO Data Display,
 		Regional Maximo Labor Data Steward
-		| 
-		(select top 1 IIF(NOT ISNULL(bpRole.BpRoleStandardName), "Y","") 
+===
+select ntid as [value] from user_data where deleted=0 and SFunction='(%RG_F_NAME%)'
+===
+select bpRole.BpRoleStandardName AS [value]
 from (user_data_mapping_role as UMR 
 inner join BpRoleStandard as bpRole
 on UMR.idBpRoleStandard = bpRole.id)
-where UMR.idUserdata = UD.ntid and UMR.Deleted=0
+where UMR.idUserdata = '(%VALUE%)' and UMR.Deleted=0
 and bpRole.Deleted = 0
-and bpRole.BpRoleStandardName = '(%VALUE%)'
-and UMR.idFunction='(%RG_F_ID%)')
-				AS [(%VALUE%)]
-			%}
-FROM user_data AS UD 
-where UD.SFunction='(%RG_F_NAME%)'
+and UMR.idFunction='(%RG_F_ID%)'
+===
+SELECT 
+	UD.[NTID],
+	[fname] AS [First Name],
+	[lname] AS [Last Name],
+	[jobTitle] AS [Job Title],
+	'' AS [Performace Unit],
+	[purchasingOrg] AS [Purchasing Org],
+	[jobTitle] AS [Job Title 2],
+	[siteLocation] AS[Location-Site],
+	'' AS [HR Status],
+	'' AS [Requisition/Indent ($Limit in Thousands)],
+	'' AS [Invoice Approval ($Limit in Thousands)],
+	'' AS [3rd Party Commitment ($Limit in Thousands)],
+	f1,
+	f2,
+	f3,
+	f4,
+	f5,
+	f6,
+	f7,
+	f8,
+	f9,
+	f10,
+	f11,
+	f12,
+	f13,
+	f14,
+	f15,
+	f16,
+	f17,
+	f18,
+	f19,
+	f20,
+	f21,
+	f22,
+	f23,
+	f24,
+	f25,
+	f26,
+	f27,
+	f28,
+	f29,
+	f30,
+	f31,
+	f32,
+	f33,
+	f34,
+	f35,
+	f36,
+	f37,
+	f38,
+	f39,
+	f40,
+	f41,
+	f42,
+	f43,
+	f44,
+	f45,
+	f46,
+	f47,
+	f48,
+	f49,
+	f50,
+	f51,
+	f52,
+	f53,
+	f54,
+	f55,
+	f56,
+	f57,
+	f58,
+	f59,
+	f60,
+	f61,
+	f62,
+	f63,
+	f64,
+	f65,
+	f66,
+	f67,
+	f68,
+	f69,
+	f70,
+	f71,
+	f72,
+	f73,
+	f74,
+	f75,
+	f76,
+	f77,
+	f78,
+	f79,
+	f80,
+	f81,
+	f82,
+	f83,
+	f84,
+	f85,
+	f86,
+	f87
+FROM (user_data as UD
+inner join tmp_pilot_report_1 as tbl_cached
+on tbl_cached.[key] = UD.ntid)
+Where UD.deleted=0
+and UD.SFunction='(%RG_F_NAME%)'
 ORDER BY UD.ntid
