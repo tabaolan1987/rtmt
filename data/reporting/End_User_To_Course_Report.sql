@@ -33,3 +33,4 @@ group by UDT.ntid,Course.courseId,CMR.ps
 ) as rpc on rpc.ntid = UD.ntid)
 	inner join Course as Cr on Cr.courseId = rpc.courseId)
 	inner join tmp_table_report as tmp_table on tmp_table.[key] = UD.ntid)
+	order by rpc.ntid, rpc.courseId
