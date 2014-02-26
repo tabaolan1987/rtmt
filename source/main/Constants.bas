@@ -174,6 +174,8 @@ Public Const RP_QUERY_TYPE_SIMPLE = "simple"
 Public Const RP_SECTION_TYPE_FIXED = "fixed"
 Public Const RP_SECTION_TYPE_AUTO = "auto"
 Public Const RP_SECTION_TYPE_TMP_TABLE = "tmp_table"
+Public Const RP_SECTION_TYPE_TMP_PILOT_REPORT = "tmp_pilot_report"
+
 Public Const RP_ROOT_FOLDER = "data\reporting\"
 Public Const RP_END_USER_TO_SYSTEM_ROLE = "end_user_to_system_role_report"
 Public Const RP_END_USER_TO_BB_JOB_ROLE = "end_user_to_bb_job_role_report"
