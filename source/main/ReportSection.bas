@@ -72,7 +72,7 @@ Public Function Init(raw As String, Optional mss As SystemSetting, Optional Skip
             mQuery = StringHelper.GenerateQuery(mQuery, DataQuery)
            
             dbm.OpenRecordSet mQuery
-            mCount = dbm.RecordSet.RecordCount
+            mCount = dbm.RecordSet.recordCount
             ' Execute query and get all header name
             Logger.LogDebug "ReportSection.Init", "Fields count: " & CStr(dbm.RecordSet.fields.Count)
             For i = 0 To dbm.RecordSet.fields.Count - 1
@@ -138,7 +138,7 @@ Public Function Init(raw As String, Optional mss As SystemSetting, Optional Skip
             mQuery = StringHelper.GenerateQuery(mQuery, DataQuery)
             If Not SkipCheckHeader Then
                 dbm.OpenRecordSet mQuery
-                mCount = dbm.RecordSet.RecordCount
+                mCount = dbm.RecordSet.recordCount
                 ' Execute query and get all header name
                 Logger.LogDebug "ReportSection.Init", "Fields count: " & CStr(dbm.RecordSet.fields.Count)
                 For i = 0 To dbm.RecordSet.fields.Count - 1
@@ -238,7 +238,7 @@ Public Function Init(raw As String, Optional mss As SystemSetting, Optional Skip
                
                 If Not SkipCheckHeader Then
                     dbm.OpenRecordSet mQuery
-                    mCount = dbm.RecordSet.RecordCount
+                    mCount = dbm.RecordSet.recordCount
                     ' Execute query and get all header name
                     Logger.LogDebug "ReportSection.Init", "Fields count: " & CStr(dbm.RecordSet.fields.Count)
                     arraySize = 0
