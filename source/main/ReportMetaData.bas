@@ -199,8 +199,8 @@ Public Property Get Name() As String
     Name = mName
 End Property
 
-Public Property Get StartRow() As Long
-    StartRow = mStartRow
+Public Property Get startRow() As Long
+    startRow = mStartRow
 End Property
 
 Public Property Get StartCol() As Long

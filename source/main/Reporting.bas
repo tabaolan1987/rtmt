@@ -95,7 +95,7 @@ Public Sub GenerateReport(rpm As ReportMetaData)
                                             query = rSect.MakeQuery(headerCol, ss)
                                             Logger.LogDebug "Reporting.GenerateReport", "Prepare query: " & query
                                             objRs.Open query, objConn, adOpenStatic, adLockReadOnly
-                                            Set rng = .Cells(rpm.StartRow, colCount)
+                                            Set rng = .Cells(rpm.startRow, colCount)
                                             rng.CopyFromRecordset objRs
                                             objRs.Close
                                             colCount = colCount + c
@@ -107,7 +107,7 @@ Public Sub GenerateReport(rpm As ReportMetaData)
                                         query = rSect.MakeQuery(headerCol, ss)
                                         Logger.LogDebug "Reporting.GenerateReport", "Prepare query: " & query
                                         objRs.Open query, objConn, adOpenStatic, adLockReadOnly
-                                        Set rng = .Cells(rpm.StartRow, colCount)
+                                        Set rng = .Cells(rpm.startRow, colCount)
                                         rng.CopyFromRecordset objRs
                                         objRs.Close
                                         colCount = colCount + headerCol.Count
@@ -119,7 +119,7 @@ Public Sub GenerateReport(rpm As ReportMetaData)
                                     objRs.Open rSect.query, objConn, adOpenStatic, adLockReadOnly
                                     
                                     'Logger.LogDebug "Reporting.GenerateReport", "Prepare Cells(" & CStr(rpm.StartRow) & "," & CStr(colCount) & ")"
-                                    Set rng = .Cells(rpm.StartRow, colCount) 'Starting point of the data range
+                                    Set rng = .Cells(rpm.startRow, colCount) 'Starting point of the data range
                                     rng.CopyFromRecordset objRs
                                     colCount = colCount + objRs.fields.Count
                                     objRs.Close
@@ -128,19 +128,25 @@ Public Sub GenerateReport(rpm As ReportMetaData)
                             End Select
                         Next
                          If rpm.CustomMode Then
-                           k = rpm.StartRow
+                           k = rpm.startRow
                            Dim ntid1 As String
                            Dim ntid2 As String
                            Dim courseId1 As String
                            Dim courseId2 As String
                            Dim psValue As String
                            Dim countValue As String
-                            Do While k < 65536
+                           Dim startRow As Long
+                           startRow = rpm.startRow
+                           Dim v As Variant
+                           Do While k < 65536
                                 psValue = .Cells(k, 12).value
                                 countValue = .Cells(k, 14).value
                                 ntid1 = .Cells(k, 1).value
                                 courseId1 = .Cells(k, 8).value
                                 If Len(Trim(psValue)) = 0 Then
+                                    For Each v In rpm.MergeColumes
+                                             .range(.Cells(startRow, CInt(v)), .Cells(k - 1, CInt(v))).Merge
+                                        Next v
                                     Exit Do
                                 End If
                                 If StringHelper.IsEqual(psValue, "s", True) _
@@ -150,39 +156,21 @@ Public Sub GenerateReport(rpm As ReportMetaData)
                                 Else
                                     k = k + 1
                                 End If
+                                  If rpm.MergeEnable Then
+                                    If Not StringHelper.IsEqual(ntid1, ntid2, True) And Len(ntid2) > 0 Then
+                                        For Each v In rpm.MergeColumes
+                                             .range(.Cells(startRow, CInt(v)), .Cells(k - 1, CInt(v))).Merge
+                                        Next v
+                                        startRow = k
+                                    End If
+                                  End If
                                 courseId2 = courseId1
                                 ntid2 = ntid1
                              Loop
-                             .Cells(rpm.StartRow, 14).EntireColumn.Delete
+                             .Cells(rpm.startRow, 14).EntireColumn.Delete
                         End If
                         
-                        If rpm.MergeEnable Then
-                            Dim tmpPrimaryValue As String
-                            Dim tmpValue As String
-                            Dim startMergeRow As Long
-                            Dim endMergeRow As Long
-                            Dim lastPrimaryValue As String
-                            Dim lastValue As String
-                            Dim v As Variant
-                            For i = rpm.StartRow To (rpm.Count + rpm.StartRow - 1)
-                                Set rng = .Cells(i, rpm.MergePrimary)
-                                tmpPrimaryValue = Trim(rng)
-                                Logger.LogDebug "Reporting.GenerateReport", "tmpPrimaryValue: " & tmpPrimaryValue & ". lastPrimaryValue: " & lastPrimaryValue
-                                If Len(tmpPrimaryValue) <> 0 Then
-                                    If StringHelper.IsEqual(tmpPrimaryValue, lastPrimaryValue, True) Then
-                                        rng.value = ""
-                                    Else
-                                    
-                                    End If
-                                Else
-                                End If
-                                lastPrimaryValue = tmpPrimaryValue
-                            Next i
-                            For Each v In rpm.MergeColumes
-                                j = CInt(v)
-                                
-                            Next v
-                        End If
+                        
                         '.PrintOut Copies:=1, Preview:=False, Collate:=True
                     End With
                     Logger.LogDebug "Reporting.GenerateReport", "Save report as : " & rpm.OutputPath

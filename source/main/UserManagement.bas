@@ -555,7 +555,7 @@ Public Function GenerateRoleMapping(rm As ReportMetaData)
                 Logger.LogDebug "UserManagement.GenerateRoleMapping", "Select worksheet: " & rm.WorkSheet
                 Set WS = WB.workSheets(rm.WorkSheet)
                 l = rm.StartCol
-                k = rm.StartRow
+                k = rm.startRow
                 With WS
                     Do While k < 65536
                         Set rng = .Cells(k, l)
