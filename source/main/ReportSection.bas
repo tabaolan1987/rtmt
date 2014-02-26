@@ -7,6 +7,7 @@ Attribute VB_Exposed = False
 Option Explicit
 Private mSectionType As String
 Private mHeader() As String
+Private mPivotHeader() As String
 Private mQuery As String
 Private mValid As Boolean
 Private ss As SystemSetting
@@ -167,12 +168,18 @@ Public Function Init(raw As String, Optional mss As SystemSetting, Optional Skip
                 dbm.DeleteTable tmpTableName
                 tmpQuery = "create table [" & tmpTableName & "] ( [key] varchar(255), "
                 tmpList = Split(StringHelper.TrimNewLine(queryCache(1)), ",")
+                arraySize = 0
                 For i = LBound(tmpList) To UBound(tmpList)
                     tmpStr = Trim(Replace(Replace(Replace(tmpList(i), Chr(10), " "), Chr(13), " "), Chr(9), " "))
                     tmpHeader = "f" & CStr(i + 1)
                     pilotHeader.Add tmpHeader, tmpStr
                     tmpCol.Add tmpHeader
                     tmpQuery = tmpQuery & "[" & tmpHeader & "]" & " varchar(255)" & ","
+                    
+                    ReDim Preserve mPivotHeader(arraySize)
+                    mPivotHeader(arraySize) = tmpHeader
+                    arraySize = arraySize + 1
+                    
                 Next i
                 If StringHelper.EndsWith(tmpQuery, ",", True) Then
                     tmpQuery = Left(tmpQuery, Len(tmpQuery) - 1)
@@ -226,8 +233,22 @@ Public Function Init(raw As String, Optional mss As SystemSetting, Optional Skip
                         dbm.RecordSet.MoveNext
                     Loop
                 End If
-                dbm.Recycle
+               
                 mQuery = StringHelper.GenerateQuery(StringHelper.TrimNewLine(queryCache(4)), DataQuery)
+               
+                If Not SkipCheckHeader Then
+                    dbm.OpenRecordSet mQuery
+                    mCount = dbm.RecordSet.RecordCount
+                    ' Execute query and get all header name
+                    Logger.LogDebug "ReportSection.Init", "Fields count: " & CStr(dbm.RecordSet.fields.Count)
+                    arraySize = 0
+                    For i = 0 To dbm.RecordSet.fields.Count - 1
+                        ReDim Preserve mHeader(arraySize)
+                        mHeader(arraySize) = dbm.RecordSet.fields(i).Name
+                        arraySize = arraySize + 1
+                    Next i
+                End If
+                dbm.Recycle
             End If
         Case Else
     End Select
@@ -439,4 +460,16 @@ End Function
 
 Public Property Get CachedTable() As String
     CachedTable = mCachedTable
+End Property
+
+Public Property Get PivotHeader() As String()
+    PivotHeader = mPivotHeader
+End Property
+
+Public Property Get PivotHeaderCount() As Integer
+    If Not Ultilities.IsVarArrayEmpty(mPivotHeader) Then
+        PivotHeaderCount = UBound(mPivotHeader) + 1
+    Else
+        PivotHeaderCount = 0
+    End If
 End Property

@@ -533,14 +533,10 @@ Public Function GenerateRoleMapping(rm As ReportMetaData)
     Dim isUpdate As Boolean
     i = 0
     For Each tmpRps In rm.ReportSections
-        If i = 0 Then
-            startMappingCol = rm.StartCol + tmpRps.HeaderCount
-        ElseIf i = 1 Then
-            header = tmpRps.header
-            mappingCount = tmpRps.HeaderCount
-        Else
-        End If
-        i = i + 1
+        startMappingCol = (tmpRps.HeaderCount - tmpRps.PivotHeaderCount) + rm.StartCol
+        header = tmpRps.PivotHeader
+        mappingCount = tmpRps.PivotHeaderCount
+        Exit For
     Next
     
     Logger.LogDebug "UserManagement.GenerateRoleMapping", "Mapping Cols count : " & CStr(mappingCount) _
@@ -575,7 +571,7 @@ Public Function GenerateRoleMapping(rm As ReportMetaData)
                             j = startMappingCol + i
                             Set rng = .Cells(rm.StartHeaderRow, j)
                             tmpRole = rng.value
-                            'Logger.LogDebug "UserManagement.GenerateRoleMapping", "Found role: " & tmpRole
+                            Logger.LogDebug "UserManagement.GenerateRoleMapping", "Found role: " & tmpRole
                             ' Get mapping check
                             Set rng = .Cells(k, j)
                             tmpStr = Trim(rng.value)

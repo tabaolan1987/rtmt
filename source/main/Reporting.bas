@@ -144,10 +144,12 @@ Public Sub GenerateReport(rpm As ReportMetaData)
                                 ntid1 = .Cells(k, 1).value
                                 courseId1 = .Cells(k, 8).value
                                 If Len(Trim(psValue)) = 0 Then
-                                    For Each v In rpm.MergeColumes
-                                             .range(.Cells(startRow, CInt(v)), .Cells(k - 1, CInt(v))).Merge
-                                        Next v
-                                    Exit Do
+                                    If rpm.MergeEnable Then
+                                        For Each v In rpm.MergeColumes
+                                                 .range(.Cells(startRow, CInt(v)), .Cells(k - 1, CInt(v))).Merge
+                                            Next v
+                                        Exit Do
+                                    End If
                                 End If
                                 If StringHelper.IsEqual(psValue, "s", True) _
                                     And StringHelper.IsEqual(ntid1, ntid2, True) _
