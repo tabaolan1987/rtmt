@@ -3,3 +3,4 @@ from audit_logs as AD
 inner join functions as F
 on AD.idFunction = F.id
 where AD.idFunction = '(%RG_F_ID%)'
+order by AD.timestamp DESC

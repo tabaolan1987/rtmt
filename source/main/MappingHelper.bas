@@ -22,8 +22,17 @@ Public Function Init(md As MappingMetadata, Optional mss As SystemSetting, Optio
                             Optional filterLeft As String)
     Set mmd = md
     Set ss = mss
-    mFilterTop = filterTop
-    mFilterLeft = filterLeft
+    If Len(Trim(filterTop)) = 0 Then
+        mFilterTop = "'" & StringHelper.GetGUID & "'"
+    Else
+        mFilterTop = filterTop
+    End If
+    If Len(Trim(filterLeft)) = 0 Then
+        mFilterLeft = "'" & StringHelper.GetGUID & "'"
+    Else
+        mFilterLeft = filterLeft
+    End If
+   
     If mmd.Valid Then
         Set dbm = New DbManager
         Set mmd = md
@@ -31,7 +40,7 @@ Public Function Init(md As MappingMetadata, Optional mss As SystemSetting, Optio
             Set ss = Session.Settings()
         End If
         PrepareMappingActivitesBBJobRoles
-        PrepareData filterTop, filterLeft
+        PrepareData
         If dictTop.Count <> 0 And dictTopComment.Count <> 0 _
             And dictLeft.Count <> 0 And dictLeftComment.Count <> 0 Then
             Valid = True
@@ -64,8 +73,7 @@ Public Function CheckExistMapping() As Boolean
     dbm.Recycle
 End Function
 
-Private Function PrepareData(Optional filterTop As String, _
-                            Optional filterLeft As String)
+Private Function PrepareData()
     Dim tmpId As String, tmpIdLeft As String
     Dim query As String
     Dim tmpComment As String
@@ -76,7 +84,7 @@ Private Function PrepareData(Optional filterTop As String, _
     Set dictTopComment = New Scripting.Dictionary
     dbm.Init
     Set data = New Scripting.Dictionary
-    data.Add Constants.Q_KEY_FILTER, filterTop
+    data.Add Constants.Q_KEY_FILTER, mFilterTop
     query = mmd.query(Q_TOP, data)
     Logger.LogDebug "MappingHelper.PrepareData", "Query top: " & query
     dbm.OpenRecordSet query
@@ -104,7 +112,7 @@ Private Function PrepareData(Optional filterTop As String, _
     Set dictLeftComment = New Scripting.Dictionary
     dbm.Init
     Set data = New Scripting.Dictionary
-    data.Add Constants.Q_KEY_FILTER, filterLeft
+    data.Add Constants.Q_KEY_FILTER, mFilterLeft
     query = mmd.query(Q_LEFT, data)
     Logger.LogDebug "MappingHelper.PrepareData", "Query left: " & query
     dbm.OpenRecordSet query
@@ -353,10 +361,18 @@ Public Function PrepareMappingActivitesBBJobRoles()
     Dim str2 As String
     Dim str3 As String
     Dim query As String
+    Dim filter As String
+    Dim rps As ReportSection
+    Dim rm As ReportMetaData
+    Set rm = Session.ReportMetaData(Constants.RP_END_USER_TO_BB_JOB_ROLE)
+    For Each rps In rm.ReportSections
+            filter = StringHelper.GenerateFilter(rps.PivotHeader)
+            Exit For
+    Next
     Dim tmpRst As DAO.RecordSet
     Dim tmpQdf As DAO.QueryDef
     query = "select MA.idActivity, MA.idBpRoleStandard, MA.Description from (MappingActivityBpStandardRole as MA inner join BpRoleStandard AS BR on BR.id = MA.idBpRolestandard)" _
-            & " where BR.BpRoleStandardName in (" & mFilterLeft & ")" _
+            & " where BR.BpRoleStandardName in (" & filter & ")" _
             & " and MA.deleted = 0 and MA.function_region='" & Session.CurrentUser.FuncRegion.FuncRgID & "'"
     dbm.Init
     dbm.OpenRecordSet query
@@ -364,7 +380,7 @@ Public Function PrepareMappingActivitesBBJobRoles()
     Else
         mmd.SetComplete (False)
         query = "select MA.idActivity, MA.idBpRoleStandard, MA.Description from (MappingActivityBpStandardRole as MA inner join BpRoleStandard AS BR on BR.id = MA.idBpRolestandard)" _
-            & " where BR.BpRoleStandardName in (" & mFilterLeft & ")" _
+            & " where BR.BpRoleStandardName in (" & filter & ")" _
             & " and MA.deleted = 0 and MA.function_region=''"
         Set tmpQdf = dbm.Database.CreateQueryDef("", query)
         Set tmpRst = tmpQdf.OpenRecordSet

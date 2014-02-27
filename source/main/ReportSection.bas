@@ -177,7 +177,7 @@ Public Function Init(raw As String, Optional mss As SystemSetting, Optional Skip
                     tmpQuery = tmpQuery & "[" & tmpHeader & "]" & " varchar(255)" & ","
                     
                     ReDim Preserve mPivotHeader(arraySize)
-                    mPivotHeader(arraySize) = tmpHeader
+                    mPivotHeader(arraySize) = tmpStr
                     arraySize = arraySize + 1
                     
                 Next i

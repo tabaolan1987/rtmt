@@ -1,9 +1,6 @@
 # IMPORTANT
 MappingActivityBpStandardRole
-MappingRegionSystemRole
-MappingSystemRoleBpStandardRole
 user_data
-CourseMappingBpRoleStandard
 SpecialismMappingActivity
 user_data_mapping_role
-audit_logs
+Specialism

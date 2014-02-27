@@ -80,7 +80,7 @@ tmp_pilot_report_2
 		Regional Backbone Administrator,
 		Vendor Maintainer - SQM
 ===
-select ntid as [value] from user_data where deleted=0 and SFunction='(%RG_F_NAME%)'
+select ntid as [value] from user_data_cache where deleted=0 and SFunction='(%RG_F_NAME%)'
 ===
 select bpRole.BpRoleStandardName as [value]
 from (((((user_data_cache as udata 

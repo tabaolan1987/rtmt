@@ -530,7 +530,7 @@ Public Function GenerateRoleMapping(rm As ReportMetaData)
     Dim rng As Excel.range
     Dim tmpRps As ReportSection
     Dim header() As String
-    Dim isUpdate As Boolean
+    Dim IsUpdate As Boolean
     i = 0
     For Each tmpRps In rm.ReportSections
         startMappingCol = (tmpRps.HeaderCount - tmpRps.PivotHeaderCount) + rm.StartCol

@@ -86,6 +86,13 @@ Public Function ReportMetaData(reportName As String) As ReportMetaData
     End If
     Dim rmd As ReportMetaData
     If Not mReportMDCol.Exists(reportName) Then
+        If StringHelper.IsEqual(reportName, Constants.RP_AUDIT_LOG, True) Then
+            Dim dbm As New DbManager
+            dbm.Init
+            dbm.DeleteTable Constants.TABLE_AUDIT_LOG
+            dbm.SyncTable Settings.ServerName & "," & Settings.Port, Settings.DatabaseName, Constants.TABLE_AUDIT_LOG, Constants.TABLE_AUDIT_LOG, Settings.userNAme, Settings.Password, False
+            dbm.Recycle
+        End If
         Set rmd = New ReportMetaData
         rmd.Init reportName
         mReportMDCol.Add reportName, rmd
