@@ -31,7 +31,7 @@ End Sub
 
 Public Sub TestMappingMetaData()
     On Error GoTo OnError
-    Dim mmd As New MappingMetadata
+    Dim mmd As New MappingMetaData
     mmd.Init Constants.MAPPING_ACTIVITIES_SPECIALISM
     Dim data As New Scripting.Dictionary
     data.Add Constants.Q_KEY_ID, "test id 1"
@@ -57,7 +57,7 @@ End Sub
 
 Public Sub TestInitMapping()
     On Error GoTo OnError
-    Dim mmd As New MappingMetadata
+    Dim mmd As New MappingMetaData
     Dim ss As SystemSetting
     Set ss = Session.Settings()
     mmd.Init Constants.MAPPING_ACTIVITIES_SPECIALISM

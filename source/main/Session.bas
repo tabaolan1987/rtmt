@@ -31,7 +31,7 @@ End Function
 
 Public Function RecyleMapping()
     mFlagMapping = False
-    Dim md As MappingMetadata
+    Dim md As MappingMetaData
     Dim v As Variant
     If Not mMappingMDCol Is Nothing Then
         For Each v In mMappingMDCol.keys
@@ -40,9 +40,7 @@ Public Function RecyleMapping()
         Next v
     End If
     Set mMappingMDCol = New Scripting.Dictionary
-    Set md = New MappingMetadata
-    md.Init Constants.MAPPING_ACTIVITIES_BB_JOB_ROLE, Settings
-    mMappingMDCol.Add Constants.MAPPING_ACTIVITIES_BB_JOB_ROLE, md
+    
 End Function
 
 Public Function RecyleReports()
@@ -73,11 +71,17 @@ Public Function Init()
     Recycle
 End Function
 
-Public Function MappingMDCol() As Scripting.Dictionary
+Public Function MappingMetaData(mappingName As String) As MappingMetaData
     If mMappingMDCol Is Nothing Then
         RecyleMapping
     End If
-    Set MappingMDCol = mMappingMDCol
+    Dim md As MappingMetaData
+    If Not mMappingMDCol.Exists(mappingName) Then
+        Set md = New MappingMetaData
+        md.Init mappingName, Settings
+        mMappingMDCol.Add mappingName, md
+    End If
+    Set MappingMetaData = mMappingMDCol.Item(mappingName)
 End Function
 
 Public Function ReportMetaData(reportName As String) As ReportMetaData
@@ -100,11 +104,13 @@ Public Function ReportMetaData(reportName As String) As ReportMetaData
     Set ReportMetaData = mReportMDCol.Item(reportName)
 End Function
 
-Public Function ReportMDCols() As Scripting.Dictionary
-    If mReportMDCol Is Nothing Then
-        RenewReports
-    End If
-    Set ReportMDCols = mReportMDCol
+Public Function ReportMDCols() As Collection
+     Dim list As New Collection
+     list.Add Constants.RP_AUDIT_LOG
+     list.Add Constants.RP_END_USER_TO_BB_JOB_ROLE
+     list.Add Constants.RP_END_USER_TO_COURSE
+     list.Add Constants.RP_ROLE_MAPPING_OUTPUT_OF_TOOL_FOR_SECURITY
+     Set ReportMDCols = list
 End Function
 
 Public Function CurrentUser() As CurrentUser

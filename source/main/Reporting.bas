@@ -66,6 +66,9 @@ Public Sub GenerateReport(rpm As ReportMetaData)
                     Logger.LogDebug "Reporting.GenerateReport", "Select worksheet: " & rpm.WorkSheet
                     Set WS = WB.workSheets(rpm.WorkSheet) 'Replace with the name of actual sheet
                     With WS
+                        If .FilterMode Then
+                            .ShowAllData
+                        End If
                         Logger.LogDebug "Reporting.GenerateReport", "Detect query type: Section"
                         Dim rSect As ReportSection
                         Dim colCount As Long
@@ -192,6 +195,12 @@ Public Sub GenerateReport(rpm As ReportMetaData)
                             Next v
                         End If
                         WS.Rows.AutoFit
+                        Dim pi As PivotItem
+                         For Each pi In Pivot.PivotFields("NTID").PivotItems
+                             If pi.value = "(blank)" Then
+                                 pi.Visible = False
+                            End If
+                         Next pi
                     End If
                     Logger.LogDebug "Reporting.GenerateReport", "Save report as : " & rpm.OutputPath
                     .SaveAs (rpm.OutputPath)
@@ -207,17 +216,3 @@ Public Sub GenerateReport(rpm As ReportMetaData)
         Logger.LogError "Reporting.GenerateReport", "The reporting meta data format is not valid", Nothing
     End If
 End Sub
-
-Public Function CountUncompleteReport() As Integer
-    Dim v As Variant
-    Dim i As Integer
-    Dim rpm As ReportMetaData
-    i = 0
-    For Each v In Session.ReportMDCols.keys
-        Set rpm = Session.ReportMetaData(CStr(v))
-        If Not rpm.Complete Then
-            i = i + 1
-        End If
-    Next v
-    CountUncompleteReport = i
-End Function

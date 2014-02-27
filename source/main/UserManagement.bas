@@ -553,6 +553,9 @@ Public Function GenerateRoleMapping(rm As ReportMetaData)
                 l = rm.StartCol
                 k = rm.startRow
                 With WS
+                    If .FilterMode Then
+                        .ShowAllData
+                    End If
                     Do While k < 65536
                         Set rng = .Cells(k, l)
                         tmpNtid = rng.value

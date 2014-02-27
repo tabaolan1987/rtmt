@@ -11,14 +11,14 @@ Private dictTopComment As Scripting.Dictionary
 Private dictLeft As Scripting.Dictionary
 Private dictLeftComment As Scripting.Dictionary
 Private dbm As DbManager
-Private mmd As MappingMetadata
+Private mmd As MappingMetaData
 Private ss As SystemSetting
 Private Valid As Boolean
 Private mFilterTop As String
 Private mFilterLeft As String
 Private mWorkingFile As String
 
-Public Function Init(md As MappingMetadata, Optional mss As SystemSetting, Optional filterTop As String, _
+Public Function Init(md As MappingMetaData, Optional mss As SystemSetting, Optional filterTop As String, _
                             Optional filterLeft As String)
     Set mmd = md
     Set ss = mss
@@ -286,7 +286,11 @@ Public Function ParseMapping()
             With WB
                 Logger.LogDebug "MappingHelper.ParseMapping", "Select worksheet: " & mmd.WorkSheet
                 Set WS = WB.workSheets(mmd.WorkSheet)
+                
                 With WS
+                    If .FilterMode Then
+                        .ShowAllData
+                    End If
                     l = mmd.StartColTop
                     For Each v In dictTop.keys
                         tmpDictTop.Add l, CStr(v)
