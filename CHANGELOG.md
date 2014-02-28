@@ -1,6 +1,48 @@
 CHANGELOG (notable new features or fixes)
 ---------
 
+###<a href='https://cmgcode.atlassian.net/browse/DURM/fixforversion/11500'>Version 0.1.8</a>
+Released on: 28/02/2014
+
++ Improve performance
++ Improve Excel templates (Add filter, freeze pane, pivot table)
++ Allow RC role to manual mapping EUDLs - Backbone Job Roles on Landing page
++ Allow Admin role to edit EUDLs on Administration page
++ Allow user to override the NTID conflicts (does not match the GAL)
++ Add warning message if user cannot connect to central database
++ Critical & major bugs fixed
+
+<h5>        Bug
+</h5>
+<ul>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-121'>DURM-121</a>] -         Upload File - Could not complete if more than 1 user access to database
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-131'>DURM-131</a>] -         Reports - Default mapping of End Users to BB Job Roles does not work (daily test)
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-132'>DURM-132</a>] -         Reports - Securities report is empty (daily test)
+</li>
+</ul>
+                
+<h5>        Improvement
+</h5>
+<ul>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-125'>DURM-125</a>] -         Add warning message if user cannot connect to central database
+</li>
+</ul>
+            
+<h5>        Task
+</h5>
+<ul>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-128'>DURM-128</a>] -         Improve performance
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-133'>DURM-133</a>] -         Write function to delete data to refresh the Tool.
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-134'>DURM-134</a>] -         Add more button in landing page 
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-138'>DURM-138</a>] -         Allow user to override the NTID conflicts (does not match the GAL)
+</li>
+</ul>
+
 ###<a href='https://cmgcode.atlassian.net/browse/DURM/fixforversion/11404'>Version 0.1.7</a>
 Released on: 18/02/2014
 
