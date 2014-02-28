@@ -1,9 +1,7 @@
 Option Explicit
 
 Public Sub OnTest()
-    'Run '"FileHelperTester"
-    Dim rmd As New ReportMetaData
-    rmd.Init Constants.RP_END_USER_TO_BB_JOB_ROLE
+    Run
 End Sub
 
 Public Sub Run(Optional TestClassName As String)

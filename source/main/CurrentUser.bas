@@ -172,11 +172,11 @@ Public Function ListFunctions(region As String) As Collection
 End Function
 
 
-Public Function SelectFunc(fName As String)
+Public Function SelectFunc(fname As String)
     Dim frg As FunctionRegion
     If mValid And Not mListFuncRg Is Nothing Then
         For Each frg In mListFuncRg
-            If StringHelper.IsEqual(frg.value, fName, True) Then
+            If StringHelper.IsEqual(frg.value, fname, True) Then
                 Set mFuncRegion = frg
                 Exit For
             End If

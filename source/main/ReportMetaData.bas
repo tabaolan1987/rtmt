@@ -40,6 +40,8 @@ Private mPivotWordWrapCols As Collection
 
 Private mComplete As Boolean
 
+Private mLastModified As String
+
 Public Function Init(Name As String, Optional ss As SystemSetting, Optional rpType As String)
     If Len(rpType) > 0 Then
         mType = rpType
@@ -197,6 +199,7 @@ Public Function Recyle()
     FileHelper.DeleteFile mTemplateFilePath
     FileHelper.DeleteFile mConfigFilePath
     FileHelper.DeleteFile mOutputPath
+    mComplete = False
 End Function
 
 Public Property Get ReportSections() As Collection
@@ -268,6 +271,16 @@ End Property
 
 Public Function SetComplete(done As Boolean)
     mComplete = done
+    mLastModified = FileHelper.FileLastModified(OutputPath)
+End Function
+
+Public Function IsChange() As Boolean
+    IsChange = False
+    If FileHelper.IsExistFile(OutputPath) Then
+        If Not StringHelper.IsEqual(FileHelper.FileLastModified(OutputPath), mLastModified, True) Then
+            IsChange = True
+        End If
+    End If
 End Function
 
 Public Property Get Complete() As Boolean

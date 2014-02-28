@@ -59,6 +59,20 @@ Public Function RecyleReports()
     mAllReportsZip = ""
 End Function
 
+Public Function RecyleReport(Name As String)
+    mFlagReports = False
+    Dim rmd As ReportMetaData
+    Dim v As Variant
+    ' Remove all cache report
+    If Not mReportMDCol Is Nothing Then
+        Set rmd = mReportMDCol.Item(Name)
+        rmd.Recyle
+        mReportMDCol.Remove (Name)
+    End If
+    FileHelper.DeleteFile mAllReportsZip
+    mAllReportsZip = ""
+End Function
+
 Public Function RenewReports()
     Dim rmd As ReportMetaData
     Set mReportMDCol = New Scripting.Dictionary
