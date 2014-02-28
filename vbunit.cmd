@@ -5,4 +5,5 @@ cscript ".\scripts\run.vbs" rolemapping.accdb WGetAllTables
 cscript ".\scripts\run.vbs" rolemapping.accdb OnTest
 ping 1.1.1.1 -n 1 -w 10000 > nul
 ".\thirdparty\PSTools\pskill.exe" msaccess.exe
+".\thirdparty\PSTools\pskill.exe" excel.exe
 del skip.launch
