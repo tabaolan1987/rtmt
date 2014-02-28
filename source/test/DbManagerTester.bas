@@ -64,7 +64,7 @@ Public Sub TestSyncTable()
         For i = LBound(SyncTables) To UBound(SyncTables)
             stTable = Trim(SyncTables(i))
             Logger.LogDebug "DbManagerTester.TestSyncTable", "Start sync table: " & stTable
-            dbm.SyncTable prop.ServerName & "," & prop.Port, prop.DatabaseName, stTable, stTable, prop.userNAme, prop.Password, False
+            'dbm.SyncTable prop.ServerName & "," & prop.Port, prop.DatabaseName, stTable, stTable, prop.userNAme, prop.Password, False
         Next i
     End If
 OnExit:
