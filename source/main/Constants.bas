@@ -18,6 +18,10 @@ Public Const HELP_UPLOAD_EUDL = "data\helps\upload-eudl.txt"
 
 Public Const HELP_REPORTS = "data\helps\reports.txt"
 
+Public Const HELP_ADMIN = "data\helps\admin.txt"
+
+Public Const HELP_MAPPING = "data\helps\mapping.txt"
+
 Public Const TEMPLATE_EUDL = "data\template\eudl_template.xlsx"
 
 Public Const FIELD_TIMESTAMP = "Timestamp"
