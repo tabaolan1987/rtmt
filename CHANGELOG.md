@@ -2,7 +2,7 @@ CHANGELOG (notable new features or fixes)
 ---------
 
 ###<a href='https://cmgcode.atlassian.net/browse/DURM/fixforversion/11500'>Version 0.1.8</a>
-Released on: 28/02/2014
+Released on: 03/03/2014
 
 + Improve performance
 + Improve Excel templates (Add filter, freeze pane, pivot table)
@@ -20,6 +20,10 @@ Released on: 28/02/2014
 <li>[<a href='https://cmgcode.atlassian.net/browse/DURM-131'>DURM-131</a>] -         Reports - Default mapping of End Users to BB Job Roles does not work (daily test)
 </li>
 <li>[<a href='https://cmgcode.atlassian.net/browse/DURM-132'>DURM-132</a>] -         Reports - Securities report is empty (daily test)
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-140'>DURM-140</a>] -         Landing page - Some display improvements
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-141'>DURM-141</a>] -         Landing page - display issue
 </li>
 </ul>
                 
@@ -41,7 +45,10 @@ Released on: 28/02/2014
 </li>
 <li>[<a href='https://cmgcode.atlassian.net/browse/DURM-138'>DURM-138</a>] -         Allow user to override the NTID conflicts (does not match the GAL)
 </li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-139'>DURM-139</a>] -         Release version 0.1.8
+</li>
 </ul>
+
 
 ###<a href='https://cmgcode.atlassian.net/browse/DURM/fixforversion/11404'>Version 0.1.7</a>
 Released on: 18/02/2014
