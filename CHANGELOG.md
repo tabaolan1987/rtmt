@@ -7,7 +7,7 @@ Released on: 04/03/2014
 + Improve performance
 + Improve Excel templates (Add filter, freeze pane, pivot table)
 + Allow RC role to manual mapping EUDLs - Backbone Job Roles on Landing page
-+ Allow Admin role to edit EUDLs on Administration page
++ Allow RC role to edit EUDLs
 + Allow user to override the NTID conflicts (does not match the GAL)
 + Add warning message if user cannot connect to central database
 + Critical & major bugs fixed
