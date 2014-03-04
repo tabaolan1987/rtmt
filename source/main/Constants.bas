@@ -121,6 +121,7 @@ Public Const KEY_LOG_LEVEL = "logLevel"
 Public Const KEY_ENABLE_TESTING = "enableTesting"
 Public Const KEY_ENABLE_VALIDATION = "enableValidation"
 Public Const KEY_SYNC_FIXED_TABLES = "syncFixedTables"
+Public Const KEY_ENABLE_AUDITLOG = "enableAuditLog"
 
 Public Const SECTION_GENERAL = "General"
 Public Const KEY_NAME = "name"

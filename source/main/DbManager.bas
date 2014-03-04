@@ -843,12 +843,14 @@ Public Function CreateServerRecord(datas As Scripting.Dictionary, colsType As Sc
                                     & "' WHERE [" & Constants.FIELD_ID & "] = '" & StringHelper.EscapeQueryString(tmpId) & "'"
         Logger.LogDebug "DbManager.CreateServerRecord", "Query: " & query
         ExecuteQuery query
-        ExecuteQuery "insert into audit_logs([id], [ntid], [idFunction], [userAction], [description]) values('" _
+        If Session.Settings.EnableAuditLog Then
+            ExecuteQuery "insert into audit_logs([id], [ntid], [idFunction], [userAction], [description]) values('" _
             & StringHelper.EscapeQueryString(StringHelper.GetGUID) & "','" _
             & StringHelper.EscapeQueryString(Session.CurrentUser.ntid) & "','" _
             & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.FuncRgID) & "','" _
             & StringHelper.EscapeQueryString("Create central store record") & "','" _
             & StringHelper.EscapeQueryString(createQuery) & "')"
+        End If
     End If
 OnExit:
     On Error Resume Next
@@ -900,12 +902,14 @@ Public Function UpdateServerRecord(datas As Scripting.Dictionary, cols As Collec
                                     & "' WHERE [id] = '" & StringHelper.EscapeQueryString(tmpId) & "'"
         Logger.LogDebug "DbManager.UpdateServerRecord", "Query: " & query
         ExecuteQuery query
-        ExecuteQuery "insert into audit_logs([id], [ntid], [idFunction], [userAction], [description]) values('" _
+        If Session.Settings.EnableAuditLog Then
+            ExecuteQuery "insert into audit_logs([id], [ntid], [idFunction], [userAction], [description]) values('" _
             & StringHelper.EscapeQueryString(StringHelper.GetGUID) & "','" _
             & StringHelper.EscapeQueryString(Session.CurrentUser.ntid) & "','" _
             & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.FuncRgID) & "','" _
             & StringHelper.EscapeQueryString("Update central store record") & "','" _
             & StringHelper.EscapeQueryString(updateQuery) & "')"
+        End If
         
     End If
 OnExit:

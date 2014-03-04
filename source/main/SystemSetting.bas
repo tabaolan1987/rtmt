@@ -34,6 +34,7 @@ Private mEnv As String
 Private mVersion As String
 Private mCheckIpURL As String
 Private mSyncFixedTables As Boolean
+Private mEnableAuditLog As Boolean
 
 Public Function Init()
     Dim ir As IniReader: Set ir = Ultilities.SystemIniReader
@@ -81,6 +82,7 @@ Public Function Init()
     mCheckIpURL = ir.ReadKey(Constants.SECTION_APPLICATION, Constants.KEY_CHECK_IP_URL)
     
     mEnableTesting = ir.ReadBooleanKey(Constants.SECTION_APPLICATION, Constants.KEY_ENABLE_TESTING)
+    mEnableAuditLog = ir.ReadBooleanKey(Constants.SECTION_APPLICATION, Constants.KEY_ENABLE_AUDITLOG)
     mSyncFixedTables = ir.ReadBooleanKey(Constants.SECTION_APPLICATION, Constants.KEY_SYNC_FIXED_TABLES)
     
     mEnableValidation = ir.ReadBooleanKey(Constants.SECTION_USER_DATA, Constants.KEY_ENABLE_VALIDATION)
@@ -217,4 +219,8 @@ End Property
 
 Public Property Get SyncFixedTables() As Boolean
     SyncFixedTables = mSyncFixedTables
+End Property
+
+Public Property Get EnableAuditLog() As Boolean
+    EnableAuditLog = mEnableAuditLog
 End Property
