@@ -47,7 +47,12 @@ Released on: 03/03/2014
 </li>
 <li>[<a href='https://cmgcode.atlassian.net/browse/DURM-139'>DURM-139</a>] -         Release version 0.1.8
 </li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-144'>DURM-144</a>] -         Please correct Typo on Manual Mapping button
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-146'>DURM-146</a>] -         Please add functionality to edit ALL end user data to the RC mapper role
+</li>
 </ul>
+
 
 
 ###<a href='https://cmgcode.atlassian.net/browse/DURM/fixforversion/11404'>Version 0.1.7</a>
