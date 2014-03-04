@@ -176,7 +176,7 @@ Private Function ValidateNtid(s As SystemSetting, ntids As String, Optional user
         Dim fields As String
         Dim mData As String
         Dim result As String
-        Dim NTID As String
+        Dim ntid As String
         Dim str1 As String, str2 As String, key As String, value As String
         Dim check As Boolean
         Dim v As Variant
@@ -208,7 +208,7 @@ Private Function ValidateNtid(s As SystemSetting, ntids As String, Optional user
             If StringHelper.IsContain(result, "}", True) And StringHelper.IsContain(result, "{", True) Then
                 Set checkList = JSONHelper.parse(result)
                 For Each tmpDict In checkList
-                    NTID = tmpDict.Item("ntid")
+                    ntid = tmpDict.Item("ntid")
                     check = tmpDict.Item("isvalid")
                     Logger.LogDebug "DbManager.SyncUserData", "Is valid: " & CStr(check)
                     Logger.LogDebug "DbManager.SyncUserData", s.SyncUsers.Item(Constants.FIELD_FIRST_NAME) & " | " & s.SyncUsers.Item(Constants.FIELD_LAST_NAME)
@@ -216,9 +216,9 @@ Private Function ValidateNtid(s As SystemSetting, ntids As String, Optional user
                                                 & " " _
                                                 & tmpUserData.Item(Constants.FIELD_LAST_NAME)
                     If check Then
-                        Logger.LogDebug "DbManager.SyncUserData", "check ntid: " & NTID
+                        Logger.LogDebug "DbManager.SyncUserData", "check ntid: " & ntid
                         If Not userData Is Nothing And userData.Count > 0 Then
-                            Set tmpUserData = userData.Item(NTID)
+                            Set tmpUserData = userData.Item(ntid)
                             
                             For Each v In validatorMapping
                                 key = v
@@ -230,7 +230,7 @@ Private Function ValidateNtid(s As SystemSetting, ntids As String, Optional user
                                 If StringHelper.IsEqual(str1, str2, True) Then
                                     Logger.LogDebug "DbManager.SyncUserData", "validated!!!"
                                 Else
-                                    AddWarning ("Validation failed !!! NTID: " & NTID & " . Field name: " & key & ". Local: " & str1 & ". LDAP: " & str2)
+                                    AddWarning ("Validation failed !!! NTID: " & ntid & " . Field name: " & key & ". Local: " & str1 & ". LDAP: " & str2)
                                     tmpStr = StringHelper.GetDictKey(s.SyncUsers, key)
                                     Logger.LogDebug "DbManager.SyncUserData", "Db column: " & tmpStr
                                     Set tmpInsertCols = New Collection
@@ -242,7 +242,7 @@ Private Function ValidateNtid(s As SystemSetting, ntids As String, Optional user
                                     tmpInsertCols.Add "LDAP"
                                     tmpInsertCols.Add "Select"
                                     Set tmpInsertData = New Scripting.Dictionary
-                                    tmpInsertData.Add "NTID", NTID
+                                    tmpInsertData.Add "NTID", ntid
                                     tmpInsertData.Add "Name", FullName
                                     tmpInsertData.Add "Field heading", key
                                     tmpInsertData.Add "Db field", tmpStr
@@ -254,14 +254,14 @@ Private Function ValidateNtid(s As SystemSetting, ntids As String, Optional user
                             Next v
                         End If
                     Else
-                        AddWarning ("Validation failed !!! NTID: " & NTID & " not found!")
+                        AddWarning ("Validation failed !!! NTID: " & ntid & " not found!")
                         
                         Set tmpInsertCols = New Collection
                         tmpInsertCols.Add "NTID"
                         tmpInsertCols.Add "Name"
                         tmpInsertCols.Add "Select"
                         Set tmpInsertData = New Scripting.Dictionary
-                        tmpInsertData.Add "NTID", NTID
+                        tmpInsertData.Add "NTID", ntid
                         tmpInsertData.Add "Name", FullName
                         tmpInsertData.Add "Select", "-1"
                         CreateLocalRecord tmpInsertData, tmpInsertCols, Constants.TABLE_USER_DATA_LDAP_NOTFOUND
@@ -845,7 +845,7 @@ Public Function CreateServerRecord(datas As Scripting.Dictionary, colsType As Sc
         ExecuteQuery query
         ExecuteQuery "insert into audit_logs([id], [ntid], [idFunction], [userAction], [description]) values('" _
             & StringHelper.EscapeQueryString(StringHelper.GetGUID) & "','" _
-            & StringHelper.EscapeQueryString(Session.CurrentUser.NTID) & "','" _
+            & StringHelper.EscapeQueryString(Session.CurrentUser.ntid) & "','" _
             & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.FuncRgID) & "','" _
             & StringHelper.EscapeQueryString("Create central store record") & "','" _
             & StringHelper.EscapeQueryString(createQuery) & "')"
@@ -902,7 +902,7 @@ Public Function UpdateServerRecord(datas As Scripting.Dictionary, cols As Collec
         ExecuteQuery query
         ExecuteQuery "insert into audit_logs([id], [ntid], [idFunction], [userAction], [description]) values('" _
             & StringHelper.EscapeQueryString(StringHelper.GetGUID) & "','" _
-            & StringHelper.EscapeQueryString(Session.CurrentUser.NTID) & "','" _
+            & StringHelper.EscapeQueryString(Session.CurrentUser.ntid) & "','" _
             & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.FuncRgID) & "','" _
             & StringHelper.EscapeQueryString("Update central store record") & "','" _
             & StringHelper.EscapeQueryString(updateQuery) & "')"

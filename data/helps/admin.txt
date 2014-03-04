@@ -1,1 +1,1 @@
-Select the Administration button to view and/or edit mapping of Activities To Backbone Job Roles and End user data landscape
+Select the Administration button to view and/or edit mapping of Activities To Backbone Job Roles

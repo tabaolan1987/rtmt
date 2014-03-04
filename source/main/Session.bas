@@ -10,6 +10,7 @@ Private mMappingMDCol As Scripting.Dictionary
 Private mReportMDCol As Scripting.Dictionary
 Private mSelectedCSV As String
 Private mAllReportsZip As String
+Private mCurrentHelpContent As String
 
 Public Function Recycle()
     Set ss = Nothing
@@ -177,4 +178,16 @@ End Function
 
 Public Function AllReportsZip() As String
     AllReportsZip = mAllReportsZip
+End Function
+
+
+Public Function CurrentHelpContent() As String
+    If Len(mCurrentHelpContent) = 0 Then
+        mCurrentHelpContent = Constants.HELP_UPLOAD_EUDL
+    End If
+    CurrentHelpContent = mCurrentHelpContent
+End Function
+
+Public Function SetCurrentHelpContent(help As String)
+    mCurrentHelpContent = help
 End Function

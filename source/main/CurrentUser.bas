@@ -192,8 +192,8 @@ Public Property Get Auth() As Boolean
     Auth = mAuth
 End Property
 
-Public Property Get NTID() As String
-    NTID = mNtid
+Public Property Get ntid() As String
+    ntid = mNtid
 End Property
 
 Public Property Get FuncRegion() As FunctionRegion
@@ -204,6 +204,6 @@ Public Property Get ListFuncRg() As Collection
     Set ListFuncRg = mListFuncRg
 End Property
 
-Public Function SetNtid(NTID As String)
-    mNtid = NTID
+Public Function SetNtid(ntid As String)
+    mNtid = ntid
 End Function

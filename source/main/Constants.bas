@@ -22,6 +22,8 @@ Public Const HELP_ADMIN = "data\helps\admin.txt"
 
 Public Const HELP_MAPPING = "data\helps\mapping.txt"
 
+Public Const HELP_EDIT_EUDL = "data\helps\edit-eudl.txt"
+
 Public Const TEMPLATE_EUDL = "data\template\eudl_template.xlsx"
 
 Public Const FIELD_TIMESTAMP = "Timestamp"
