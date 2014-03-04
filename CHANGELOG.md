@@ -2,7 +2,7 @@ CHANGELOG (notable new features or fixes)
 ---------
 
 ###<a href='https://cmgcode.atlassian.net/browse/DURM/fixforversion/11500'>Version 0.1.8</a>
-Released on: 03/03/2014
+Released on: 04/03/2014
 
 + Improve performance
 + Improve Excel templates (Add filter, freeze pane, pivot table)
