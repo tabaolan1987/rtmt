@@ -10,6 +10,7 @@ Released on: 04/03/2014
 + Allow RC role to edit EUDLs
 + Allow user to override the NTID conflicts (does not match the GAL)
 + Add warning message if user cannot connect to central database
++ Add option to enable/disable audit log on settings.ini
 + Critical & major bugs fixed
 
 <h5>        Bug
@@ -51,9 +52,9 @@ Released on: 04/03/2014
 </li>
 <li>[<a href='https://cmgcode.atlassian.net/browse/DURM-146'>DURM-146</a>] -         Please add functionality to edit ALL end user data to the RC mapper role
 </li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-148'>DURM-148</a>] -         Give option to enable/disable audit logs
+</li>
 </ul>
-
-
 
 ###<a href='https://cmgcode.atlassian.net/browse/DURM/fixforversion/11404'>Version 0.1.7</a>
 Released on: 18/02/2014
