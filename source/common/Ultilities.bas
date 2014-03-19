@@ -81,26 +81,34 @@ Public Sub WDeleteAllTables()
     Dim tmpStr As String
     Dim tables() As String
     tables = Session.Settings.SyncMappingTables
-    For i = LBound(tables) To UBound(tables)
-        tmpStr = tables(i)
-        dbm.DeleteTable tmpStr
-    Next i
+    If Not Ultilities.IsVarArrayEmpty(tables) Then
+        For i = LBound(tables) To UBound(tables)
+            tmpStr = tables(i)
+            dbm.DeleteTable tmpStr
+        Next i
+    End If
     tables = Session.Settings.SyncRoleTables
-    For i = LBound(tables) To UBound(tables)
-        tmpStr = tables(i)
-        dbm.DeleteTable tmpStr
-    Next i
+    If Not Ultilities.IsVarArrayEmpty(tables) Then
+        For i = LBound(tables) To UBound(tables)
+            tmpStr = tables(i)
+            dbm.DeleteTable tmpStr
+        Next i
+    End If
     tables = Session.Settings.SyncTables
-    For i = LBound(tables) To UBound(tables)
-        tmpStr = tables(i)
-        dbm.DeleteTable tmpStr
-    Next i
+    If Not Ultilities.IsVarArrayEmpty(tables) Then
+        For i = LBound(tables) To UBound(tables)
+            tmpStr = tables(i)
+            dbm.DeleteTable tmpStr
+        Next i
+    End If
     tables = Session.Settings.JunkTables
-    For i = LBound(tables) To UBound(tables)
-        tmpStr = tables(i)
-        dbm.DeleteTable tmpStr
-    Next i
-    
+    If Not Ultilities.IsVarArrayEmpty(tables) Then
+        
+        For i = LBound(tables) To UBound(tables)
+            tmpStr = tables(i)
+            dbm.DeleteTable tmpStr
+        Next i
+    End If
     dbm.Recycle
 End Sub
 

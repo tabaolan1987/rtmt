@@ -8,3 +8,4 @@ build-number.txt
 /database/**
 skip.launch
 /data/config/settings.ini
+/source/rolemapping_stub.laccdb
