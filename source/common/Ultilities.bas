@@ -203,15 +203,15 @@ Public Function GetUserName() As String
     ' Buffer size for the return string.
     Const lpnLength As Integer = 255
     ' Get return buffer space.
-    Dim status As Integer
+    Dim Status As Integer
     ' For getting user information.
     Dim lpName, lpUserName As String
     ' Assign the buffer size constant to lpUserName.
     lpUserName = Space$(lpnLength + 1)
     ' Get the log-on name of the person using product.
-    status = WNetGetUser(lpName, lpUserName, lpnLength)
+    Status = WNetGetUser(lpName, lpUserName, lpnLength)
     ' See whether error occurred.
-    If status = NoError Then
+    If Status = NoError Then
          ' This line removes the null character. Strings in C are null-
          ' terminated. Strings in Visual Basic are not null-terminated.
          ' The null character must be removed from the C strings to be used

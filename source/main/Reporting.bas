@@ -188,7 +188,7 @@ Public Sub GenerateReport(rpm As ReportMetaData)
                         Logger.LogDebug "Reporting.GenerateReport", "Select pivot table: " & rpm.PivotTableName
                         Set Pivot = WS.PivotTables(rpm.PivotTableName)
                         Pivot.RefreshTable
-                        Pivot.Update
+                        Pivot.update
                         If rpm.PivotWordWrapCols.Count > 0 Then
                             For Each v In rpm.PivotWordWrapCols
                                 WS.range(WS.Cells(1, CInt(v)), WS.Cells(rpm.startRow + recordCount, CInt(v))).WrapText = True

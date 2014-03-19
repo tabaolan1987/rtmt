@@ -383,7 +383,7 @@ Public Function SyncUserData()
                                 tmpDict.Add dictParams.keys(k), dictParams.Items(k)
                             Next k
                             tmpDict.Add "value", tmpValue
-                            tmpDict.Add "region_name", s.RegionName
+                            tmpDict.Add "region_name", s.regionName
                             ExecuteQuery queryCustomInsert, tmpDict
                         End If
                     Next j
@@ -702,7 +702,7 @@ Public Function SyncTable(Server As String, _
                 Next i
                 rst.Edit
                 rst(Constants.FIELD_ID).value = CStr(tmpDataLocal.Item(Constants.FIELD_ID))
-                rst.Update
+                rst.update
                 CreateServerRecord tmpDataLocal, tmpColType, tmpCols, fromTable, tblCached, Server, DatabaseName, userNAme, Password
                 rst.MoveNext
             Loop

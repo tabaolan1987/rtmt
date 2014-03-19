@@ -37,8 +37,8 @@ Public Property Get FuncRgID() As String
     FuncRgID = mFuncRgID
 End Property
 
-Public Property Get region() As String
-    region = mRegion
+Public Property Get Region() As String
+    Region = mRegion
 End Property
 
 
@@ -52,6 +52,6 @@ Public Property Get role() As Collection
     Set role = mRole
 End Property
 
-Public Property Get Permission() As String
-    Permission = mPermission
+Public Property Get permission() As String
+    permission = mPermission
 End Property

@@ -4,3 +4,13 @@ user_data
 SpecialismMappingActivity
 user_data_mapping_role
 Specialism
+user_data_mapping_qualification
+BlueprintRole_mapping_BpRole
+specialism_mapping_BpRole
+BlueprintRoles
+Qualifications
+dofa
+user_rmt
+mappingType
+sub_function
+standard_team
