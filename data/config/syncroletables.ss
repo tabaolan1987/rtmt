@@ -8,6 +8,7 @@ audit_logs
 BlueprintRole_mapping_BpRole
 BlueprintRoles
 dofa
+activity
 MappingActivityBpStandardRole
 Qualifications
 Specialism
