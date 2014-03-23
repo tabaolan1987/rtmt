@@ -4,3 +4,16 @@
 #Functions
 #Region_Function
 #RMT_ROLES
+audit_logs
+BlueprintRole_mapping_BpRole
+BlueprintRoles
+dofa
+activity
+MappingActivityBpStandardRole
+Qualifications
+Specialism
+specialism_mapping_BpRole
+SpecialismMappingActivity
+user_data
+user_data_mapping_qualification
+user_data_mapping_role
