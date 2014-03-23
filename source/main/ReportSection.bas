@@ -23,7 +23,7 @@ Private Property Get DataQuery() As Scripting.Dictionary
     Set DataQuery = data
 End Property
 
-Public Function Init(raw As String, Optional mss As SystemSetting, Optional SkipCheckHeader As Boolean)
+Public Function init(raw As String, Optional mss As SystemSetting, Optional SkipCheckHeader As Boolean)
     mValid = False
     Dim dbm As New DbManager
     Logger.LogDebug "ReportSection.Init", "SkipCheckHeader: " & SkipCheckHeader
@@ -67,7 +67,7 @@ Public Function Init(raw As String, Optional mss As SystemSetting, Optional Skip
             PrepareQuery mQuery, ss
             mQuery = StringHelper.GenerateQuery(mQuery, DataQuery)
         Case Constants.RP_SECTION_TYPE_FIXED:
-            dbm.Init
+            dbm.init
             Logger.LogDebug "ReportSection.Init", "RP_SECTION_TYPE_FIXED"
             mQuery = StringHelper.GenerateQuery(mQuery, DataQuery)
            
@@ -93,7 +93,7 @@ Public Function Init(raw As String, Optional mss As SystemSetting, Optional Skip
                 Logger.LogDebug "ReportSection.Init", "Primary query: " & mQuery
                 tableName = StringHelper.TrimNewLine(queryCache(0))
                 mCachedTable = tableName
-                dbm.Init
+                dbm.init
                 If Ultilities.IfTableExists(tableName) Then
                     Logger.LogDebug "ReportSection.Init", "Delete all records table " & tableName
                     dbm.ExecuteQuery "DELETE * FROM [" & tableName & "]"
@@ -134,7 +134,7 @@ Public Function Init(raw As String, Optional mss As SystemSetting, Optional Skip
                 dbm.Recycle
             End If
             
-            dbm.Init
+            dbm.init
             mQuery = StringHelper.GenerateQuery(mQuery, DataQuery)
             If Not SkipCheckHeader Then
                 dbm.OpenRecordSet mQuery
@@ -149,7 +149,7 @@ Public Function Init(raw As String, Optional mss As SystemSetting, Optional Skip
             End If
             dbm.Recycle
         Case RP_SECTION_TYPE_TMP_PILOT_REPORT:
-            dbm.Init
+            dbm.init
             queryCache = Split(mQuery, Constants.SPLIT_LEVEL_2)
             Dim tmpCol As New Collection
             Dim tmpValueCol As Collection
@@ -293,7 +293,7 @@ Private Function PrepareQuery(query As String, Optional ss As SystemSetting) As 
         'Logger.LogDebug "ReportSection.PrepareQuery", "Generate query: " & qIn
         'Logger.LogDebug "ReportSection.PrepareQuery", "Get value query: " & qOut
         If StringHelper.IsContain(qOut, "select", True) And StringHelper.IsContain(qOut, "from", True) Then
-            dbm.Init
+            dbm.init
             dbm.OpenRecordSet (qOut)
             If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
                 tmpQuery = ""
@@ -360,7 +360,7 @@ Private Function GenerateQuery(query As String, Optional ss As SystemSetting) As
         qIn = Trim(tmpSplit(1))
         'Logger.LogDebug "ReportSection.GenerateQuery", "Generate query: " & qIn
         'Logger.LogDebug "ReportSection.GenerateQuery", "Get value query: " & qOut
-        dbm.Init
+        dbm.init
         dbm.OpenRecordSet (qOut)
         
         If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then

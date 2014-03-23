@@ -257,7 +257,7 @@ Public Function SaveAsCSV(filePath As String, desFilePath As String, Optional Wo
     Dim oExcel As New Excel.Application
     Dim i As Integer
     Dim WB As New Excel.Workbook
-    Dim WS As Excel.Sheets
+    Dim ws As Excel.Sheets
     Dim Name As String
     Dim v As Variant
     If IsExistFile(desFilePath) Then

@@ -1,7 +1,11 @@
 Option Explicit
 
 Public Sub OnTest()
-    Run
+    'Run
+    Dim sh As New SyncHelper
+    sh.init "privileges"
+    sh.sync
+    sh.Recycle
 End Sub
 
 Public Sub Run(Optional TestClassName As String)

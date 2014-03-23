@@ -34,7 +34,7 @@ Public Sub TestImportData()
     Dim csvPath As String
     csvPath = FileHelper.CurrentDbPath & Constants.END_USER_DATA_CSV_FILE_PATH
     Dim im As DbManager: Set im = New DbManager
-    im.Init
+    im.init
     im.ImportData csvPath
     
 OnExit:
@@ -92,7 +92,7 @@ Public Sub TestImportSqlTable()
         For i = LBound(SyncTables) To UBound(SyncTables)
             stTable = Trim(SyncTables(i))
             Logger.LogDebug "DbManagerTester.TestImportSqlTable", "Start import table: " & stTable
-            dbm.ImportSqlTable prop.ServerName & "," & prop.Port, prop.DatabaseName, stTable, stTable, prop.userNAme, prop.Password
+            dbm.ImportSqlTable prop.ServerName & "," & prop.Port, prop.DatabaseName, stTable, stTable, prop.Username, prop.Password
         Next i
     End If
 OnExit:
@@ -108,7 +108,7 @@ End Sub
 Public Sub TestExecuteQuery()
     On Error GoTo OnError
     Dim im As DbManager: Set im = New DbManager
-    im.Init
+    im.init
     If Ultilities.IfTableExists(Constants.END_USER_DATA_CACHE_TABLE_NAME) = False Then
         im.ExecuteQuery FileHelper.ReadQuery(Constants.END_USER_DATA_CACHE_TABLE_NAME, Constants.Q_CREATE)
     End If
@@ -127,8 +127,8 @@ Public Sub TestOpenRecordSet()
     Dim params As New Scripting.Dictionary
     Dim dm As DbManager: Set dm = New DbManager
     Dim rInfo As ReportMetaData: Set rInfo = New ReportMetaData
-    dm.Init
-    rInfo.Init (Name)
+    dm.init
+    rInfo.init (Name)
     params.Add "SYSTEM_ROLE_NAME", "Procurement Catalogue Approver"
     params.Add "BP_ROLE_STANDARD_NAME", "POQR Approver"
     If rInfo.Valid = True Then
@@ -148,7 +148,7 @@ End Sub
 Public Sub TestSyncUserData()
     On Error GoTo OnError
     Dim dm As DbManager: Set dm = New DbManager
-    dm.Init
+    dm.init
     dm.SyncUserData
 OnExit:
     dm.Recycle

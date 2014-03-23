@@ -27,7 +27,7 @@ Public Property Get Database() As DAO.Database
     Set Database = dbs
 End Property
 
-Public Function Init()
+Public Function init()
     If dbs Is Nothing Then
         Set dbs = CurrentDb
     End If
@@ -286,7 +286,7 @@ Public Function SyncUserData()
     Dim tmpValue As String
     Dim tmpCache As String
     ' Init database
-    Init
+    init
     '
     RecycleTable s
     ' Read the dict mapping
@@ -453,23 +453,23 @@ Public Function ImportSqlTable(Server As String, _
                                     DatabaseName As String, _
                                     fromTable As String, _
                                     desTable As String, _
-                                    Optional userNAme As String, _
+                                    Optional Username As String, _
                                     Optional Password As String)
     Dim check As Boolean: check = False
     Logger.LogDebug "DbManager.ImportSqlTable", "Server: " & Server _
                                                 & ", Database: " & DatabaseName _
                                                 & ", FromTable: " & fromTable _
                                                 & ", ToTable: " & desTable _
-                                                & ", Username: " & userNAme
+                                                & ", Username: " & Username
     On Error GoTo OnError
     If Ultilities.IfTableExists(desTable) Then
         Logger.LogDebug "DbManager.ImportSqlTable", "Create cached table " & desTable & "_tmp"
         DoCmd.Rename desTable & "_tmp", acTable, desTable
     End If
     Dim stConnect As String
-    If Len(userNAme) <> 0 Then
+    If Len(Username) <> 0 Then
         stConnect = "ODBC;DRIVER=SQL Server;SERVER=" & Server & ";DATABASE=" & DatabaseName _
-                                                & ";UID=" & userNAme _
+                                                & ";UID=" & Username _
                                                 & ";PWD=" & Password
     Else
         stConnect = "ODBC;DRIVER=SQL Server;SERVER=" & Server & ";DATABASE=" & DatabaseName
@@ -500,7 +500,7 @@ OnError:
 End Function
 
 Public Function RecycleTableName(Name As String)
-    Init
+    init
         Logger.LogDebug "DbManager.SyncTable", "Recycle table name " & Name
         dbs.TableDefs.Refresh
         If Ultilities.IfTableExists(Name) Then
@@ -520,12 +520,12 @@ Public Function SyncTable(Server As String, _
                                     DatabaseName As String, _
                                     fromTable As String, _
                                     desTable As String, _
-                                    Optional userNAme As String, _
+                                    Optional Username As String, _
                                     Optional Password As String, _
                                     Optional CheckConflict As Boolean)
     Logger.LogDebug "DbManager.SyncTable", "Start sync table " & fromTable
     If Ultilities.IfTableExists(desTable) Then
-        Init
+        init
         Logger.LogDebug "DbManager.SyncTable", "Table " & fromTable & " is existed!"
         Dim tblCached As String
         Dim tmpTimestampServer As String
@@ -547,7 +547,7 @@ Public Function SyncTable(Server As String, _
         End If
         DoCmd.Rename tblCached, acTable, desTable
         
-        ImportSqlTable Server, DatabaseName, fromTable, desTable, userNAme, Password
+        ImportSqlTable Server, DatabaseName, fromTable, desTable, Username, Password
         
         OpenRecordSet "SELECT * FROM " & desTable
         If Not (rst.EOF And rst.BOF) Then
@@ -612,7 +612,7 @@ Public Function SyncTable(Server As String, _
                                         tmpCols.Add Constants.FIELD_TIMESTAMP
                                         tmpDataLocal.Add Constants.FIELD_ID, tmpId
                                         Logger.LogDebug "DbManager.SyncTable", "Update server. Field: " & tmpCol & ". Local: " & str1 & " | Server: " & str2
-                                        UpdateServerRecord tmpDataLocal, tmpCols, fromTable, tblCached, Server, DatabaseName, userNAme, Password
+                                        UpdateServerRecord tmpDataLocal, tmpCols, fromTable, tblCached, Server, DatabaseName, Username, Password
                                         '============== UPDATE SERVER RECORD BLOCK ===============
                                     Else
                                         '============== UPDATE LOCAL RECORD & CONFLICT RECORD BLOCK ===============
@@ -678,7 +678,7 @@ Public Function SyncTable(Server As String, _
         End If
         dbs.TableDefs.Refresh
         Recycle
-        Init
+        init
         '============== ADD NEW SERVER RECORD BLOCK ===============
         OpenRecordSet "SELECT * FROM [" & tblCached _
                     & "] WHERE [" & Constants.FIELD_TIMESTAMP & "] IS NULL "
@@ -702,8 +702,8 @@ Public Function SyncTable(Server As String, _
                 Next i
                 rst.Edit
                 rst(Constants.FIELD_ID).value = CStr(tmpDataLocal.Item(Constants.FIELD_ID))
-                rst.update
-                CreateServerRecord tmpDataLocal, tmpColType, tmpCols, fromTable, tblCached, Server, DatabaseName, userNAme, Password
+                rst.Update
+                CreateServerRecord tmpDataLocal, tmpColType, tmpCols, fromTable, tblCached, Server, DatabaseName, Username, Password
                 rst.MoveNext
             Loop
         Else
@@ -717,7 +717,7 @@ Public Function SyncTable(Server As String, _
     Else
         Logger.LogDebug "DbManager.SyncTable", "Table " & fromTable & " is not existed!" _
                                     & " . Create new table ..."
-        ImportSqlTable Server, DatabaseName, fromTable, desTable, userNAme, Password
+        ImportSqlTable Server, DatabaseName, fromTable, desTable, Username, Password
     End If
 End Function
 
@@ -733,54 +733,80 @@ Public Function CreateRecordQuery(datas As Scripting.Dictionary, cols As Collect
     tmpVal = ""
     For Each val In cols
         tmpCol = tmpCol & "[" & val & "],"
-        If IsServer Then
+        
             value = datas.Item(val)
-            If colsType Is Nothing Then
-                tmpVal = tmpVal & "'" & StringHelper.EscapeQueryString(value) & "',"
+            If IsServer = True And StringHelper.IsEqual(CStr(val), Constants.FIELD_TIMESTAMP, True) Then
+                tmpVal = tmpVal & "getdate(),"
             Else
-                If colsType.Item(val) = dbBoolean Then
-                    Logger.LogDebug "DbManager.CreateRecordQuery", "boolean value: " & value
-                    If StringHelper.IsEqual(value, "False", True) Then
-                        tmpVal = tmpVal & "'0',"
-                    Else
-                        tmpVal = tmpVal & "'1',"
-                    End If
-                Else
+                If colsType Is Nothing Then
                     tmpVal = tmpVal & "'" & StringHelper.EscapeQueryString(value) & "',"
+                Else
+                    If CInt(colsType.Item(val)) = 11 Then
+                        Logger.LogDebug "DbManager.CreateRecordQuery", "boolean value: " & value
+                        If StringHelper.IsEqual(value, "False", True) Then
+                            tmpVal = tmpVal & "'0',"
+                        Else
+                            If IsServer Then
+                                tmpVal = tmpVal & "'1',"
+                            Else
+                                tmpVal = tmpVal & "'-1',"
+                            End If
+                        End If
+                    Else
+                        tmpVal = tmpVal & "'" & StringHelper.EscapeQueryString(value) & "',"
+                    End If
                 End If
             End If
-        End If
+       
     Next
     tmpCol = Trim(tmpCol)
     If StringHelper.EndsWith(tmpCol, ",", True) Then
         tmpCol = Left(tmpCol, Len(tmpCol) - 1)
     End If
     tmpVal = Trim(tmpVal)
-    If StringHelper.EndsWith(tmpVal, ",", True) And IsServer Then
+    If StringHelper.EndsWith(tmpVal, ",", True) Then
         tmpVal = Left(tmpVal, Len(tmpVal) - 1)
     End If
     
-    If IsServer Then
-        query = "INSERT INTO [" & table & "](" & tmpCol & ")" & " VALUES(" & tmpVal & ")"
-    Else
-        query = "INSERT INTO [" & table & "](" & tmpCol & ")" & " VALUES(" & tmpCol & ")"
-    End If
+    query = "INSERT INTO [" & table & "](" & tmpCol & ")" & " VALUES(" & tmpVal & ")"
     Logger.LogDebug "DbManager.CreateRecordQuery", "Query: " & query
     CreateRecordQuery = query
 End Function
 
-Public Function UpdateRecordQuery(datas As Scripting.Dictionary, cols As Collection, table As String, Optional IsServer As Boolean) As String
+Public Function UpdateRecordQuery(datas As Scripting.Dictionary, cols As Collection, _
+                                        table As String, _
+                                        Optional colsType As Scripting.Dictionary, _
+                                        Optional IsServer As Boolean) As String
     Dim query As String
     Dim tmpCol As String
     Dim i As Integer
     Dim val As Variant
+    Dim value As String
     tmpCol = ""
     For Each val In cols
         If Not StringHelper.IsEqual(CStr(val), Constants.FIELD_ID, True) Then
             If IsServer = True And StringHelper.IsEqual(CStr(val), Constants.FIELD_TIMESTAMP, True) Then
                 tmpCol = tmpCol & "[" & CStr(val) & "] = GETDATE()" & " ,"
             Else
-                tmpCol = tmpCol & "[" & CStr(val) & "] = '" & StringHelper.EscapeQueryString(datas.Item(CStr(val))) & "'" & " ,"
+                value = datas.Item(CStr(val))
+                If colsType Is Nothing Then
+                    tmpCol = tmpCol & "[" & CStr(val) & "] = '" & StringHelper.EscapeQueryString(value) & "'" & " ,"
+                Else
+                    
+                    If CInt(colsType.Item(val)) = 11 Then
+                        If StringHelper.IsEqual(value, "False", True) Then
+                            tmpCol = tmpCol & "[" & CStr(val) & "] = '0'" & " ,"
+                        Else
+                            If IsServer Then
+                                tmpCol = tmpCol & "[" & CStr(val) & "] = '1'" & " ,"
+                            Else
+                                tmpCol = tmpCol & "[" & CStr(val) & "] = '-1'" & " ,"
+                            End If
+                        End If
+                    Else
+                        tmpCol = tmpCol & "[" & CStr(val) & "] = '" & StringHelper.EscapeQueryString(value) & "'" & " ,"
+                    End If
+                End If
             End If
         End If
     Next
@@ -807,7 +833,7 @@ Public Function CreateServerRecord(datas As Scripting.Dictionary, colsType As Sc
                                             desTable As String, _
                                             Server As String, _
                                     DatabaseName As String, _
-                                    Optional userNAme As String, _
+                                    Optional Username As String, _
                                     Optional Password As String)
     On Error GoTo OnError
     Dim rs As ADODB.RecordSet
@@ -817,9 +843,9 @@ Public Function CreateServerRecord(datas As Scripting.Dictionary, colsType As Sc
     Dim createQuery As String
     Dim stConnect As String
     Dim tmpTimestamp As String, tmpId As String
-    If Len(userNAme) <> 0 Then
+    If Len(Username) <> 0 Then
         stConnect = "DRIVER=SQL Server;SERVER=" & Server & ";DATABASE=" & DatabaseName _
-                                                & ";UID=" & userNAme _
+                                                & ";UID=" & Username _
                                                 & ";PWD=" & Password
     Else
         stConnect = "DRIVER=SQL Server;SERVER=" & Server & ";DATABASE=" & DatabaseName
@@ -865,7 +891,7 @@ Public Function UpdateServerRecord(datas As Scripting.Dictionary, cols As Collec
                                             desTable As String, _
                                             Server As String, _
                                     DatabaseName As String, _
-                                    Optional userNAme As String, _
+                                    Optional Username As String, _
                                     Optional Password As String)
     On Error GoTo OnError
     Dim rs As ADODB.RecordSet
@@ -875,15 +901,15 @@ Public Function UpdateServerRecord(datas As Scripting.Dictionary, cols As Collec
     Dim updateQuery As String
     Dim stConnect As String
     Dim tmpTimestamp As String, tmpId As String
-    If Len(userNAme) <> 0 Then
+    If Len(Username) <> 0 Then
         stConnect = "DRIVER=SQL Server;SERVER=" & Server & ";DATABASE=" & DatabaseName _
-                                                & ";UID=" & userNAme _
+                                                & ";UID=" & Username _
                                                 & ";PWD=" & Password
     Else
         stConnect = "DRIVER=SQL Server;SERVER=" & Server & ";DATABASE=" & DatabaseName
     End If
     Logger.LogDebug "DbManager.UpdateServerRecord", "Connection String: " & stConnect
-    updateQuery = UpdateRecordQuery(datas, cols, table, True)
+    updateQuery = UpdateRecordQuery(datas, cols, table, IsServer:=True)
     
     cn.Open stConnect
     cn.BeginTrans
@@ -924,10 +950,10 @@ End Function
 
 Public Function ConnectionTest() As Boolean
     Dim stConnect As String
-    If Len(Session.Settings.userNAme) <> 0 Then
+    If Len(Session.Settings.Username) <> 0 Then
         stConnect = "DRIVER=SQL Server;SERVER=" & Session.Settings.ServerName & "," & Session.Settings.Port _
                                                 & ";DATABASE=" & Session.Settings.DatabaseName _
-                                                & ";UID=" & Session.Settings.userNAme _
+                                                & ";UID=" & Session.Settings.Username _
                                                 & ";PWD=" & Session.Settings.Password
     Else
         stConnect = "DRIVER=SQL Server;SERVER=" & Session.Settings.ServerName & "," & Session.Settings.Port _

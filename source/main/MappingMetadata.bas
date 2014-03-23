@@ -41,7 +41,7 @@ Public Function Recyle()
     FileHelper.DeleteFile mTemplateFilePath & Constants.FILE_EXTENSION_TEMPLATE
 End Function
 
-Public Function Init(mappingName As String, Optional ss As SystemSetting)
+Public Function init(mappingName As String, Optional ss As SystemSetting)
     mComplete = False
     rawName = mappingName
     Logger.LogDebug "MappingMetaData.Init", "Start init mapping meta name: " & rawName
@@ -54,7 +54,7 @@ Public Function Init(mappingName As String, Optional ss As SystemSetting)
     mTemplateFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.MAPPING_ROOT_FOLDER & rawName & Constants.FILE_EXTENSION_TEMPLATE)
     mConfigFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.MAPPING_ROOT_FOLDER & rawName & Constants.FILE_EXTENSION_CONFIG)
     Logger.LogDebug "MappingMetaData.Init", "Read configuration path: " & mConfigFilePath
-    ir.Init mConfigFilePath
+    ir.init mConfigFilePath
     'RefreshLastModified
     
     mName = ir.ReadKey(Constants.SECTION_GENERAL, Constants.KEY_NAME)

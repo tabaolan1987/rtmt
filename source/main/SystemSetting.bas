@@ -36,7 +36,7 @@ Private mCheckIpURL As String
 Private mSyncFixedTables As Boolean
 Private mEnableAuditLog As Boolean
 
-Public Function Init()
+Public Function init()
     Dim ir As IniReader: Set ir = Ultilities.SystemIniReader
     mServerName = ir.ReadKey(Constants.SECTION_REMOTE_DATABASE, Constants.KEY_SERVER_NAME)
     mDatabaseName = ir.ReadKey(Constants.SECTION_REMOTE_DATABASE, Constants.KEY_DATABASE_NAME)
@@ -113,8 +113,8 @@ Public Property Get Port() As String
     Port = mPort
 End Property
 
-Public Property Get userNAme() As String
-    userNAme = mUsername
+Public Property Get Username() As String
+    Username = mUsername
 End Property
 
 Public Property Get Password() As String

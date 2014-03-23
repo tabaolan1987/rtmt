@@ -42,7 +42,7 @@ Private mComplete As Boolean
 
 Private mLastModified As String
 
-Public Function Init(Name As String, Optional ss As SystemSetting, Optional rpType As String)
+Public Function init(Name As String, Optional ss As SystemSetting, Optional rpType As String)
     If Len(rpType) > 0 Then
         mType = rpType
     Else
@@ -64,7 +64,7 @@ Public Function Init(Name As String, Optional ss As SystemSetting, Optional rpTy
     mTemplateFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.RP_ROOT_FOLDER & Name & Constants.FILE_EXTENSION_TEMPLATE)
     mConfigFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.RP_ROOT_FOLDER & Name & Constants.FILE_EXTENSION_CONFIG)
     Logger.LogDebug "ReportMetaData.Init", "Read configuration path: " & mConfigFilePath
-    ir.Init mConfigFilePath
+    ir.init mConfigFilePath
     
     mName = ir.ReadKey(Constants.SECTION_GENERAL, Constants.KEY_NAME)
     Logger.LogDebug "ReportMetaData.Init", "Report name: " & mName
@@ -128,7 +128,7 @@ Public Function Init(Name As String, Optional ss As SystemSetting, Optional rpTy
             Logger.LogDebug "ReportMetaData.Init", "Found section " & CStr(i + 1)
             Set rpSection = New ReportSection
             tmpStr = Trim(tmpRawSection(i))
-            rpSection.Init tmpStr, ss, mSkipCheckHeader
+            rpSection.init tmpStr, ss, mSkipCheckHeader
             If StringHelper.IsEqual(rpSection.SectionType, Constants.RP_SECTION_TYPE_FIXED, True) _
                 Or StringHelper.IsEqual(rpSection.SectionType, Constants.RP_SECTION_TYPE_TMP_TABLE, True) Then
                 mCount = rpSection.Count
@@ -155,7 +155,7 @@ End Property
 Public Function OpenReport()
     Dim oExcel As New Excel.Application
     Dim WB As New Excel.Workbook
-    Dim WS As Excel.WorkSheet
+    Dim ws As Excel.WorkSheet
     Dim rng As Excel.range
     With oExcel
         .Visible = True
@@ -169,7 +169,7 @@ End Function
 Public Function OpenSaveAs()
     Dim oExcel As New Excel.Application
     Dim WB As New Excel.Workbook
-    Dim WS As Excel.WorkSheet
+    Dim ws As Excel.WorkSheet
     Dim rng As Excel.range
     With oExcel
         .Visible = False
@@ -185,7 +185,7 @@ End Function
 
 Public Function Recyle()
     Dim dbm As New DbManager
-    dbm.Init
+    dbm.init
     Dim rps As ReportSection
     If Not mReportSections Is Nothing Then
         For Each rps In mReportSections

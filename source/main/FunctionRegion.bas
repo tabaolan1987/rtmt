@@ -10,7 +10,7 @@ Private mRole As Collection
 Private mFuncRgID As String
 Private mPermission As String
 
-Public Function Init(iRegion As String, _
+Public Function init(iRegion As String, _
                         iName As String, _
                         iRole As String, _
                         iPermission As String, _

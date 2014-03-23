@@ -32,7 +32,7 @@ End Sub
 Public Sub TestCurrentUser()
     On Error GoTo OnError
     Dim cUser As New CurrentUser
-    cUser.Init "Carld0"
+    cUser.init "Carld0"
 'mAssert.Equals cUser.Auth, True
    ' mAssert.Equals cUser.Valid, True
 OnExit:
@@ -50,7 +50,7 @@ Public Sub TestCheckConflict()
     Dim ss As SystemSetting
     Set ss = Session.Settings()
     Dim um As New UserManagement
-    um.Init ss
+    um.init ss
     um.CheckConflict
 OnExit:
     ' finally
@@ -66,7 +66,7 @@ Public Sub TestCheckDuplicate()
     Dim ss As SystemSetting
     Set ss = Session.Settings()
     Dim um As New UserManagement
-    um.Init ss
+    um.init ss
     um.CheckDuplicate
 OnExit:
     ' finally
@@ -82,7 +82,7 @@ Public Sub TestResolveLdapNotFounds()
     Dim ss As SystemSetting
     Set ss = Session.Settings()
     Dim um As New UserManagement
-    um.Init ss
+    um.init ss
     um.ResolveLdapNotFound
 OnExit:
     ' finally
@@ -98,7 +98,7 @@ Public Sub TestResolveLdapConflict()
     Dim ss As SystemSetting
     Set ss = Session.Settings()
     Dim um As New UserManagement
-    um.Init ss
+    um.init ss
     um.ResolveLdapConflict
 OnExit:
     ' finally
@@ -114,7 +114,7 @@ Public Sub TestResolveUserDataDuplicate()
     Dim ss As SystemSetting
     Set ss = Session.Settings()
     Dim um As New UserManagement
-    um.Init ss
+    um.init ss
     um.ResolveUserDataDuplicate
 OnExit:
     ' finally
@@ -130,7 +130,7 @@ Public Sub TestResolveUserDataConflict()
     Dim ss As SystemSetting
     Set ss = Session.Settings()
     Dim um As New UserManagement
-    um.Init ss
+    um.init ss
     um.ResolveUserDataConflict
 OnExit:
     ' finally
@@ -147,7 +147,7 @@ Public Sub TestMergeUserData()
     Dim ss As SystemSetting
     Set ss = Session.Settings()
     Dim um As New UserManagement
-    um.Init ss
+    um.init ss
     um.MergeUserData
 OnExit:
     ' finally

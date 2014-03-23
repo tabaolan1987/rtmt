@@ -1,6 +1,6 @@
 # IMPORTANT
 #Activity
-##BpRoleStandard
+#BpRoleStandard
 #BPRoleStandardCategory
 #MappingRegionSystemRole
 #MappingSystemRoleBpStandardRole
@@ -13,3 +13,15 @@
 #SpecialismMappingActivity
 #user_data_mapping_role
 #Specialism
+audit_logs
+BlueprintRole_mapping_BpRole
+BlueprintRoles
+dofa
+MappingActivityBpStandardRole
+Qualifications
+Specialism
+specialism_mapping_BpRole
+SpecialismMappingActivity
+user_data
+user_data_mapping_qualification
+user_data_mapping_role

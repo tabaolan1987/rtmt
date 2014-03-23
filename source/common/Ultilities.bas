@@ -52,7 +52,7 @@ Private Const SW_SHOW = 5
 Public Function SystemIniReader() As IniReader
     If mIniReader Is Nothing Then
         Set mIniReader = New IniReader
-        mIniReader.Init FileHelper.CurrentDbPath & Constants.SETTINGS_FILE
+        mIniReader.init FileHelper.CurrentDbPath & Constants.SETTINGS_FILE
     End If
     Set SystemIniReader = mIniReader
 End Function
@@ -77,7 +77,7 @@ End Sub
 Public Sub WDeleteAllTables()
     Dim i As Integer
     Dim dbm As New DbManager
-    dbm.Init
+    dbm.init
     Dim tmpStr As String
     Dim tables() As String
     tables = Session.Settings.SyncMappingTables
@@ -317,7 +317,7 @@ Function GetTables(SyncTables() As String)
         For i = LBound(SyncTables) To UBound(SyncTables)
             stTable = Trim(SyncTables(i))
             If Not IfTableExists(stTable) Then
-                dbm.SyncTable prop.ServerName & "," & prop.Port, prop.DatabaseName, stTable, stTable, prop.userNAme, prop.Password, False
+                dbm.SyncTable prop.ServerName & "," & prop.Port, prop.DatabaseName, stTable, stTable, prop.Username, prop.Password, False
             End If
         Next i
     End If

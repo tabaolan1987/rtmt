@@ -16,7 +16,7 @@ Option Explicit
 
 Private mFilePath As String
 
-Public Function Init(filePath As String)
+Public Function init(filePath As String)
   mFilePath = filePath
 End Function
 

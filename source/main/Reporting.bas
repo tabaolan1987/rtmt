@@ -8,7 +8,7 @@ Public Sub ExportExcelReport(sSQL As String, sFileNameTemplate As String, output
     
     Dim oExcel As New Excel.Application
     Dim WB As New Excel.Workbook
-    Dim WS As Excel.WorkSheet
+    Dim ws As Excel.WorkSheet
     Dim rng As Excel.range
     Dim objConn As New ADODB.Connection
     Dim objRs As New ADODB.RecordSet
@@ -18,15 +18,15 @@ Public Sub ExportExcelReport(sSQL As String, sFileNameTemplate As String, output
                    'Create new workbook from the template file
                     Set WB = .Workbooks.Add(sFileNameTemplate)
                             With WB
-                                 Set WS = WB.workSheets(workSheets) 'Replace with the name of actual sheet
-                                 With WS
+                                 Set ws = WB.workSheets(workSheets) 'Replace with the name of actual sheet
+                                 With ws
                                         
                                           objRs.Open sSQL, objConn, adOpenStatic, adLockReadOnly
                                           Set rng = .range(range) 'Starting point of the data range
                                           rng.CopyFromRecordset objRs
                                           objRs.Close
                                  End With
-                                 WS.SaveAs (output)
+                                 ws.SaveAs (output)
                             End With
         .Quit
     End With
@@ -47,7 +47,7 @@ Public Sub GenerateReport(rpm As ReportMetaData)
         Dim i As Integer, j As Integer
         Dim oExcel As New Excel.Application
         Dim WB As New Excel.Workbook
-        Dim WS As Excel.WorkSheet
+        Dim ws As Excel.WorkSheet
         Dim rng As Excel.range
         Dim Pivot As Excel.PivotTable
         Dim c As Long
@@ -64,8 +64,8 @@ Public Sub GenerateReport(rpm As ReportMetaData)
             Set WB = .Workbooks.Add(rpm.TemplateFilePath)
                 With WB
                     Logger.LogDebug "Reporting.GenerateReport", "Select worksheet: " & rpm.WorkSheet
-                    Set WS = WB.workSheets(rpm.WorkSheet) 'Replace with the name of actual sheet
-                    With WS
+                    Set ws = WB.workSheets(rpm.WorkSheet) 'Replace with the name of actual sheet
+                    With ws
                         If .FilterMode Then
                             .ShowAllData
                         End If
@@ -184,17 +184,17 @@ Public Sub GenerateReport(rpm As ReportMetaData)
                     End With
                     If rpm.PivotTable Then
                         Logger.LogDebug "Reporting.GenerateReport", "Select pivot worksheet: " & rpm.PivotTableWorksheet
-                        Set WS = WB.workSheets(rpm.PivotTableWorksheet)
+                        Set ws = WB.workSheets(rpm.PivotTableWorksheet)
                         Logger.LogDebug "Reporting.GenerateReport", "Select pivot table: " & rpm.PivotTableName
-                        Set Pivot = WS.PivotTables(rpm.PivotTableName)
+                        Set Pivot = ws.PivotTables(rpm.PivotTableName)
                         Pivot.RefreshTable
-                        Pivot.update
+                        Pivot.Update
                         If rpm.PivotWordWrapCols.Count > 0 Then
                             For Each v In rpm.PivotWordWrapCols
-                                WS.range(WS.Cells(1, CInt(v)), WS.Cells(rpm.startRow + recordCount, CInt(v))).WrapText = True
+                                ws.range(ws.Cells(1, CInt(v)), ws.Cells(rpm.startRow + recordCount, CInt(v))).WrapText = True
                             Next v
                         End If
-                        WS.Rows.AutoFit
+                        ws.Rows.AutoFit
                         Dim pi As PivotItem
                          For Each pi In Pivot.PivotFields("NTID").PivotItems
                              If pi.value = "(blank)" Then
