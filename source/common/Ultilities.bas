@@ -109,6 +109,8 @@ Public Sub WDeleteAllTables()
             dbm.DeleteTable tmpStr
         Next i
     End If
+    dbm.RecycleTableName "ChangeLog"
+    dbm.RecycleTableName "audit_logs"
     dbm.Recycle
 End Sub
 

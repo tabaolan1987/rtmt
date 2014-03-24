@@ -152,6 +152,7 @@ Private Function CompareServer()
             Set tmpData = New Scripting.Dictionary
             Logger.LogDebug "SyncHelper.CompareServer", "==========================="
             For Each v In mHeaders
+                Logger.LogDebug "SyncHelper.CompareServer", "get header value: " & CStr(v)
                 If IsNull(rs(CStr(v))) Then
                     tmpValue = ""
                 Else
