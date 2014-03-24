@@ -84,21 +84,21 @@ Public Sub WDeleteAllTables()
     If Not Ultilities.IsVarArrayEmpty(tables) Then
         For i = LBound(tables) To UBound(tables)
             tmpStr = tables(i)
-            dbm.DeleteTable tmpStr
+            dbm.RecycleTableName tmpStr
         Next i
     End If
     tables = Session.Settings.SyncRoleTables
     If Not Ultilities.IsVarArrayEmpty(tables) Then
         For i = LBound(tables) To UBound(tables)
             tmpStr = tables(i)
-            dbm.DeleteTable tmpStr
+            dbm.RecycleTableName tmpStr
         Next i
     End If
     tables = Session.Settings.SyncTables
     If Not Ultilities.IsVarArrayEmpty(tables) Then
         For i = LBound(tables) To UBound(tables)
             tmpStr = tables(i)
-            dbm.DeleteTable tmpStr
+            dbm.RecycleTableName tmpStr
         Next i
     End If
     tables = Session.Settings.JunkTables
@@ -119,7 +119,7 @@ Public Function IfTableExists(tblName As String) As Boolean
     Set dbs = Application.CurrentData
     IfTableExists = False
     For Each obj In dbs.AllTables
-        If obj.Name = tblName Then
+        If StringHelper.IsEqual(obj.Name, tblName, True) Then
             IfTableExists = True
             Exit For
         End If
@@ -304,21 +304,22 @@ End Sub
 
 Function GetTables(SyncTables() As String)
     On Error GoTo OnError
-    Dim dbm As DbManager, _
+    Dim dbm As New DbManager, _
     prop As SystemSetting, _
             isEmpty As Boolean, _
             stTable As String
-    Set dbm = New DbManager
-    Set prop = Session.Settings()
+    Dim sh As SyncHelper
+    
     isEmpty = Ultilities.IsVarArrayEmpty(SyncTables)
     If Not isEmpty Then
         Dim i As Integer
         dbm.RecycleTableName Constants.TABLE_SYNC_CONFLICT
         For i = LBound(SyncTables) To UBound(SyncTables)
             stTable = Trim(SyncTables(i))
-            If Not IfTableExists(stTable) Then
-                dbm.SyncTable prop.ServerName & "," & prop.Port, prop.DatabaseName, stTable, stTable, prop.Username, prop.Password, False
-            End If
+            Set sh = New SyncHelper
+            sh.init stTable
+            sh.sync
+            sh.Recycle
         Next i
     End If
 OnExit:

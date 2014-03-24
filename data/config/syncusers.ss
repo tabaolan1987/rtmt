@@ -53,7 +53,6 @@ spare27 : Optional Field 27
 spare28 : Optional Field 28
 spare29 : Optional Field 29
 spare30 : Optional Field 30
-spare30 : Optional Field 30
 spare31 : Optional Field 31
 spare32 : Optional Field 32
 spare33 : Optional Field 33

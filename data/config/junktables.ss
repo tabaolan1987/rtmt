@@ -6,4 +6,3 @@ user_data_cache
 tmp_pilot_report
 tmp_pilot_report_1
 tmp_pilot_report_2
-audit_logs

@@ -505,11 +505,12 @@ Public Function RecycleTableName(Name As String)
         dbs.TableDefs.Refresh
         If Ultilities.IfTableExists(Name) Then
             Logger.LogDebug "DbManager.SyncTable", "Delete all record table " & Name
-            ExecuteQuery FileHelper.ReadQuery(Name, Constants.Q_DELETE_ALL)
+            ExecuteQuery "delete from [" & Name & "]"
+            'FileHelper.ReadQuery(Name, Constants.Q_DELETE_ALL)
             'DoCmd.DeleteObject acTable, name
         Else
             Logger.LogDebug "DbManager.SyncTable", "Create new table " & Name
-            ExecuteQuery FileHelper.ReadQuery(Name, Constants.Q_CREATE)
+            'ExecuteQuery FileHelper.ReadQuery(Name, Constants.Q_CREATE)
         End If
         
         dbs.TableDefs.Refresh

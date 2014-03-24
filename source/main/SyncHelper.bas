@@ -22,8 +22,10 @@ Private dbm As DbManager
 Public Function init(tblName As String)
     Set dbs = CurrentDb
     mTableName = tblName
+    Logger.LogDebug "SyncHelper.init", "Start sync table " & tblName
     Set dbm = New DbManager
     If Len(Session.Settings.Username) <> 0 Then
+    
         mConnString = "DRIVER=SQL Server;SERVER=" & Session.Settings.ServerName & "," & Session.Settings.Port _
                                                 & ";DATABASE=" & Session.Settings.DatabaseName _
                                                 & ";UID=" & Session.Settings.Username _
@@ -32,14 +34,24 @@ Public Function init(tblName As String)
         mConnString = "DRIVER=SQL Server;SERVER=" & Session.Settings.ServerName & "," & Session.Settings.Port _
                                 & ";DATABASE=" & Session.Settings.DatabaseName
     End If
+    
 End Function
 
 Public Function sync()
-    GetLocalTimestamp
-    CompareLocal
-    CompareServer
-    PushLocalChange
-    UpdateLocalTimestamp
+    If Ultilities.IfTableExists(mTableName) Then
+        GetLocalTimestamp
+        CompareLocal
+        CompareServer
+        PushLocalChange
+        UpdateLocalTimestamp
+    Else
+        Dim cs As String
+        cs = "ODBC;DRIVER=SQL Server;SERVER=" & Session.Settings.ServerName & "," & Session.Settings.Port _
+                                                 & ";DATABASE=" & Session.Settings.DatabaseName _
+                                                & ";UID=" & Session.Settings.Username _
+                                                & ";PWD=" & Session.Settings.Password
+        DoCmd.TransferDatabase acImport, "ODBC Database", cs, acTable, mTableName, mTableName, False, True
+    End If
 End Function
 
 Public Function Recycle()
@@ -107,7 +119,7 @@ Private Function CompareServer()
     Dim tmpId As String
     Dim tmpData As Scripting.Dictionary
     Set mFieldTypes = New Scripting.Dictionary
-
+    Dim tmpValue As String
     Dim query As String
     Dim i As Integer
     Dim v As Variant
@@ -140,7 +152,12 @@ Private Function CompareServer()
             Set tmpData = New Scripting.Dictionary
             Logger.LogDebug "SyncHelper.CompareServer", "==========================="
             For Each v In mHeaders
-                tmpData.Add CStr(v), rs(CStr(v))
+                If IsNull(rs(CStr(v))) Then
+                    tmpValue = ""
+                Else
+                    tmpValue = rs(CStr(v))
+                End If
+                tmpData.Add CStr(v), tmpValue
             Next v
             tmpId = rs("id")
             Logger.LogDebug "SyncHelper.CompareServer", "Found id: " & tmpId
@@ -255,7 +272,12 @@ Private Function PushLocalChange()
                 For Each v In mHeaders
                     If Not StringHelper.IsEqual(CStr(v), "id", True) _
                          And Not StringHelper.IsEqual(CStr(v), "timestamp", True) Then
-                        v1 = rs(CStr(v))
+                        
+                        If IsNull(rs(CStr(v))) Then
+                            v1 = ""
+                        Else
+                            v1 = rs(CStr(v))
+                        End If
                         v2 = dbm.GetFieldValue(rst, CStr(v))
                         Logger.LogDebug "SyncHelper.PushLocalChange", "Compare column " & CStr(v) & ". Local: " & v2 & ". Server: " & v1
                         If Not StringHelper.IsEqual(v1, v2, False) Then
