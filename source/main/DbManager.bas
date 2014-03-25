@@ -54,6 +54,19 @@ OnError:
     Resume OnExit
 End Function
 
+Public Function RecycleRecordSet()
+    On Error GoTo OnError
+    If Not rst Is Nothing Then
+        rst.Close
+        Set rst = Nothing
+    End If
+OnExit:
+    Exit Function
+OnError:
+    Logger.LogError "DbManager.Recycle", "Could close db object: ", Err
+    Resume OnExit
+End Function
+
 Public Function DeleteTable(Name As String)
     If Ultilities.IfTableExists(Name) Then
         DoCmd.DeleteObject acTable, Name

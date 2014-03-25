@@ -1,16 +1,21 @@
 Option Explicit
 
 Public Sub OnTest()
-    'Run
+   ' Run
     'Dim sh As New SyncHelper
-    'sh.init "user_data"
+    'sh.init "mappingType"
     'sh.sync
     'sh.Recycle
+    'Dim dbm As New DbManager
+    'dbm.init
+    'dbm.ExecuteQuery "delete [user_data].[mappingBpRoles].value from user_data"
+    'dbm.ExecuteQuery "insert into user_data([mappingBpRoles].value) values('SRM Lead Requester') where ntid='ABDUST'"
+    'dbm.ExecuteQuery "insert into user_data([mappingBpRoles].value) values('Contract Display & Reporting') where ntid='ABDUST'"
+    'dbm.Recycle
+    
     Dim dbm As New DbManager
     dbm.init
-    dbm.ExecuteQuery "delete [user_data].[mappingBpRoles].value from user_data"
-    dbm.ExecuteQuery "insert into user_data([mappingBpRoles].value) values('SRM Lead Requester') where ntid='ABDUST'"
-    dbm.ExecuteQuery "insert into user_data([mappingBpRoles].value) values('Contract Display & Reporting') where ntid='ABDUST'"
+    dbm.RecycleTableName "user_data_mapping_role"
     dbm.Recycle
     
 End Sub

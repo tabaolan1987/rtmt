@@ -50,6 +50,7 @@ Public Const TABLE_AUDIT_LOG = "audit_logs"
 
 Public Const TEXT_DEFAULT_SELECT_REGION = "Select Region"
 Public Const TEXT_DEFAULT_SELECT_FUNCTION = "Select Function"
+Public Const TEXT_DEFAULT_SELECT_MAPPING_TYPE = "Select mapping type"
 
 ' Environment
 Public Const ENV_DEVELOP = "DEVELOP"
