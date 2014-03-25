@@ -153,7 +153,7 @@ Public Property Get regionName() As String
     If Len(mRegionName) <> 0 Then
         regionName = mRegionName
     Else
-        regionName = Session.CurrentUser.FuncRegion.Region
+        regionName = Session.CurrentUser.FuncRegion.region
     End If
 End Property
 

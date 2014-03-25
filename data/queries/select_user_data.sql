@@ -59,7 +59,8 @@ SELECT
 	[sponsorNTID],
 	[mappingBpRoles],
 	[mappingQuanlifications],
-	[mappingTypeBpRoles]
+	[mappingTypeBpRoles],
+	[mappingQuanlificationsStatus]
 FROM user_data as UD
 Where UD.deleted=0
 and UD.Region='(%RG_NAME%)'

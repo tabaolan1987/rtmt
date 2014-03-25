@@ -133,7 +133,7 @@ Public Function ListRegions() As Collection
     Dim tmpName As String
     If mValid And Not mListFuncRg Is Nothing Then
         For Each frg In mListFuncRg
-            tmpName = frg.Region
+            tmpName = frg.region
             check = False
             For Each v In list
                 If StringHelper.IsEqual(CStr(v), tmpName, True) Then
@@ -149,15 +149,15 @@ Public Function ListRegions() As Collection
     Set ListRegions = list
 End Function
 
-Public Function ListFunctions(Region As String) As Collection
+Public Function ListFunctions(region As String) As Collection
     Dim frg As FunctionRegion
     Dim list As New Collection
     Dim v As Variant
     Dim tmpName As String
     If mValid And Not mListFuncRg Is Nothing Then
         For Each frg In mListFuncRg
-            tmpName = frg.Region
-            If StringHelper.IsEqual(tmpName, Region, True) Then
+            tmpName = frg.region
+            If StringHelper.IsEqual(tmpName, region, True) Then
                 list.Add frg.Name
             End If
         Next frg
@@ -169,7 +169,7 @@ Public Function SelectRegion(rname As String)
     Dim frg As FunctionRegion
     If mValid And Not mListFuncRg Is Nothing Then
         For Each frg In mListFuncRg
-            If StringHelper.IsEqual(frg.Region, rname, True) Then
+            If StringHelper.IsEqual(frg.region, rname, True) Then
                 Set mFuncRegion = frg
                 Exit For
             End If
