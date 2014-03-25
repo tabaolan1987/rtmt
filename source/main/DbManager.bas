@@ -273,6 +273,8 @@ Private Function ValidateNtid(s As SystemSetting, ntids As String, Optional user
         Else
             
         End If
+        DoEvents
+        
 End Function
 
 Public Function SyncUserData()

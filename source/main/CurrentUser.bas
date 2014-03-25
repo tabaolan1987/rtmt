@@ -69,7 +69,6 @@ Public Function init(iNtid As String, _
         End If
     End If
     ' skip temp
-    Exit Function
     If Ultilities.CheckTables(Constants.SYNC_TYPE_ROLE) Then
         mValid = False
         Dim dbm As New DbManager
@@ -95,26 +94,20 @@ Public Function init(iNtid As String, _
             Set mListFuncRg = New Collection
             Do Until dbm.RecordSet.EOF = True
                 regionName = dbm.GetFieldValue(dbm.RecordSet, "RegionName")
-                functionId = dbm.GetFieldValue(dbm.RecordSet, "Function ID")
                 roleName = dbm.GetFieldValue(dbm.RecordSet, "roleName")
-                Logger.LogDebug "CurrentUser.Init", functionId & " | " & lastFunctionId
                 Logger.LogDebug "CurrentUser.Init", roleName & " | " & lastRoleName
                 Logger.LogDebug "CurrentUser.Init", regionName & " | " & lastRegionName
-                If (Not StringHelper.IsEqual(regionName, lastRegionName, True)) _
-                    Or (Not StringHelper.IsEqual(functionId, lastFunctionId, True)) Then
-                    Logger.LogDebug "CurrentUser.Init", "Init new function region"
+                If (Not StringHelper.IsEqual(regionName, lastRegionName, True)) Then
+                    Logger.LogDebug "CurrentUser.Init", "Init new function region " & regionName
                     Set frg = New FunctionRegion
                     frg.init regionName, _
-                        dbm.GetFieldValue(dbm.RecordSet, "nameFunction"), _
                         roleName, _
-                        dbm.GetFieldValue(dbm.RecordSet, "permission"), _
-                        functionId
+                        dbm.GetFieldValue(dbm.RecordSet, "permission")
                 Else
                     Logger.LogDebug "CurrentUser.Init", "Add more role " & roleName
                     frg.AddRole roleName
                 End If
-                If (Not StringHelper.IsEqual(regionName, lastRegionName, True)) _
-                    Or (Not StringHelper.IsEqual(functionId, lastFunctionId, True)) Then
+                If (Not StringHelper.IsEqual(regionName, lastRegionName, True)) Then
                     Logger.LogDebug "CurrentUser.Init", "Add to list "
                     If mFuncRegion Is Nothing Then
                         Set mFuncRegion = frg
@@ -122,7 +115,6 @@ Public Function init(iNtid As String, _
                     mListFuncRg.Add frg
                 End If
                 lastRegionName = regionName
-                lastFunctionId = functionId
                 lastRoleName = roleName
                 dbm.RecordSet.MoveNext
             Loop
@@ -173,6 +165,17 @@ Public Function ListFunctions(Region As String) As Collection
     Set ListFunctions = list
 End Function
 
+Public Function SelectRegion(rname As String)
+    Dim frg As FunctionRegion
+    If mValid And Not mListFuncRg Is Nothing Then
+        For Each frg In mListFuncRg
+            If StringHelper.IsEqual(frg.Region, rname, True) Then
+                Set mFuncRegion = frg
+                Exit For
+            End If
+        Next frg
+    End If
+End Function
 
 Public Function SelectFunc(fname As String)
     Dim frg As FunctionRegion

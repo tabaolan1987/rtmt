@@ -11,6 +11,7 @@ CREATE TABLE [user_data_cache](
 	[jobTitle] varchar(255),
 	[sponsorForeName] varchar(255),
 	[sponsorSurname] varchar(255),
+	[sponsorNTID] varchar(255),
 	[vta] varchar(255),
 	[country] varchar(255),
 	[contractor] varchar(255),

@@ -11,15 +11,11 @@ Private mFuncRgID As String
 Private mPermission As String
 
 Public Function init(iRegion As String, _
-                        iName As String, _
                         iRole As String, _
-                        iPermission As String, _
-                        iFuncRgID As String)
+                        iPermission As String)
     mRegion = iRegion
-    mName = iName
     AddRole iRole
     mPermission = iPermission
-    mFuncRgID = iFuncRgID
 End Function
 
 Public Function AddRole(role As String)
@@ -30,8 +26,12 @@ Public Function AddRole(role As String)
 End Function
 
 Public Property Get value() As String
-    value = mRegion & " - " & mName
+    value = mRegion ' & " - " & mName
 End Property
+
+Public Function SetFuncRgId(id As String)
+    mFuncRgID = id
+End Function
 
 Public Property Get FuncRgID() As String
     FuncRgID = mFuncRgID
@@ -41,12 +41,13 @@ Public Property Get Region() As String
     Region = mRegion
 End Property
 
+Public Function SetFuncName(iName As String)
+    mName = iName
+End Function
 
 Public Property Get Name() As String
     Name = mName
 End Property
-
-
 
 Public Property Get role() As Collection
     Set role = mRole

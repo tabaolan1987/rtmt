@@ -16,6 +16,10 @@ SELECT
 	[SFunction],
 	[SdSubFunction],
 	[STeam],
+	[Region],
+	[blueprintRole],
+	[siteLocation],
+	[purchasingOrg],
 	[Spare1],
 	[Spare2],
 	[Spare3],
@@ -35,8 +39,28 @@ SELECT
 	[Spare17],
 	[Spare18],
 	[Spare19],
-	[Spare20]
+	[Spare20],
+	[Spare21],
+	[Spare22],
+	[Spare23],
+	[Spare24],
+	[Spare25],
+	[Spare26],
+	[Spare27],
+	[Spare28],
+	[Spare29],
+	[Spare30],
+	[Spare31],
+	[Spare32],
+	[Spare33],
+	[Spare34],
+	[Spare35],
+	[suspend],
+	[sponsorNTID],
+	[mappingBpRoles],
+	[mappingQuanlifications],
+	[mappingTypeBpRoles]
 FROM user_data as UD
 Where UD.deleted=0
-and UD.SFunction='(%RG_F_NAME%)'
+and UD.Region='(%RG_NAME%)'
 ORDER BY UD.ntid

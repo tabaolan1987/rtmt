@@ -23,8 +23,8 @@ End Function
 
 Public Function IsExistUserData() As Boolean
     Dim query As String
-    query = "select * from " & Constants.END_USER_DATA_TABLE_NAME & " where deleted = 0 and SFunction='" & _
-                Session.CurrentUser.FuncRegion.Name & "'"
+    query = "select * from " & Constants.END_USER_DATA_TABLE_NAME & " where deleted = 0 and region='" & _
+                Session.CurrentUser.FuncRegion.Region & "'"
     dbm.init
     dbm.OpenRecordSet query
     If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
@@ -51,7 +51,7 @@ End Function
 Public Function CheckRegionFunction()
     Dim query As String
     Dim tmpNtid As String
-    query = "SELECT * FROM " & Constants.END_USER_DATA_CACHE_TABLE_NAME & " WHERE [" & Constants.FIELD_REGION_FUNCTION & "] not like '" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Name) & "'"
+    query = "SELECT * FROM " & Constants.END_USER_DATA_CACHE_TABLE_NAME & " WHERE [Region] not like '" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "'"
     dbm.init
     dbm.OpenRecordSet query
     mIsFunctionRegionConflict = False
@@ -65,7 +65,7 @@ Public Function CheckRegionFunction()
             dbm.RecordSet.MoveNext
         Loop
     End If
-    dbm.ExecuteQuery "DELETE FROM " & Constants.END_USER_DATA_CACHE_TABLE_NAME & " WHERE [" & Constants.FIELD_REGION_FUNCTION & "] not like '" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Name) & "' Or " & Session.Settings.NtidField & " is null"
+    dbm.ExecuteQuery "DELETE FROM " & Constants.END_USER_DATA_CACHE_TABLE_NAME & " WHERE [Region] not like '" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "' Or " & Session.Settings.NtidField & " is null"
     dbm.Recycle
 End Function
 
@@ -144,7 +144,7 @@ Public Function CheckConflict()
             
             query = "SELECT * FROM " & Constants.END_USER_DATA_TABLE_NAME _
                                                         & " WHERE " & ss.NtidField & " = '" _
-                                                        & StringHelper.EscapeQueryString(ntid) & "'"
+                                                        & StringHelper.EscapeQueryString(ntid) & "' and deleted=0 and suspend=0"
             'Logger.LogDebug "UserManagement.CheckConflict", "Compare NTID query: " & query
             Set qdf = dbm.Database.CreateQueryDef("", query)
             Set tmpRst = qdf.OpenRecordSet
@@ -668,7 +668,9 @@ Public Function MergeUserData()
             Next v
             tmpCols.Add FIELD_DELETED
             tmpCols.Add FIELD_ID
+            tmpCols.Add "suspend"
             tmpData.Add Constants.FIELD_DELETED, "0"
+            tmpData.Add "suspend", "0"
             ntid = dbm.GetFieldValue(dbm.RecordSet, ss.NtidField)
             query = "SELECT * FROM " & Constants.END_USER_DATA_TABLE_NAME & " WHERE " & ss.NtidField _
                     & " = '" & StringHelper.EscapeQueryString(ntid) & "'"

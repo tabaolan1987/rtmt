@@ -1,1 +1,25 @@
 # IMPORTANT
+Activity
+BpRoleStandard
+BPRoleStandardCategory
+MappingRegionSystemRole
+MappingSystemRoleBpStandardRole
+SystemRole
+SystemRoleCategory
+CourseMappingBpRoleStandard
+course
+MappingActivityBpStandardRole
+user_data
+SpecialismMappingActivity
+user_data_mapping_role
+Specialism
+BlueprintRole_mapping_BpRole
+BlueprintRoles
+dofa
+Qualifications
+specialism_mapping_BpRole
+user_data_mapping_qualification
+user_rmt
+mappingType
+sub_function
+standard_team

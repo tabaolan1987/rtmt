@@ -2,15 +2,16 @@ Option Explicit
 
 Public Sub OnTest()
     'Run
-   ' Dim sh As New SyncHelper
-   ' sh.init "privileges"
-   ' sh.sync
-   ' sh.Recycle
+    'Dim sh As New SyncHelper
+    'sh.init "user_data"
+    'sh.sync
+    'sh.Recycle
     Dim dbm As New DbManager
     dbm.init
-    dbm.ExecuteQuery "update activity set ActivityGroup='testing' where id='98748e5e-3eda-452d-9c74-65bc1d1582dc'"
+    dbm.ExecuteQuery "delete [user_data].[mappingBpRoles].value from user_data"
+    dbm.ExecuteQuery "insert into user_data([mappingBpRoles].value) values('SRM Lead Requester') where ntid='ABDUST'"
+    dbm.ExecuteQuery "insert into user_data([mappingBpRoles].value) values('Contract Display & Reporting') where ntid='ABDUST'"
     dbm.Recycle
-    
     
 End Sub
 

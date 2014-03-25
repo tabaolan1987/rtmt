@@ -10,6 +10,7 @@ specialism : Specialism
 jobTitle : Job Title
 sponsorForeName : Line Manager/ Sponsor Forename
 sponsorSurname : Line Manager/ Sponsor Surname
+sponsorNTID : Line Manager/ Sponsor NTID
 vta : VTA
 country : Country
 contractor : Contractor? (Y/N)
