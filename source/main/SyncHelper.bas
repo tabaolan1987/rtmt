@@ -140,9 +140,11 @@ Private Function CompareServer()
     Logger.LogDebug "SyncHelper.CompareServer", "Query: " & query
     Set rs = cn.Execute(query)
     Set mHeaders = New Collection
+    Dim tmpFName As String
     For i = 0 To rs.fields.Count - 1
-        mHeaders.Add rs.fields(i).Name
-        mFieldTypes.Add rs.fields(i).Name, rs.fields(i).Type
+        tmpFName = rs.fields(i).Name
+        mHeaders.Add tmpFName
+        mFieldTypes.Add tmpFName, rs.fields(i).Type
     Next i
     Logger.LogDebug "SyncHelper.CompareServer", "Found header:"
     For Each v In mHeaders
@@ -160,7 +162,9 @@ Private Function CompareServer()
                 Else
                     tmpValue = Trim(rs(CStr(v)))
                 End If
-                tmpData.Add CStr(v), tmpValue
+                If Not tmpData.Exists(CStr(v)) Then
+                    tmpData.Add CStr(v), tmpValue
+                End If
             Next v
             tmpId = rs("id")
             Logger.LogDebug "SyncHelper.CompareServer", "Found id: " & tmpId
@@ -233,7 +237,9 @@ Private Function CompareLocal()
         rst.MoveFirst
         Do Until rst.EOF = True
             tmpId = dbm.GetFieldValue(rst, "TableId")
-            mIdCol.Add tmpId, tmpId
+            If Not mIdCol.Exists(tmpId) Then
+                mIdCol.Add tmpId, tmpId
+            End If
             rst.MoveNext
         Loop
     End If
@@ -323,7 +329,9 @@ Private Function PushLocalChange()
                             adData.Add "table_name", mTableName
                             query = dbm.CreateRecordQuery(adData, adCol, "audit_logs", IsServer:=True)
                             qBatch.Add query
-                            mIdTs.Add tmpId, tmpId
+                            If Not mIdTs.Exists(tmpId) Then
+                                mIdTs.Add tmpId, tmpId
+                            End If
                             RemoveChangeLog tmpId
                         End If
                     End If
@@ -360,7 +368,9 @@ Private Function PushLocalChange()
             If Len(tmpTs) = 0 And StringHelper.IsEqual(tmpDeleted, "false", True) Then
                 Set tmpData = New Scripting.Dictionary
                 For Each v In mHeaders
-                    tmpData.Add CStr(v), dbm.GetFieldValue(rst, CStr(v))
+                    If Not tmpData.Exists(CStr(v)) Then
+                        tmpData.Add CStr(v), dbm.GetFieldValue(rst, CStr(v))
+                    End If
                 Next v
                 
                 query = dbm.CreateRecordQuery(tmpData, mHeaders, mTableName, mFieldTypes, True)
@@ -377,7 +387,9 @@ Private Function PushLocalChange()
                 query = dbm.CreateRecordQuery(adData, adCol, "audit_logs", IsServer:=True)
                 'cn.Execute query
                 qBatch.Add query
-                mIdTs.Add tmpId, tmpId
+                If Not mIdTs.Exists(tmpId) Then
+                    mIdTs.Add tmpId, tmpId
+                End If
                 
             End If
             RemoveChangeLog tmpId

@@ -11,6 +11,7 @@ Private mReportMDCol As Scripting.Dictionary
 Private mSelectedCSV As String
 Private mAllReportsZip As String
 Private mCurrentHelpContent As String
+Private mMappingTypes As Scripting.Dictionary
 
 Public Function Recycle()
     Set ss = Nothing
@@ -190,6 +191,24 @@ End Function
 
 Public Function SetCurrentHelpContent(help As String)
     mCurrentHelpContent = help
+End Function
+
+Public Function MappingTypes() As Scripting.Dictionary
+    If mMappingTypes Is Nothing Then
+        Set mMappingTypes = New Scripting.Dictionary
+        Dim dbm As New DbManager
+        dbm.init
+        dbm.OpenRecordSet "select * from mappingType where deleted=0"
+        If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
+            dbm.RecordSet.MoveFirst
+            Do While Not dbm.RecordSet.EOF
+                mMappingTypes.Add dbm.GetFieldValue(dbm.RecordSet, "id"), dbm.GetFieldValue(dbm.RecordSet, "mapp_name")
+                dbm.RecordSet.MoveNext
+            Loop
+        End If
+        dbm.Recycle
+    End If
+    Set MappingTypes = mMappingTypes
 End Function
 
 Public Function UpdateChangelog(tblName As String, tblId As String)

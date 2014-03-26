@@ -963,7 +963,6 @@ OnError:
     Resume OnExit
 End Function
 
-
 Public Function ConnectionTest() As Boolean
     Dim stConnect As String
     If Len(Session.Settings.Username) <> 0 Then
@@ -1002,4 +1001,14 @@ Public Function ConnectionTest() As Boolean
         End If
     End If
     Set cn = Nothing
+End Function
+
+
+Public Function IsNullField(field As String)
+    IsNullField = True
+    If Not rst Is Nothing Then
+        If Not IsNull(rst(field)) Then
+            IsNullField = False
+        End If
+    End If
 End Function

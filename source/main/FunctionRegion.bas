@@ -37,8 +37,8 @@ Public Property Get FuncRgID() As String
     FuncRgID = mFuncRgID
 End Property
 
-Public Property Get region() As String
-    region = mRegion
+Public Property Get Region() As String
+    Region = mRegion
 End Property
 
 Public Function SetFuncName(iName As String)
