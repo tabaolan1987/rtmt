@@ -6,10 +6,10 @@ select id,
 		from Activity where deleted=0 order by ActivityDetail
 =====
 select * from SpecialismMappingActivity 
-	where idActivity='(%ID_TOP%)' and  idSpecialism='(%ID_LEFT%)' and function_region='(%RG_F_ID%)'
+	where idActivity='(%ID_TOP%)' and  idSpecialism='(%ID_LEFT%)' and idRegion='(%RG_NAME%)'
 =====
 update SpecialismMappingActivity set deleted='(%CHECK%)'
-	where idActivity='(%ID_TOP%)' and  idSpecialism='(%ID_LEFT%)' and function_region='(%RG_F_ID%)'
+	where idActivity='(%ID_TOP%)' and  idSpecialism='(%ID_LEFT%)' and idRegion='(%RG_NAME%)'
 =====
-insert into SpecialismMappingActivity(id, idActivity, idSpecialism, function_region, deleted) 
-	values('(%ID%)', '(%ID_TOP%)', '(%ID_LEFT%)', '(%RG_F_ID%)', '0')
+insert into SpecialismMappingActivity(id, idActivity, idSpecialism, idRegion, deleted) 
+	values('(%ID%)', '(%ID_TOP%)', '(%ID_LEFT%)', '(%RG_NAME%)', '0')

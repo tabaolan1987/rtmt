@@ -6,10 +6,10 @@ select id,
 		from Activity where deleted=0 order by ActivityDetail
 =====
 select Description As [MappingChar],deleted from MappingActivityBpStandardRole
-	where idActivity='(%ID_TOP%)' and  idBpRoleStandard='(%ID_LEFT%)' and function_region='(%RG_F_ID%)'
+	where idActivity='(%ID_TOP%)' and  idBpRoleStandard='(%ID_LEFT%)'
 =====
 update MappingActivityBpStandardRole set deleted='(%CHECK%)', Description='(%VALUE%)'
-	where idActivity='(%ID_TOP%)' and  idBpRoleStandard='(%ID_LEFT%)' and function_region='(%RG_F_ID%)'
+	where idActivity='(%ID_TOP%)' and  idBpRoleStandard='(%ID_LEFT%)'
 =====
-insert into MappingActivityBpStandardRole(id, idActivity, idBpRoleStandard,Description, function_region, deleted) 
-	values('(%ID%)', '(%ID_TOP%)', '(%ID_LEFT%)','(%VALUE%)', '(%RG_F_ID%)', '0')
+insert into MappingActivityBpStandardRole(id, idActivity, idBpRoleStandard,Description, deleted) 
+	values('(%ID%)', '(%ID_TOP%)', '(%ID_LEFT%)','(%VALUE%)', '0')

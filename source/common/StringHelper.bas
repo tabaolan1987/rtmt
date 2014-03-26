@@ -87,7 +87,9 @@ OnError:
 End Function
 
 Function EscapeQueryString(str As String) As String
-    str = Replace(str, "'", "''")
+    If IsContain(str, "'", True) Then
+        str = Replace(str, "'", "''")
+    End If
     str = Replace(str, Chr(13) & Chr(10), "")
     EscapeQueryString = str
 End Function
@@ -194,5 +196,32 @@ Public Function GenerateFilter(source() As String) As String
         GenerateFilter = filter
     Else
         GenerateFilter = "'" & StringHelper.EscapeQueryString(StringHelper.GetGUID) & "'"
+    End If
+End Function
+
+Public Function GenerateFilterDict(source As Scripting.Dictionary, Optional UseKey As Boolean) As String
+    Dim v As Variant
+    Dim filter As String
+    Dim mKey As String
+    Dim mValue As String
+    filter = ""
+    For Each v In source.keys
+        mKey = CStr(v)
+        mValue = source.Item(mKey)
+        Logger.LogDebug "StringHelper.GenerateFilterDict", "key: " & mKey
+        If UserKey Then
+            filter = filter & "'" & EscapeQueryString(mKey) & "',"
+        Else
+            filter = filter & "'" & EscapeQueryString(mValue) & "',"
+        End If
+    Next v
+    If StringHelper.EndsWith(filter, ",", True) Then
+        filter = Left(filter, Len(filter) - 1)
+    End If
+    Logger.LogDebug "StringHelper.GenerateFilterDict", "filer: " & filter
+    If Len(filter) > 0 Then
+        GenerateFilterDict = filter
+    Else
+        GenerateFilterDict = "'" & StringHelper.EscapeQueryString(StringHelper.GetGUID) & "'"
     End If
 End Function

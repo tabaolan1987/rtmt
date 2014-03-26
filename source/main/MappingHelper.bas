@@ -377,7 +377,7 @@ Public Function PrepareMappingActivitesBBJobRoles()
     Dim tmpQdf As DAO.QueryDef
     query = "select MA.idActivity, MA.idBpRoleStandard, MA.Description from (MappingActivityBpStandardRole as MA inner join BpRoleStandard AS BR on BR.id = MA.idBpRolestandard)" _
             & " where BR.BpRoleStandardName in (" & filter & ")" _
-            & " and MA.deleted = 0 and MA.function_region='" & Session.CurrentUser.FuncRegion.FuncRgID & "'"
+            & " and MA.deleted = 0"
     dbm.init
     dbm.OpenRecordSet query
     If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
@@ -385,7 +385,7 @@ Public Function PrepareMappingActivitesBBJobRoles()
         mmd.SetComplete (False)
         query = "select MA.idActivity, MA.idBpRoleStandard, MA.Description from (MappingActivityBpStandardRole as MA inner join BpRoleStandard AS BR on BR.id = MA.idBpRolestandard)" _
             & " where BR.BpRoleStandardName in (" & filter & ")" _
-            & " and MA.deleted = 0 and MA.function_region=''"
+            & " and MA.deleted = 0"
         Set tmpQdf = dbm.Database.CreateQueryDef("", query)
         Set tmpRst = tmpQdf.OpenRecordSet
         If Not (tmpRst.EOF And tmpRst.BOF) Then
@@ -394,13 +394,12 @@ Public Function PrepareMappingActivitesBBJobRoles()
                 str1 = dbm.GetFieldValue(tmpRst, "idActivity")
                 str2 = dbm.GetFieldValue(tmpRst, "idBpRoleStandard")
                 str3 = dbm.GetFieldValue(tmpRst, "Description")
-                dbm.ExecuteQuery "insert into MappingActivityBpStandardRole(id, idActivity, idBpRoleStandard,Description, function_region, deleted)" _
+                dbm.ExecuteQuery "insert into MappingActivityBpStandardRole(id, idActivity, idBpRoleStandard,Description, deleted)" _
                     & " values('" _
                     & StringHelper.EscapeQueryString(StringHelper.GetGUID) & "', '" _
                     & StringHelper.EscapeQueryString(str1) & "', '" _
                     & StringHelper.EscapeQueryString(str2) & "','" _
-                    & StringHelper.EscapeQueryString(str3) & "', '" _
-                    & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.FuncRgID) & "', '0')"
+                    & StringHelper.EscapeQueryString(str3) & "', '0')"
                 tmpRst.MoveNext
             Loop
         End If
