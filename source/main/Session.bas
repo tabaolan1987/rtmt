@@ -12,11 +12,21 @@ Private mSelectedCSV As String
 Private mAllReportsZip As String
 Private mCurrentHelpContent As String
 Private mMappingTypes As Scripting.Dictionary
+Private mSelectedCurriculum As String
 
 Public Function Recycle()
     Set ss = Nothing
     
 End Function
+
+Public Function SelectedCurriculum() As String
+    SelectedCurriculum = mSelectedCurriculum
+End Function
+
+Public Function SetSelectedCurriculum(path As String)
+    mSelectedCurriculum = path
+End Function
+
 
 Public Function SelectedCSV() As String
     SelectedCSV = mSelectedCSV
@@ -81,7 +91,7 @@ Public Function RenewReports()
     
 End Function
 
-Public Function init()
+Public Function Init()
     Set mCurrentUser = Nothing
     CurrentUser
     Recycle
@@ -94,7 +104,7 @@ Public Function MappingMetaData(mappingName As String) As MappingMetaData
     Dim md As MappingMetaData
     If Not mMappingMDCol.Exists(mappingName) Then
         Set md = New MappingMetaData
-        md.init mappingName, Settings
+        md.Init mappingName, Settings
         mMappingMDCol.Add mappingName, md
     End If
     Set MappingMetaData = mMappingMDCol.Item(mappingName)
@@ -108,13 +118,13 @@ Public Function ReportMetaData(reportName As String) As ReportMetaData
     If Not mReportMDCol.Exists(reportName) Then
         If StringHelper.IsEqual(reportName, Constants.RP_AUDIT_LOG, True) Then
             Dim dbm As New DbManager
-            dbm.init
+            dbm.Init
             dbm.DeleteTable Constants.TABLE_AUDIT_LOG
             dbm.SyncTable Settings.ServerName & "," & Settings.Port, Settings.DatabaseName, Constants.TABLE_AUDIT_LOG, Constants.TABLE_AUDIT_LOG, Settings.Username, Settings.Password, False
             dbm.Recycle
         End If
         Set rmd = New ReportMetaData
-        rmd.init reportName
+        rmd.Init reportName
         mReportMDCol.Add reportName, rmd
     End If
     Set ReportMetaData = mReportMDCol.Item(reportName)
@@ -134,10 +144,10 @@ Public Function CurrentUser() As CurrentUser
         Set mCurrentUser = New CurrentUser
         If Settings().EnableTesting Then
             Logger.LogDebug "Session.CurrentUser", "Enable testing mode"
-            mCurrentUser.init Settings().TestNtid, Settings()
+            mCurrentUser.Init Settings().TestNtid, Settings()
         Else
             Logger.LogDebug "Session.CurrentUser", "Disable testing mode"
-            mCurrentUser.init Ultilities.GetUserName, Settings()
+            mCurrentUser.Init Ultilities.GetUserName, Settings()
         End If
     End If
    Set CurrentUser = mCurrentUser
@@ -147,7 +157,7 @@ Public Function Settings() As SystemSetting
     On Error GoTo OnError
     If ss Is Nothing Then
         Set ss = New SystemSetting
-        ss.init
+        ss.Init
     End If
     Set Settings = ss
 OnExit:
@@ -197,7 +207,7 @@ Public Function MappingTypes() As Scripting.Dictionary
     If mMappingTypes Is Nothing Then
         Set mMappingTypes = New Scripting.Dictionary
         Dim dbm As New DbManager
-        dbm.init
+        dbm.Init
         dbm.OpenRecordSet "select * from mappingType where deleted=0"
         If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
             dbm.RecordSet.MoveFirst
@@ -213,7 +223,7 @@ End Function
 
 Public Function UpdateChangelog(tblName As String, tblId As String)
     Dim dbm As New DbManager
-    dbm.init
+    dbm.Init
     dbm.OpenRecordSet "select * from [ChangeLog] where [TableName]='" & StringHelper.EscapeQueryString(tblName) _
                                     & "' and [TableId]='" & StringHelper.EscapeQueryString(tblId) & "'"
     If (dbm.RecordSet.BOF And dbm.RecordSet.EOF) Then

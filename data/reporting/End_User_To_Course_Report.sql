@@ -1,12 +1,12 @@
 tmp_table_report
 ===
-select ntid from user_data where deleted = 0 and SFunction='(%RG_F_NAME%)' 
+select idUserdata as [ntid] from user_data_mapping_role where idRegion='(%RG_NAME%)' and deleted=0
 ===
 select bpRole.BpRoleStandardName as [Job Role] 
 		from (user_data_mapping_role as udata   
 			inner join BpRoleStandard as bpRole on udata.idBpRoleStandard = bpRole.id) 
 		where udata.idUserdata = '(%VALUE%)' 
-			and udata.idFunction='(%RG_F_ID%)'
+			and udata.idRegion='(%RG_NAME%)'
 			and udata.Deleted = 0 and bpRole.Deleted = 0 
 		group by bpRole.BpRoleStandardName
 ===
@@ -28,7 +28,7 @@ inner join Course as Course
 on CMR.idCourse = Course.id)
 where UMR.deleted=0 and  UDT.deleted =0 and
 BPROLE.deleted=0 and CMR.deleted=0 and
-Course.deleted=0 and UMR.idFunction='(%RG_F_ID%)' And UDT.SFunction='(%RG_F_NAME%)'
+Course.deleted=0 and UMR.idRegion='(%RG_NAME%)' And UDT.Region='(%RG_NAME%)'
 group by UDT.ntid,Course.courseId,CMR.ps
 ) as rpc on rpc.ntid = UD.ntid)
 	inner join Course as Cr on Cr.courseId = rpc.courseId)

@@ -164,7 +164,8 @@ Public Function GenerateQuery(query As String, Optional data As Scripting.Dictio
     mQuery = query
     If Not data Is Nothing Then
         For Each v In data.keys
-            If StringHelper.IsEqual(CStr(v), Constants.Q_KEY_FILTER, True) Then
+            If StringHelper.IsEqual(CStr(v), Constants.Q_KEY_FILTER, True) _
+                Or StringHelper.IsEqual(CStr(v), Constants.Q_KEY_MAPPING_FIELDS, True) Then
                 mQuery = Replace(mQuery, "(%" & CStr(v) & "%)", data.Item(CStr(v)))
             Else
                 mQuery = Replace(mQuery, "(%" & CStr(v) & "%)", EscapeQueryString(data.Item(CStr(v))))

@@ -20,7 +20,7 @@ Private mIdCol As Scripting.Dictionary
 Private mIdTs As Scripting.Dictionary
 Private dbm As DbManager
 
-Public Function init(tblName As String)
+Public Function Init(tblName As String)
     Set dbs = CurrentDb
     mTableName = tblName
     Logger.LogDebug "SyncHelper.init", "Start sync table " & tblName

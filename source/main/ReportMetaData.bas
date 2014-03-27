@@ -9,11 +9,13 @@ Option Explicit
 Private mType As String
 Private rawName As String
 Private mName As String
-Private mWorkSheet As String
+Private mWorksheet As String
 
 Private mQuery As String
 
 Private mFillHeader As Boolean
+Private mFillCategory As Boolean
+Private mStartCategoryRow As Long
 Private mStartHeaderRow As Long
 Private mStartHeaderCol As Long
 Private mStartCol As Long
@@ -42,7 +44,7 @@ Private mComplete As Boolean
 
 Private mLastModified As String
 
-Public Function init(Name As String, Optional ss As SystemSetting, Optional rpType As String)
+Public Function Init(Name As String, Optional ss As SystemSetting, Optional rpType As String)
     If Len(rpType) > 0 Then
         mType = rpType
     Else
@@ -64,13 +66,13 @@ Public Function init(Name As String, Optional ss As SystemSetting, Optional rpTy
     mTemplateFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.RP_ROOT_FOLDER & Name & Constants.FILE_EXTENSION_TEMPLATE)
     mConfigFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.RP_ROOT_FOLDER & Name & Constants.FILE_EXTENSION_CONFIG)
     Logger.LogDebug "ReportMetaData.Init", "Read configuration path: " & mConfigFilePath
-    ir.init mConfigFilePath
+    ir.Init mConfigFilePath
     
     mName = ir.ReadKey(Constants.SECTION_GENERAL, Constants.KEY_NAME)
     Logger.LogDebug "ReportMetaData.Init", "Report name: " & mName
     
-    mWorkSheet = ir.ReadKey(Constants.SECTION_GENERAL, Constants.KEY_WORK_SHEET)
-    Logger.LogDebug "ReportMetaData.Init", "Work sheet: " & mWorkSheet
+    mWorksheet = ir.ReadKey(Constants.SECTION_GENERAL, Constants.KEY_WORK_SHEET)
+    Logger.LogDebug "ReportMetaData.Init", "Work sheet: " & mWorksheet
     mBulkSize = ir.ReadLongKey(Constants.SECTION_FORMAT, Constants.KEY_BULK_SIZE)
     
     mPivotTable = ir.ReadBooleanKey(Constants.SECTION_GENERAL, Constants.KEY_PIVOT_TABLE)
@@ -78,6 +80,7 @@ Public Function init(Name As String, Optional ss As SystemSetting, Optional rpTy
     mPivotTableWorksheet = ir.ReadKey(Constants.SECTION_GENERAL, Constants.KEY_PIVOT_TABLE_WORK_SHEET)
     
     mFillHeader = ir.ReadBooleanKey(Constants.SECTION_FORMAT, Constants.KEY_FILL_HEADER)
+    mFillCategory = ir.ReadBooleanKey(Constants.SECTION_FORMAT, Constants.KEY_FILL_CATEGORY)
     Logger.LogDebug "ReportMetaData.Init", "Fill header: " & CStr(mFillHeader)
     mSkipCheckHeader = ir.ReadBooleanKey(Constants.SECTION_FORMAT, Constants.KEY_SKIP_CHECK_HEADER)
     mMergeEnable = ir.ReadBooleanKey(Constants.SECTION_FORMAT, Constants.KEY_MERGE_ENABLE)
@@ -108,6 +111,7 @@ Public Function init(Name As String, Optional ss As SystemSetting, Optional rpTy
     mStartHeaderCol = ir.ReadLongKey(Constants.SECTION_FORMAT, Constants.KEY_START_HEADER_COL)
     Logger.LogDebug "ReportMetaData.Init", "Start header column: " & CStr(mStartHeaderCol)
     mStartHeaderRow = ir.ReadLongKey(Constants.SECTION_FORMAT, Constants.KEY_START_HEADER_ROW)
+    mStartCategoryRow = ir.ReadLongKey(Constants.SECTION_FORMAT, Constants.KEY_START_CATEGORY_ROW)
     Logger.LogDebug "ReportMetaData.Init", "Start header row: " & CStr(mStartHeaderRow)
     mStartCol = ir.ReadLongKey(Constants.SECTION_FORMAT, Constants.KEY_START_COL)
     Logger.LogDebug "ReportMetaData.Init", "Start column: " & CStr(mStartCol)
@@ -128,7 +132,7 @@ Public Function init(Name As String, Optional ss As SystemSetting, Optional rpTy
             Logger.LogDebug "ReportMetaData.Init", "Found section " & CStr(i + 1)
             Set rpSection = New ReportSection
             tmpStr = Trim(tmpRawSection(i))
-            rpSection.init tmpStr, ss, mSkipCheckHeader
+            rpSection.Init tmpStr, ss, mSkipCheckHeader
             If StringHelper.IsEqual(rpSection.SectionType, Constants.RP_SECTION_TYPE_FIXED, True) _
                 Or StringHelper.IsEqual(rpSection.SectionType, Constants.RP_SECTION_TYPE_TMP_TABLE, True) Then
                 mCount = rpSection.Count
@@ -155,7 +159,7 @@ End Property
 Public Function OpenReport()
     Dim oExcel As New Excel.Application
     Dim WB As New Excel.Workbook
-    Dim ws As Excel.WorkSheet
+    Dim ws As Excel.worksheet
     Dim rng As Excel.range
     With oExcel
         .Visible = True
@@ -169,7 +173,7 @@ End Function
 Public Function OpenSaveAs()
     Dim oExcel As New Excel.Application
     Dim WB As New Excel.Workbook
-    Dim ws As Excel.WorkSheet
+    Dim ws As Excel.worksheet
     Dim rng As Excel.range
     With oExcel
         .Visible = False
@@ -185,7 +189,7 @@ End Function
 
 Public Function Recyle()
     Dim dbm As New DbManager
-    dbm.init
+    dbm.Init
     Dim rps As ReportSection
     If Not mReportSections Is Nothing Then
         For Each rps In mReportSections
@@ -229,16 +233,24 @@ Public Property Get StartCol() As Long
     StartCol = mStartCol
 End Property
 
-Public Property Get WorkSheet() As String
-    WorkSheet = mWorkSheet
+Public Property Get worksheet() As String
+    worksheet = mWorksheet
 End Property
 
 Public Property Get FillHeader() As Boolean
     FillHeader = mFillHeader
 End Property
 
+Public Property Get FillCategory() As Boolean
+    FillCategory = mFillCategory
+End Property
+
 Public Property Get StartHeaderRow() As Long
     StartHeaderRow = mStartHeaderRow
+End Property
+
+Public Property Get StartCategoryRow() As Long
+    StartCategoryRow = mStartCategoryRow
 End Property
 
 Public Property Get StartHeaderCol() As Long

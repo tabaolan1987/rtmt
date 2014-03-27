@@ -18,7 +18,7 @@ Private mFilterTop As String
 Private mFilterLeft As String
 Private mWorkingFile As String
 
-Public Function init(md As MappingMetaData, Optional mss As SystemSetting, Optional filterTop As String, _
+Public Function Init(md As MappingMetaData, Optional mss As SystemSetting, Optional filterTop As String, _
                             Optional filterLeft As String)
     Set mmd = md
     Set ss = mss
@@ -63,7 +63,7 @@ Public Function CheckExistMapping() As Boolean
     data.Add Constants.Q_KEY_REGION_NAME, Session.Settings.regionName
     data.Add Constants.Q_KEY_FUNCTION_REGION_ID, Session.Settings.RegionFunctionId
     query = StringHelper.GenerateQuery(query, data)
-    dbm.init
+    dbm.Init
     dbm.OpenRecordSet query
     If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
         CheckExistMapping = True
@@ -82,7 +82,7 @@ Private Function PrepareData()
     '========= TOP FIELD DATA BLOCK ========
     Set dictTop = New Scripting.Dictionary
     Set dictTopComment = New Scripting.Dictionary
-    dbm.init
+    dbm.Init
     Set data = New Scripting.Dictionary
     data.Add Constants.Q_KEY_FILTER, mFilterTop
     query = mmd.query(Q_TOP, data)
@@ -110,7 +110,7 @@ Private Function PrepareData()
     '========= LEFT FIELD DATA BLOCK ========
     Set dictLeft = New Scripting.Dictionary
     Set dictLeftComment = New Scripting.Dictionary
-    dbm.init
+    dbm.Init
     Set data = New Scripting.Dictionary
     data.Add Constants.Q_KEY_FILTER, mFilterLeft
     query = mmd.query(Q_LEFT, data)
@@ -144,7 +144,7 @@ Public Function GenerateMapping()
         Dim v As Variant, y As Variant
         Dim oExcel As New Excel.Application
         Dim WB As New Excel.Workbook
-        Dim ws As Excel.WorkSheet
+        Dim ws As Excel.worksheet
         Dim rng As Excel.range
         Dim check As String
     
@@ -156,8 +156,8 @@ Public Function GenerateMapping()
             Logger.LogDebug "MappingHelper.GenerateMapping", "Open excel template: " & mWorkingFile
             Set WB = .Workbooks.Open(mWorkingFile)
             With WB
-                Logger.LogDebug "MappingHelper.GenerateMapping", "Select worksheet: " & mmd.WorkSheet
-                Set ws = WB.workSheets(mmd.WorkSheet)
+                Logger.LogDebug "MappingHelper.GenerateMapping", "Select worksheet: " & mmd.worksheet
+                Set ws = WB.workSheets(mmd.worksheet)
                 With ws
                     ' Fill top field heading
                     l = mmd.StartColTop
@@ -200,7 +200,7 @@ Public Function GenerateMapping()
                             tmpData.Add Q_KEY_FUNCTION_REGION_ID, ss.RegionFunctionId
                             tmpData.Add Q_KEY_ID_LEFT, tmpIdLeft
                             tmpData.Add Q_KEY_ID_TOP, tmpId
-                            dbm.init
+                            dbm.Init
                             dbm.OpenRecordSet mmd.query(Q_CHECK, tmpData)
                             If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
                                 dbm.RecordSet.MoveFirst
@@ -240,7 +240,7 @@ End Function
 Public Function OpenMapping()
     Dim oExcel As New Excel.Application
     Dim WB As New Excel.Workbook
-    Dim ws As Excel.WorkSheet
+    Dim ws As Excel.worksheet
     Dim rng As Excel.range
     With oExcel
         .Visible = True
@@ -269,7 +269,7 @@ Public Function ParseMapping()
         Dim v As Variant, y As Variant
         Dim oExcel As New Excel.Application
         Dim WB As New Excel.Workbook
-        Dim ws As Excel.WorkSheet
+        Dim ws As Excel.worksheet
         Dim rng As Excel.range
         Dim check As String
         Dim NeedUpdate As Boolean
@@ -284,8 +284,8 @@ Public Function ParseMapping()
             Logger.LogDebug "MappingHelper.ParseMapping", "Open excel template: " & mWorkingFile
             Set WB = .Workbooks.Open(mWorkingFile)
             With WB
-                Logger.LogDebug "MappingHelper.ParseMapping", "Select worksheet: " & mmd.WorkSheet
-                Set ws = WB.workSheets(mmd.WorkSheet)
+                Logger.LogDebug "MappingHelper.ParseMapping", "Select worksheet: " & mmd.worksheet
+                Set ws = WB.workSheets(mmd.worksheet)
                 
                 With ws
                     If .FilterMode Then
@@ -313,7 +313,7 @@ Public Function ParseMapping()
                             tmpData.Add Q_KEY_ID_LEFT, tmpIdLeft
                             tmpData.Add Q_KEY_ID_TOP, tmpIdTop
                             
-                            dbm.init
+                            dbm.Init
                             dbm.OpenRecordSet mmd.query(Q_CHECK, tmpData)
                             If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
                                 NeedUpdate = True
@@ -338,13 +338,13 @@ Public Function ParseMapping()
                                     tmpData.Add Q_KEY_CHECK, "-1"
                                 End If
                                 
-                                dbm.init
+                                dbm.Init
                                 Logger.LogDebug "MappingHelper.ParseMapping", "Update local database"
                                 dbm.ExecuteQuery mmd.query(Q_UPDATE, tmpData)
                                 dbm.Recycle
                             ElseIf IsChecked Then
                                 tmpData.Add Q_KEY_ID, StringHelper.GetGUID
-                                dbm.init
+                                dbm.Init
                                 Logger.LogDebug "MappingHelper.ParseMapping", "Create local database"
                                 dbm.ExecuteQuery mmd.query(Q_INSERT, tmpData)
                                 dbm.Recycle
@@ -378,7 +378,7 @@ Public Function PrepareMappingActivitesBBJobRoles()
     query = "select MA.idActivity, MA.idBpRoleStandard, MA.Description from (MappingActivityBpStandardRole as MA inner join BpRoleStandard AS BR on BR.id = MA.idBpRolestandard)" _
             & " where BR.BpRoleStandardName in (" & filter & ")" _
             & " and MA.deleted = 0"
-    dbm.init
+    dbm.Init
     dbm.OpenRecordSet query
     If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
     Else

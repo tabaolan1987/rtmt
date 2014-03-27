@@ -13,9 +13,13 @@ Private mValid As Boolean
 Private ss As SystemSetting
 Private mCount As Long
 Private mCachedTable As String
+Private mCategory As Scripting.Dictionary
+Private mCategoryBColor As Scripting.Dictionary
+Private mCategoryFColor As Scripting.Dictionary
 
 Private Property Get DataQuery() As Scripting.Dictionary
     Dim data As New Scripting.Dictionary
+    
     Set ss = Session.Settings()
     data.Add Constants.Q_KEY_FUNCTION_REGION_ID, ss.RegionFunctionId
     data.Add Constants.Q_KEY_REGION_NAME, ss.regionName
@@ -23,7 +27,10 @@ Private Property Get DataQuery() As Scripting.Dictionary
     Set DataQuery = data
 End Property
 
-Public Function init(raw As String, Optional mss As SystemSetting, Optional SkipCheckHeader As Boolean)
+Public Function Init(raw As String, Optional mss As SystemSetting, Optional SkipCheckHeader As Boolean)
+    Set mCategory = New Scripting.Dictionary
+    Set mCategoryBColor = New Scripting.Dictionary
+    Set mCategoryFColor = New Scripting.Dictionary
     mValid = False
     Dim dbm As New DbManager
     Logger.LogDebug "ReportSection.Init", "SkipCheckHeader: " & SkipCheckHeader
@@ -67,7 +74,7 @@ Public Function init(raw As String, Optional mss As SystemSetting, Optional Skip
             PrepareQuery mQuery, ss
             mQuery = StringHelper.GenerateQuery(mQuery, DataQuery)
         Case Constants.RP_SECTION_TYPE_FIXED:
-            dbm.init
+            dbm.Init
             Logger.LogDebug "ReportSection.Init", "RP_SECTION_TYPE_FIXED"
             mQuery = StringHelper.GenerateQuery(mQuery, DataQuery)
            
@@ -93,7 +100,7 @@ Public Function init(raw As String, Optional mss As SystemSetting, Optional Skip
                 Logger.LogDebug "ReportSection.Init", "Primary query: " & mQuery
                 tableName = StringHelper.TrimNewLine(queryCache(0))
                 mCachedTable = tableName
-                dbm.init
+                dbm.Init
                 If Ultilities.IfTableExists(tableName) Then
                     Logger.LogDebug "ReportSection.Init", "Delete all records table " & tableName
                     dbm.ExecuteQuery "DELETE * FROM [" & tableName & "]"
@@ -134,7 +141,7 @@ Public Function init(raw As String, Optional mss As SystemSetting, Optional Skip
                 dbm.Recycle
             End If
             
-            dbm.init
+            dbm.Init
             mQuery = StringHelper.GenerateQuery(mQuery, DataQuery)
             If Not SkipCheckHeader Then
                 dbm.OpenRecordSet mQuery
@@ -149,25 +156,59 @@ Public Function init(raw As String, Optional mss As SystemSetting, Optional Skip
             End If
             dbm.Recycle
         Case RP_SECTION_TYPE_TMP_PILOT_REPORT:
-            dbm.init
+            dbm.Init
             queryCache = Split(mQuery, Constants.SPLIT_LEVEL_2)
             Dim tmpCol As New Collection
             Dim tmpValueCol As Collection
             Dim tmpHeader As String
             Dim tmpQueryPilot As String
+            Dim tmpColor As String
             Dim tmpNtid As String
             Dim tmpTableName As String
             Dim tmpDataIn As Scripting.Dictionary
             Dim tmpDataPara As Scripting.Dictionary
+            Dim tmpCache As String
+            Dim tmpMappingFields As String
             Dim pilotHeader As New Scripting.Dictionary
             tmpCol.Add "key"
             If UBound(queryCache) > 0 Then
-                
                 tmpTableName = StringHelper.TrimNewLine(queryCache(0))
                 mCachedTable = tmpTableName
                 dbm.DeleteTable tmpTableName
                 tmpQuery = "create table [" & tmpTableName & "] ( [key] varchar(255), "
-                tmpList = Split(StringHelper.TrimNewLine(queryCache(1)), ",")
+                tmpCache = StringHelper.TrimNewLine(queryCache(1))
+                If StringHelper.IsContain(tmpCache, "select", True) _
+                    And StringHelper.IsContain(tmpCache, "from", True) _
+                    And StringHelper.IsContain(tmpCache, "where", True) _
+                    Then
+                    arraySize = 0
+                    dbm.OpenRecordSet tmpCache
+                    If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
+                        dbm.RecordSet.MoveFirst
+                        Do While Not dbm.RecordSet.EOF
+                            tmpKey = dbm.GetFieldValue(dbm.RecordSet, "header")
+                            tmpValue = dbm.GetFieldValue(dbm.RecordSet, "Category")
+                            tmpColor = dbm.GetFieldValue(dbm.RecordSet, "fColor")
+                            If Not mCategoryFColor.Exists(tmpValue) Then
+                                mCategoryFColor.Add tmpValue, tmpColor
+                            End If
+                            tmpColor = dbm.GetFieldValue(dbm.RecordSet, "bColor")
+                            If Not mCategoryBColor.Exists(tmpValue) Then
+                                mCategoryBColor.Add tmpValue, tmpColor
+                            End If
+                            ReDim Preserve tmpList(arraySize)
+                            tmpList(arraySize) = tmpKey
+                            If Not mCategory.Exists(tmpKey) Then
+                                mCategory.Add tmpKey, tmpValue
+                            End If
+                            
+                            arraySize = arraySize + 1
+                            dbm.RecordSet.MoveNext
+                        Loop
+                    End If
+                Else
+                    tmpList = Split(tmpCache, ",")
+                End If
                 arraySize = 0
                 For i = LBound(tmpList) To UBound(tmpList)
                     tmpStr = Trim(Replace(Replace(Replace(tmpList(i), Chr(10), " "), Chr(13), " "), Chr(9), " "))
@@ -175,7 +216,7 @@ Public Function init(raw As String, Optional mss As SystemSetting, Optional Skip
                     pilotHeader.Add tmpHeader, tmpStr
                     tmpCol.Add tmpHeader
                     tmpQuery = tmpQuery & "[" & tmpHeader & "]" & " varchar(255)" & ","
-                    
+                    tmpMappingFields = tmpMappingFields & "[" & tmpHeader & "] AS [" & tmpStr & "],"
                     ReDim Preserve mPivotHeader(arraySize)
                     mPivotHeader(arraySize) = tmpStr
                     arraySize = arraySize + 1
@@ -183,6 +224,9 @@ Public Function init(raw As String, Optional mss As SystemSetting, Optional Skip
                 Next i
                 If StringHelper.EndsWith(tmpQuery, ",", True) Then
                     tmpQuery = Left(tmpQuery, Len(tmpQuery) - 1)
+                End If
+                If StringHelper.EndsWith(tmpMappingFields, ",", True) Then
+                    tmpMappingFields = Left(tmpMappingFields, Len(tmpMappingFields) - 1)
                 End If
                 tmpQuery = tmpQuery & ")"
                 Logger.LogDebug "ReportSection.Init", "Create new table cache query: " & tmpQuery
@@ -233,9 +277,11 @@ Public Function init(raw As String, Optional mss As SystemSetting, Optional Skip
                         dbm.RecordSet.MoveNext
                     Loop
                 End If
-               
-                mQuery = StringHelper.GenerateQuery(StringHelper.TrimNewLine(queryCache(4)), DataQuery)
-               
+                Set tmpData = DataQuery
+                tmpData.Add Constants.Q_KEY_MAPPING_FIELDS, tmpMappingFields
+                Logger.LogDebug "ReportSection.Init", "tmpMappingFields: " & tmpMappingFields
+                mQuery = StringHelper.GenerateQuery(StringHelper.TrimNewLine(queryCache(4)), tmpData)
+                'Logger.LogDebug "ReportSection.Init", "Query: " & mQuery
                 If Not SkipCheckHeader Then
                     dbm.OpenRecordSet mQuery
                     mCount = dbm.RecordSet.recordCount
@@ -293,7 +339,7 @@ Private Function PrepareQuery(query As String, Optional ss As SystemSetting) As 
         'Logger.LogDebug "ReportSection.PrepareQuery", "Generate query: " & qIn
         'Logger.LogDebug "ReportSection.PrepareQuery", "Get value query: " & qOut
         If StringHelper.IsContain(qOut, "select", True) And StringHelper.IsContain(qOut, "from", True) Then
-            dbm.init
+            dbm.Init
             dbm.OpenRecordSet (qOut)
             If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
                 tmpQuery = ""
@@ -360,7 +406,7 @@ Private Function GenerateQuery(query As String, Optional ss As SystemSetting) As
         qIn = Trim(tmpSplit(1))
         'Logger.LogDebug "ReportSection.GenerateQuery", "Generate query: " & qIn
         'Logger.LogDebug "ReportSection.GenerateQuery", "Get value query: " & qOut
-        dbm.init
+        dbm.Init
         dbm.OpenRecordSet (qOut)
         
         If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
@@ -466,6 +512,42 @@ Public Property Get PivotHeader() As String()
     PivotHeader = mPivotHeader
 End Property
 
+Public Property Get Categories() As Scripting.Dictionary
+    Set Categories = mCategory
+End Property
+
+Public Property Get CategoryBColor() As Scripting.Dictionary
+    Set CategoryBColor = mCategoryBColor
+End Property
+
+Public Property Get CategoryFColor() As Scripting.Dictionary
+    Set CategoryFColor = mCategoryFColor
+End Property
+
+Public Function CatBcolor(CategoryName As String) As Long
+    Dim colors() As String
+    CatBcolor = RGB(255, 255, 255)
+    If mCategoryBColor.Exists(CategoryName) Then
+        On Error Resume Next
+        colors = Split(mCategoryBColor.Item(CategoryName), ",")
+        If UBound(colors) = 2 Then
+            CatBcolor = RGB(CInt(colors(0)), CInt(colors(1)), CInt(colors(2)))
+        End If
+    End If
+End Function
+
+Public Function CatFcolor(CategoryName As String) As Long
+    Dim colors() As String
+    CatFcolor = RGB(0, 0, 0)
+    If mCategoryFColor.Exists(CategoryName) Then
+        On Error Resume Next
+        colors = Split(mCategoryFColor.Item(CategoryName), ",")
+        If UBound(colors) = 2 Then
+            CatFcolor = RGB(CInt(colors(0)), CInt(colors(1)), CInt(colors(2)))
+        End If
+    End If
+End Function
+    
 Public Property Get PivotHeaderCount() As Integer
     If Not Ultilities.IsVarArrayEmpty(mPivotHeader) Then
         PivotHeaderCount = UBound(mPivotHeader) + 1

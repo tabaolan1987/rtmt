@@ -7,7 +7,7 @@ Implements ITestManager
 
 Private mMethodName As String, mClassName As String
 
-Public Sub init(MethodName As String)
+Public Sub Init(MethodName As String)
     mMethodName = MethodName
 End Sub
 

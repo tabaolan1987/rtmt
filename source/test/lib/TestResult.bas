@@ -25,7 +25,7 @@ End Property
 Public Sub EndTest(TestCase As ITestCase, time As Long)
     Dim TCR As TestCaseRow
     Set TCR = New TestCaseRow
-    TCR.init TestCase, time
+    TCR.Init TestCase, time
     TestCaseRows.Add TCR
     Set mCurrentTestCase = Nothing
 End Sub
@@ -33,7 +33,7 @@ End Sub
 Public Sub AddFailure(TestCase As ITestCase, Comment As String)
     Dim Failure As TestFailure
     Set Failure = New TestFailure
-    Failure.init TestCase, Comment
+    Failure.Init TestCase, Comment
     Failures.Add Failure
 End Sub
 

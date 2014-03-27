@@ -13,11 +13,16 @@ Public Sub OnTest()
     'dbm.ExecuteQuery "insert into user_data([mappingBpRoles].value) values('Contract Display & Reporting') where ntid='ABDUST'"
     'dbm.Recycle
     
-    Dim dbm As New DbManager
-    dbm.init
-    dbm.RecycleTableName "user_data_mapping_role"
-    dbm.Recycle
-    
+    'Dim dbm As New DbManager
+    'dbm.Init
+    'dbm.RecycleTableName "user_data_mapping_role"
+    'dbm.Recycle
+    Dim c As New CourseHelper
+    c.Init
+    c.PrepareCurriculumSheet
+    c.Validation
+    c.ImportCourse
+    c.ImportMapping
 End Sub
 
 Public Sub Run(Optional TestClassName As String)

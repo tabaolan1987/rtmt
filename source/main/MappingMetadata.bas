@@ -6,7 +6,7 @@ Attribute VB_Exposed = False
 Option Compare Database
 Private rawName As String
 Private mName As String
-Private mWorkSheet As String
+Private mWorksheet As String
 
 Private mStartRowTop As Long
 Private mStartRowLeft As Long
@@ -41,7 +41,7 @@ Public Function Recyle()
     FileHelper.DeleteFile mTemplateFilePath & Constants.FILE_EXTENSION_TEMPLATE
 End Function
 
-Public Function init(mappingName As String, Optional ss As SystemSetting)
+Public Function Init(mappingName As String, Optional ss As SystemSetting)
     mComplete = False
     rawName = mappingName
     Logger.LogDebug "MappingMetaData.Init", "Start init mapping meta name: " & rawName
@@ -54,14 +54,14 @@ Public Function init(mappingName As String, Optional ss As SystemSetting)
     mTemplateFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.MAPPING_ROOT_FOLDER & rawName & Constants.FILE_EXTENSION_TEMPLATE)
     mConfigFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.MAPPING_ROOT_FOLDER & rawName & Constants.FILE_EXTENSION_CONFIG)
     Logger.LogDebug "MappingMetaData.Init", "Read configuration path: " & mConfigFilePath
-    ir.init mConfigFilePath
+    ir.Init mConfigFilePath
     'RefreshLastModified
     
     mName = ir.ReadKey(Constants.SECTION_GENERAL, Constants.KEY_NAME)
     Logger.LogDebug "MappingMetaData.Init", "Mapping name: " & mName
     
-    mWorkSheet = ir.ReadKey(Constants.SECTION_GENERAL, Constants.KEY_WORK_SHEET)
-    Logger.LogDebug "MappingMetaData.Init", "Work sheet: " & mWorkSheet
+    mWorksheet = ir.ReadKey(Constants.SECTION_GENERAL, Constants.KEY_WORK_SHEET)
+    Logger.LogDebug "MappingMetaData.Init", "Work sheet: " & mWorksheet
     
     mMappingChar = ir.ReadKey(Constants.SECTION_GENERAL, Constants.KEY_MAPPING_CHAR)
     
@@ -99,8 +99,8 @@ Public Function init(mappingName As String, Optional ss As SystemSetting)
     End If
 End Function
 
-Public Property Get WorkSheet() As String
-    WorkSheet = mWorkSheet
+Public Property Get worksheet() As String
+    worksheet = mWorksheet
 End Property
 
 Public Property Get Name() As String

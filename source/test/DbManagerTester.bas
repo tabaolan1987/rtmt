@@ -34,7 +34,7 @@ Public Sub TestImportData()
     Dim csvPath As String
     csvPath = FileHelper.CurrentDbPath & Constants.END_USER_DATA_CSV_FILE_PATH
     Dim im As DbManager: Set im = New DbManager
-    im.init
+    im.Init
     im.ImportData csvPath
     
 OnExit:
@@ -108,7 +108,7 @@ End Sub
 Public Sub TestExecuteQuery()
     On Error GoTo OnError
     Dim im As DbManager: Set im = New DbManager
-    im.init
+    im.Init
     If Ultilities.IfTableExists(Constants.END_USER_DATA_CACHE_TABLE_NAME) = False Then
         im.ExecuteQuery FileHelper.ReadQuery(Constants.END_USER_DATA_CACHE_TABLE_NAME, Constants.Q_CREATE)
     End If
@@ -127,8 +127,8 @@ Public Sub TestOpenRecordSet()
     Dim params As New Scripting.Dictionary
     Dim dm As DbManager: Set dm = New DbManager
     Dim rInfo As ReportMetaData: Set rInfo = New ReportMetaData
-    dm.init
-    rInfo.init (Name)
+    dm.Init
+    rInfo.Init (Name)
     params.Add "SYSTEM_ROLE_NAME", "Procurement Catalogue Approver"
     params.Add "BP_ROLE_STANDARD_NAME", "POQR Approver"
     If rInfo.Valid = True Then
@@ -148,7 +148,7 @@ End Sub
 Public Sub TestSyncUserData()
     On Error GoTo OnError
     Dim dm As DbManager: Set dm = New DbManager
-    dm.init
+    dm.Init
     dm.SyncUserData
 OnExit:
     dm.Recycle

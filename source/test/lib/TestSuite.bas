@@ -20,7 +20,7 @@ Public Sub AddTest(TestClassName As String, Optional MethodName As String)
     Set test = tl.NewTestClass(TestClassName)
     If MethodName <> "" Then
         Set TestCase = test
-        TestCase.Manager.init MethodName
+        TestCase.Manager.Init MethodName
         mTests.Add test
     Else
         mTests.Add test.Suite

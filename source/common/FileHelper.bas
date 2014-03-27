@@ -110,11 +110,15 @@ Select Case ErrNum
 End Select
 End Function
 
-Function GetCSVFile() As String
+Function GetCSVFile(Optional mTitle As String) As String
     Dim fDialog As Object
     Set fDialog = Application.FileDialog(3)
     With fDialog
-        .Title = "Select EUDL to upload"
+        If Len(mTitle) > 0 Then
+            .title = mTitle
+        Else
+            .title = "Select EUDL to upload"
+        End If
         .AllowMultiSelect = False
         .Filters.Clear
         .Filters.Add "Excel Workbook", "*.xlsx", 1
@@ -253,7 +257,7 @@ Public Function ReadSSFile(Name As String) As String()
     ReadSSFile = tmpList
 End Function
 
-Public Function SaveAsCSV(filePath As String, desFilePath As String, Optional WorkSheet As String) As Boolean
+Public Function SaveAsCSV(filePath As String, desFilePath As String, Optional worksheet As String) As Boolean
     Dim oExcel As New Excel.Application
     Dim i As Integer
     Dim WB As New Excel.Workbook
@@ -268,13 +272,13 @@ Public Function SaveAsCSV(filePath As String, desFilePath As String, Optional Wo
     With oExcel
         .Visible = False
         .DisplayAlerts = False
-                    Set WB = .Workbooks.Add(filePath)
+                    Set WB = .Workbooks.Open(filePath)
                     ' Remove unused sheets
                     Logger.LogDebug "FileHelper.SaveAsCSV", "Sheet count: " & .Sheets.Count
-                    If .Sheets.Count > 1 And Len(WorkSheet) <> 0 Then
+                    If .Sheets.Count > 1 And Len(worksheet) <> 0 Then
                         For Each v In .Sheets
                             Logger.LogDebug "FileHelper.SaveAsCSV", "Sheet name: " & v.Name
-                            If Not StringHelper.IsEqual(v.Name, WorkSheet, True) Then
+                            If Not StringHelper.IsEqual(v.Name, worksheet, True) Then
                                 check = True
                                 'v.Delete
                             End If
@@ -282,7 +286,7 @@ Public Function SaveAsCSV(filePath As String, desFilePath As String, Optional Wo
                         If check Then
                             For Each v In .Sheets
                                 'Logger.LogDebug "FileHelper.SaveAsCSV", "Sheet name: " & v.Name
-                                If Not StringHelper.IsEqual(v.Name, WorkSheet, True) Then
+                                If Not StringHelper.IsEqual(v.Name, worksheet, True) Then
                                 
                                     v.Delete
                                 End If
@@ -373,7 +377,7 @@ Public Function PrepareUserData(filePath As String, ss As SystemSetting) As Stri
         
         tmpStr = tmpDir & StringHelper.GetGUID & ".csv"
         Logger.LogDebug "FileHelper.PrepareUserData", "Convert file " & tmpSource & " to CSV file " & tmpStr
-        FileHelper.SaveAsCSV tmpSource, tmpStr, ss.WorkSheet
+        FileHelper.SaveAsCSV tmpSource, tmpStr, ss.worksheet
             outputCsv = tmpDir & StringHelper.GetGUID & ".csv"
             Logger.LogDebug "FileHelper.PrepareUserData", "Trim unused rows " & tmpStr & " to CSV file " & outputCsv
             TrimSourceFile tmpStr, outputCsv, ss.LineToRemove

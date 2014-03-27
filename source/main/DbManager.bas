@@ -27,7 +27,7 @@ Public Property Get Database() As DAO.Database
     Set Database = dbs
 End Property
 
-Public Function init()
+Public Function Init()
     If dbs Is Nothing Then
         Set dbs = CurrentDb
     End If
@@ -301,7 +301,7 @@ Public Function SyncUserData()
     Dim tmpValue As String
     Dim tmpCache As String
     ' Init database
-    init
+    Init
     '
     RecycleTable s
     ' Read the dict mapping
@@ -514,8 +514,13 @@ OnError:
     Resume OnExit
 End Function
 
+Public Function TableDefsRefresh()
+    dbs.TableDefs.Refresh
+End Function
+
+
 Public Function RecycleTableName(Name As String)
-    init
+    Init
         Logger.LogDebug "DbManager.SyncTable", "Recycle table name " & Name
         dbs.TableDefs.Refresh
         If Ultilities.IfTableExists(Name) Then
@@ -541,7 +546,7 @@ Public Function SyncTable(Server As String, _
                                     Optional CheckConflict As Boolean)
     Logger.LogDebug "DbManager.SyncTable", "Start sync table " & fromTable
     If Ultilities.IfTableExists(desTable) Then
-        init
+        Init
         Logger.LogDebug "DbManager.SyncTable", "Table " & fromTable & " is existed!"
         Dim tblCached As String
         Dim tmpTimestampServer As String
@@ -694,7 +699,7 @@ Public Function SyncTable(Server As String, _
         End If
         dbs.TableDefs.Refresh
         Recycle
-        init
+        Init
         '============== ADD NEW SERVER RECORD BLOCK ===============
         OpenRecordSet "SELECT * FROM [" & tblCached _
                     & "] WHERE [" & Constants.FIELD_TIMESTAMP & "] IS NULL "

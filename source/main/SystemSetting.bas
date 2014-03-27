@@ -21,7 +21,7 @@ Private mSyncRoleTables() As String
 Private mJunkTables() As String
 Private mSyncUsers As Scripting.Dictionary
 Private mValidatorMapping As Scripting.Dictionary
-Private mWorkSheet As String
+Private mWorksheet As String
 Private mLineToRemove() As Integer
 Private mTableNames() As String
 Private mRegionName As String
@@ -36,7 +36,7 @@ Private mCheckIpURL As String
 Private mSyncFixedTables As Boolean
 Private mEnableAuditLog As Boolean
 
-Public Function init()
+Public Function Init()
     Dim ir As IniReader: Set ir = Ultilities.SystemIniReader
     mServerName = ir.ReadKey(Constants.SECTION_REMOTE_DATABASE, Constants.KEY_SERVER_NAME)
     mDatabaseName = ir.ReadKey(Constants.SECTION_REMOTE_DATABASE, Constants.KEY_DATABASE_NAME)
@@ -74,7 +74,7 @@ Public Function init()
     mRegionFunctionId = ir.ReadKey(Constants.SECTION_USER_DATA, Constants.KEY_REGION_FUNCTION_ID)
     source = ir.ReadKey(Constants.SECTION_USER_DATA, Constants.KEY_TABLE_NAME)
     mTableNames = Split(source, ",")
-    mWorkSheet = ir.ReadKey(Constants.SECTION_USER_DATA, Constants.KEY_WORK_SHEET)
+    mWorksheet = ir.ReadKey(Constants.SECTION_USER_DATA, Constants.KEY_WORK_SHEET)
     mLogLevel = ir.ReadKey(Constants.SECTION_APPLICATION, Constants.KEY_LOG_LEVEL)
     mTestNtid = ir.ReadKey(Constants.SECTION_APPLICATION, Constants.KEY_TEST_NTID)
     mVersion = ir.ReadKey(Constants.SECTION_APPLICATION, Constants.KEY_VERSION)
@@ -181,8 +181,8 @@ Public Property Get NtidField() As String
     NtidField = mNtidField
 End Property
 
-Public Property Get WorkSheet() As String
-    WorkSheet = mWorkSheet
+Public Property Get worksheet() As String
+    worksheet = mWorksheet
 End Property
 
 Public Property Get RegionFunctionId() As String

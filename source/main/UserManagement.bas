@@ -12,7 +12,7 @@ Private mIsLdapConflict As Boolean
 Private mIsLdapNotfound As Boolean
 Private mIsFunctionRegionConflict As Boolean
 
-Public Function init(Optional mss As SystemSetting)
+Public Function Init(Optional mss As SystemSetting)
     If mss Is Nothing Then
         Set ss = Session.Settings()
     Else
@@ -25,7 +25,7 @@ Public Function IsExistUserData() As Boolean
     Dim query As String
     query = "select * from " & Constants.END_USER_DATA_TABLE_NAME & " where deleted = 0 and region='" & _
                 Session.CurrentUser.FuncRegion.Region & "'"
-    dbm.init
+    dbm.Init
     dbm.OpenRecordSet query
     If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
         IsExistUserData = True
@@ -38,7 +38,7 @@ End Function
 Public Function IsExistUserDataCache() As Boolean
     Dim query As String
     query = "select * from " & Constants.END_USER_DATA_CACHE_TABLE_NAME
-    dbm.init
+    dbm.Init
     dbm.OpenRecordSet query
     If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
         IsExistUserDataCache = True
@@ -52,7 +52,7 @@ Public Function CheckRegionFunction()
     Dim query As String
     Dim tmpNtid As String
     query = "SELECT * FROM " & Constants.END_USER_DATA_CACHE_TABLE_NAME & " WHERE [Region] not like '" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "'"
-    dbm.init
+    dbm.Init
     dbm.OpenRecordSet query
     mIsFunctionRegionConflict = False
     If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
@@ -74,7 +74,7 @@ Public Function CheckLdapNotFound()
     Dim query As String
     Dim tmpSelect As String
     query = "SELECT * FROM " & Constants.TABLE_USER_DATA_LDAP_NOTFOUND
-    dbm.init
+    dbm.Init
     dbm.OpenRecordSet query
     mIsLdapNotfound = False
     If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
@@ -87,7 +87,7 @@ Public Function CheckLdapConfict()
     Dim query As String
     Dim tmpSelect As String
     query = "SELECT * FROM " & Constants.TABLE_USER_DATA_LDAP_CONFLICT
-    dbm.init
+    dbm.Init
     dbm.OpenRecordSet query
     mIsLdapConflict = False
     If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
@@ -116,7 +116,7 @@ Public Function CheckConflict()
     query = "SELECT * FROM " & Constants.END_USER_DATA_CACHE_TABLE_NAME
     Logger.LogDebug "UserManagement.CheckConflict", "Start check conflict records. Query: " & query
     dbm.RecycleTableName Constants.TABLE_USER_DATA_CONFLICT
-    dbm.init
+    dbm.Init
     dbm.OpenRecordSet query
     If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
         Set tmpInsertCols = New Collection
@@ -177,7 +177,7 @@ Public Function CheckConflict()
 End Function
 
 Public Function IgnoreAllConflict()
-    dbm.init
+    dbm.Init
     dbm.ExecuteQuery "UPDATE [" & Constants.TABLE_USER_DATA_CONFLICT & "] SET [" & Constants.FIELD_SELECT & "] = 'false'"
     dbm.Recycle
 End Function
@@ -210,7 +210,7 @@ Public Function CheckDuplicate()
                     & ss.NtidField
     Logger.LogDebug "UserManagement.CheckDuplicate", "Start check duplicate " & ss.NtidField & " records. Query: " & query
     dbm.RecycleTableName Constants.TABLE_USER_DATA_DUPLICATE
-    dbm.init
+    dbm.Init
     
     dbm.OpenRecordSet query
     If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
@@ -296,7 +296,7 @@ Public Function ResolveLdapNotFound()
     Dim query As String
     Dim tmpSelect As String
     query = "SELECT * FROM " & Constants.TABLE_USER_DATA_LDAP_NOTFOUND
-    dbm.init
+    dbm.Init
     dbm.OpenRecordSet query
     If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
         dbm.RecordSet.MoveFirst
@@ -326,7 +326,7 @@ Public Function ResolveLdapConflict()
     Dim query As String
     Dim tmpSelect As String
     query = "SELECT * FROM " & Constants.TABLE_USER_DATA_LDAP_CONFLICT
-    dbm.init
+    dbm.Init
     dbm.OpenRecordSet query
     If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
         dbm.RecordSet.MoveFirst
@@ -359,7 +359,7 @@ Public Function ResolveUserDataConflict()
     Dim query As String
     Dim tmpSelect As String
     query = "SELECT * FROM " & Constants.TABLE_USER_DATA_CONFLICT
-    dbm.init
+    dbm.Init
     dbm.OpenRecordSet query
     If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
         dbm.RecordSet.MoveFirst
@@ -397,7 +397,7 @@ Public Function ResolveUserDataDuplicate()
     Dim v As Variant
     Dim tmpSelect As String
     query = "SELECT * FROM " & Constants.TABLE_USER_DATA_DUPLICATE
-    dbm.init
+    dbm.Init
     dbm.OpenRecordSet query
     If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
         dbm.RecordSet.MoveFirst
@@ -426,7 +426,7 @@ Public Function ResolveUserDataDuplicate()
                 & ss.NtidField & " =UD." _
                 & ss.NtidField & ") AS count_ntid from " _
                 & Constants.END_USER_DATA_CACHE_TABLE_NAME & " AS UD) as tmp_tbl where count_ntid > 1 order by tmp_tbl." & ss.NtidField
-    dbm.init
+    dbm.Init
     dbm.OpenRecordSet query
     If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
         Set tmpCol = New Collection
@@ -467,7 +467,7 @@ Public Function ListSpecialism() As Collection
     Dim tmp As String
     query = "SELECT [" & Constants.FIELD_SPECIALISM & "] from " & Constants.END_USER_DATA_CACHE_TABLE_NAME _
                     & " group by [" & Constants.FIELD_SPECIALISM & "]"
-    dbm.init
+    dbm.Init
     dbm.OpenRecordSet query
     If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
         dbm.RecordSet.MoveFirst
@@ -526,7 +526,7 @@ Public Function GenerateRoleMapping(rm As ReportMetaData)
     Dim tmpQuery As String
     Dim oExcel As New Excel.Application
     Dim WB As New Excel.Workbook
-    Dim ws As Excel.WorkSheet
+    Dim ws As Excel.worksheet
     Dim rng As Excel.range
     Dim tmpRps As ReportSection
     Dim header() As String
@@ -548,8 +548,8 @@ Public Function GenerateRoleMapping(rm As ReportMetaData)
             Logger.LogDebug "UserManagement.GenerateRoleMapping", "Open excel : " & rm.OutputPath
             Set WB = .Workbooks.Open(rm.OutputPath)
             With WB
-                Logger.LogDebug "UserManagement.GenerateRoleMapping", "Select worksheet: " & rm.WorkSheet
-                Set ws = WB.workSheets(rm.WorkSheet)
+                Logger.LogDebug "UserManagement.GenerateRoleMapping", "Select worksheet: " & rm.worksheet
+                Set ws = WB.workSheets(rm.worksheet)
                 l = rm.StartCol
                 k = rm.startRow
                 With ws
@@ -564,7 +564,7 @@ Public Function GenerateRoleMapping(rm As ReportMetaData)
                         End If
                         Logger.LogDebug "UserManagement.GenerateRoleMapping", "Found ntid: " & tmpNtid
                         
-                        dbm.init
+                        dbm.Init
                         ' Remove all mapping
                         dbm.ExecuteQuery "update user_data_mapping_role set Deleted=-1 where idUserdata='" & StringHelper.EscapeQueryString(tmpNtid) _
                                             & "' and idFunction='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.FuncRgID) & "'"
@@ -579,7 +579,7 @@ Public Function GenerateRoleMapping(rm As ReportMetaData)
                             Set rng = .Cells(k, j)
                             tmpStr = Trim(rng.value)
                             If Len(tmpStr) <> 0 Then
-                                dbm.init
+                                dbm.Init
                                 dbm.OpenRecordSet "select BR.[id] from BpRoleStandard As BR Where BR.BpRoleStandardName='" _
                                         & StringHelper.EscapeQueryString(tmpRole) & "' and BR.deleted=0"
                                 If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
@@ -591,7 +591,7 @@ Public Function GenerateRoleMapping(rm As ReportMetaData)
                                 If Len(tmpRoleId) <> 0 Then
                                     Logger.LogDebug "UserManagement.GenerateRoleMapping", "Found mapping Ntid: " & tmpNtid & " to Role: " & tmpRole
                                     
-                                    dbm.init
+                                    dbm.Init
                                     tmpQuery = "select * from user_data_mapping_role where idUserdata='" & StringHelper.EscapeQueryString(tmpNtid) _
                                                 & "' and idFunction='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.FuncRgID) & "'" _
                                                 & " and idBpRoleStandard='" & StringHelper.EscapeQueryString(tmpRoleId) & "'"
@@ -648,7 +648,7 @@ Public Function MergeUserData()
     Dim query As String
     
     query = "SELECT * FROM " & Constants.END_USER_DATA_CACHE_TABLE_NAME
-    dbm.init
+    dbm.Init
     dbm.OpenRecordSet query
     If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
         dbm.RecordSet.MoveFirst

@@ -120,7 +120,7 @@ Public Sub TestSaveAsCSV()
     Dim outFile As String
     inFile = FileHelper.CurrentDbPath & Constants.END_USER_DATA_FILE_XLSX
     outFile = FileHelper.CurrentDbPath & Constants.END_USER_DATA_FILE_CSV
-    FileHelper.SaveAsCSV inFile, outFile, ss.WorkSheet
+    FileHelper.SaveAsCSV inFile, outFile, ss.worksheet
 '    mAssert.Equals FileHelper.IsExistFile(outFile), True
 OnExit:
     ' finally

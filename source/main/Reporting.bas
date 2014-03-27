@@ -8,7 +8,7 @@ Public Sub ExportExcelReport(sSQL As String, sFileNameTemplate As String, output
     
     Dim oExcel As New Excel.Application
     Dim WB As New Excel.Workbook
-    Dim ws As Excel.WorkSheet
+    Dim ws As Excel.worksheet
     Dim rng As Excel.range
     Dim objConn As New ADODB.Connection
     Dim objRs As New ADODB.RecordSet
@@ -47,10 +47,11 @@ Public Sub GenerateReport(rpm As ReportMetaData)
         Dim i As Integer, j As Integer
         Dim oExcel As New Excel.Application
         Dim WB As New Excel.Workbook
-        Dim ws As Excel.WorkSheet
+        Dim ws As Excel.worksheet
         Dim rng As Excel.range
         Dim Pivot As Excel.PivotTable
         Dim c As Long
+        Dim tmpValue As String
         Dim headerCol As Collection
         Dim objConn As New ADODB.Connection
         Dim objRs As New ADODB.RecordSet
@@ -63,8 +64,8 @@ Public Sub GenerateReport(rpm As ReportMetaData)
             Logger.LogDebug "Reporting.GenerateReport", "Open excel template: " & rpm.TemplateFilePath
             Set WB = .Workbooks.Add(rpm.TemplateFilePath)
                 With WB
-                    Logger.LogDebug "Reporting.GenerateReport", "Select worksheet: " & rpm.WorkSheet
-                    Set ws = WB.workSheets(rpm.WorkSheet) 'Replace with the name of actual sheet
+                    Logger.LogDebug "Reporting.GenerateReport", "Select worksheet: " & rpm.worksheet
+                    Set ws = WB.workSheets(rpm.worksheet) 'Replace with the name of actual sheet
                     With ws
                         If .FilterMode Then
                             .ShowAllData
@@ -72,17 +73,50 @@ Public Sub GenerateReport(rpm As ReportMetaData)
                         Logger.LogDebug "Reporting.GenerateReport", "Detect query type: Section"
                         Dim rSect As ReportSection
                         Dim colCount As Long
+                        Dim category As String
+                        Dim lastCategory As String
+                        Dim colCategory As Long
                         colCount = rpm.StartCol
                         colHeadCount = rpm.StartHeaderCol
+                        colCategory = rpm.StartHeaderCol
                         For Each rSect In rpm.ReportSections
                             Dim headers() As String
                             headers = rSect.header
                             If rpm.FillHeader Then
                                 For i = LBound(headers) To UBound(headers)
                                     Set rng = .Cells(rpm.StartHeaderRow, colHeadCount)
-                                    rng.value = headers(i)
+                                    tmpValue = headers(i)
+                                    rng.value = tmpValue
+                                    If rpm.FillCategory And rSect.Categories.Count > 0 Then
+                                        Set rng = .Cells(rpm.StartCategoryRow, colHeadCount)
+                                        If rSect.Categories.Exists(tmpValue) Then
+                                            category = rSect.Categories.Item(tmpValue)
+                                            rng.value = category
+                                        End If
+                                        If Not StringHelper.IsEqual(category, lastCategory, True) _
+                                            Or i = UBound(headers) Then
+                                            If i = UBound(headers) Then
+                                                .range(.Cells(rpm.StartCategoryRow, colCategory), .Cells(rpm.StartCategoryRow, colHeadCount)).Merge
+                                                If Len(category) > 0 Then
+                                                    .range(.Cells(rpm.StartCategoryRow, colCategory), .Cells(rpm.StartHeaderRow + 1, colHeadCount)).Interior.Color = rSect.CatBcolor(category)
+                                                    .range(.Cells(rpm.StartCategoryRow, colCategory), .Cells(rpm.StartHeaderRow + 1, colHeadCount)).Characters.Font.Color = rSect.CatFcolor(category)
+                                                    .range(.Cells(rpm.StartCategoryRow, colCategory), .Cells(rpm.StartHeaderRow + 1, colHeadCount)).Cells.Borders.Color = RGB(0, 0, 0)
+                                                End If
+                                            Else
+                                                .range(.Cells(rpm.StartCategoryRow, colCategory), .Cells(rpm.StartCategoryRow, colHeadCount - 1)).Merge
+                                                If Len(lastCategory) > 0 Then
+                                                    .range(.Cells(rpm.StartCategoryRow, colCategory), .Cells(rpm.StartHeaderRow + 1, colHeadCount - 1)).Interior.Color = rSect.CatBcolor(lastCategory)
+                                                    .range(.Cells(rpm.StartCategoryRow, colCategory), .Cells(rpm.StartHeaderRow + 1, colHeadCount - 1)).Characters.Font.Color = rSect.CatFcolor(lastCategory)
+                                                    .range(.Cells(rpm.StartCategoryRow, colCategory), .Cells(rpm.StartHeaderRow + 1, colHeadCount - 1)).Cells.Borders.Color = RGB(0, 0, 0)
+                                                End If
+                                            End If
+                                            colCategory = colHeadCount
+                                        End If
+                                        lastCategory = category
+                                    End If
                                     colHeadCount = colHeadCount + 1
                                 Next i
+                                .Cells(rpm.StartCategoryRow, rpm.StartHeaderCol).EntireRow.AutoFit
                             End If
                             Select Case rSect.SectionType
                                 Case Constants.RP_SECTION_TYPE_AUTO:

@@ -25,7 +25,7 @@ Public Property Get IsRole(role As String) As Boolean
     End If
 End Property
 
-Public Function init(iNtid As String, _
+Public Function Init(iNtid As String, _
                         Optional ss As SystemSetting)
     Dim mData As String
     Dim fields As String
@@ -82,7 +82,7 @@ Public Function init(iNtid As String, _
         Dim lastFunctionId As String
         Dim lastRoleName As String
         data.Add Constants.Q_KEY_VALUE, mNtid
-        dbm.init
+        dbm.Init
         query = FileHelper.ReadQuery(Constants.TABLE_USER_PRIVILEGES, Constants.Q_SELECT)
         query = StringHelper.GenerateQuery(query, data)
         Logger.LogDebug "CurrentUser.Init", query
@@ -100,7 +100,7 @@ Public Function init(iNtid As String, _
                 If (Not StringHelper.IsEqual(regionName, lastRegionName, True)) Then
                     Logger.LogDebug "CurrentUser.Init", "Init new function region " & regionName
                     Set frg = New FunctionRegion
-                    frg.init regionName, _
+                    frg.Init regionName, _
                         roleName, _
                         dbm.GetFieldValue(dbm.RecordSet, "permission")
                 Else
