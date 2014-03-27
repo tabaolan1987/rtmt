@@ -115,9 +115,9 @@ Function GetCSVFile(Optional mTitle As String) As String
     Set fDialog = Application.FileDialog(3)
     With fDialog
         If Len(mTitle) > 0 Then
-            .title = mTitle
+            .Title = mTitle
         Else
-            .title = "Select EUDL to upload"
+            .Title = "Select EUDL to upload"
         End If
         .AllowMultiSelect = False
         .Filters.Clear
