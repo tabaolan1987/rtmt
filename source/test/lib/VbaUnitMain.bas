@@ -17,12 +17,21 @@ Public Sub OnTest()
     'dbm.Init
     'dbm.RecycleTableName "user_data_mapping_role"
     'dbm.Recycle
-    Dim c As New CourseHelper
-    c.Init
-    c.PrepareCurriculumSheet
-    c.Validation
-    c.ImportCourse
-    c.ImportMapping
+    Dim tmpFid As String
+    Dim tmpName As String
+    Dim dbm As New DbManager
+    dbm.Init
+    dbm.OpenRecordSet "select * from Functions where deleted=0"
+   
+                If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
+                    dbm.RecordSet.MoveFirst
+                    Do While Not dbm.RecordSet.EOF
+                        tmpFid = dbm.GetFieldValue(dbm.RecordSet, "id")
+                        tmpName = dbm.GetFieldValue(dbm.RecordSet, "nameFunction")
+                        MsgBox tmpFid & " " & tmpName
+                        dbm.RecordSet.MoveNext
+                    Loop
+                End If
 End Sub
 
 Public Sub Run(Optional TestClassName As String)

@@ -390,6 +390,17 @@ Public Function PrepareUserData(filePath As String, ss As SystemSetting) As Stri
     End If
 End Function
 
+Public Function PrepareCurriculum(filePath As String) As String
+    
+    If StringHelper.EndsWith(filePath, ".xlsx", True) Or _
+        StringHelper.EndsWith(filePath, ".xls", True) Or _
+        StringHelper.EndsWith(filePath, ".csv", True) Then
+        PrepareCurriculum = filePath
+    Else
+        PrepareCurriculum = ""
+    End If
+End Function
+
 Public Function tmpDir() As String
     If Len(tmpDirPath) = 0 Then
         Dim Fso As New Scripting.FileSystemObject
