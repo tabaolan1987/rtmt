@@ -14,6 +14,21 @@ Private mCurrentHelpContent As String
 Private mMappingTypes As Scripting.Dictionary
 Private mSelectedCurriculum As String
 
+Private mCustomFilter As Scripting.Dictionary
+
+Public Function SetCustomFilter(mFilter As Scripting.Dictionary)
+    Set mCustomFilter = mFilter
+End Function
+
+Public Function CustomFilter() As Scripting.Dictionary
+    If mCustomFilter Is Nothing Then
+        Set mCustomFilter = New Scripting.Dictionary
+        mCustomFilter.Add "CUSTOM_FILTER_NAME", " is not null "
+        mCustomFilter.Add "CUSTOM_FILTER_ID", " is not null "
+    End If
+    Set CustomFilter = mCustomFilter
+End Function
+
 Public Function Recycle()
     Set ss = Nothing
     
@@ -117,11 +132,10 @@ Public Function ReportMetaData(reportName As String) As ReportMetaData
     Dim rmd As ReportMetaData
     If Not mReportMDCol.Exists(reportName) Then
         If StringHelper.IsEqual(reportName, Constants.RP_AUDIT_LOG, True) Then
-            Dim dbm As New DbManager
-            dbm.Init
-            dbm.DeleteTable Constants.TABLE_AUDIT_LOG
-            dbm.SyncTable Settings.ServerName & "," & Settings.Port, Settings.DatabaseName, Constants.TABLE_AUDIT_LOG, Constants.TABLE_AUDIT_LOG, Settings.Username, Settings.Password, False
-            dbm.Recycle
+            Dim sh As New SyncHelper
+            sh.Init Constants.TABLE_AUDIT_LOG
+            sh.sync
+            sh.Recycle
         End If
         Set rmd = New ReportMetaData
         rmd.Init reportName

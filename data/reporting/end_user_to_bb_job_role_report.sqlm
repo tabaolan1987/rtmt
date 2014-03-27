@@ -7,7 +7,10 @@ tmp_pilot_report_2
 	where B.deleted = 0 and BG.deleted = 0
 	) order by orderPriority, col1
 ===
-select idUserdata as [value] from user_data_mapping_role where idRegion='(%RG_NAME%)' and deleted=0
+select UM.idUserdata as [value] from (user_data_mapping_role AS UM inner join user_data AS U
+					on U.ntid = UM.idUserdata)
+	where UM.idRegion='(%RG_NAME%)' and UM.deleted=0 and U.deleted=0 and U.Region='(%RG_NAME%)' and U.suspend=0
+		and U.SFunction (%CUSTOM_FILTER_NAME%)
 ===
 select bpRole.BpRoleStandardName AS [value]
 from (user_data_mapping_role as UMR 
@@ -81,4 +84,6 @@ left join tmp_pilot_report_2 as tbl_cached
 on tbl_cached.[key] = UD.ntid)
 Where UD.deleted=0
 and UD.Region='(%RG_NAME%)'
+and UD.suspend=0
+and UD.SFunction (%CUSTOM_FILTER_NAME%)
 ORDER BY UD.ntid

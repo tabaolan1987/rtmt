@@ -318,7 +318,7 @@ Private Function PushLocalChange()
                             Set adData = New Scripting.Dictionary
                             adData.Add "id", StringHelper.GetGUID
                             adData.Add "ntid", Session.CurrentUser.ntid
-                            adData.Add "idFunction", ""
+                            adData.Add "idFunction", Session.CurrentUser.FuncRegion.Region
                             adData.Add "userAction", "Update central store record"
                             adData.Add "description", "update [" & mTableName & "] set [" & CStr(v) _
                                     & "]='" & StringHelper.EscapeQueryString(v2) & "', [timestamp]=getdate() where [id]='" _
@@ -377,7 +377,7 @@ Private Function PushLocalChange()
                 Set adData = New Scripting.Dictionary
                 adData.Add "id", StringHelper.GetGUID
                 adData.Add "ntid", Session.CurrentUser.ntid
-                adData.Add "idFunction", ""
+                adData.Add "idFunction", Session.CurrentUser.FuncRegion.Region
                 adData.Add "userAction", "Create central store record"
                 adData.Add "description", query
                 adData.Add "data_fields", ""
