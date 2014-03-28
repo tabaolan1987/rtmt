@@ -2,10 +2,10 @@ Option Explicit
 
 Public Sub OnTest()
    ' Run
-    Dim sh As New SyncHelper
-    sh.Init "Region"
-    sh.sync
-    sh.Recycle
+    'Dim sh As New SyncHelper
+    'sh.init "mappingType"
+    'sh.sync
+    'sh.Recycle
     'Dim dbm As New DbManager
     'dbm.init
     'dbm.ExecuteQuery "delete [user_data].[mappingBpRoles].value from user_data"
@@ -17,16 +17,12 @@ Public Sub OnTest()
     'dbm.Init
     'dbm.RecycleTableName "user_data_mapping_role"
     'dbm.Recycle
-<<<<<<< HEAD
-   
-=======
     Dim c As New CourseHelper
     c.Init
     c.PrepareCurriculumSheet
     c.Validation
     c.ImportCourse
     c.ImportMapping
->>>>>>> 6067eb3eab24de17deeb9c5b1edab7e9d9e45937
 End Sub
 
 Public Sub Run(Optional TestClassName As String)

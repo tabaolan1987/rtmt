@@ -35,7 +35,6 @@ Private mVersion As String
 Private mCheckIpURL As String
 Private mSyncFixedTables As Boolean
 Private mEnableAuditLog As Boolean
-Private mDateFormat As String
 
 Public Function Init()
     Dim ir As IniReader: Set ir = Ultilities.SystemIniReader
@@ -44,7 +43,6 @@ Public Function Init()
     mPort = ir.ReadKey(Constants.SECTION_REMOTE_DATABASE, Constants.KEY_PORT)
     mUsername = ir.ReadKey(Constants.SECTION_REMOTE_DATABASE, Constants.KEY_USERNAME)
     mPassword = ir.ReadKey(Constants.SECTION_REMOTE_DATABASE, Constants.KEY_PASSWORD)
-    mDateFormat = ir.ReadKey(Constants.SECTION_REMOTE_DATABASE, Constants.KEY_DATE_FORMAT)
     
     mSyncTables = FileHelper.ReadSSFile(Constants.SS_SYNC_TABLES)
     mSyncRoleTables = FileHelper.ReadSSFile(Constants.SS_SYNC_ROLE_TABLES)
@@ -225,8 +223,4 @@ End Property
 
 Public Property Get EnableAuditLog() As Boolean
     EnableAuditLog = mEnableAuditLog
-End Property
-
-Public Property Get DateFormat() As String
-    DateFormat = mDateFormat
 End Property

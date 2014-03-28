@@ -38,8 +38,7 @@ Public Function Init(iNtid As String, _
         Set ss = Session.Settings()
     End If
     
-   ' If ss.EnableTesting Then
-    If True Then
+    If ss.EnableTesting Then
         mAuth = True
     Else
         mAuth = False
