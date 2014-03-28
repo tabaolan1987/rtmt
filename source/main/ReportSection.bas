@@ -182,7 +182,7 @@ Public Function Init(raw As String, Optional mss As SystemSetting, Optional Skip
                     And StringHelper.IsContain(tmpCache, "where", True) _
                     Then
                     arraySize = 0
-                    dbm.OpenRecordSet StringHelper.GenerateQuery(tmpCache, DataQuery)
+                    dbm.OpenRecordSet tmpCache
                     If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
                         dbm.RecordSet.MoveFirst
                         Do While Not dbm.RecordSet.EOF
@@ -340,7 +340,7 @@ Private Function PrepareQuery(query As String, Optional ss As SystemSetting) As 
         'Logger.LogDebug "ReportSection.PrepareQuery", "Get value query: " & qOut
         If StringHelper.IsContain(qOut, "select", True) And StringHelper.IsContain(qOut, "from", True) Then
             dbm.Init
-            dbm.OpenRecordSet StringHelper.GenerateQuery(qOut, DataQuery)
+            dbm.OpenRecordSet (qOut)
             If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
                 tmpQuery = ""
                 dbm.RecordSet.MoveFirst
@@ -407,7 +407,7 @@ Private Function GenerateQuery(query As String, Optional ss As SystemSetting) As
         'Logger.LogDebug "ReportSection.GenerateQuery", "Generate query: " & qIn
         'Logger.LogDebug "ReportSection.GenerateQuery", "Get value query: " & qOut
         dbm.Init
-        dbm.OpenRecordSet StringHelper.GenerateQuery(qOut, DataQuery)
+        dbm.OpenRecordSet (qOut)
         
         If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
             tmpQuery = ""
