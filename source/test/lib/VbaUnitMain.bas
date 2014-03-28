@@ -17,16 +17,7 @@ Public Sub OnTest()
     'dbm.Init
     'dbm.RecycleTableName "user_data_mapping_role"
     'dbm.Recycle
-<<<<<<< HEAD
    
-=======
-    Dim c As New CourseHelper
-    c.Init
-    c.PrepareCurriculumSheet
-    c.Validation
-    c.ImportCourse
-    c.ImportMapping
->>>>>>> 6067eb3eab24de17deeb9c5b1edab7e9d9e45937
 End Sub
 
 Public Sub Run(Optional TestClassName As String)

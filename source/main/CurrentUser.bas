@@ -38,8 +38,8 @@ Public Function Init(iNtid As String, _
         Set ss = Session.Settings()
     End If
     
-   ' If ss.EnableTesting Then
-    If True Then
+    If ss.EnableTesting Then
+   ' If True Then
         mAuth = True
     Else
         mAuth = False
@@ -53,7 +53,7 @@ Public Function Init(iNtid As String, _
                 & "&fields=" & StringHelper.EncodeURL(fields) _
                 & "&ntids=" & StringHelper.EncodeURL(mNtid)
         Logger.LogDebug "CurrentUser.Init", "Post valid ntid: " & mNtid
-        result = HttpHelper.PostData(ss.ValidatorURL, mData)
+        result = Trim(HttpHelper.PostData(ss.ValidatorURL, mData))
         Logger.LogDebug "CurrentUser.Init", "Result: " & result
         
         If Len(result) > 0 Then
@@ -67,6 +67,8 @@ Public Function Init(iNtid As String, _
                     End If
                 Next
             End If
+        Else
+            mAuth = True
         End If
     End If
     ' skip temp
