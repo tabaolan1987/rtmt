@@ -6,18 +6,7 @@ Public Sub OnTest()
     sh.Init "Region"
     sh.sync
     sh.Recycle
-    'Dim dbm As New DbManager
-    'dbm.init
-    'dbm.ExecuteQuery "delete [user_data].[mappingBpRoles].value from user_data"
-    'dbm.ExecuteQuery "insert into user_data([mappingBpRoles].value) values('SRM Lead Requester') where ntid='ABDUST'"
-    'dbm.ExecuteQuery "insert into user_data([mappingBpRoles].value) values('Contract Display & Reporting') where ntid='ABDUST'"
-    'dbm.Recycle
     
-    'Dim dbm As New DbManager
-    'dbm.Init
-    'dbm.RecycleTableName "user_data_mapping_role"
-    'dbm.Recycle
-   
 End Sub
 
 Public Sub Run(Optional TestClassName As String)
