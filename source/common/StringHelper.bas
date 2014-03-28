@@ -159,22 +159,9 @@ Public Function GetDictKey(dict As Scripting.Dictionary, value As String) As Str
     GetDictKey = key
 End Function
 
-Public Function AddCustomFilterQuery(query As String, mFilter As Scripting.Dictionary) As String
-    Dim mQuery As String
-    mQuery = query
-    Dim v As Variant
-    If Not mFilter Is Nothing Then
-        For Each v In mFilter.keys
-             mQuery = Replace(mQuery, "(%" & CStr(v) & "%)", mFilter.Item(CStr(v)))
-        Next v
-    End If
-    AddCustomFilterQuery = mQuery
-End Function
-
 Public Function GenerateQuery(query As String, Optional data As Scripting.Dictionary) As String
     Dim mQuery As String
     mQuery = query
-    Dim v As Variant
     If Not data Is Nothing Then
         For Each v In data.keys
             If StringHelper.IsEqual(CStr(v), Constants.Q_KEY_FILTER, True) _
@@ -186,7 +173,7 @@ Public Function GenerateQuery(query As String, Optional data As Scripting.Dictio
         Next v
     End If
     'Logger.LogDebug "StringHelper.GenerateQuery", mQuery
-    GenerateQuery = AddCustomFilterQuery(mQuery, Session.CustomFilter)
+    GenerateQuery = mQuery
 End Function
 
 Public Function TrimNewLine(str As String) As String

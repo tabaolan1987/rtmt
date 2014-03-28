@@ -75,6 +75,7 @@ Public Sub MakeAccde()
 End Sub
 
 Public Sub WDeleteAllTables()
+    Exit Sub
     Dim i As Integer
     Dim dbm As New DbManager
     dbm.Init

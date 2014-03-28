@@ -40,25 +40,9 @@ Private mPivotTableName As String
 Private mPivotTableWorksheet As String
 Private mPivotWordWrapCols As Collection
 
-
 Private mComplete As Boolean
 
 Private mLastModified As String
-
-Private mCustomFilter As Scripting.Dictionary
-
-Public Function SetCustomFilter(mFilter As Scripting.Dictionary)
-    Set mCustomFilter = mFilter
-End Function
-
-Public Function CustomFilter() As Scripting.Dictionary
-    If mCustomFilter Is Nothing Then
-        Set mCustomFilter = New Scripting.Dictionary
-        mCustomFilter.Add "CUSTOM_FILTER_NAME", " is not null "
-        mCustomFilter.Add "CUSTOM_FILTER_ID", " is not null "
-    End If
-    Set CustomFilter = mCustomFilter
-End Function
 
 Public Function Init(Name As String, Optional ss As SystemSetting, Optional rpType As String)
     If Len(rpType) > 0 Then
