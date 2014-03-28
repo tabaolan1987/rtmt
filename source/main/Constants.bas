@@ -150,6 +150,7 @@ Public Const KEY_MERGE_ENABLE = "mergeEnable"
 Public Const KEY_MERGE_COLUMES = "mergeCols"
 Public Const KEY_MERGE_PRIMARY = "mergePrimary"
 Public Const KEY_CUSTOM_MODE = "customMode"
+Public Const KEY_DATE_FORMAT = "dateFormat"
 
 Public Const KEY_MAPPING_CHAR = "mappingChar"
 

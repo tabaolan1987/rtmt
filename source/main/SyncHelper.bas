@@ -107,6 +107,8 @@ Private Function GetLocalTimestamp()
     If Not (rst.EOF And rst.BOF) Then
         rst.MoveFirst
         mLocalTimestamp = dbm.GetFieldValue(rst, "timestamp")
+        mLocalTimestamp = Format(CDate(mLocalTimestamp), Session.Settings.DateFormat)
+        Logger.LogDebug "SyncHelper.GetLocalTimestamp", "mLocalTimestamp: " & mLocalTimestamp
     End If
 OnExit:
     RecycleLocal
