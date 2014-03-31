@@ -3,7 +3,7 @@ Option Explicit
 Public Sub OnTest()
    ' Run
     Dim sh As New SyncHelper
-    sh.Init "SpecialismMappingActivity"
+    sh.Init "BlueprintRole_mapping_BpRole"
     sh.sync
     sh.Recycle
     
