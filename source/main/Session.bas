@@ -14,10 +14,48 @@ Private mCurrentHelpContent As String
 Private mMappingTypes As Scripting.Dictionary
 Private mSelectedCurriculum As String
 
+Private mEnablePrimarySync As Scripting.Dictionary
+
 Private mCustomFilter As Scripting.Dictionary
+
+Private mSyncByRegion As Scripting.Dictionary
 
 Public Function SetCustomFilter(mFilter As Scripting.Dictionary)
     Set mCustomFilter = mFilter
+End Function
+
+Public Function EnablePrimarySync() As Scripting.Dictionary
+    If mEnablePrimarySync Is Nothing Then
+        Set mEnablePrimarySync = New Scripting.Dictionary
+        mEnablePrimarySync.Add LCase("user_data"), "ntid"
+        mEnablePrimarySync.Add LCase("Activity"), "ActivityDetail"
+        mEnablePrimarySync.Add LCase("BlueprintRoles"), "BPrintName"
+        mEnablePrimarySync.Add LCase("BpRoleStandard"), "BpRoleStandardName"
+        mEnablePrimarySync.Add LCase("BPRoleStandardCategory"), "BpRoleStandardCategoryName"
+        mEnablePrimarySync.Add LCase("Functions"), "nameFunction"
+        mEnablePrimarySync.Add LCase("Qualifications"), "Qname"
+        mEnablePrimarySync.Add LCase("Region"), "RegionName"
+        mEnablePrimarySync.Add LCase("RMT_ROLES"), "roleName"
+        mEnablePrimarySync.Add LCase("Specialism"), "SpecialismName"
+        mEnablePrimarySync.Add LCase("standard_team"), "Steam_name"
+        mEnablePrimarySync.Add LCase("sub_function"), "SubF_name"
+        mEnablePrimarySync.Add LCase("SystemRole"), "SystemRoleName"
+        mEnablePrimarySync.Add LCase("SystemRoleCategory"), "SystemRoleCategory"
+        mEnablePrimarySync.Add LCase("user_rmt"), "ntid"
+    End If
+    Set EnablePrimarySync = mEnablePrimarySync
+End Function
+
+Public Function SyncByRegion() As Scripting.Dictionary
+    If mSyncByRegion Is Nothing Then
+        Set mSyncByRegion = New Scripting.Dictionary
+        mSyncByRegion.Add LCase("user_data"), "region"
+        mSyncByRegion.Add LCase("user_data_mapping_role"), "idRegion"
+        mSyncByRegion.Add LCase("user_data_mapping_qualification"), "idRegion"
+        mSyncByRegion.Add LCase("course"), "idRegion"
+        mSyncByRegion.Add LCase("CourseMappingBpRoleStandard"), "idRegion"
+    End If
+    Set SyncByRegion = mSyncByRegion
 End Function
 
 Public Function CustomFilter() As Scripting.Dictionary

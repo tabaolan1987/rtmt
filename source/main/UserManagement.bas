@@ -25,7 +25,7 @@ End Function
 Public Function IsExistUserData() As Boolean
     Dim query As String
     query = "select * from " & Constants.END_USER_DATA_TABLE_NAME & " where deleted = 0 and region='" & _
-                Session.CurrentUser.FuncRegion.Region & "'"
+               StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "'"
     dbm.Init
     dbm.OpenRecordSet query
     If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
@@ -147,7 +147,9 @@ Public Function CheckConflict()
             
             query = "SELECT * FROM " & Constants.END_USER_DATA_TABLE_NAME _
                                                         & " WHERE " & ss.NtidField & " = '" _
-                                                        & StringHelper.EscapeQueryString(ntid) & "' and deleted=0 and suspend=0"
+                                                        & StringHelper.EscapeQueryString(ntid) & "'" _
+                                                        & " and region='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "'" _
+                                                        & " and deleted=0 and suspend=0"
             'Logger.LogDebug "UserManagement.CheckConflict", "Compare NTID query: " & query
             Set qdf = dbm.Database.CreateQueryDef("", query)
             Set tmpRst = qdf.OpenRecordSet
@@ -181,7 +183,7 @@ End Function
 
 Public Function IgnoreAllConflict()
     dbm.Init
-    dbm.ExecuteQuery "UPDATE [" & Constants.TABLE_USER_DATA_CONFLICT & "] SET [" & Constants.FIELD_SELECT & "] = 'false'"
+    dbm.ExecuteQuery "UPDATE [" & Constants.TABLE_USER_DATA_CONFLICT & "] SET [" & Constants.FIELD_SELECT & "] = 0"
     dbm.Recycle
 End Function
 
@@ -686,8 +688,8 @@ Public Function MergeUserData()
             tmpData.Add Constants.FIELD_DELETED, "0"
             tmpData.Add "suspend", "0"
             ntid = dbm.GetFieldValue(dbm.RecordSet, ss.NtidField)
-            query = "SELECT * FROM " & Constants.END_USER_DATA_TABLE_NAME & " WHERE " & ss.NtidField _
-                    & " = '" & StringHelper.EscapeQueryString(ntid) & "'"
+            query = "SELECT * FROM " & Constants.END_USER_DATA_TABLE_NAME & " WHERE ntid = '" & StringHelper.EscapeQueryString(ntid) & "'" _
+                    & " and region='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "'"
                     
             Set tmpQdf = dbm.Database.CreateQueryDef("", query)
             Set tmpRst = tmpQdf.OpenRecordSet

@@ -21,15 +21,27 @@ Private mIdCol As Scripting.Dictionary
 Private mIdTs As Scripting.Dictionary
 Private dbm As DbManager
 Private mUncompleteId As Scripting.Dictionary
-
+Private mEnablePrimary As Boolean
+Private mEnableRegion As Boolean
 Public Function Init(tblName As String)
+    If Session.EnablePrimarySync.Exists(LCase(tblName)) Then
+        mEnablePrimary = True
+    Else
+        mEnablePrimary = False
+    End If
+    
+    If Session.SyncByRegion.Exists(LCase(tblName)) Then
+        mEnableRegion = True
+    Else
+        mEnableRegion = False
+    End If
+    
     Set mUncompleteId = New Scripting.Dictionary
     Set dbs = CurrentDb
     mTableName = tblName
     Logger.LogDebug "SyncHelper.init", "Start sync table " & tblName
     Set dbm = New DbManager
     If Len(Session.Settings.Username) <> 0 Then
-    
         mConnString = "DRIVER=SQL Server;SERVER=" & Session.Settings.ServerName & "," & Session.Settings.Port _
                                                 & ";DATABASE=" & Session.Settings.DatabaseName _
                                                 & ";UID=" & Session.Settings.Username _
@@ -103,7 +115,15 @@ End Function
 
 Private Function GetLocalTimestamp()
     On Error GoTo OnError
-    Set qdf = dbs.CreateQueryDef("", "select top 1 [timestamp] from [" & mTableName & "] order by [timestamp] desc")
+    Dim query As String
+    
+    query = "select top 1 [timestamp] from [" & mTableName & "]"
+    If mEnablePrimary Then
+        
+    End If
+    query = query & " order by [timestamp] desc"
+    
+    Set qdf = dbs.CreateQueryDef("", query)
     Set rst = qdf.OpenRecordSet
     If Not (rst.EOF And rst.BOF) Then
         rst.MoveFirst
@@ -411,7 +431,6 @@ Private Function PushLocalChange()
     If Not (rst.EOF And rst.BOF) Then
         rst.MoveFirst
         Do Until rst.EOF = True
-            
             tmpTs = Trim(dbm.GetFieldValue(rst, "timestamp"))
             tmpId = dbm.GetFieldValue(rst, "id")
             tmpDeleted = dbm.GetFieldValue(rst, "deleted")
