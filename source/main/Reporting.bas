@@ -232,7 +232,8 @@ Public Sub GenerateReport(rpm As ReportMetaData)
                         Dim pi As PivotItem
                          For Each pi In Pivot.PivotFields("NTID").PivotItems
                              If pi.value = "(blank)" Then
-                                 'pi.Visible = False
+                                On Error Resume Next
+                                 pi.Visible = False
                             End If
                          Next pi
                     End If
