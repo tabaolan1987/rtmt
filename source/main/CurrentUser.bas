@@ -43,7 +43,7 @@ Public Function Init(iNtid As String, _
         mAuth = True
     Else
         mAuth = False
-        For i = 0 To ss.validatorMapping.Count - 1
+        For i = 0 To ss.validatorMapping.count - 1
             fields = fields & ss.validatorMapping.Items(i) & ","
         Next i
         If StringHelper.EndsWith(fields, ",", True) Then

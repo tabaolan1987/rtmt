@@ -81,8 +81,8 @@ Public Function Init(raw As String, Optional mss As SystemSetting, Optional Skip
             dbm.OpenRecordSet mQuery
             mCount = dbm.RecordSet.recordCount
             ' Execute query and get all header name
-            Logger.LogDebug "ReportSection.Init", "Fields count: " & CStr(dbm.RecordSet.fields.Count)
-            For i = 0 To dbm.RecordSet.fields.Count - 1
+            Logger.LogDebug "ReportSection.Init", "Fields count: " & CStr(dbm.RecordSet.fields.count)
+            For i = 0 To dbm.RecordSet.fields.count - 1
                 ReDim Preserve mHeader(arraySize)
                 mHeader(arraySize) = dbm.RecordSet.fields(i).Name
                 arraySize = arraySize + 1
@@ -147,8 +147,8 @@ Public Function Init(raw As String, Optional mss As SystemSetting, Optional Skip
                 dbm.OpenRecordSet mQuery
                 mCount = dbm.RecordSet.recordCount
                 ' Execute query and get all header name
-                Logger.LogDebug "ReportSection.Init", "Fields count: " & CStr(dbm.RecordSet.fields.Count)
-                For i = 0 To dbm.RecordSet.fields.Count - 1
+                Logger.LogDebug "ReportSection.Init", "Fields count: " & CStr(dbm.RecordSet.fields.count)
+                For i = 0 To dbm.RecordSet.fields.count - 1
                     ReDim Preserve mHeader(arraySize)
                     mHeader(arraySize) = dbm.RecordSet.fields(i).Name
                     arraySize = arraySize + 1
@@ -286,9 +286,9 @@ Public Function Init(raw As String, Optional mss As SystemSetting, Optional Skip
                     dbm.OpenRecordSet mQuery
                     mCount = dbm.RecordSet.recordCount
                     ' Execute query and get all header name
-                    Logger.LogDebug "ReportSection.Init", "Fields count: " & CStr(dbm.RecordSet.fields.Count)
+                    Logger.LogDebug "ReportSection.Init", "Fields count: " & CStr(dbm.RecordSet.fields.count)
                     arraySize = 0
-                    For i = 0 To dbm.RecordSet.fields.Count - 1
+                    For i = 0 To dbm.RecordSet.fields.count - 1
                         ReDim Preserve mHeader(arraySize)
                         mHeader(arraySize) = dbm.RecordSet.fields(i).Name
                         arraySize = arraySize + 1
@@ -460,8 +460,8 @@ Public Property Get Valid() As Boolean
     Valid = mValid
 End Property
 
-Public Property Get Count() As Long
-    Count = mCount
+Public Property Get count() As Long
+    count = mCount
 End Property
 
 Public Function MakeQuery(mHeaderCol As Collection, Optional mss As SystemSetting) As String

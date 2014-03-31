@@ -61,28 +61,28 @@ Public Property Get TotalTime(className As String) As Long
 End Property
 
 Public Property Get TestCaseCount(className As String) As Integer
-    Dim Count As Integer, TC As TestCaseRow, test As ITest
-    Count = 0
+    Dim count As Integer, TC As TestCaseRow, test As ITest
+    count = 0
     For Each TC In mTestCaseRows
         Set test = TC.TestCase
         If StrComp(className, test.Manager.className, vbTextCompare) = 0 Then
-            Count = Count + 1
+            count = count + 1
         End If
     Next
-    TestCaseCount = Count
+    TestCaseCount = count
 End Property
 
 Public Property Get FailureCount(className As String) As Integer
-    Dim Count As Integer, FL As TestFailure, test As ITest, TC As ITestCase
-    Count = 0
+    Dim count As Integer, FL As TestFailure, test As ITest, TC As ITestCase
+    count = 0
     For Each FL In mFailures
         Set TC = FL.TestCase
        Set test = TC
         If StrComp(className, test.Manager.className, vbTextCompare) = 0 Then
-            Count = Count + 1
+            count = count + 1
         End If
    Next
-   FailureCount = Count
+   FailureCount = count
 End Property
 
 Public Property Get isFailures(TestCase As ITestCase) As TestFailure
@@ -111,5 +111,5 @@ Private Sub Class_Initialize()
 End Sub
 
 Public Property Get WasSuccessful() As Boolean
-    WasSuccessful = Failures.Count = 0
+    WasSuccessful = Failures.count = 0
 End Property

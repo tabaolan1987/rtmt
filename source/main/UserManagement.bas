@@ -11,6 +11,7 @@ Private mIsDuplicate As Boolean
 Private mIsLdapConflict As Boolean
 Private mIsLdapNotfound As Boolean
 Private mIsFunctionRegionConflict As Boolean
+Private mNotFoundSpecialism As Scripting.Dictionary
 
 Public Function Init(Optional mss As SystemSetting)
     If mss Is Nothing Then
@@ -65,7 +66,9 @@ Public Function CheckRegionFunction()
             dbm.RecordSet.MoveNext
         Loop
     End If
-    dbm.ExecuteQuery "DELETE FROM " & Constants.END_USER_DATA_CACHE_TABLE_NAME & " WHERE [Region] not like '" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "' Or " & Session.Settings.NtidField & " is null"
+    dbm.ExecuteQuery "DELETE FROM " & Constants.END_USER_DATA_CACHE_TABLE_NAME & " WHERE [Region] not like '" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "'"
+    dbm.ExecuteQuery "DELETE FROM " & Constants.END_USER_DATA_CACHE_TABLE_NAME & " WHERE ntid is null"
+    dbm.ExecuteQuery "DELETE FROM " & Constants.END_USER_DATA_CACHE_TABLE_NAME & " WHERE ntid = ''"
     dbm.Recycle
 End Function
 
@@ -127,7 +130,7 @@ Public Function CheckConflict()
         tmpInsertCols.Add "Upload file"
         tmpInsertCols.Add "Data held"
         tmpInsertCols.Add "Select"
-        For i = 0 To dbm.RecordSet.fields.Count - 1
+        For i = 0 To dbm.RecordSet.fields.count - 1
             tmpCol = dbm.RecordSet.fields(i).Name
              If (Not StringHelper.IsEqual(tmpCol, Constants.FIELD_ID, True)) _
                    And (Not StringHelper.IsEqual(tmpCol, Constants.FIELD_TIMESTAMP, True)) _
@@ -221,7 +224,7 @@ Public Function CheckDuplicate()
         tmpInsertCols.Add "Db field"
         tmpInsertCols.Add "Upload file"
         tmpInsertCols.Add "Select"
-        For i = 0 To dbm.RecordSet.fields.Count - 1
+        For i = 0 To dbm.RecordSet.fields.count - 1
             tmpCol = dbm.RecordSet.fields(i).Name
              If (Not StringHelper.IsEqual(tmpCol, Constants.FIELD_ID, True)) _
                    And (Not StringHelper.IsEqual(tmpCol, Constants.FIELD_TIMESTAMP, True)) _
@@ -465,6 +468,9 @@ Public Function ListSpecialism() As Collection
     Dim list As New Collection
     Dim query As String
     Dim tmp As String
+    If mNotFoundSpecialism Is Nothing Then
+        Set mNotFoundSpecialism = New Scripting.Dictionary
+    End If
     query = "SELECT [" & Constants.FIELD_SPECIALISM & "] from " & Constants.END_USER_DATA_CACHE_TABLE_NAME _
                     & " group by [" & Constants.FIELD_SPECIALISM & "]"
     dbm.Init
@@ -474,19 +480,27 @@ Public Function ListSpecialism() As Collection
         Do Until dbm.RecordSet.EOF = True
             tmp = dbm.GetFieldValue(dbm.RecordSet, Constants.FIELD_SPECIALISM)
             If Len(tmp) > 0 Then
-                list.Add tmp
+                
                 query = "SELECT * FROM Specialism WHERE SpecialismName = '" & StringHelper.EscapeQueryString(tmp) & "'"
                 Set tmpQdf = dbm.Database.CreateQueryDef("", query)
                 Set tmpRst = tmpQdf.OpenRecordSet
                 If Not (tmpRst.EOF And tmpRst.BOF) Then
-                    Logger.LogDebug "UserManagement.ListSpecialism", "Update specialism: " & tmp
-                    dbm.ExecuteQuery "UPDATE Specialism Set Deleted = 'false' WHERE SpecialismName = '" & StringHelper.EscapeQueryString(tmp) & "'"
+                    list.Add tmp
+                    If Not mNotFoundSpecialism.Exists(tmp) Then
+                        mNotFoundSpecialism.Add tmp, tmp
+                    End If
+                   ' Logger.LogDebug "UserManagement.ListSpecialism", "Update specialism: " & tmp
+                    'dbm.ExecuteQuery "UPDATE Specialism Set Deleted = 'false' WHERE SpecialismName = '" & StringHelper.EscapeQueryString(tmp) & "'"
                 Else
-                    Logger.LogDebug "UserManagement.ListSpecialism", "Create new specialism: " & tmp
-                    dbm.ExecuteQuery "INSERT INTO Specialism([id], [SpecialismName], [deleted]) " _
+                   ' Logger.LogDebug "UserManagement.ListSpecialism", "Create new specialism: " & tmp
+                   ' dbm.ExecuteQuery "INSERT INTO Specialism([id], [SpecialismName], [deleted]) " _
                         & "VALUES('" & StringHelper.EscapeQueryString(StringHelper.GetGUID) _
                                 & "', '" & StringHelper.EscapeQueryString(tmp) & "', 'false')"
                 End If
+                tmpQdf.Close
+                Set tmpQdf = Nothing
+                tmpRst.Close
+                Set tmpRst = Nothing
             End If
             dbm.RecordSet.MoveNext
         Loop
@@ -654,7 +668,7 @@ Public Function MergeUserData()
         dbm.RecordSet.MoveFirst
         Do Until dbm.RecordSet.EOF = True
             Set tmpCols = New Collection
-            For i = 0 To dbm.RecordSet.fields.Count - 1
+            For i = 0 To dbm.RecordSet.fields.count - 1
                 tmpCol = dbm.RecordSet.fields(i).Name
                 If (Not StringHelper.IsEqual(tmpCol, Constants.FIELD_TIMESTAMP, True)) _
                     And (Not StringHelper.IsEqual(tmpCol, Constants.FIELD_DELETED, True)) _
@@ -770,4 +784,8 @@ End Property
 
 Public Property Get IsFunctionRegionConflict() As Boolean
     IsFunctionRegionConflict = mIsFunctionRegionConflict
+End Property
+
+Public Property Get NotFoundSpecialism() As Scripting.Dictionary
+    Set NotFoundSpecialism = mNotFoundSpecialism
 End Property

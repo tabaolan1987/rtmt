@@ -2,9 +2,10 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-Option Compare Database
+Option Explicit
 ' @author Hai Lu
 
+Private Const BULK_SIZE = 50
 Private dbs As DAO.Database
 Private qdf As DAO.QueryDef
 Private rst As DAO.RecordSet
@@ -19,8 +20,10 @@ Private mFieldTypes As Scripting.Dictionary
 Private mIdCol As Scripting.Dictionary
 Private mIdTs As Scripting.Dictionary
 Private dbm As DbManager
+Private mUncompleteId As Scripting.Dictionary
 
 Public Function Init(tblName As String)
+    Set mUncompleteId = New Scripting.Dictionary
     Set dbs = CurrentDb
     mTableName = tblName
     Logger.LogDebug "SyncHelper.init", "Start sync table " & tblName
@@ -41,10 +44,8 @@ End Function
 Public Function sync()
     If Ultilities.IfTableExists(mTableName) Then
         GetLocalTimestamp
-        CompareLocal
         CompareServer
-        PushLocalChange
-        UpdateLocalTimestamp
+        CompareLocal
         RollbackId
     Else
         Dim cs As String
@@ -107,7 +108,10 @@ Private Function GetLocalTimestamp()
     If Not (rst.EOF And rst.BOF) Then
         rst.MoveFirst
         mLocalTimestamp = dbm.GetFieldValue(rst, "timestamp")
-        mLocalTimestamp = Format(CDate(mLocalTimestamp), Session.Settings.DateFormat)
+        'Logger.LogDebug "SyncHelper.GetLocalTimestamp", "Date format: " & Session.Settings.DateFormat
+        If Len(mLocalTimestamp) > 0 Then
+            mLocalTimestamp = Format(CDate(mLocalTimestamp), Session.Settings.DateFormat)
+        End If
         Logger.LogDebug "SyncHelper.GetLocalTimestamp", "mLocalTimestamp: " & mLocalTimestamp
     End If
 OnExit:
@@ -128,7 +132,7 @@ Private Function CompareServer()
     Dim i As Integer
     Dim v As Variant
     cn.Open mConnString
-    cn.BeginTrans
+    'cn.BeginTrans
 
     
     If Len(mLocalTimestamp) > 0 Then
@@ -143,7 +147,7 @@ Private Function CompareServer()
     Set rs = cn.Execute(query)
     Set mHeaders = New Collection
     Dim tmpFName As String
-    For i = 0 To rs.fields.Count - 1
+    For i = 0 To rs.fields.count - 1
         tmpFName = rs.fields(i).Name
         mHeaders.Add tmpFName
         mFieldTypes.Add tmpFName, rs.fields(i).Type
@@ -183,24 +187,30 @@ Private Function CompareServer()
                 
             End If
             Logger.LogDebug "SyncHelper.CompareServer", "Post execute query: " & query
-            Set qdf = dbs.CreateQueryDef("", query)
-            qdf.Execute
-            RemoveChangeLog (tmpId)
             qdf.Close
             Set qdf = Nothing
             rst.Close
             Set rst = Nothing
             
+            Set qdf = dbs.CreateQueryDef("", query)
+            qdf.Execute
+            qdf.Close
+            Set qdf = Nothing
+            Set qdf = dbs.CreateQueryDef("", "delete from [ChangeLog] where [TableName]='" & StringHelper.EscapeQueryString(mTableName) _
+                                            & "' and [TableId]='" & StringHelper.EscapeQueryString(tmpId) & "'")
+            qdf.Execute
+            qdf.Close
+            Set qdf = Nothing
             rs.MoveNext
         Loop
     End If
-    cn.CommitTrans
+   ' cn.CommitTrans
 OnExit:
     RecycleLocal
     RecycleServer
     Exit Function
 OnError:
-    cn.RollbackTrans
+   ' cn.RollbackTrans
     Logger.LogError "SyncHelper.CompareServer", "Could not compare " & mTableName, Err
     Resume OnExit
 End Function
@@ -211,8 +221,8 @@ Private Function RollbackId()
     Set qdf = dbs.CreateQueryDef("", "delete from [ChangeLog] where [TableName]='" _
                         & StringHelper.EscapeQueryString(mTableName) & "'")
     qdf.Execute
-    If mIdCol.Count > 0 Then
-        For Each v In mIdCol
+    If mUncompleteId.count > 0 Then
+        For Each v In mUncompleteId
             Set qdf = dbs.CreateQueryDef("", "insert into [ChangeLog]([TableName], [TableId]) values('" _
                             & StringHelper.EscapeQueryString(mTableName) & "', '" & StringHelper.EscapeQueryString(CStr(v)) & "')")
             qdf.Execute
@@ -228,22 +238,58 @@ OnError:
 End Function
 
 Private Function CompareLocal()
-    On Error GoTo OnError
+  '  On Error GoTo OnError
+    Dim mQdf As DAO.QueryDef
+    Dim mRst As DAO.RecordSet
     Dim v As Variant
     Dim tmpId As String
-    Set mIdCol = New Scripting.Dictionary
-    Set qdf = dbs.CreateQueryDef("", "select [TableId] from [ChangeLog] where [TableName]='" _
+    Logger.LogDebug "SyncHelper.CompareLocal", "Start compare local"
+    
+    Set mQdf = dbs.CreateQueryDef("", "select [TableId] from [ChangeLog] where [TableName]='" _
                         & StringHelper.EscapeQueryString(mTableName) & "' group by [TableId]")
-    Set rst = qdf.OpenRecordSet
-    If Not (rst.EOF And rst.BOF) Then
-        rst.MoveFirst
-        Do Until rst.EOF = True
-            tmpId = dbm.GetFieldValue(rst, "TableId")
+    Set mRst = mQdf.OpenRecordSet
+    Dim count As Integer
+    count = 0
+    Set mIdCol = New Scripting.Dictionary
+    Set mIdTs = New Scripting.Dictionary
+    If Not (mRst.EOF And mRst.BOF) Then
+        mRst.MoveFirst
+        Do Until mRst.EOF = True
+            tmpId = dbm.GetFieldValue(mRst, "TableId")
             If Not mIdCol.Exists(tmpId) Then
                 mIdCol.Add tmpId, tmpId
             End If
-            rst.MoveNext
+            If count >= BULK_SIZE Then
+                Logger.LogDebug "SyncHelper.CompareLocal", "Push bulk"
+               ' CompareLocal
+                PushLocalChange
+                UpdateLocalTimestamp
+                'RollbackId
+                If mIdCol.count > 0 Then
+                    For Each v In mIdCol
+                        If Not mUncompleteId.Exists(CStr(v)) Then
+                            mUncompleteId.Add CStr(v), CStr(v)
+                        End If
+                    Next v
+                End If
+                Set mIdTs = New Scripting.Dictionary
+                Set mIdCol = New Scripting.Dictionary
+                count = 0
+            End If
+            count = count + 1
+            mRst.MoveNext
         Loop
+        Logger.LogDebug "SyncHelper.CompareLocal", "Push bulk"
+        'CompareLocal
+        PushLocalChange
+        UpdateLocalTimestamp
+        If mIdCol.count > 0 Then
+                    For Each v In mIdCol
+                        If Not mUncompleteId.Exists(CStr(v)) Then
+                            mUncompleteId.Add CStr(v), CStr(v)
+                        End If
+                    Next v
+        End If
     End If
     
     For Each v In mIdCol
@@ -251,6 +297,11 @@ Private Function CompareLocal()
     Next v
     
 OnExit:
+    On Error Resume Next
+    mQdf.Close
+    Set mQdf = Nothing
+    mRst.Close
+    Set mRst = Nothing
     RecycleLocal
     Exit Function
 OnError:
@@ -259,7 +310,7 @@ OnError:
 End Function
 
 Private Function PushLocalChange()
-    If mIdCol.Count = 0 Then
+    If mIdCol.count = 0 Then
         Exit Function
     End If
     Set cn = New ADODB.Connection
@@ -288,8 +339,6 @@ Private Function PushLocalChange()
     query = "select * from [" & mTableName & "] where [id] in (" & mFilter & ")"
     Logger.LogDebug "SyncHelper.PushLocalChange", "List changed data query: " & query
     cn.Open mConnString
-    cn.BeginTrans
-    
     Set rs = cn.Execute(query)
     Dim v1 As String
     Dim v2 As String
@@ -331,28 +380,29 @@ Private Function PushLocalChange()
                             adData.Add "table_name", mTableName
                             query = dbm.CreateRecordQuery(adData, adCol, "audit_logs", IsServer:=True)
                             qBatch.Add query
-                            If Not mIdTs.Exists(tmpId) Then
-                                mIdTs.Add tmpId, tmpId
-                            End If
-                            RemoveChangeLog tmpId
                         End If
                     End If
+                    If Not mIdTs.Exists(tmpId) Then
+                        mIdTs.Add tmpId, tmpId
+                    End If
+                    RemoveChangeLog tmpId
                 Next v
             End If
+            qdf.Close
+            Set qdf = Nothing
             rst.Close
             Set rst = Nothing
             rs.MoveNext
         Loop
     End If
     rs.Close
-    
     Set rs = Nothing
-    If qBatch.Count > 0 Then
-        For Each v In qBatch
-            cn.Execute CStr(v)
-        Next v
-    End If
-    Set qBatch = New Collection
+  '  If qBatch.count > 0 Then
+  '      For Each v In qBatch
+  '          cn.Execute CStr(v)
+  '      Next v
+  '  End If
+  '  Set qBatch = New Collection
     query = "select * from [" & mTableName & "] where [id] in (" & mFilter & ")"
     Set qdf = dbs.CreateQueryDef("", query)
     Set rst = qdf.OpenRecordSet
@@ -374,7 +424,7 @@ Private Function PushLocalChange()
                         tmpData.Add CStr(v), dbm.GetFieldValue(rst, CStr(v))
                     End If
                 Next v
-                
+                Logger.LogDebug "SyncHelper.PushLocalChange", "Create query for new record"
                 query = dbm.CreateRecordQuery(tmpData, mHeaders, mTableName, mFieldTypes, True)
                 Set adData = New Scripting.Dictionary
                 adData.Add "id", StringHelper.GetGUID
@@ -386,21 +436,25 @@ Private Function PushLocalChange()
                 adData.Add "prev_value", ""
                 adData.Add "new_value", ""
                 adData.Add "table_name", mTableName
+                Logger.LogDebug "SyncHelper.PushLocalChange", "Create query for audit log"
                 query = dbm.CreateRecordQuery(adData, adCol, "audit_logs", IsServer:=True)
                 'cn.Execute query
+                Logger.LogDebug "SyncHelper.PushLocalChange", "Add to collection"
                 qBatch.Add query
-                If Not mIdTs.Exists(tmpId) Then
-                    mIdTs.Add tmpId, tmpId
-                End If
-                
+            End If
+            If Not mIdTs.Exists(tmpId) Then
+                mIdTs.Add tmpId, tmpId
             End If
             RemoveChangeLog tmpId
             rst.MoveNext
         Loop
     End If
+    qdf.Close
+    Set qdf = Nothing
     rst.Close
     Set rst = Nothing
-    If qBatch.Count > 0 Then
+    cn.BeginTrans
+    If qBatch.count > 0 Then
         For Each v In qBatch
             cn.Execute CStr(v)
         Next v
@@ -418,7 +472,7 @@ OnError:
 End Function
 
 Private Function UpdateLocalTimestamp()
-    If mIdTs.Count = 0 Then
+    If mIdTs.count = 0 Then
         Exit Function
     End If
     
@@ -435,7 +489,7 @@ Private Function UpdateLocalTimestamp()
     query = "select * from [" & mTableName & "] where [id] in (" & mFilter & ")"
     Logger.LogDebug "SyncHelper.UpdateLocalTimestamp", "Query: " & query
     cn.Open mConnString
-    cn.BeginTrans
+    'cn.BeginTrans
     
     Set rs = cn.Execute(query)
     If Not (rs.EOF And rs.BOF) Then
@@ -447,21 +501,23 @@ Private Function UpdateLocalTimestamp()
             Set qdf = dbs.CreateQueryDef("", "delete from [ChangeLog] where [TableName]='" & StringHelper.EscapeQueryString(mTableName) _
                                             & "' and [TableId]='" & StringHelper.EscapeQueryString(tmpId) & "'")
             qdf.Execute
+            qdf.Close
             Set qdf = dbs.CreateQueryDef("", "update [" & mTableName & "] set [timestamp]='" _
                                 & StringHelper.EscapeQueryString(tmpTs) & "' where [id]='" & StringHelper.EscapeQueryString(tmpId) & "'")
             qdf.Execute
+            qdf.Close
             rs.MoveNext
         Loop
     End If
     rs.Close
     Set rs = Nothing
-    cn.CommitTrans
+    'cn.CommitTrans
 OnExit:
     RecycleLocal
     RecycleServer
     Exit Function
 OnError:
-    cn.RollbackTrans
+    'cn.RollbackTrans
     Logger.LogError "SyncHelper.UpdateLocalTimestamp", "Could not update local timestamp " & mTableName, Err
     Resume OnExit
 End Function
@@ -469,7 +525,7 @@ End Function
 Private Function RemoveChangeLog(id As String)
     On Error Resume Next
     Dim v As Variant
-    If mIdCol.Count > 0 Then
+    If mIdCol.count > 0 Then
         Logger.LogDebug "SyncHelper.CheckConflict", "Remove conflict id: " & id
         If mIdCol.Exists(id) Then
             mIdCol.Remove (id)
@@ -485,7 +541,7 @@ Private Function GetChangeLogFilter(Optional col As Scripting.Dictionary) As Str
     If col Is Nothing Then
         Set col = mIdCol
     End If
-    If col.Count > 0 Then
+    If col.count > 0 Then
         For Each v In col.keys
             mFilter = mFilter & "'" & StringHelper.EscapeQueryString(CStr(v)) & "',"
         Next v

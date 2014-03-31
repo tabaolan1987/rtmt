@@ -3,7 +3,7 @@ Option Explicit
 Public Sub OnTest()
    ' Run
     Dim sh As New SyncHelper
-    sh.Init "Region"
+    sh.Init "SpecialismMappingActivity"
     sh.sync
     sh.Recycle
     

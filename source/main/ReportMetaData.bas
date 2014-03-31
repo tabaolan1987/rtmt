@@ -151,7 +151,7 @@ Public Function Init(Name As String, Optional ss As SystemSetting, Optional rpTy
             rpSection.Init tmpStr, ss, mSkipCheckHeader
             If StringHelper.IsEqual(rpSection.SectionType, Constants.RP_SECTION_TYPE_FIXED, True) _
                 Or StringHelper.IsEqual(rpSection.SectionType, Constants.RP_SECTION_TYPE_TMP_TABLE, True) Then
-                mCount = rpSection.Count
+                mCount = rpSection.count
             End If
             If Not rpSection.Valid Then
                 mValid = False
@@ -293,8 +293,8 @@ Public Property Get MergePrimary() As Long
     MergePrimary = mMergePrimary
 End Property
 
-Public Property Get Count() As Long
-    Count = mCount
+Public Property Get count() As Long
+    count = mCount
 End Property
 
 Public Function SetComplete(done As Boolean)

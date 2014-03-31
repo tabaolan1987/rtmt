@@ -41,8 +41,8 @@ Public Function Init(md As MappingMetaData, Optional mss As SystemSetting, Optio
         End If
         PrepareMappingActivitesBBJobRoles
         PrepareData
-        If dictTop.Count <> 0 And dictTopComment.Count <> 0 _
-            And dictLeft.Count <> 0 And dictLeftComment.Count <> 0 Then
+        If dictTop.count <> 0 And dictTopComment.count <> 0 _
+            And dictLeft.count <> 0 And dictLeftComment.count <> 0 Then
             Valid = True
         Else
             ' Add warning here
@@ -296,13 +296,13 @@ Public Function ParseMapping()
                         tmpDictTop.Add l, CStr(v)
                         l = l + 1
                     Next v
-                    For k = mmd.StartRowLeft To (mmd.StartRowLeft + dictLeft.Count - 1)
+                    For k = mmd.StartRowLeft To (mmd.StartRowLeft + dictLeft.count - 1)
                         Set rng = .Cells(k, mmd.StartColLeft)
                         tmpValue = rng.value
                         tmpDictLeft.Add k, StringHelper.GetDictKey(dictLeft, tmpValue)
                     Next
-                    For l = mmd.StartColTop To (mmd.StartColTop + dictTop.Count - 1)
-                        For k = mmd.StartRowLeft To (mmd.StartRowLeft + dictLeft.Count - 1)
+                    For l = mmd.StartColTop To (mmd.StartColTop + dictTop.count - 1)
+                        For k = mmd.StartRowLeft To (mmd.StartRowLeft + dictLeft.count - 1)
                             Set rng = .Cells(k, l)
                             tmpValue = Trim(rng.value)
                             tmpIdLeft = tmpDictLeft.Item(k)

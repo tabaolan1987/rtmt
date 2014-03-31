@@ -87,7 +87,7 @@ Public Sub GenerateReport(rpm As ReportMetaData)
                                     Set rng = .Cells(rpm.StartHeaderRow, colHeadCount)
                                     tmpValue = headers(i)
                                     rng.value = tmpValue
-                                    If rpm.FillCategory And rSect.Categories.Count > 0 Then
+                                    If rpm.FillCategory And rSect.Categories.count > 0 Then
                                         Set rng = .Cells(rpm.StartCategoryRow, colHeadCount)
                                         If rSect.Categories.Exists(tmpValue) Then
                                             category = rSect.Categories.Item(tmpValue)
@@ -143,7 +143,7 @@ Public Sub GenerateReport(rpm As ReportMetaData)
                                             Set headerCol = New Collection
                                         End If
                                     Next i
-                                    If Not headerCol Is Nothing And headerCol.Count > 0 Then
+                                    If Not headerCol Is Nothing And headerCol.count > 0 Then
                                         query = rSect.MakeQuery(headerCol, ss)
                                         Logger.LogDebug "Reporting.GenerateReport", "Prepare query: " & query
                                         objRs.Open query, objConn, adOpenStatic, adLockReadOnly
@@ -151,7 +151,7 @@ Public Sub GenerateReport(rpm As ReportMetaData)
                                         Set rng = .Cells(rpm.startRow, colCount)
                                         rng.CopyFromRecordset objRs
                                         objRs.Close
-                                        colCount = colCount + headerCol.Count
+                                        colCount = colCount + headerCol.count
                                     End If
                                     
                                     Logger.LogDebug "Reporting.GenerateReport", "Complete generate section type: Auto"
@@ -162,7 +162,7 @@ Public Sub GenerateReport(rpm As ReportMetaData)
                                     'Logger.LogDebug "Reporting.GenerateReport", "Prepare Cells(" & CStr(rpm.StartRow) & "," & CStr(colCount) & ")"
                                     Set rng = .Cells(rpm.startRow, colCount) 'Starting point of the data range
                                     rng.CopyFromRecordset objRs
-                                    colCount = colCount + objRs.fields.Count
+                                    colCount = colCount + objRs.fields.count
                                     objRs.Close
                                     Logger.LogDebug "Reporting.GenerateReport", "Complete generate section type: Fixed"
                                 Case Else
@@ -223,7 +223,7 @@ Public Sub GenerateReport(rpm As ReportMetaData)
                         Set Pivot = ws.PivotTables(rpm.PivotTableName)
                         Pivot.RefreshTable
                         Pivot.Update
-                        If rpm.PivotWordWrapCols.Count > 0 Then
+                        If rpm.PivotWordWrapCols.count > 0 Then
                             For Each v In rpm.PivotWordWrapCols
                                 ws.range(ws.Cells(1, CInt(v)), ws.Cells(rpm.startRow + recordCount, CInt(v))).WrapText = True
                             Next v

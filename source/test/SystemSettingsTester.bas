@@ -45,7 +45,7 @@ Public Sub TestImportSettings()
    ' mAssert.Equals s.SyncUsers.Count > 0, True
     Dim dic As Scripting.Dictionary, i As Integer
     Set dic = s.SyncUsers
-    For i = 0 To dic.Count - 1
+    For i = 0 To dic.count - 1
         Logger.LogDebug "SystemSettingsTester.TestImportSettings", "key: " & dic.keys(i) & " | value: " & dic.Items(i)
     Next i
 OnExit:

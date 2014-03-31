@@ -274,8 +274,8 @@ Public Function SaveAsCSV(filePath As String, desFilePath As String, Optional wo
         .DisplayAlerts = False
                     Set WB = .Workbooks.Open(filePath)
                     ' Remove unused sheets
-                    Logger.LogDebug "FileHelper.SaveAsCSV", "Sheet count: " & .Sheets.Count
-                    If .Sheets.Count > 1 And Len(worksheet) <> 0 Then
+                    Logger.LogDebug "FileHelper.SaveAsCSV", "Sheet count: " & .Sheets.count
+                    If .Sheets.count > 1 And Len(worksheet) <> 0 Then
                         For Each v In .Sheets
                             Logger.LogDebug "FileHelper.SaveAsCSV", "Sheet name: " & v.Name
                             If Not StringHelper.IsEqual(v.Name, worksheet, True) Then
@@ -475,14 +475,14 @@ On Error GoTo ErrHandler
 
     Set oApp = CreateObject("Shell.Application")
     Set oFld = oApp.Namespace(CVar(ZipFile))
-    i = oFld.Items.Count
+    i = oFld.Items.count
     oFld.CopyHere (InputFile)
 
     Set oShl = CreateObject("WScript.Shell")
 
     'Search for a Compressing dialog
     Do While oShl.AppActivate("Compressing...") = False
-        If oFld.Items.Count > i Then
+        If oFld.Items.count > i Then
             'There's a file in the zip file now, but
             'compressing may not be done just yet
             Exit Do
@@ -590,7 +590,7 @@ Function FileSaveDialog(InitialFileName As String)
     fd.InitialFileName = InitialFileName
     fd.AllowMultiSelect = False
     If CBool(fd.Show) Then
-            FileSaveDialog = fd.SelectedItems(fd.SelectedItems.Count)
+            FileSaveDialog = fd.SelectedItems(fd.SelectedItems.count)
     Else
     
     End If

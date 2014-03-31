@@ -28,7 +28,7 @@ Private Sub IRunManager_Report()
         FileHelper.CheckDir (reportPath)
         reportPath = reportPath & "\reports"
         FileHelper.CheckDir (reportPath)
-        Logger.LogInfo "RunManager.IRunManager_Report", "Tests run: " & result.TestCasesRun & " Failures: " & result.Failures.Count
+        Logger.LogInfo "RunManager.IRunManager_Report", "Tests run: " & result.TestCasesRun & " Failures: " & result.Failures.count
         For Each TCR In result.TestCaseRows
             Set Failure = result.isFailures(TCR.TestCase)
             Set TestCase = TCR.TestCase

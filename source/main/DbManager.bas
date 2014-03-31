@@ -79,7 +79,7 @@ Public Function ExecuteQuery(query As String, Optional params As Scripting.Dicti
     Set qdf = dbs.CreateQueryDef("", query)
     If Not params Is Nothing Then
         'Logger.LogDebug "DbManager.OpenRecordSet", "Param cound: " & params.count
-        For i = 0 To params.Count - 1
+        For i = 0 To params.count - 1
             On Error Resume Next
             key = params.keys(i)
             value = params.Items(i)
@@ -104,7 +104,7 @@ Public Function OpenRecordSet(query As String, Optional params As Scripting.Dict
     If Not params Is Nothing Then
         
         'Logger.LogDebug "DbManager.OpenRecordSet", "Param cound: " & params.count
-        For i = 0 To params.Count - 1
+        For i = 0 To params.count - 1
             On Error Resume Next
             key = params.keys(i)
             'Logger.LogDebug "DbManager.OpenRecordSet", "Param key: " & params.Keys(i) & ". Value: " & params.Items(i)
@@ -148,7 +148,7 @@ End Function
 Private Function GetHeaderIndex(Name As String) As Integer
     Dim index As Integer
     index = -1
-    For i = 0 To rst.fields.Count - 1
+    For i = 0 To rst.fields.count - 1
         If StringHelper.IsEqual(Trim(rst.fields(i).Name), Trim(Name), True) Then
             'Logger.LogDebug "DbManager.SyncUserData", "## HEADER: " & rst.fields(i).name
             index = i
@@ -162,7 +162,7 @@ Public Function GetFieldValue(rs As RecordSet, Name As String) As String
     If Len(Name) <> 0 Then
         Dim index As Integer
         index = -1
-        For i = 0 To rs.fields.Count - 1
+        For i = 0 To rs.fields.count - 1
             If StringHelper.IsEqual(Trim(rs.fields(i).Name), Trim(Name), True) Then
                 index = i
             End If
@@ -200,7 +200,7 @@ Private Function ValidateNtid(s As SystemSetting, ntids As String, Optional user
         Dim tmpStr As String
         Dim FullName As String
         Dim i As Integer
-        For i = 0 To validatorMapping.Count - 1
+        For i = 0 To validatorMapping.count - 1
             fields = fields & validatorMapping.Items(i) & ","
         Next i
         If StringHelper.EndsWith(fields, ",", True) Then
@@ -230,7 +230,7 @@ Private Function ValidateNtid(s As SystemSetting, ntids As String, Optional user
                                                 & tmpUserData.Item(Constants.FIELD_LAST_NAME)
                     If check Then
                         Logger.LogDebug "DbManager.SyncUserData", "check ntid: " & ntid
-                        If Not userData Is Nothing And userData.Count > 0 Then
+                        If Not userData Is Nothing And userData.count > 0 Then
                             Set tmpUserData = userData.Item(ntid)
                             
                             For Each v In validatorMapping
@@ -328,7 +328,7 @@ Public Function SyncUserData()
             ' List all mapping column
             Set dictParams = New Scripting.Dictionary
             Set tmpUserData = New Scripting.Dictionary
-            For i = 0 To dictMapping.Count - 1
+            For i = 0 To dictMapping.count - 1
                  key = dictMapping.keys(i)
                  value = dictMapping.Items(i)
                  tmpCols.Add key
@@ -394,7 +394,7 @@ Public Function SyncUserData()
                         If StringHelper.IsEqual(tmpCache, checkValue, True) Then
                             ' If value is valid, get parameter and execute query
                             Set tmpDict = New Scripting.Dictionary
-                            For k = 0 To dictParams.Count - 1
+                            For k = 0 To dictParams.count - 1
                                 tmpDict.Add dictParams.keys(k), dictParams.Items(k)
                             Next k
                             tmpDict.Add "value", tmpValue
@@ -408,7 +408,7 @@ Public Function SyncUserData()
             ' === VALIDATION BLOCK ===
             If s.EnableValidation Then
                 If size >= s.BulkSize Then
-                    Logger.LogDebug "DbManager.SyncUserData", "check bulk user data size: " & userData.Count
+                    Logger.LogDebug "DbManager.SyncUserData", "check bulk user data size: " & userData.count
                     ValidateNtid s, ntids, userData
                     ntids = ""
                     size = 0
@@ -430,7 +430,7 @@ Public Function SyncUserData()
         Loop
         ' === VALIDATION BLOCK ===
         If s.EnableValidation Then
-            If Len(ntids) <> 0 And size <> 0 And Not userData Is Nothing And userData.Count > 0 Then
+            If Len(ntids) <> 0 And size <> 0 And Not userData Is Nothing And userData.count > 0 Then
                 ValidateNtid s, ntids, userData
                 ntids = ""
                 size = 0
@@ -587,7 +587,7 @@ Public Function SyncTable(Server As String, _
                         tmpTimestampLocal = GetFieldValue(tmpRst, Constants.FIELD_TIMESTAMP)
                         c = TimerHelper.Compare(tmpTimestampLocal, tmpTimestampServer)
                         tmpRst.MoveFirst
-                        For i = 0 To tmpRst.fields.Count - 1
+                        For i = 0 To tmpRst.fields.count - 1
                            ' Logger.LogDebug "field type:", tmpRst.fields(i).Type & " === " & dbBoolean
                             tmpCol = tmpRst.fields(i).Name
                             tmpType = tmpRst.fields(i).Type
@@ -683,7 +683,7 @@ Public Function SyncTable(Server As String, _
                         ' If not exist in local db. Create new record
                         Set tmpCols = New Collection
                         Set tmpDataServer = New Scripting.Dictionary
-                        For i = 0 To rst.fields.Count - 1
+                        For i = 0 To rst.fields.count - 1
                             tmpCol = rst.fields(i).Name
                             str2 = GetFieldValue(rst, tmpCol)
                             tmpDataServer.Add tmpCol, str2
@@ -709,7 +709,7 @@ Public Function SyncTable(Server As String, _
                 Set tmpDataLocal = New Scripting.Dictionary
                 Set tmpCols = New Collection
                 Set tmpColType = New Scripting.Dictionary
-                For i = 0 To rst.fields.Count - 1
+                For i = 0 To rst.fields.count - 1
                     tmpCol = rst.fields(i).Name
                     tmpColType.Add tmpCol, rst.fields(i).Type
                     If Not StringHelper.IsEqual(tmpCol, Constants.FIELD_TIMESTAMP, True) Then
