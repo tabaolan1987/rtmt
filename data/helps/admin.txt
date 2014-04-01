@@ -1,1 +1,7 @@
-Select the Administration button to view and/or edit mapping of Activities To Backbone Job Roles
+Select the Administration button to :
+
+* Add/delete Users.
+* Set/change permissions (Roles, Regions, read/write).
+* Update mapping tables. (All master tables and permissions) Edit/delete existing data.
+* Sync to the central database immediately without exiting the tool.
+* Add/Edit/Delete : Blueprint Job Roles, Backbone Job Roles, Specialisms, Activities, Qualifications,..!
