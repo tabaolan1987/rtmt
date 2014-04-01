@@ -30,7 +30,7 @@ SELECT distinct
 	[siteLocation] AS [Maximo Site Location],
 	(%MAPPING_FIELDS%)
 FROM (user_data as UD
-left join tmp_pilot_report_1 as tbl_cached
+inner join tmp_pilot_report_1 as tbl_cached
 on tbl_cached.[key] = UD.ntid)
 Where UD.deleted=0
 and UD.Region='(%RG_NAME%)'

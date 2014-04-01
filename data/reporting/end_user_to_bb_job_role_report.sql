@@ -80,7 +80,7 @@ SELECT distinct
 	[Spare35] AS [Optional Field 35],
 	(%MAPPING_FIELDS%)
 FROM (user_data as UD
-left join tmp_pilot_report as tbl_cached
+inner join tmp_pilot_report as tbl_cached
 on tbl_cached.[key] = UD.ntid)
 Where UD.deleted=0
 and UD.Region='(%RG_NAME%)'

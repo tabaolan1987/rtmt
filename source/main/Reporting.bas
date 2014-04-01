@@ -168,6 +168,7 @@ Public Sub GenerateReport(rpm As ReportMetaData)
                                 Case Else
                             End Select
                         Next
+                        
                          If rpm.CustomMode Then
                            k = rpm.startRow
                            Dim ntid1 As String
@@ -213,7 +214,10 @@ Public Sub GenerateReport(rpm As ReportMetaData)
                              .Cells(rpm.startRow, 14).EntireColumn.Delete
                         End If
                         
-                        
+                        If StringHelper.IsEqual(rpm.RpName, Constants.RP_AUDIT_LOG, True) Then
+                            On Error Resume Next
+                            .range(.Cells(2, 9), .Cells(65000, 9)).NumberFormat = "dd/MM/yyyy hh:mm:ss"
+                        End If
                         '.PrintOut Copies:=1, Preview:=False, Collate:=True
                     End With
                     If rpm.PivotTable Then

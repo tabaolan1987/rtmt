@@ -338,3 +338,7 @@ End Property
 Public Property Get PivotWordWrapCols() As Collection
     Set PivotWordWrapCols = mPivotWordWrapCols
 End Property
+
+Public Property Get RpName() As String
+    RpName = rawName
+End Property

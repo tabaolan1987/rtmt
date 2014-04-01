@@ -149,6 +149,9 @@ Private Function CompareServer()
     Set mFieldTypes = New Scripting.Dictionary
     Dim tmpValue As String
     Dim query As String
+    Dim extraId As String
+    Dim tmpLocalId As String
+    Dim tmpRegion As String
     Dim i As Integer
     Dim v As Variant
     cn.Open mConnString
@@ -169,8 +172,8 @@ Private Function CompareServer()
     Dim tmpFName As String
     For i = 0 To rs.fields.count - 1
         tmpFName = rs.fields(i).Name
-        mHeaders.Add tmpFName
-        mFieldTypes.Add tmpFName, rs.fields(i).Type
+        mHeaders.Add LCase(tmpFName)
+        mFieldTypes.Add LCase(tmpFName), rs.fields(i).Type
     Next i
     Logger.LogDebug "SyncHelper.CompareServer", "Found header:"
     For Each v In mHeaders
@@ -189,22 +192,43 @@ Private Function CompareServer()
                     tmpValue = Trim(rs(CStr(v)))
                 End If
                 If Not tmpData.Exists(CStr(v)) Then
-                    tmpData.Add CStr(v), tmpValue
+                    tmpData.Add LCase(CStr(v)), tmpValue
+                    If mEnablePrimary Then
+                        If StringHelper.IsEqual(CStr(v), Session.EnablePrimarySync.Item(LCase(mTableName)), True) Then
+                            extraId = tmpValue
+                        End If
+                    End If
+                    If mEnableRegion Then
+                        If StringHelper.IsEqual(CStr(v), Session.SyncByRegion.Item(LCase(mTableName)), True) Then
+                            tmpRegion = tmpValue
+                        End If
+                    End If
                 End If
             Next v
             tmpId = rs("id")
             Logger.LogDebug "SyncHelper.CompareServer", "Found id: " & tmpId
             query = "select * from [" & mTableName _
-                & "] where [id] = '" & StringHelper.EscapeQueryString(tmpId) _
-                & "'"
+                & "] where "
+            If mEnablePrimary Then
+                query = query & " [" & Session.EnablePrimarySync.Item(LCase(mTableName)) & "] = '" & StringHelper.EscapeQueryString(extraId) & "'"
+                If mEnableRegion Then
+                    query = query & " and [" & Session.SyncByRegion.Item(LCase(mTableName)) & "] = '" & StringHelper.EscapeQueryString(tmpRegion) & "'"
+                End If
+            Else
+                query = query & " [id] = '" & StringHelper.EscapeQueryString(tmpId) & "'"
+            End If
             Logger.LogDebug "SyncHelper.CompareServer", "Check table " & mTableName & " id " & tmpId & ". Query: " & query
             Set qdf = dbs.CreateQueryDef("", query)
             Set rst = qdf.OpenRecordSet
             If Not (rst.EOF And rst.BOF) Then
+                If mEnablePrimary Then
+                    tmpLocalId = dbm.GetFieldValue(rst, "id")
+                    tmpData.Remove LCase("id")
+                    tmpData.Add LCase("id"), tmpLocalId
+                End If
                 query = dbm.UpdateRecordQuery(tmpData, mHeaders, mTableName, mFieldTypes, False)
             Else
                 query = dbm.CreateRecordQuery(tmpData, mHeaders, mTableName, mFieldTypes, False)
-                
             End If
             Logger.LogDebug "SyncHelper.CompareServer", "Post execute query: " & query
             qdf.Close

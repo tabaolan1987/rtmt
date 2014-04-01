@@ -26,11 +26,13 @@ Public Function Init(Optional path As String, Optional worksheet As String)
     mPath = FileHelper.DuplicateAsTemporary(mPath)
     Set dbm = New DbManager
     dbm.Init
-    If Ultilities.IfTableExists(Name) Then
-        dbm.ExecuteQuery "delete from [tmp_curriculum]"
+    
+    If Ultilities.IfTableExists("tmp_curriculum") Then
+        dbm.RecycleTableName "tmp_curriculum"
     Else
         dbm.ExecuteQuery FileHelper.ReadQuery("tmp_curriculum", Constants.Q_CREATE)
     End If
+    dbm.Init
     dbm.TableDefsRefresh
     Set mCols = New Collection
     mCols.Add "Course ID"
@@ -44,8 +46,7 @@ Public Function Init(Optional path As String, Optional worksheet As String)
     mCols.Add "For sorting only"
     mCols.Add "Delivery Timing"
     mCols.Add "Area"
-    
-    
+    Logger.LogDebug "test", "step1"
 End Function
 
 Public Function PrepareCurriculumSheet()
@@ -102,7 +103,24 @@ Public Function PrepareCurriculumSheet()
     dbm.Recycle
 End Function
 
+Public Function CourseCount() As Long
+    Dim ct As Long
+    ct = 0
+    dbm.Init
+    dbm.OpenRecordSet "select count(*) as ct from tmp_curriculum"
+    If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
+        dbm.RecordSet.MoveFirst
+        ct = CLng(dbm.GetFieldValue(dbm.RecordSet, "ct"))
+        
+    End If
+    dbm.RecycleRecordSet
+    CourseCount = ct
+End Function
+
 Public Function Validation()
+    
+    dbm.RecycleTableName "w_in_db_not_in_curriculum"
+    dbm.RecycleTableName "w_in_curriculum_not_in_db"
     dbm.Init
     Set missingbbRolesCur = New Scripting.Dictionary
     Dim role As String
@@ -112,6 +130,7 @@ Public Function Validation()
         dbm.RecordSet.MoveFirst
         Do While Not dbm.RecordSet.EOF
             role = dbm.GetFieldValue(dbm.RecordSet, "BpRoleStandardName")
+            dbm.ExecuteQuery "insert into w_in_db_not_in_curriculum(role) values('" & StringHelper.EscapeQueryString(role) & "')"
             Logger.LogDebug "CourseHelper.Validation", "Not found in curiculum role: " & role
             missingbbRolesCur.Add role, role
             dbm.RecordSet.MoveNext
@@ -126,6 +145,7 @@ Public Function Validation()
         dbm.RecordSet.MoveFirst
         Do While Not dbm.RecordSet.EOF
             role = dbm.GetFieldValue(dbm.RecordSet, "Role Name")
+            dbm.ExecuteQuery "insert into w_in_curriculum_not_in_db(role) values('" & StringHelper.EscapeQueryString(role) & "')"
             Logger.LogDebug "CourseHelper.Validation", "Not found in db role: " & role
             missingbbRolesDb.Add role, role
             dbm.RecordSet.MoveNext

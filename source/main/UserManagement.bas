@@ -12,6 +12,11 @@ Private mIsLdapConflict As Boolean
 Private mIsLdapNotfound As Boolean
 Private mIsFunctionRegionConflict As Boolean
 Private mNotFoundSpecialism As Scripting.Dictionary
+Private mIsValidBlueprintRole As Boolean
+Private mIsValidSpecialism As Boolean
+Private mIsValidStandardFunction As Boolean
+Private mIsValidStandardTeam As Boolean
+Private mIsValidSubFunction As Boolean
 
 Public Function Init(Optional mss As SystemSetting)
     If mss Is Nothing Then
@@ -20,6 +25,109 @@ Public Function Init(Optional mss As SystemSetting)
         Set ss = mss
     End If
     Set dbm = New DbManager
+End Function
+
+Public Function ApplyCheckData(tblName As String)
+    Dim query As String
+    Dim tmpData As String
+    Dim tmpNtid As String
+    Dim tmpFullName As String
+
+    dbm.Init
+    dbm.OpenRecordSet "select * from [" & tblName & "]"
+    If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
+        dbm.RecordSet.MoveFirst
+        Do While Not dbm.RecordSet.EOF
+            tmpData = dbm.GetFieldValue(dbm.RecordSet, "data")
+            tmpFullName = dbm.GetFieldValue(dbm.RecordSet, "fullName")
+            tmpNtid = dbm.GetFieldValue(dbm.RecordSet, "ntid")
+            Select Case tblName
+                Case "w_invalid_bluesprint_role": query = "update user_data_cache set blueprintRole = '" & StringHelper.EscapeQueryString(tmpData) & "' where ntid='" & StringHelper.EscapeQueryString(tmpNtid) & "'"
+                Case "w_invalid_specialism": query = "update user_data_cache set specialism = '" & StringHelper.EscapeQueryString(tmpData) & "' where ntid='" & StringHelper.EscapeQueryString(tmpNtid) & "'"
+                Case "w_invalid_standard_function": query = "update user_data_cache set SFunction = '" & StringHelper.EscapeQueryString(tmpData) & "' where ntid = '" & StringHelper.EscapeQueryString(tmpNtid) & "'"
+                Case "w_invalid_standard_team": query = "update user_data_cache set STeam = '" & StringHelper.EscapeQueryString(tmpData) & "' where ntid='" & StringHelper.EscapeQueryString(tmpNtid) & "'"
+                Case "w_invalid_sub_function": query = "update user_data_cache set SdSubFunction = '" & StringHelper.EscapeQueryString(tmpData) & "' where ntid = '" & StringHelper.EscapeQueryString(tmpNtid) & "'"
+            End Select
+            dbm.ExecuteQuery query
+            dbm.RecordSet.MoveNext
+        Loop
+    Else
+        
+    End If
+    dbm.Recycle
+    dbm.RecycleTableName tblName
+End Function
+
+Public Function CheckValidData(tblName As String)
+    Dim query As String
+    Dim tmpData As String
+    Dim tmpNtid As String
+    Dim tmpFullName As String
+    Logger.LogDebug "UserManagement.CheckValidData", "table: " & tblName
+    Select Case tblName
+        Case "w_invalid_bluesprint_role":
+            query = "select ntid, (fname + ' ' + lname) as fullName, blueprintRole as data  from user_data_cache where blueprintRole not in (select BPrintName from BlueprintRoles where deleted=0) and blueprintRole is not null and blueprintRole not like ''"
+            mIsValidBlueprintRole = False
+        Case "w_invalid_specialism":
+            query = "select ntid, (fname + ' ' + lname) as fullName, Specialism as data  from user_data_cache where specialism not in (select SpecialismName from Specialism where deleted=0) and Specialism is not null and Specialism not like ''"
+            mIsValidSpecialism = False
+        Case "w_invalid_standard_function":
+            query = "select ntid, (fname + ' ' + lname) as fullName, SFunction as data  from user_data_cache where SFunction not in (select nameFunction from Functions where deleted=0) and SFunction is not null and SFunction not like ''"
+            mIsValidStandardFunction = False
+        Case "w_invalid_standard_team":
+            query = "select ntid, (fname + ' ' + lname) as fullName, STeam as data  from user_data_cache where STeam not in (select Steam_name from standard_team where deleted=0) and STeam is not null and STeam not like ''"
+            mIsValidStandardTeam = False
+        Case "w_invalid_sub_function":
+            query = "select ntid, (fname + ' ' + lname) as fullName, SdSubFunction as data  from user_data_cache where SdSubFunction not in (select SubF_Name from sub_function where deleted=0) and SdSubFunction is not null and SdSubFunction not like ''"
+            mIsValidSubFunction = False
+    End Select
+    Logger.LogDebug "UserManagement.CheckValidData", "query: " & query
+    dbm.RecycleTableName tblName
+    dbm.Init
+    dbm.OpenRecordSet query
+    If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
+        dbm.RecordSet.MoveFirst
+        Do While Not dbm.RecordSet.EOF
+            tmpData = dbm.GetFieldValue(dbm.RecordSet, "data")
+            tmpFullName = dbm.GetFieldValue(dbm.RecordSet, "fullName")
+            tmpNtid = dbm.GetFieldValue(dbm.RecordSet, "ntid")
+            dbm.ExecuteQuery "insert into [" & tblName & "]([ntid], [fullName], [data]) values(" _
+                    & "'" & StringHelper.EscapeQueryString(tmpNtid) & "'," _
+                    & "'" & StringHelper.EscapeQueryString(tmpFullName) & "'," _
+                    & "'" & StringHelper.EscapeQueryString(tmpData) & "'" _
+                    & ")"
+            dbm.RecordSet.MoveNext
+        Loop
+    Else
+        Select Case tblName
+        Case "w_invalid_bluesprint_role":
+            mIsValidBlueprintRole = True
+        Case "w_invalid_specialism":
+            mIsValidSpecialism = True
+        Case "w_invalid_standard_function":
+            mIsValidStandardFunction = True
+        Case "w_invalid_standard_team":
+            mIsValidStandardTeam = True
+        Case "w_invalid_sub_function":
+            mIsValidSubFunction = True
+    End Select
+    End If
+    dbm.Recycle
+End Function
+
+Public Function IsValidData(tblName As String)
+    Select Case tblName
+        Case "w_invalid_bluesprint_role":
+            IsValidData = mIsValidBlueprintRole
+        Case "w_invalid_specialism":
+            IsValidData = mIsValidSpecialism
+        Case "w_invalid_standard_function":
+            IsValidData = mIsValidStandardFunction
+        Case "w_invalid_standard_team":
+            IsValidData = mIsValidStandardTeam
+        Case "w_invalid_sub_function":
+            IsValidData = mIsValidSubFunction
+    End Select
 End Function
 
 Public Function IsExistUserData() As Boolean
@@ -387,7 +495,6 @@ Public Function ResolveUserDataConflict()
         Logger.LogInfo "UserManagement.ResolveUserDataConflict", "There are no selected record in table " & Constants.TABLE_USER_DATA_CONFLICT
     End If
     dbm.RecycleTableName Constants.TABLE_USER_DATA_CONFLICT
-    dbm.Recycle
 End Function
 
 
@@ -461,7 +568,7 @@ Public Function ResolveUserDataDuplicate()
     End If
     
     dbm.RecycleTableName Constants.TABLE_USER_DATA_DUPLICATE
-    dbm.Recycle
+    'dbm.Recycle
 End Function
 
 Public Function ListSpecialism() As Collection
@@ -782,4 +889,24 @@ End Property
 
 Public Property Get NotFoundSpecialism() As Scripting.Dictionary
     Set NotFoundSpecialism = mNotFoundSpecialism
+End Property
+
+Public Property Get IsValidBlueprintRole() As Boolean
+    IsValidBlueprintRole = mIsValidBlueprintRole
+End Property
+
+Public Property Get IsValidSpecialism() As Boolean
+    IsValidSpecialism = mIsValidSpecialism
+End Property
+
+Public Property Get IsValidStandardFunction() As Boolean
+    IsValidStandardFunction = mIsValidStandardFunction
+End Property
+
+Public Property Get IsValidStandardTeam() As Boolean
+    IsValidStandardTeam = mIsValidStandardTeam
+End Property
+
+Public Property Get IsValidSubFunction() As Boolean
+    IsValidSubFunction = mIsValidSubFunction
 End Property
