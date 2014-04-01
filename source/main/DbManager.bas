@@ -91,6 +91,9 @@ Public Function ExecuteQuery(query As String, Optional params As Scripting.Dicti
     qdf.Execute
     dbs.TableDefs.Refresh
 OnExit:
+    On Error Resume Next
+    qdf.Close
+    Set qdf = Nothing
     Exit Function
 OnError:
     Logger.LogError "DbManager.ExecuteQuery", "Could execute query: " & query, Err

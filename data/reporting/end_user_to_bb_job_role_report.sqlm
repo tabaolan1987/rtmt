@@ -1,4 +1,4 @@
-tmp_pilot_report_2
+tmp_pilot_report
 ===
 	select col1 as [header], col2 as [Category], bColor, fColor from (
 	select B.BpRoleStandardName as [col1],IIF(ISNULL(BG.BpRoleStandardCategoryName), "MASTER DATA",BG.BpRoleStandardCategoryName) As [col2]
@@ -11,6 +11,7 @@ select distinct UM.idUserdata as [value] from (user_data_mapping_role AS UM inne
 					on U.ntid = UM.idUserdata)
 	where UM.idRegion='(%RG_NAME%)' and UM.deleted=0 and U.deleted=0 and U.Region='(%RG_NAME%)' and U.suspend=0
 		and U.SFunction (%CUSTOM_FILTER_NAME%)
+		and U.ntid (%CUSTOM_FILTER_NTID%)
 ===
 select bpRole.BpRoleStandardName AS [value]
 from (user_data_mapping_role as UMR 
@@ -80,10 +81,11 @@ SELECT distinct
 	[Spare35] AS [Optional Field 35],
 	(%MAPPING_FIELDS%)
 FROM (user_data as UD
-left join tmp_pilot_report_2 as tbl_cached
+left join tmp_pilot_report as tbl_cached
 on tbl_cached.[key] = UD.ntid)
 Where UD.deleted=0
 and UD.Region='(%RG_NAME%)'
 and UD.suspend=0
 and UD.SFunction (%CUSTOM_FILTER_NAME%)
+and UD.ntid (%CUSTOM_FILTER_NTID%)
 ORDER BY UD.ntid

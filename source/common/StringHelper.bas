@@ -223,7 +223,7 @@ Public Function GenerateFilterDict(source As Scripting.Dictionary, Optional UseK
         mKey = CStr(v)
         mValue = source.Item(mKey)
         Logger.LogDebug "StringHelper.GenerateFilterDict", "key: " & mKey
-        If UserKey Then
+        If UseKey Then
             filter = filter & "'" & EscapeQueryString(mKey) & "',"
         Else
             filter = filter & "'" & EscapeQueryString(mValue) & "',"
@@ -232,6 +232,7 @@ Public Function GenerateFilterDict(source As Scripting.Dictionary, Optional UseK
     If StringHelper.EndsWith(filter, ",", True) Then
         filter = Left(filter, Len(filter) - 1)
     End If
+    filter = Trim(filter)
     Logger.LogDebug "StringHelper.GenerateFilterDict", "filer: " & filter
     If Len(filter) > 0 Then
         GenerateFilterDict = filter

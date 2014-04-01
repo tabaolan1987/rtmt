@@ -583,7 +583,7 @@ Public Function GenerateRoleMapping(rm As ReportMetaData)
                         dbm.Init
                         ' Remove all mapping
                         dbm.ExecuteQuery "update user_data_mapping_role set Deleted=-1 where idUserdata='" & StringHelper.EscapeQueryString(tmpNtid) _
-                                            & "' and idFunction='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.FuncRgID) & "'"
+                                            & "' and idRegion='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "'"
                         
                         dbm.Recycle
                         For i = 0 To mappingCount - 1
@@ -595,46 +595,38 @@ Public Function GenerateRoleMapping(rm As ReportMetaData)
                             Set rng = .Cells(k, j)
                             tmpStr = Trim(rng.value)
                             If Len(tmpStr) <> 0 Then
-                                dbm.Init
-                                dbm.OpenRecordSet "select BR.[id] from BpRoleStandard As BR Where BR.BpRoleStandardName='" _
-                                        & StringHelper.EscapeQueryString(tmpRole) & "' and BR.deleted=0"
-                                If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
-                                    tmpRoleId = dbm.GetFieldValue(dbm.RecordSet, "id")
-                                Else
-                                    tmpRoleId = ""
-                                End If
-                                dbm.Recycle
-                                If Len(tmpRoleId) <> 0 Then
+                                
                                     Logger.LogDebug "UserManagement.GenerateRoleMapping", "Found mapping Ntid: " & tmpNtid & " to Role: " & tmpRole
                                     
                                     dbm.Init
-                                    tmpQuery = "select * from user_data_mapping_role where idUserdata='" & StringHelper.EscapeQueryString(tmpNtid) _
+                                    'tmpQuery = "select * from user_data_mapping_role where idUserdata='" & StringHelper.EscapeQueryString(tmpNtid) _
                                                 & "' and idFunction='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.FuncRgID) & "'" _
                                                 & " and idBpRoleStandard='" & StringHelper.EscapeQueryString(tmpRoleId) & "'"
-                                    dbm.OpenRecordSet tmpQuery
-                                    If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
-                                        tmpQuery = "update user_data_mapping_role set Deleted=0 where idUserdata='" & StringHelper.EscapeQueryString(tmpNtid) _
+                                    'dbm.OpenRecordSet tmpQuery
+                                    'If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
+                                    '    tmpQuery = "update user_data_mapping_role set Deleted=0 where idUserdata='" & StringHelper.EscapeQueryString(tmpNtid) _
                                                 & "' and idFunction='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.FuncRgID) & "'" _
                                                 & " and idBpRoleStandard='" & StringHelper.EscapeQueryString(tmpRoleId) & "'"
                                         ' Update mapping
-                                        Logger.LogDebug "UserManagement.GenerateRoleMapping", "Update mapping. Query: " & tmpQuery
-                                        dbm.ExecuteQuery tmpQuery
-                                    Else
+                                    '    Logger.LogDebug "UserManagement.GenerateRoleMapping", "Update mapping. Query: " & tmpQuery
+                                    '    dbm.ExecuteQuery tmpQuery
+                                    'Else
                                         ' Insert mapping
-                                        tmpQuery = "insert into user_data_mapping_role(id, idUserdata, idFunction, idBpRoleStandard, Deleted) values('" _
-                                                & StringHelper.EscapeQueryString(StringHelper.GetGUID) & "', '" _
-                                                & StringHelper.EscapeQueryString(tmpNtid) & "', '" _
-                                                & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.FuncRgID) & "', '" _
-                                                & StringHelper.EscapeQueryString(tmpRoleId) & "', 0)"
+                                        tmpQuery = "insert into user_data_mapping_role(id, idUserdata, idRegion, idBpRoleStandard, idMapping)" _
+                                            & " select '" & StringHelper.EscapeQueryString(StringHelper.GetGUID) & "' as id " _
+                                            & ",'" & StringHelper.EscapeQueryString(tmpNtid) & "' As idUserdata " _
+                                            & ", '" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "' As idRegion " _
+                                            & ", BpRoleStandard.id as idBpRoleStandard " _
+                                            & ", mappingType.id  As idMapping " _
+                                            & " from BpRoleStandard, mappingType " _
+                                            & " where BpRoleStandard.BpRoleStandardName='" & StringHelper.EscapeQueryString(tmpRole) & "' " _
+                                            & " and mappingType.id = 'C'"
                                                 
                                         Logger.LogDebug "UserManagement.GenerateRoleMapping", "Insert mapping. Query: " & tmpQuery
                                         dbm.ExecuteQuery tmpQuery
-                                    End If
+                           
                                     dbm.Recycle
                                     
-                                Else
-                                    Logger.LogError "UserManagement.GenerateRoleMapping", "Found mapping Ntid: " & tmpNtid & " to Role: " & tmpRole & ". But role ID not found", Nothing
-                                End If
                                 
                             End If
                         Next i
