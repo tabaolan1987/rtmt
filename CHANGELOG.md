@@ -110,6 +110,8 @@ Released on: 02/04/2014
 </li>
 <li>[<a href='https://cmgcode.atlassian.net/browse/DURM-255'>DURM-255</a>] -         Cannot delete blueprint job role in admin
 </li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-257'>DURM-257</a>] -         RTMT Phase1b - Cannot clear filter on end users after performed mapping type Qualifications to End Users
+</li>
 <li>[<a href='https://cmgcode.atlassian.net/browse/DURM-259'>DURM-259</a>] -         RTMT Phase1b - Wrong error message when upload an invalid curricula 
 </li>
 <li>[<a href='https://cmgcode.atlassian.net/browse/DURM-261'>DURM-261</a>] -         RTMT Phase 1b - Unable to choose a different mapping type after selecting BB Job Roles to End User
@@ -123,6 +125,10 @@ Released on: 02/04/2014
 <li>[<a href='https://cmgcode.atlassian.net/browse/DURM-268'>DURM-268</a>] -         RTMT Phase1b - Need to update Info for Upload Curriculum function
 </li>
 <li>[<a href='https://cmgcode.atlassian.net/browse/DURM-269'>DURM-269</a>] -         RTMT Phase1b - BluePrint Job Role - Cannot add new mapping to BB Job Role
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-272'>DURM-272</a>] -         RTMT Phase1b - Report - End users belong to Standard Function without curriculum uploaded should not have course training report
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-273'>DURM-273</a>] -         RTMT Phase1b - Cannot reset filter after performed Manual Mapping
 </li>
 </ul>
         
