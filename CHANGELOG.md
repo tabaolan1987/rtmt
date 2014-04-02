@@ -12,6 +12,7 @@ Released on: 02/04/2014
 + Allow Admin role to Add/Edit/Delete RTMT user, Global tables and mapping.
 + Improve sync performance
 + Download or view report by Function
++ Critical & major bugs fixed
 
 <h5>        Sub-task
 </h5>

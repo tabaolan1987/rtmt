@@ -23,6 +23,9 @@ Private dbm As DbManager
 Private mUncompleteId As Scripting.Dictionary
 Private mEnablePrimary As Boolean
 Private mEnableRegion As Boolean
+
+
+
 Public Function Init(tblName As String)
     If Session.EnablePrimarySync.Exists(LCase(tblName)) Then
         mEnablePrimary = True
