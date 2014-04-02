@@ -1,6 +1,199 @@
 CHANGELOG (notable new features or fixes)
 ---------
 
+###<a href='https://cmgcode.atlassian.net/browse/DURM/fixforversion/11501'>Version 0.2</a>
+Released on: 02/04/2014
+
+ Include a big update <a href='https://sites.google.com/a/c-mg.com/upstream/project/phase-1b---proposed'>phase 1b</a> 
+ 
++ Allow TC role to upload curriculum
++ New RC role upload EUDL flow
++ Allow RC role to use mapping process (Blueprint Job Roles, Activities to Specialism, BB Job Roles to End User, Specialism to BB Job Roles,Qualifications to End User)
++ Allow Admin role to Add/Edit/Delete RTMT user, Global tables and mapping.
++ Improve sync performance
++ Download or view report by Function
+
+<h5>        Sub-task
+</h5>
+<ul>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-168'>DURM-168</a>] -         Add/Edit/Delete/Warning when delete a BB Job Role
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-169'>DURM-169</a>] -         Add/Edit/Delete/Warning when delete a Specialism
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-171'>DURM-171</a>] -         Add/Edit/Delete/Warning when delete a Qualification
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-172'>DURM-172</a>] -         Add/Delete training course when new Curriculum uploaded
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-173'>DURM-173</a>] -         Add/Edit/Delete/Warning when delete a Standard Function
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-174'>DURM-174</a>] -         Add/Edit/Delete/Warning when delete a Sub Function
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-175'>DURM-175</a>] -         Add/Edit/Delete/Warning when delete a Standard Team
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-177'>DURM-177</a>] -         Allocate BB Job Role to a Group
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-178'>DURM-178</a>] -         GUI for select Region and Function for upload Curriculum 
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-180'>DURM-180</a>] -         Warning differences between upload Curriculum and current database.
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-185'>DURM-185</a>] -         [Admin Role] Add/Delete user
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-186'>DURM-186</a>] -         [Admin Role] Set permission
+</li>
+</ul>
+        
+<h5>        Bug
+</h5>
+<ul>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-40'>DURM-40</a>] -         There should not be a button for the Activity to Specialism mapping
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-142'>DURM-142</a>] -         Upload File - Landing page is displayed during uploading progress
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-147'>DURM-147</a>] -         Synchronizing - Blank screen shown while the process is in progress
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-156'>DURM-156</a>] -         Downloading report does not &#39;save&#39; in the chosen file location
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-157'>DURM-157</a>] -         Upload File - Progress bar changes to red after revolved invalid data (daily test)
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-160'>DURM-160</a>] -         Upload File - Conflict resolution displays for an user who does not exist (daily test)
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-163'>DURM-163</a>] -         Unable to edit  standard function on the Access form
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-221'>DURM-221</a>] -         Typo and name change in the drop down for mapping selection 
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-223'>DURM-223</a>] -         RTMT Phase1b - Synchronizing fails when local datetime format is not the same as central database
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-224'>DURM-224</a>] -         Access rights of user is not affected after changing in admin
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-225'>DURM-225</a>] -         Admin user should not delete and down grade rights himself
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-226'>DURM-226</a>] -         The deleted user in RTMT USER is still shown in RTMT PRIVILEGES
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-227'>DURM-227</a>] -         The deleted user in RTMT USER is still shown in RTMT PRIVILEGES
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-228'>DURM-228</a>] -         User must select twice to delete row in RTMT Privileges
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-229'>DURM-229</a>] -         RTMT Phase1b - Update for Infor of Administration
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-231'>DURM-231</a>] -         RTMT Phase1b - Upload File - Should show error message for EUDL with unavailable Standard Functions
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-232'>DURM-232</a>] -         RTMT Phase1b - Upload File - Should show Edit EUDL to edit data and choose a mapping type after finished uploading
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-233'>DURM-233</a>] -         RTMT Phase1b - Upload File - Should not upload records without NTID
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-234'>DURM-234</a>] -         RTMT Phase1b - Upload File - Should allow user to choose uploaded details different from GAL
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-235'>DURM-235</a>] -         NTID is duplicated in report
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-236'>DURM-236</a>] -         Error when running training report
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-237'>DURM-237</a>] -         RTMT Phase1b - Upload File - Ignore All Differences function does not work
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-238'>DURM-238</a>] -         RTMT Phase1b - Upload File - Should prevent upoading end users with unavailable BluePrint Job Roles
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-242'>DURM-242</a>] -         RTMT Phase1b - Synchronize - Duplicate end users uploaded!
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-245'>DURM-245</a>] -         RTMT Phase 1b - Unable to use the tool in AWS
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-247'>DURM-247</a>] -         RTMT Phase1b - Mapping - Should allow to overwrite the mapping 
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-248'>DURM-248</a>] -         RTMT Phase1b - Mapping - Should NOT enable the user to edit BB Job Roles in case using automated mapping types
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-249'>DURM-249</a>] -         RTMT Phase1b - Mapping - Should show a message in case of end user without specialisms/BluePrint Job Roles
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-250'>DURM-250</a>] -         RTMT Phase1b - Mapping - Wrong Mapping type display!
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-253'>DURM-253</a>] -         Deleted specialism is sitll shown in mapping table after uploading
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-254'>DURM-254</a>] -         RTMT Phase 1b - Unable to upload EUDL
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-255'>DURM-255</a>] -         Cannot delete blueprint job role in admin
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-259'>DURM-259</a>] -         RTMT Phase1b - Wrong error message when upload an invalid curricula 
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-261'>DURM-261</a>] -         RTMT Phase 1b - Unable to choose a different mapping type after selecting BB Job Roles to End User
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-262'>DURM-262</a>] -         RTMT Phase1b - Should not allow to upload curriculum without course!
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-264'>DURM-264</a>] -         RTMT Phase1b - Manual mapping of end user is not saved!
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-267'>DURM-267</a>] -         RTMT Phase1b - Report - New uploaded end users without any mapping should not be added into BB Job Roles or Securities reports
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-268'>DURM-268</a>] -         RTMT Phase1b - Need to update Info for Upload Curriculum function
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-269'>DURM-269</a>] -         RTMT Phase1b - BluePrint Job Role - Cannot add new mapping to BB Job Role
+</li>
+</ul>
+        
+<h5>        Clarification
+</h5>
+<ul>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-154'>DURM-154</a>] -         Why does selecting button for editing Activities to BB Job Roles seem to be mapping?
+</li>
+</ul>
+        
+<h5>        Improvement
+</h5>
+<ul>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-110'>DURM-110</a>] -         Better screen design - Use fewer Excel sheets and more forms
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-153'>DURM-153</a>] -         Checking GAL Data - Functionality for choosing which data to use
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-155'>DURM-155</a>] -         Refinements to Audit Report
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-159'>DURM-159</a>] -         Please remove extra worksheets from mapping docs 
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-241'>DURM-241</a>] -         RTMT Phase1b - Filter - Improve to allow multi columns filtering
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-243'>DURM-243</a>] -         RTMT Phase1b - Mapping - Improve to show mapping of end users automatically after finished a mapping type
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-246'>DURM-246</a>] -         RTMT Phase1b - Mapping - Improve error message for mapping of end users without mapping!
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-256'>DURM-256</a>] -         RTMT Phase1b - Audit report - Should show full timestamp
+</li>
+</ul>
+    
+<h5>        New Feature
+</h5>
+<ul>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-105'>DURM-105</a>] -         Super user role and management screen
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-107'>DURM-107</a>] -         Admin screens to add or remove - Activity, Specialisms, Training and backbone data following Region
+</li>
+</ul>
+        
+<h5>        Task
+</h5>
+<ul>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-127'>DURM-127</a>] -         Please remove selection of Function when opening the tool.
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-166'>DURM-166</a>] -         Refine database schema 
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-179'>DURM-179</a>] -         Upload new Curriculum and extract data to save to db
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-182'>DURM-182</a>] -         [Mapping table] Blueprint Job Role to BB Job Role
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-183'>DURM-183</a>] -         [Mapping table] Add/Edit and Save mapping data in Specialism to BB Job Role
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-184'>DURM-184</a>] -         Soft delete of End Users
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-187'>DURM-187</a>] -         [Admin Role] Synchronize with out exit the Tool
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-188'>DURM-188</a>] -         [Main flow for RC] Create filter for user select from A to E
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-189'>DURM-189</a>] -         [Main Flow RC] Automate and manual mapping process
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-191'>DURM-191</a>] -         [Reports] Training course with select Function
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-195'>DURM-195</a>] -         [Reports] Audit report
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-200'>DURM-200</a>] -         Release version 0.2
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-239'>DURM-239</a>] -         Way of mappping BB Job Role to Blueprint
+</li>
+</ul>
+
+
 ###<a href='https://cmgcode.atlassian.net/browse/DURM/fixforversion/11500'>Version 0.1.8</a>
 Released on: 04/03/2014
 
