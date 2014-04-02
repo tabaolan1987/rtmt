@@ -1,1 +1,3 @@
-Select the Edit Mannual Mapping button to view and/or manually edit End user data landscape to Backbone Job Roles
+* Upload the curriculum for mapping Backbone Job Roles to Courses
+* Upload one curriculum for each of 5 Functions for each region.
+* Mapping to training courses based on the curriculum relating to the Function allocated to the End User in the EUDL
