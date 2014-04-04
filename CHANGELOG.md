@@ -126,6 +126,8 @@ Released on: 02/04/2014
 </li>
 <li>[<a href='https://cmgcode.atlassian.net/browse/DURM-269'>DURM-269</a>] -         RTMT Phase1b - BluePrint Job Role - Cannot add new mapping to BB Job Role
 </li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-270'>DURM-270</a>] -         RTMT Phase 1b - Activity to Specialism Wizard is displayed when BB Job Roles to End User mapping type selected 
+</li>
 <li>[<a href='https://cmgcode.atlassian.net/browse/DURM-272'>DURM-272</a>] -         RTMT Phase1b - Report - End users belong to Standard Function without curriculum uploaded should not have course training report
 </li>
 <li>[<a href='https://cmgcode.atlassian.net/browse/DURM-273'>DURM-273</a>] -         RTMT Phase1b - Cannot reset filter after performed Manual Mapping
@@ -199,6 +201,7 @@ Released on: 02/04/2014
 <li>[<a href='https://cmgcode.atlassian.net/browse/DURM-239'>DURM-239</a>] -         Way of mappping BB Job Role to Blueprint
 </li>
 </ul>
+
 
 
 ###<a href='https://cmgcode.atlassian.net/browse/DURM/fixforversion/11500'>Version 0.1.8</a>
