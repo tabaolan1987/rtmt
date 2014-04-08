@@ -1,6 +1,21 @@
 CHANGELOG (notable new features or fixes)
 ---------
 
+###<a href='https://cmgcode.atlassian.net/browse/DURM/fixforversion/11701'>Version 0.2.1</a>
+Released on: 08/04/2014
+
++ Fix issue runtime error when delete a Standard function
++ Minor bugs fixed
+
+<h5>        Bug
+</h5>
+<ul>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-280'>DURM-280</a>] -         Phase 1b INT: popup is always shown in mapping BB Job role in admin
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-281'>DURM-281</a>] -         RTMT Phase1b - Run time error when delete a Standard Function
+</li>
+</ul>
+
 ###<a href='https://cmgcode.atlassian.net/browse/DURM/fixforversion/11501'>Version 0.2</a>
 Released on: 02/04/2014
 
