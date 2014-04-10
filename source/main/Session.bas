@@ -28,6 +28,7 @@ Public Function EnablePrimarySync() As Scripting.Dictionary
     If mEnablePrimarySync Is Nothing Then
         Set mEnablePrimarySync = New Scripting.Dictionary
         mEnablePrimarySync.Add LCase("user_data"), "ntid"
+        mEnablePrimarySync.Add LCase("user_data_mapping_role"), "idUserdata"
       '  mEnablePrimarySync.Add LCase("Activity"), "ActivityDetail"
       '  mEnablePrimarySync.Add LCase("BlueprintRoles"), "BPrintName"
       '  mEnablePrimarySync.Add LCase("BpRoleStandard"), "BpRoleStandardName"
@@ -50,7 +51,7 @@ Public Function SyncByRegion() As Scripting.Dictionary
     If mSyncByRegion Is Nothing Then
         Set mSyncByRegion = New Scripting.Dictionary
         mSyncByRegion.Add LCase("user_data"), "region"
-       ' mSyncByRegion.Add LCase("user_data_mapping_role"), "idRegion"
+        mSyncByRegion.Add LCase("user_data_mapping_role"), "idRegion"
        ' mSyncByRegion.Add LCase("user_data_mapping_qualification"), "idRegion"
        ' mSyncByRegion.Add LCase("course"), "idRegion"
        ' mSyncByRegion.Add LCase("CourseMappingBpRoleStandard"), "idRegion"

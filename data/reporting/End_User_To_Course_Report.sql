@@ -17,13 +17,13 @@ select bpRole.BpRoleStandardName as [Job Role]
 			and UD.SFunction (%CUSTOM_FILTER_NAME%)
 		group by bpRole.BpRoleStandardName
 ===
-select UD.ntid, (UD.fname+','+UD.lname) As Fullname ,UD.fname,UD.lname,UD.omsSubfunction,tmp_table.[value],
+select * from (select distinct UD.ntid, (UD.fname+','+UD.lname) As Fullname ,UD.fname,UD.lname,UD.omsSubfunction,tmp_table.[value],
 	Cr.courseArena,rpc.courseId,
 Cr.courseTitle,Cr.courseType,
 Cr.courseDuration,rpc.ps,Cr.courseDelivery
 	from (((user_data as UD 
 		inner join 
-	(select UDT.ntid, Course.courseId,CMR.ps, F.id As Fid
+	(select distinct UDT.ntid, Course.courseId,CMR.ps, F.id As Fid
 from (((((user_data_mapping_role as UMR
 inner join user_data as UDT
 on UMR.idUserdata = UDT.ntid)
@@ -55,6 +55,5 @@ group by UDT.ntid,Course.courseId,CMR.ps, F.id
 	and Cr.idFunction (%CUSTOM_FILTER_ID%)
 	and UD.SFunction (%CUSTOM_FILTER_NAME%)
 	and UD.deleted=0
-	and UD.Region='(%RG_NAME%)'
-	order by rpc.ntid, rpc.courseId
-
+	and UD.Region='(%RG_NAME%)')
+	order by ntid, courseId

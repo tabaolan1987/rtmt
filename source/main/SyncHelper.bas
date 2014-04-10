@@ -24,7 +24,7 @@ Private mUncompleteId As Scripting.Dictionary
 Private mEnablePrimary As Boolean
 Private mEnableRegion As Boolean
 
-
+Private mIdPull As Scripting.Dictionary
 
 Public Function Init(tblName As String)
     If Session.EnablePrimarySync.Exists(LCase(tblName)) Then
@@ -157,6 +157,7 @@ Private Function CompareServer()
     Dim tmpRegion As String
     Dim i As Integer
     Dim v As Variant
+    Dim queryDelete As String
     cn.Open mConnString
     'cn.BeginTrans
 
@@ -165,6 +166,9 @@ Private Function CompareServer()
         query = "select * from [" & mTableName _
                 & "] where CONVERT(DATETIME, CONVERT(VARCHAR(MAX), [timestamp], 120), 120) > '" & StringHelper.EscapeQueryString(mLocalTimestamp) _
                 & "'"
+        If mEnablePrimary Then
+            query = query & " order by [" & Session.EnablePrimarySync.Item(LCase(mTableName)) & "]"
+        End If
     Else
         query = "select * from [" & StringHelper.EscapeQueryString(mTableName) _
             & "] where [deleted]=0"
@@ -172,6 +176,7 @@ Private Function CompareServer()
     Logger.LogDebug "SyncHelper.CompareServer", "Query: " & query
     Set rs = cn.Execute(query)
     Set mHeaders = New Collection
+    Set mIdPull = New Scripting.Dictionary
     Dim tmpFName As String
     For i = 0 To rs.fields.count - 1
         tmpFName = rs.fields(i).Name
@@ -210,16 +215,36 @@ Private Function CompareServer()
             Next v
             tmpId = rs("id")
             Logger.LogDebug "SyncHelper.CompareServer", "Found id: " & tmpId
+            queryDelete = "update [" & mTableName _
+                & "] set deleted=-1 where "
             query = "select * from [" & mTableName _
                 & "] where "
             If mEnablePrimary Then
                 query = query & " [" & Session.EnablePrimarySync.Item(LCase(mTableName)) & "] = '" & StringHelper.EscapeQueryString(extraId) & "'"
+                queryDelete = queryDelete & " [" & Session.EnablePrimarySync.Item(LCase(mTableName)) & "] = '" & StringHelper.EscapeQueryString(extraId) & "'"
                 If mEnableRegion Then
                     query = query & " and [" & Session.SyncByRegion.Item(LCase(mTableName)) & "] = '" & StringHelper.EscapeQueryString(tmpRegion) & "'"
+                    queryDelete = queryDelete & " and [" & Session.SyncByRegion.Item(LCase(mTableName)) & "] = '" & StringHelper.EscapeQueryString(tmpRegion) & "'"
                 End If
             Else
                 query = query & " [id] = '" & StringHelper.EscapeQueryString(tmpId) & "'"
             End If
+            
+            If StringHelper.IsEqual(mTableName, "user_data_mapping_role", True) Then
+                If mEnablePrimary Then
+                    If Not mIdPull.Exists(extraId) Then
+                        If mIdPull.count > BULK_SIZE Then
+                            Set mIdPull = New Scripting.Dictionary
+                        End If
+                        mIdPull.Add extraId, extraId
+                        Set qdf = dbs.CreateQueryDef("", queryDelete)
+                        qdf.Execute
+                        qdf.Close
+                        Set qdf = Nothing
+                    End If
+                End If
+            End If
+            
             Logger.LogDebug "SyncHelper.CompareServer", "Check table " & mTableName & " id " & tmpId & ". Query: " & query
             Set qdf = dbs.CreateQueryDef("", query)
             Set rst = qdf.OpenRecordSet
