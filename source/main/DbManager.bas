@@ -800,7 +800,8 @@ End Function
 Public Function UpdateRecordQuery(datas As Scripting.Dictionary, cols As Collection, _
                                         table As String, _
                                         Optional colsType As Scripting.Dictionary, _
-                                        Optional IsServer As Boolean) As String
+                                        Optional IsServer As Boolean, _
+                                        Optional newId As String) As String
     Dim query As String
     Dim tmpCol As String
     Dim i As Integer
@@ -834,6 +835,9 @@ Public Function UpdateRecordQuery(datas As Scripting.Dictionary, cols As Collect
             End If
         End If
     Next
+    If Len(newId) > 0 Then
+        tmpCol = tmpCol & "[id] = '" & StringHelper.EscapeQueryString(newId) & "'" & " ,"
+    End If
     tmpCol = Trim(tmpCol)
     If StringHelper.EndsWith(tmpCol, ",", True) Then
         tmpCol = Left(tmpCol, Len(tmpCol) - 1)

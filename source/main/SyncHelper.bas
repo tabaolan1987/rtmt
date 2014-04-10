@@ -230,8 +230,7 @@ Private Function CompareServer()
                 query = query & " [id] = '" & StringHelper.EscapeQueryString(tmpId) & "'"
             End If
             
-            If StringHelper.IsEqual(mTableName, "user_data_mapping_role", True) Then
-                If mEnablePrimary Then
+            If mEnableRegion And mEnablePrimary Then
                     If Not mIdPull.Exists(extraId) Then
                         If mIdPull.count > BULK_SIZE Then
                             Set mIdPull = New Scripting.Dictionary
@@ -242,7 +241,6 @@ Private Function CompareServer()
                         qdf.Close
                         Set qdf = Nothing
                     End If
-                End If
             End If
             
             Logger.LogDebug "SyncHelper.CompareServer", "Check table " & mTableName & " id " & tmpId & ". Query: " & query
@@ -254,7 +252,7 @@ Private Function CompareServer()
                     tmpData.Remove LCase("id")
                     tmpData.Add LCase("id"), tmpLocalId
                 End If
-                query = dbm.UpdateRecordQuery(tmpData, mHeaders, mTableName, mFieldTypes, False)
+                query = dbm.UpdateRecordQuery(tmpData, mHeaders, mTableName, mFieldTypes, False, tmpId)
             Else
                 query = dbm.CreateRecordQuery(tmpData, mHeaders, mTableName, mFieldTypes, False)
             End If
