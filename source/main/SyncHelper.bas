@@ -236,6 +236,7 @@ Private Function CompareServer()
                             Set mIdPull = New Scripting.Dictionary
                         End If
                         mIdPull.Add extraId, extraId
+                        Logger.LogDebug "SyncHelper.CompareServer", "Delete mapping if ntid " & extraId
                         Set qdf = dbs.CreateQueryDef("", queryDelete)
                         qdf.Execute
                         qdf.Close
@@ -246,7 +247,9 @@ Private Function CompareServer()
             Logger.LogDebug "SyncHelper.CompareServer", "Check table " & mTableName & " id " & tmpId & ". Query: " & query
             Set qdf = dbs.CreateQueryDef("", query)
             Set rst = qdf.OpenRecordSet
-            If Not (rst.EOF And rst.BOF) Then
+            If mEnablePrimary And mEnableRegion Then
+                query = dbm.CreateRecordQuery(tmpData, mHeaders, mTableName, mFieldTypes, False)
+            ElseIf Not (rst.EOF And rst.BOF) Then
                 If mEnablePrimary Then
                     tmpLocalId = dbm.GetFieldValue(rst, "id")
                     tmpData.Remove LCase("id")
