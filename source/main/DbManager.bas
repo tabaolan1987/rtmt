@@ -89,7 +89,7 @@ Public Function ExecuteQuery(query As String, Optional params As Scripting.Dicti
         Next i
     End If
     qdf.Execute
-    dbs.TableDefs.Refresh
+    'dbs.TableDefs.Refresh
 OnExit:
     On Error Resume Next
     qdf.Close
