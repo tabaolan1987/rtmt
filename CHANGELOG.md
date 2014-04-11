@@ -1,6 +1,33 @@
 CHANGELOG (notable new features or fixes)
 ---------
 
+###<a href='https://cmgcode.atlassian.net/browse/DURM/fixforversion/11900'>Version 0.2.2</a>
+Released on: 11/04/2014
+
+Critical & major bugs fixed:
+- User is unable to access the tool using BP wired network
+- Duplicate entries on Training Course report
+- Admin functionality disappears after synchronized & Training report cannot be generated
+- Change database configuration to "Don't display lists when more than 10,000 of records is read"
+
+<h5>        Bug
+</h5>
+<ul>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-205'>DURM-205</a>] -         User is unable to access the tool using BP wired network.
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-289'>DURM-289</a>] -         RTMT Phase 1b - Duplicate entries on Training Course report
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-292'>DURM-292</a>] -         RTMT Phase1b - Admin functionality disappears after synchronized (daily test)
+</li>
+</ul>
+        
+<h5>        Clarification
+</h5>
+<ul>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-288'>DURM-288</a>] -         RTMT Phase 1b - I am not able to select NTID as first filter for North Sea
+</li>
+</ul>
+
 ###<a href='https://cmgcode.atlassian.net/browse/DURM/fixforversion/11701'>Version 0.2.1</a>
 Released on: 08/04/2014
 
