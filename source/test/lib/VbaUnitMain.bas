@@ -6,7 +6,10 @@ Public Sub OnTest()
    ' sh.Init "user_data"
    ' sh.sync
    ' sh.Recycle
-   
+   Dim rpm As New ReportMetaData
+   rpm.Init "end_user_to_bb_job_role_activity"
+   Reporting.GenerateReport rpm
+   rpm.OpenReport
 End Sub
 
 Public Sub Run(Optional TestClassName As String)
