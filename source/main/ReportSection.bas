@@ -212,11 +212,11 @@ Public Function Init(raw As String, Optional mss As SystemSetting, Optional Skip
                 arraySize = 0
                 For i = LBound(tmpList) To UBound(tmpList)
                     tmpStr = Trim(Replace(Replace(Replace(tmpList(i), Chr(10), " "), Chr(13), " "), Chr(9), " "))
-                    tmpHeader = "f" & CStr(i + 1)
+                    tmpHeader = LCase("f" & CStr(i + 1))
                     pilotHeader.Add tmpHeader, tmpStr
                     tmpCol.Add tmpHeader
                     tmpQuery = tmpQuery & "[" & tmpHeader & "]" & " varchar(255)" & ","
-                    tmpMappingFields = tmpMappingFields & "[" & tmpHeader & "] AS [" & tmpStr & "],"
+                    tmpMappingFields = tmpMappingFields & "[" & tmpHeader & "] ,"
                     ReDim Preserve mPivotHeader(arraySize)
                     mPivotHeader(arraySize) = tmpStr
                     arraySize = arraySize + 1
@@ -290,7 +290,12 @@ Public Function Init(raw As String, Optional mss As SystemSetting, Optional Skip
                     arraySize = 0
                     For i = 0 To dbm.RecordSet.fields.count - 1
                         ReDim Preserve mHeader(arraySize)
-                        mHeader(arraySize) = dbm.RecordSet.fields(i).Name
+                        tmpHeader = dbm.RecordSet.fields(i).Name
+                        If pilotHeader.Exists(tmpHeader) Then
+                            mHeader(arraySize) = pilotHeader.Item(tmpHeader)
+                        Else
+                            mHeader(arraySize) = tmpHeader
+                        End If
                         arraySize = arraySize + 1
                     Next i
                 End If

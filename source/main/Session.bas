@@ -285,3 +285,24 @@ Public Function UpdateChangelog(tblName As String, tblId As String)
     End If
     dbm.Recycle
 End Function
+
+
+Public Function UpdateDbFlag(enable As Boolean)
+    Dim dbm As New DbManager
+    dbm.Init
+    dbm.OpenRecordSet "select * from [update_flag]"
+    If (dbm.RecordSet.BOF And dbm.RecordSet.EOF) Then
+        If enable Then
+            dbm.ExecuteQuery "insert into [update_flag]([flag]) values('true')"
+        Else
+            dbm.ExecuteQuery "insert into [update_flag]([flag]) values('false')"
+        End If
+    Else
+        If enable Then
+            dbm.ExecuteQuery "update [update_flag] set [flag] = 'true'"
+        Else
+            dbm.ExecuteQuery "update [update_flag] set [flag] = 'false'"
+        End If
+    End If
+    dbm.Recycle
+End Function

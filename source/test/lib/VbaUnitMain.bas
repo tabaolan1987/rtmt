@@ -2,10 +2,10 @@ Option Explicit
 
 Public Sub OnTest()
    ' Run
-    Dim sh As New SyncHelper
-    sh.Init "user_data"
-    sh.sync
-    sh.Recycle
+   ' Dim sh As New SyncHelper
+   ' sh.Init "user_data"
+   ' sh.sync
+   ' sh.Recycle
    
 End Sub
 

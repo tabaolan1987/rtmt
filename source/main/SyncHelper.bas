@@ -59,7 +59,9 @@ End Function
 Public Function sync()
     If Ultilities.IfTableExists(mTableName) Then
         GetLocalTimestamp
+        Session.UpdateDbFlag (False)
         CompareServer
+        Session.UpdateDbFlag (True)
         CompareLocal
         RollbackId
     Else
