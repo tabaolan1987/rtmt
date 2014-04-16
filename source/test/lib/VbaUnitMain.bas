@@ -6,7 +6,9 @@ Public Sub OnTest()
    ' sh.Init "user_data"
    ' sh.sync
    ' sh.Recycle
-   
+   Dim dh As New DofaHelper
+   dh.Init
+   dh.ImportDofa
 End Sub
 
 Public Sub Run(Optional TestClassName As String)

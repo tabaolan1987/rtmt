@@ -4,14 +4,15 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Compare Database
 Private dbm As DbManager
-Private mPath As String
-Private mCols As Collection
-Private mData As Scripting.Dictionary
-Private mWorksheet As String
-Private missingbbRolesDb As Scripting.Dictionary
-Private missingbbRolesCur As Scripting.Dictionary
 Private qdf As DAO.QueryDef
 Private rst As DAO.RecordSet
+Private mPath As String
+Private mWorksheet As String
+Private mCols As Collection
+Private mData As Scripting.Dictionary
+Private missingbbRolesDb As Scripting.Dictionary
+Private missingbbRolesCur As Scripting.Dictionary
+
 Public Function Init(Optional path As String, Optional worksheet As String)
     If Len(worksheet) > 0 Then
         mWorksheet = worksheet
