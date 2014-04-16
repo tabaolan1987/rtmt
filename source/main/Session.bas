@@ -189,6 +189,8 @@ Public Function ReportMDCols() As Collection
      list.Add Constants.RP_END_USER_TO_BB_JOB_ROLE
      list.Add Constants.RP_END_USER_TO_COURSE
      list.Add Constants.RP_ROLE_MAPPING_OUTPUT_OF_TOOL_FOR_SECURITY
+     list.Add Constants.RP_END_USER_TO_BB_ACTIVITY
+     list.Add Constants.RP_END_USER_TO_BB_QUALIFICATION
      Set ReportMDCols = list
 End Function
 

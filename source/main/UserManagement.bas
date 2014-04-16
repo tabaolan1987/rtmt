@@ -17,12 +17,22 @@ Private mIsValidSpecialism As Boolean
 Private mIsValidStandardFunction As Boolean
 Private mIsValidStandardTeam As Boolean
 Private mIsValidSubFunction As Boolean
+Private mValidationTable As String
+Private mCustomValidation As Boolean
 
-Public Function Init(Optional mss As SystemSetting)
+
+Public Function Init(Optional mss As SystemSetting, Optional validationTable)
     If mss Is Nothing Then
         Set ss = Session.Settings()
     Else
         Set ss = mss
+    End If
+    If Len(validationTable) > 0 Then
+        mCustomValidation = True
+        mValidationTable = validationTable
+    Else
+        mCustomValidation = False
+        mValidationTable = "user_data_cache"
     End If
     Set dbm = New DbManager
 End Function
@@ -32,7 +42,6 @@ Public Function ApplyCheckData(tblName As String)
     Dim tmpData As String
     Dim tmpNtid As String
     Dim tmpFullName As String
-
     dbm.Init
     dbm.OpenRecordSet "select * from [" & tblName & "]"
     If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
@@ -42,12 +51,15 @@ Public Function ApplyCheckData(tblName As String)
             tmpFullName = dbm.GetFieldValue(dbm.RecordSet, "fullName")
             tmpNtid = dbm.GetFieldValue(dbm.RecordSet, "ntid")
             Select Case tblName
-                Case "w_invalid_bluesprint_role": query = "update user_data_cache set blueprintRole = '" & StringHelper.EscapeQueryString(tmpData) & "' where ntid='" & StringHelper.EscapeQueryString(tmpNtid) & "'"
-                Case "w_invalid_specialism": query = "update user_data_cache set specialism = '" & StringHelper.EscapeQueryString(tmpData) & "' where ntid='" & StringHelper.EscapeQueryString(tmpNtid) & "'"
-                Case "w_invalid_standard_function": query = "update user_data_cache set SFunction = '" & StringHelper.EscapeQueryString(tmpData) & "' where ntid = '" & StringHelper.EscapeQueryString(tmpNtid) & "'"
-                Case "w_invalid_standard_team": query = "update user_data_cache set STeam = '" & StringHelper.EscapeQueryString(tmpData) & "' where ntid='" & StringHelper.EscapeQueryString(tmpNtid) & "'"
-                Case "w_invalid_sub_function": query = "update user_data_cache set SdSubFunction = '" & StringHelper.EscapeQueryString(tmpData) & "' where ntid = '" & StringHelper.EscapeQueryString(tmpNtid) & "'"
+                Case "w_invalid_bluesprint_role": query = "update " & mValidationTable & " set blueprintRole = '" & StringHelper.EscapeQueryString(tmpData) & "' where ntid='" & StringHelper.EscapeQueryString(tmpNtid) & "'"
+                Case "w_invalid_specialism": query = "update " & mValidationTable & " set specialism = '" & StringHelper.EscapeQueryString(tmpData) & "' where ntid='" & StringHelper.EscapeQueryString(tmpNtid) & "'"
+                Case "w_invalid_standard_function": query = "update " & mValidationTable & " set SFunction = '" & StringHelper.EscapeQueryString(tmpData) & "' where ntid = '" & StringHelper.EscapeQueryString(tmpNtid) & "'"
+                Case "w_invalid_standard_team": query = "update " & mValidationTable & " set STeam = '" & StringHelper.EscapeQueryString(tmpData) & "' where ntid='" & StringHelper.EscapeQueryString(tmpNtid) & "'"
+                Case "w_invalid_sub_function": query = "update " & mValidationTable & " set SdSubFunction = '" & StringHelper.EscapeQueryString(tmpData) & "' where ntid = '" & StringHelper.EscapeQueryString(tmpNtid) & "'"
             End Select
+            If mCustomValidation Then
+                query = query & " and region='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "'"
+            End If
             dbm.ExecuteQuery query
             dbm.RecordSet.MoveNext
         Loop
@@ -66,21 +78,25 @@ Public Function CheckValidData(tblName As String)
     Logger.LogDebug "UserManagement.CheckValidData", "table: " & tblName
     Select Case tblName
         Case "w_invalid_bluesprint_role":
-            query = "select ntid, (fname + ' ' + lname) as fullName, blueprintRole as data  from user_data_cache where blueprintRole not in (select BPrintName from BlueprintRoles where deleted=0) and blueprintRole is not null and blueprintRole not like ''"
+            query = "select ntid, (fname + ' ' + lname) as fullName, blueprintRole as data  from " & mValidationTable & " where blueprintRole not in (select BPrintName from BlueprintRoles where deleted=0) and blueprintRole is not null and blueprintRole not like ''"
             mIsValidBlueprintRole = False
         Case "w_invalid_specialism":
-            query = "select ntid, (fname + ' ' + lname) as fullName, Specialism as data  from user_data_cache where specialism not in (select SpecialismName from Specialism where deleted=0) and Specialism is not null and Specialism not like ''"
+            query = "select ntid, (fname + ' ' + lname) as fullName, Specialism as data  from " & mValidationTable & " where specialism not in (select SpecialismName from Specialism where deleted=0) and Specialism is not null and Specialism not like ''"
             mIsValidSpecialism = False
         Case "w_invalid_standard_function":
-            query = "select ntid, (fname + ' ' + lname) as fullName, SFunction as data  from user_data_cache where SFunction not in (select nameFunction from Functions where deleted=0) and SFunction is not null and SFunction not like ''"
+            query = "select ntid, (fname + ' ' + lname) as fullName, SFunction as data  from " & mValidationTable & " where SFunction not in (select nameFunction from Functions where deleted=0) and SFunction is not null and SFunction not like ''"
             mIsValidStandardFunction = False
         Case "w_invalid_standard_team":
-            query = "select ntid, (fname + ' ' + lname) as fullName, STeam as data  from user_data_cache where STeam not in (select Steam_name from standard_team where deleted=0) and STeam is not null and STeam not like ''"
+            query = "select ntid, (fname + ' ' + lname) as fullName, STeam as data  from " & mValidationTable & " where STeam not in (select Steam_name from standard_team where deleted=0) and STeam is not null and STeam not like ''"
             mIsValidStandardTeam = False
         Case "w_invalid_sub_function":
-            query = "select ntid, (fname + ' ' + lname) as fullName, SdSubFunction as data  from user_data_cache where SdSubFunction not in (select SubF_Name from sub_function where deleted=0) and SdSubFunction is not null and SdSubFunction not like ''"
+            query = "select ntid, (fname + ' ' + lname) as fullName, SdSubFunction as data  from " & mValidationTable & " where SdSubFunction not in (select SubF_Name from sub_function where deleted=0) and SdSubFunction is not null and SdSubFunction not like ''"
             mIsValidSubFunction = False
     End Select
+    If mCustomValidation Then
+        query = query & " and deleted=0 and suspend=0 "
+        query = query & " and region='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "'"
+    End If
     Logger.LogDebug "UserManagement.CheckValidData", "query: " & query
     dbm.RecycleTableName tblName
     dbm.Init
