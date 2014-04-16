@@ -7,7 +7,7 @@ Public Sub OnTest()
    ' sh.sync
    ' sh.Recycle
    Dim rpm As New ReportMetaData
-   rpm.Init "end_user_to_bb_job_role_activity"
+   rpm.Init "end_user_to_bb_job_role_report_qualification"
    Reporting.GenerateReport rpm
    rpm.OpenReport
 End Sub
