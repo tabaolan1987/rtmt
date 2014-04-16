@@ -6,9 +6,16 @@ Public Sub OnTest()
    ' sh.Init "user_data"
    ' sh.sync
    ' sh.Recycle
+<<<<<<< HEAD
    Dim dh As New DofaHelper
    dh.Init
    dh.ImportDofa
+=======
+   Dim rpm As New ReportMetaData
+   rpm.Init "end_user_to_bb_job_role_report_qualification"
+   Reporting.GenerateReport rpm
+   rpm.OpenReport
+>>>>>>> 8d0059633564530c5abf9599127ee9de1f99a7f6
 End Sub
 
 Public Sub Run(Optional TestClassName As String)
