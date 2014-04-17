@@ -38,6 +38,7 @@ on F.nameFunction = UDT.SFunction)
 where UMR.deleted=0 and  UDT.deleted =0 and UDT.suspend=0
 and BPROLE.deleted=0 and CMR.deleted=0
 and F.deleted=0
+and UDT.suspend = 0
 and Course.deleted=0 and UMR.idRegion='(%RG_NAME%)' And UDT.Region='(%RG_NAME%)'
 and UDT.SFunction (%CUSTOM_FILTER_NAME%)
 and CMR.idRegion='(%RG_NAME%)'
@@ -55,5 +56,6 @@ group by UDT.ntid,Course.courseId,CMR.ps, F.id
 	and Cr.idFunction (%CUSTOM_FILTER_ID%)
 	and UD.SFunction (%CUSTOM_FILTER_NAME%)
 	and UD.deleted=0
+	and UD.suspend = 0
 	and UD.Region='(%RG_NAME%)')
 	order by ntid, courseId

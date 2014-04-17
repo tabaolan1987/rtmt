@@ -23,6 +23,7 @@ inner join activity as ac
 on spAc.idActivity = ac.id)
 where um.idUserdata ='(%VALUE%)' and um.idMapping='B'
 and ud.deleted=0 and um.deleted=0 and sp.deleted=0 and spAc.deleted=0
+and ud.suspend=0
 and ac.deleted=0 and um.idRegion='(%RG_NAME%)'
 
 ===
