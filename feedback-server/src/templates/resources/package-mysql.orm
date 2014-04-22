@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE orm SYSTEM "file:/javax/jdo/orm.dtd">
+<orm>
+	<package name="com.cmg.hipspot.data.jdo">
+    		<class name="FeedbackModelJDO" table="FeedbackModelJDO">
+    			<field name="id">
+    				<column name="id"/>
+    			</field>
+    			<field name="email">
+    				<column name="email" length="100"/>
+    			</field>
+    			<field name="description">
+    				<column name="description" length="1000"/>
+    			</field>
+    			<field name="pictureError">
+                    <column name="pictureError" length="255"/>
+                </field>
+                <field name="version">
+                   <column name="version" length="255"/>
+                </field>
+                <field name="osInformation">
+                   <column name="osInformation" length="255"/>
+                </field>
+                <field name="stepError">
+                   <column name="stepError" length="1000"/>
+                </field>
+                <field name="testData">
+                    <column name="testData" length="1000"/>
+                </field>
+    		</class>
+    </package>
+</orm>
