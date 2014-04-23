@@ -83,6 +83,9 @@ End Function
 
 
 Public Function SelectedCSV() As String
+    If Len(mSelectedCSV) = 0 Then
+        mSelectedCSV = FileHelper.GetCSVFile("Open EUDL")
+    End If
     SelectedCSV = mSelectedCSV
 End Function
 

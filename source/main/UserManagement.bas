@@ -21,7 +21,8 @@ Private mValidationTable As String
 Private mCustomValidation As Boolean
 
 
-Public Function Init(Optional mss As SystemSetting, Optional validationTable)
+Public Function Init(Optional mss As SystemSetting, Optional validationTable As String)
+    Logger.LogDebug "UserManagement.Init", "Start init"
     If mss Is Nothing Then
         Set ss = Session.Settings()
     Else
@@ -35,6 +36,7 @@ Public Function Init(Optional mss As SystemSetting, Optional validationTable)
         mValidationTable = "user_data_cache"
     End If
     Set dbm = New DbManager
+    Logger.LogDebug "UserManagement.Init", "Init completed"
 End Function
 
 Public Function ApplyCheckData(tblName As String)
@@ -147,14 +149,17 @@ Public Function IsValidData(tblName As String)
 End Function
 
 Public Function IsExistUserData() As Boolean
+    Logger.LogDebug "UserManagement.IsExistUserData", "Start check"
     Dim query As String
     query = "select * from " & Constants.END_USER_DATA_TABLE_NAME & " where deleted = 0 and region='" & _
                StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "'"
     dbm.Init
     dbm.OpenRecordSet query
     If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
+        Logger.LogDebug "UserManagement.IsExistUserData", "existed"
         IsExistUserData = True
     Else
+        Logger.LogDebug "UserManagement.IsExistUserData", "not exist"
         IsExistUserData = False
     End If
     dbm.Recycle

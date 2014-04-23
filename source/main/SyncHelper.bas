@@ -393,6 +393,7 @@ Private Function PushLocalChange()
     Dim mFilter As String
     Dim tmpData As Scripting.Dictionary
     Dim adData As Scripting.Dictionary
+    Dim idOnServer As New Scripting.Dictionary
     Dim adCol As New Collection
     Dim tmpId As String
     Dim tmpTs As String
@@ -418,21 +419,31 @@ Private Function PushLocalChange()
     Dim v1 As String
     Dim v2 As String
     Set qBatch = New Collection
+    Dim needUpdate As Boolean
     If Not (rs.EOF And rs.BOF) Then
         rs.MoveFirst
         Logger.LogDebug "SyncHelper.PushLocalChange", "Found record in server"
         Do Until rs.EOF = True
-            
             tmpId = rs("id")
             tmpTs = rs("timestamp")
+            If Not idOnServer.Exists(tmpId) Then
+                idOnServer.Add LCase(tmpId), tmpTs
+            End If
+            
             Set qdf = dbs.CreateQueryDef("", "select * from [" & mTableName & "] where [id]='" & StringHelper.EscapeQueryString(tmpId) & "'")
             Set rst = qdf.OpenRecordSet
             If Not (rst.EOF And rst.BOF) Then
+                Set tmpData = New Scripting.Dictionary
                 rst.MoveFirst
+                needUpdate = False
                 For Each v In mHeaders
+                    If Not tmpData.Exists(CStr(v)) Then
+                        tmpData.Add CStr(v), dbm.GetFieldValue(rst, CStr(v))
+                    End If
+                    
                     If Not StringHelper.IsEqual(CStr(v), "id", True) _
                          And Not StringHelper.IsEqual(CStr(v), "timestamp", True) Then
-                        
+                    
                         If IsNull(rs(CStr(v))) Then
                             v1 = ""
                         Else
@@ -441,27 +452,43 @@ Private Function PushLocalChange()
                         v2 = Trim(dbm.GetFieldValue(rst, CStr(v)))
                         Logger.LogDebug "SyncHelper.PushLocalChange", "Compare column " & CStr(v) & ". Local: " & v2 & ". Server: " & v1
                         If Not StringHelper.IsEqual(v1, v2, True) Then
-                            Set adData = New Scripting.Dictionary
-                            adData.Add "id", StringHelper.GetGUID
-                            adData.Add "ntid", Session.CurrentUser.ntid
-                            adData.Add "idFunction", Session.CurrentUser.FuncRegion.Region
-                            adData.Add "userAction", "Update central store record"
-                            adData.Add "description", "update [" & mTableName & "] set [" & CStr(v) _
+                            needUpdate = True
+                            'Set adData = New Scripting.Dictionary
+                            'adData.Add "id", StringHelper.GetGUID
+                            'adData.Add "ntid", Session.CurrentUser.ntid
+                            'adData.Add "idFunction", Session.CurrentUser.FuncRegion.Region
+                            'adData.Add "userAction", "Update central store record"
+                            'adData.Add "description", "update [" & mTableName & "] set [" & CStr(v) _
                                     & "]='" & StringHelper.EscapeQueryString(v2) & "', [timestamp]=getdate() where [id]='" _
                                     & StringHelper.EscapeQueryString(tmpId) & "'"
-                            adData.Add "data_fields", CStr(v)
-                            adData.Add "prev_value", v1
-                            adData.Add "new_value", v2
-                            adData.Add "table_name", mTableName
-                            query = dbm.CreateRecordQuery(adData, adCol, "audit_logs", IsServer:=True)
-                            qBatch.Add query
+                            'adData.Add "data_fields", CStr(v)
+                            'adData.Add "prev_value", v1
+                            'adData.Add "new_value", v2
+                            'adData.Add "table_name", mTableName
+                            'query = dbm.CreateRecordQuery(adData, adCol, "audit_logs", IsServer:=True)
+                            'qBatch.Add query
                         End If
                     End If
-                    If Not mIdTs.Exists(tmpId) Then
-                        mIdTs.Add tmpId, tmpId
-                    End If
-                    RemoveChangeLog tmpId
                 Next v
+                If needUpdate Then
+                    query = dbm.UpdateRecordQuery(tmpData, mHeaders, mTableName, mFieldTypes, True)
+                    Set adData = New Scripting.Dictionary
+                    adData.Add "id", StringHelper.GetGUID
+                    adData.Add "ntid", Session.CurrentUser.ntid
+                    adData.Add "idFunction", Session.CurrentUser.FuncRegion.Region
+                    adData.Add "userAction", "Update central store record"
+                    adData.Add "description", query
+                    adData.Add "data_fields", ""
+                    adData.Add "prev_value", ""
+                    adData.Add "new_value", ""
+                    adData.Add "table_name", mTableName
+                    query = dbm.CreateRecordQuery(adData, adCol, "audit_logs", IsServer:=True)
+                    qBatch.Add query
+                End If
+                If Not mIdTs.Exists(tmpId) Then
+                    mIdTs.Add tmpId, tmpId
+                End If
+                RemoveChangeLog tmpId
             End If
             qdf.Close
             Set qdf = Nothing
@@ -478,6 +505,8 @@ Private Function PushLocalChange()
   '      Next v
   '  End If
   '  Set qBatch = New Collection
+    mFilter = GetChangeLogFilter
+    
     query = "select * from [" & mTableName & "] where [id] in (" & mFilter & ")"
     Set qdf = dbs.CreateQueryDef("", query)
     Set rst = qdf.OpenRecordSet
@@ -499,7 +528,11 @@ Private Function PushLocalChange()
                     End If
                 Next v
                 Logger.LogDebug "SyncHelper.PushLocalChange", "Create query for new record"
-                query = dbm.CreateRecordQuery(tmpData, mHeaders, mTableName, mFieldTypes, True)
+                If Not idOnServer.Exists(LCase(tmpId)) Then
+                    query = dbm.CreateRecordQuery(tmpData, mHeaders, mTableName, mFieldTypes, True)
+                Else
+                    query = dbm.UpdateRecordQuery(tmpData, mHeaders, mTableName, mFieldTypes, True)
+                End If
                 Set adData = New Scripting.Dictionary
                 adData.Add "id", StringHelper.GetGUID
                 adData.Add "ntid", Session.CurrentUser.ntid

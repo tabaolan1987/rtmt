@@ -272,7 +272,7 @@ Public Function ParseMapping()
         Dim ws As Excel.worksheet
         Dim rng As Excel.range
         Dim check As String
-        Dim NeedUpdate As Boolean
+        Dim needUpdate As Boolean
         Dim IsChecked As Boolean
         Dim tmpDictLeft As New Scripting.Dictionary
         Dim tmpDictTop As New Scripting.Dictionary
@@ -316,9 +316,9 @@ Public Function ParseMapping()
                             dbm.Init
                             dbm.OpenRecordSet mmd.query(Q_CHECK, tmpData)
                             If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
-                                NeedUpdate = True
+                                needUpdate = True
                             Else
-                                NeedUpdate = False
+                                needUpdate = False
                             End If
                             dbm.Recycle
                             ' Check the mapping
@@ -331,7 +331,7 @@ Public Function ParseMapping()
                                 tmpData.Add Q_KEY_VALUE, ""
                                 IsChecked = False
                             End If
-                            If NeedUpdate Then
+                            If needUpdate Then
                                 If IsChecked Then
                                     tmpData.Add Q_KEY_CHECK, "0"
                                 Else

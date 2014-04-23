@@ -213,6 +213,28 @@ Public Function GenerateFilter(source() As String) As String
     End If
 End Function
 
+Public Function GenerateCommaDict(source As Scripting.Dictionary, Optional UseKey As Boolean) As String
+    Dim v As Variant
+    Dim filter As String
+    Dim mKey As String
+    Dim mValue As String
+    filter = ""
+    For Each v In source.keys
+        mKey = CStr(v)
+        mValue = source.Item(mKey)
+        If UseKey Then
+            filter = filter & mKey & ", "
+        Else
+            filter = filter & mValue & ", "
+        End If
+    Next v
+    filter = Trim(filter)
+    If StringHelper.EndsWith(filter, ",", True) Then
+        filter = Left(filter, Len(filter) - 1)
+    End If
+    GenerateCommaDict = Trim(filter)
+End Function
+
 Public Function GenerateFilterDict(source As Scripting.Dictionary, Optional UseKey As Boolean) As String
     Dim v As Variant
     Dim filter As String
