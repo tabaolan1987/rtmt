@@ -499,12 +499,15 @@ Private Function PushLocalChange()
     End If
     rs.Close
     Set rs = Nothing
-  '  If qBatch.count > 0 Then
-  '      For Each v In qBatch
-  '          cn.Execute CStr(v)
-  '      Next v
-  '  End If
-  '  Set qBatch = New Collection
+    'Logger.LogDebug "SyncHelper.PushLocalChange", "Start push data to central"
+    'If qBatch.count > 0 Then
+    '    For Each v In qBatch
+    '        query = CStr(v)
+    '        Logger.LogDebug "SyncHelper.PushLocalChange", "Execute query: " & query
+    '        cn.Execute query
+    '    Next v
+    'End If
+    'Set qBatch = New Collection
     mFilter = GetChangeLogFilter
     
     query = "select * from [" & mTableName & "] where [id] in (" & mFilter & ")"
@@ -561,9 +564,12 @@ Private Function PushLocalChange()
     rst.Close
     Set rst = Nothing
     cn.BeginTrans
+    Logger.LogDebug "SyncHelper.PushLocalChange", "Start push data to central"
     If qBatch.count > 0 Then
         For Each v In qBatch
-            cn.Execute CStr(v)
+            query = CStr(v)
+            Logger.LogDebug "SyncHelper.PushLocalChange", "Execute query: " & query
+            cn.Execute query
         Next v
     End If
     Set qBatch = Nothing
@@ -657,5 +663,9 @@ Private Function GetChangeLogFilter(Optional col As Scripting.Dictionary) As Str
             mFilter = Left(mFilter, Len(mFilter) - 1)
         End If
     End If
-    GetChangeLogFilter = mFilter
+    If Len(mFilter) = 0 Then
+        GetChangeLogFilter = "'" & StringHelper.EscapeQueryString(StringHelper.GetGUID) & "'"
+    Else
+        GetChangeLogFilter = mFilter
+    End If
 End Function

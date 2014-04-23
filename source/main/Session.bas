@@ -174,10 +174,10 @@ Public Function ReportMetaData(reportName As String) As ReportMetaData
     Dim rmd As ReportMetaData
     If Not mReportMDCol.Exists(reportName) Then
         If StringHelper.IsEqual(reportName, Constants.RP_AUDIT_LOG, True) Then
-            Dim sh As New SyncHelper
-            sh.Init Constants.TABLE_AUDIT_LOG
-            sh.sync
-            sh.Recycle
+            Dim Sh As New SyncHelper
+            Sh.Init Constants.TABLE_AUDIT_LOG
+            Sh.sync
+            Sh.Recycle
         End If
         Set rmd = New ReportMetaData
         rmd.Init reportName
