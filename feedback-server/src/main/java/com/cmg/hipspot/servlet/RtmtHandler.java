@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 /**
  * Created by lantb on 2014-04-22.
@@ -42,6 +43,8 @@ public class RtmtHandler extends HttpServlet {
             logger.info("coming serlet");
             if(ServletFileUpload.isMultipartContent(request)) {
                 logger.info("multipart");
+                ArrayList<String> screenshotFiles = new ArrayList<String>();
+                ArrayList<String> testDataFiles = new ArrayList<String>();
                 ServletFileUpload upload = new ServletFileUpload();
                 FileItemIterator iter = upload.getItemIterator(request);
                 while (iter.hasNext()) {
@@ -56,7 +59,8 @@ public class RtmtHandler extends HttpServlet {
                             if(item.getName()!=null && item.getName()!=""){
                                 String testData = fileServices.saveFile(stream,pathDataFolder,item.getName());
                                 logger.info("test data : " + testData);
-                                model.setTestData(testData);
+                                testDataFiles.add(testData);
+                                //model.setTestData(testData);
                             }
                         }else if(field.equalsIgnoreCase(SCREEN_SHOT_PARA)){
                             String pathScreenshotFolder = fileServices.getPath(FOLDER_SCREEN_SHOT);
@@ -64,7 +68,8 @@ public class RtmtHandler extends HttpServlet {
                             if(item.getName()!=null && item.getName()!=""){
                                 String pictureError = fileServices.saveFile(stream,pathScreenshotFolder,item.getName());
                                 logger.info("picture Error : " + pictureError);
-                                model.setPictureError(pictureError);
+                                screenshotFiles.add(pictureError);
+                                //model.setPictureError(pictureError);
                             }
                         }
                     }else{
@@ -89,6 +94,12 @@ public class RtmtHandler extends HttpServlet {
                     }
                 }
                 if(model.getEmail()!=null && model.getDescription()!=null){
+                    if(StringUtil.List2String(screenshotFiles)!=null){
+                        model.setPictureError(StringUtil.List2String(screenshotFiles));
+                    }
+                    if(StringUtil.List2String(testDataFiles)!=null){
+                        model.setTestData(StringUtil.List2String(testDataFiles));
+                    }
                     //add feedback to database
                     dao.create(model);
                     MailServices mailServices = new MailServices(model);

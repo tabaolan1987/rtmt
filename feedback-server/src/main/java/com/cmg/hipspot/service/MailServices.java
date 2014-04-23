@@ -105,7 +105,7 @@ public class MailServices extends Thread{
             MimeMessage message = new MimeMessage(session);
             message.setHeader("Content-Type", "text/html");
             message.setFrom(new InternetAddress("lan.ta@c-mg.com"));
-            message.setRecipients(Message.RecipientType.TO, "rtmt@c-mg.com");
+            message.setRecipients(Message.RecipientType.TO, "lan.ta@c-mg.com");
             message.setSubject(subject);
 
             Multipart mp = new MimeMultipart("related");
@@ -114,24 +114,36 @@ public class MailServices extends Thread{
             mp.addBodyPart(mbp1);
 
             if(model.getPictureError()!=null){
-                File file = new File(model.getPictureError());
-                if(file.exists()){
-                    MimeBodyPart mbp2 = new MimeBodyPart();
-                    FileDataSource fds = new FileDataSource(file);
-                    mbp2.setDataHandler(new DataHandler(fds));
-                    mbp2.setFileName(fds.getName());
-                    mp.addBodyPart(mbp2);
+                String test = model.getPictureError().substring(0,model.getPictureError().length()-1);
+                logger.info("all file before :" + test );
+                String[] allFiles = test.split("\\|");
+                for(String temp : allFiles){
+                    logger.info("temp file : " + temp);
+                    File file = new File(temp);
+                    if(file.exists()){
+                        logger.info("File existed : " + file.getAbsolutePath());
+                        MimeBodyPart mbp2 = new MimeBodyPart();
+                        FileDataSource fds = new FileDataSource(file);
+                        mbp2.setDataHandler(new DataHandler(fds));
+                        mbp2.setFileName(fds.getName());
+                        mp.addBodyPart(mbp2);
+                    }
                 }
             }
 
             if(model.getTestData()!=null){
-                File file = new File(model.getTestData());
-                if(file.exists()){
-                    MimeBodyPart mbp3 = new MimeBodyPart();
-                    FileDataSource fds = new FileDataSource(file);
-                    mbp3.setDataHandler(new DataHandler(fds));
-                    mbp3.setFileName(fds.getName());
-                    mp.addBodyPart(mbp3);
+                String test = model.getTestData().substring(0,model.getTestData().length()-1);
+                logger.info("all test before :" + test );
+                String[] allFiles = test.split("\\|");
+                for(String temp : allFiles){
+                    File file = new File(temp);
+                    if(file.exists()){
+                        MimeBodyPart mbp3 = new MimeBodyPart();
+                        FileDataSource fds = new FileDataSource(file);
+                        mbp3.setDataHandler(new DataHandler(fds));
+                        mbp3.setFileName(fds.getName());
+                        mp.addBodyPart(mbp3);
+                    }
                 }
             }
 
