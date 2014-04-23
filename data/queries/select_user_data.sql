@@ -3,4 +3,4 @@ SELECT
 FROM user_data as UD
 Where UD.deleted=0
 and UD.Region='(%RG_NAME%)'
-ORDER BY UD.ntid
+and UD.suspend=0
