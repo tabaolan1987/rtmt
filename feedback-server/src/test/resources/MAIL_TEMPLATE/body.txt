@@ -1,0 +1,10 @@
+﻿<p style="color:#666; font-family: arial; font-size:10pt;">[[sayHi]]</p>
+<p style="color:#666; font-family: arial; font-size:10pt;">There is new feedback for RTMT from client :  </p>
+<p style="color:#666; font-family: arial; font-size:10pt;">Email : [[email]] </p>
+<p style="color:#666; font-family: arial; font-size:10pt;">Description : [[description]] </p>
+<p style="color:#666; font-family: arial; font-size:10pt;">Version : [[version]] </p>
+<p style="color:#666; font-family: arial; font-size:10pt;">OS Information : [[os_information]] </p>
+<p style="color:#666; font-family: arial; font-size:10pt;">Step to get Error : [[stepError]] </p>
+<p style="color:#666; font-family: arial; font-size:10pt;">Kind regards,<br />
+[[PabloDropboxes]]</p>
+<p class="footer" style="color:#ddd; font-family: arial; font-size:10pt;">P.S : This request was generated on [[dayGenerated]] at [[timeGenerated]]</b></p>
