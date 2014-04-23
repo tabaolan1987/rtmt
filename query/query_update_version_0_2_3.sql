@@ -31,6 +31,48 @@ ADD [mapped_bb_job_roles] VARCHAR(4000)
 GO
 ALTER TABLE [user_data]
 ADD [mapped_qualifications] VARCHAR(4000)
+--				--
+-- UPDATE DATA  --
+--	  			--
+GO
+UPDATE user_data SET actor_ntid = ''
+GO
+DECLARE @ntid VARCHAR(255)
+DECLARE @region VARCHAR(255)
+DECLARE db_cursor CURSOR FOR  
+				SELECT [ntid], [region]
+				FROM [user_data] WHERE deleted=0
+DECLARE @qualifications VARCHAR(4000)
+DECLARE @roles VARCHAR(4000)
+OPEN db_cursor 
+FETCH NEXT FROM db_cursor INTO @ntid, @region
+WHILE @@FETCH_STATUS = 0   
+BEGIN 
+	SET @qualifications = ''
+	SELECT @qualifications = @qualifications + Qname + ', ' FROM (SELECT DISTINCT q.Qname
+											FROM (user_data_mapping_qualification
+											AS um inner join Qualifications AS q
+											ON q.id = um.idQuali)
+											WHERE um.ntid=@ntid AND q.deleted=0 AND um.deleted=0
+											AND um.idRegion=@region) AS cached_table
+											ORDER BY Qname
+	SET @qualifications = SUBSTRING(@qualifications, 0, LEN(@qualifications))
+	SET @roles = ''
+	SELECT @roles = @roles + BpRoleStandardName + ', ' FROM (select DISTINCT bpRole.BpRoleStandardName
+											from (user_data_mapping_role as UMR 
+											inner join BpRoleStandard as bpRole
+											on UMR.idBpRoleStandard = bpRole.id)
+											where UMR.idUserdata = @ntid and UMR.Deleted=0
+											and bpRole.Deleted = 0
+											and UMR.idRegion=@region) AS cached_table
+											ORDER BY BpRoleStandardName
+	SET @roles = SUBSTRING(@roles, 0, LEN(@roles))
+	UPDATE user_data SET mapped_qualifications = @qualifications, mapped_bb_job_roles = @roles
+			WHERE ntid=@ntid AND region = @region
+	FETCH NEXT FROM db_cursor INTO @ntid, @region
+END
+CLOSE db_cursor   
+DEALLOCATE db_cursor
 --				 --
 -- CREATE TABLE  --
 --				 --
