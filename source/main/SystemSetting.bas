@@ -36,6 +36,7 @@ Private mCheckIpURL As String
 Private mSyncFixedTables As Boolean
 Private mEnableAuditLog As Boolean
 Private mDateFormat As String
+Private mFeedbackUrl As String
 
 Public Function Init()
     Dim ir As IniReader: Set ir = Ultilities.SystemIniReader
@@ -82,7 +83,7 @@ Public Function Init()
     mVersion = ir.ReadKey(Constants.SECTION_APPLICATION, Constants.KEY_VERSION)
     mEnv = ir.ReadKey(Constants.SECTION_APPLICATION, Constants.KEY_ENV)
     mCheckIpURL = ir.ReadKey(Constants.SECTION_APPLICATION, Constants.KEY_CHECK_IP_URL)
-    
+    mFeedbackUrl = ir.ReadKey(Constants.SECTION_APPLICATION, Constants.KEY_FEEDBACK_URL)
     mEnableTesting = ir.ReadBooleanKey(Constants.SECTION_APPLICATION, Constants.KEY_ENABLE_TESTING)
     mEnableAuditLog = ir.ReadBooleanKey(Constants.SECTION_APPLICATION, Constants.KEY_ENABLE_AUDITLOG)
     mSyncFixedTables = ir.ReadBooleanKey(Constants.SECTION_APPLICATION, Constants.KEY_SYNC_FIXED_TABLES)
@@ -229,4 +230,8 @@ End Property
 
 Public Property Get DateFormat() As String
     DateFormat = mDateFormat
+End Property
+
+Public Property Get FeedbackUrl() As String
+    FeedbackUrl = mFeedbackUrl
 End Property

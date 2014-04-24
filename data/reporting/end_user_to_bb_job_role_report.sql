@@ -1,3 +1,5 @@
+Role Mapping Report
+=======
 tmp_pilot_report
 ===
 	select col1 as [header], col2 as [Category], bColor, fColor from (
@@ -87,3 +89,19 @@ and UD.Region='(%RG_NAME%)'
 and UD.suspend=0
 and UD.SFunction (%CUSTOM_FILTER_NAME%)
 ORDER BY UD.ntid
+=========
+EUDL to BB Job Roles
+=======
+SELECT distinct user_data.NTID, user_data.fname AS [First name], user_data.lname AS [Last name],
+	 BpRoleStandard.BpRoleStandardName AS [BB Job Role], 
+	user_data.jobTitle As [Job Title]
+FROM ((user_data INNER JOIN user_data_mapping_role ON user_data.ntid = user_data_mapping_role.idUserdata) 
+			INNER JOIN BpRoleStandard ON user_data_mapping_role.idBpRoleStandard = BpRoleStandard.id)
+WHERE user_data_mapping_role.deleted=0
+and user_data_mapping_role.idRegion='(%RG_NAME%)'
+and BpRoleStandard.deleted=0
+and user_data.deleted=0
+and user_data.Region='(%RG_NAME%)'
+and user_data.suspend=0
+and user_data.SFunction (%CUSTOM_FILTER_NAME%)
+ORDER BY user_data.ntid, BpRoleStandard.BpRoleStandardName

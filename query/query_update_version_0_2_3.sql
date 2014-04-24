@@ -9,7 +9,7 @@
 --	+ New tables [user_action_mapping], [user_change_log], [user_data_tmp]	
 --	+ New triggers [trg_create_user_change_log], [trg_update_user_change_log]
 --		for Audit user data change
---	
+--	+ New RTMT role DofA
 
 -- SELECT DATABASE 
 USE [upstream_role_mapping]
@@ -67,8 +67,8 @@ BEGIN
 											and UMR.idRegion=@region) AS cached_table
 											ORDER BY BpRoleStandardName
 	SET @roles = SUBSTRING(@roles, 0, LEN(@roles))
-	UPDATE user_data SET mapped_qualifications = @qualifications, mapped_bb_job_roles = @roles
-			WHERE ntid=@ntid AND region = @region
+	UPDATE user_data SET mapped_qualifications = @qualifications, mapped_bb_job_roles = @roles, timestamp=getdate()
+			WHERE ntid=@ntid AND region = @region AND deleted=0
 	FETCH NEXT FROM db_cursor INTO @ntid, @region
 END
 CLOSE db_cursor   
@@ -486,3 +486,5 @@ GO
 INSERT [user_action_mapping]([data_field], [action]) VALUES('spare34','Update Optional Field 34')
 GO
 INSERT [user_action_mapping]([data_field], [action]) VALUES('spare35','Update Optional Field 35')
+GO
+INSERT [RMT_ROLES]([id], [roleName], [description]) VALUES('2a8jsdk5-2dh7-fhh8-acn7-f747151jnhk7', 'DofA', 'Upload DofA data')

@@ -390,14 +390,14 @@ Public Function PrepareUserData(filePath As String, ss As SystemSetting) As Stri
     End If
 End Function
 
-Public Function PrepareCurriculum(filePath As String) As String
+Public Function PrepareExcelFile(filePath As String) As String
     
     If StringHelper.EndsWith(filePath, ".xlsx", True) Or _
         StringHelper.EndsWith(filePath, ".xls", True) Or _
         StringHelper.EndsWith(filePath, ".csv", True) Then
-        PrepareCurriculum = filePath
+        PrepareExcelFile = filePath
     Else
-        PrepareCurriculum = ""
+        PrepareExcelFile = ""
     End If
 End Function
 

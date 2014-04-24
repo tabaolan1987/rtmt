@@ -40,6 +40,10 @@ Private mPivotTableName As String
 Private mPivotTableWorksheet As String
 Private mPivotWordWrapCols As Collection
 
+Private mDateColumes As Collection
+Private mDateFormat As String
+
+Private mReportSheets As Scripting.Dictionary
 
 Private mComplete As Boolean
 
@@ -68,11 +72,15 @@ Public Function Init(Name As String, Optional ss As SystemSetting, Optional rpTy
     End If
     rawName = Name
     Logger.LogDebug "ReportMetaData.Init", "Start init report meta name: " & rawName
+    Dim mReportSect As Collection
     Dim tmpRawSection() As String, tmpStr As String, i As Integer
+    Dim tmpRawSheet() As String
+    Dim tmpRawSheetSection() As String
     Dim v As Variant
     Dim tmpList() As String
     Dim rpSection As ReportSection
     Dim ir As New IniReader
+    Dim j As Integer
     If StringHelper.IsEqual(mType, Constants.RP_TYPE_DEFAULT, True) Then
         mQueryFilePath = FileHelper.DuplicateAsTemporary(FileHelper.CurrentDbPath & Constants.RP_ROOT_FOLDER & Name & Constants.FILE_EXTENSION_QUERY)
     Else
@@ -114,6 +122,17 @@ Public Function Init(Name As String, Optional ss As SystemSetting, Optional rpTy
             Next v
         End If
     End If
+    Set mDateColumes = New Collection
+    tmpStr = ir.ReadKey(Constants.SECTION_FORMAT, Constants.KEY_DATE_COLS)
+    If Len(tmpStr) <> 0 Then
+            tmpList = Split(tmpStr, ",")
+            For Each v In tmpList
+                mDateColumes.Add CInt(Trim(CStr(v)))
+            Next v
+    End If
+    
+    mDateFormat = ir.ReadKey(Constants.SECTION_FORMAT, Constants.KEY_DATE_FORMAT)
+    
     If mPivotTable Then
         tmpStr = ir.ReadKey(Constants.SECTION_FORMAT, Constants.KEY_PIVOT_WORD_WRAP_COLS)
         If Len(tmpStr) <> 0 Then
@@ -140,23 +159,41 @@ Public Function Init(Name As String, Optional ss As SystemSetting, Optional rpTy
     mValid = False
     mQuery = FileHelper.ReadFileFullPath(mQueryFilePath)
     
-    If Len(mQuery) <> 0 Then
-        Set mReportSections = New Collection
+    If Len(mQuery) <> 0 And StringHelper.IsContain(mQuery, Constants.SPLIT_LEVEL_S, True) _
+            And StringHelper.IsContain(mQuery, Constants.SPLIT_LEVEL_0, True) Then
+        Set mReportSheets = New Scripting.Dictionary
+        
         mValid = True
-        tmpRawSection = Split(mQuery, Constants.SPLIT_LEVEL_1)
-        For i = LBound(tmpRawSection) To UBound(tmpRawSection)
-            Logger.LogDebug "ReportMetaData.Init", "Found section " & CStr(i + 1)
-            Set rpSection = New ReportSection
-            tmpStr = Trim(tmpRawSection(i))
-            rpSection.Init tmpStr, ss, mSkipCheckHeader
-            If StringHelper.IsEqual(rpSection.SectionType, Constants.RP_SECTION_TYPE_FIXED, True) _
-                Or StringHelper.IsEqual(rpSection.SectionType, Constants.RP_SECTION_TYPE_TMP_TABLE, True) Then
-                mCount = rpSection.count
+        tmpRawSheet = Split(mQuery, Constants.SPLIT_LEVEL_S)
+        Dim tmp1 As String
+        Dim tmp2 As String
+        For i = LBound(tmpRawSheet) To UBound(tmpRawSheet)
+            tmpStr = tmpRawSheet(i)
+            If StringHelper.IsContain(tmpStr, Constants.SPLIT_LEVEL_0, True) Then
+                tmpRawSheetSection = Split(tmpStr, Constants.SPLIT_LEVEL_0)
+                tmp1 = StringHelper.TrimNewLine(tmpRawSheetSection(0))
+                Logger.LogDebug "ReportMetaData.Init", "Found sheet " & tmp1
+                tmp2 = tmpRawSheetSection(1)
+                tmpRawSection = Split(tmp2, Constants.SPLIT_LEVEL_1)
+                Set mReportSect = New Collection
+                For j = LBound(tmpRawSection) To UBound(tmpRawSection)
+                    Logger.LogDebug "ReportMetaData.Init", "Found section " & CStr(j + 1)
+                    Set rpSection = New ReportSection
+                    tmpStr = Trim(tmpRawSection(j))
+                    rpSection.Init tmpStr, ss, mSkipCheckHeader
+                    If StringHelper.IsEqual(rpSection.SectionType, Constants.RP_SECTION_TYPE_FIXED, True) _
+                        Or StringHelper.IsEqual(rpSection.SectionType, Constants.RP_SECTION_TYPE_TMP_TABLE, True) Then
+                        mCount = rpSection.count
+                    End If
+                    If Not rpSection.Valid Then
+                        mValid = False
+                    End If
+                    Logger.LogDebug "ReportMetaData.Init", "Add section to sheet " & tmp1
+                    mReportSect.Add rpSection
+                Next j
+                Logger.LogDebug "ReportMetaData.Init", "Add all sections to sheet " & tmp1
+                mReportSheets.Add tmp1, mReportSect
             End If
-            If Not rpSection.Valid Then
-                mValid = False
-            End If
-            mReportSections.Add rpSection
         Next i
     End If
     mComplete = False
@@ -336,9 +373,24 @@ Public Property Get PivotTableWorksheet() As String
 End Property
 
 Public Property Get PivotWordWrapCols() As Collection
+    If mPivotWordWrapCols Is Nothing Then
+        Set mPivotWordWrapCols = New Collection
+    End If
     Set PivotWordWrapCols = mPivotWordWrapCols
 End Property
 
 Public Property Get RpName() As String
     RpName = rawName
+End Property
+
+Public Property Get DateFormat() As String
+    DateFormat = mDateFormat
+End Property
+
+Public Property Get DateColumes() As Collection
+    Set DateColumes = mDateColumes
+End Property
+
+Public Property Get ReportSheets() As Scripting.Dictionary
+    Set ReportSheets = mReportSheets
 End Property

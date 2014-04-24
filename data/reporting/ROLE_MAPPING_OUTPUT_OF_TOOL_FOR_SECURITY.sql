@@ -1,3 +1,5 @@
+Security Report
+=======
 tmp_pilot_report_1
 ===
 	select col1 as [header], col2 as [Category], bColor, fColor from (
@@ -37,3 +39,4 @@ and UD.Region='(%RG_NAME%)'
 and UD.suspend=0
 and UD.SFunction (%CUSTOM_FILTER_NAME%)
 ORDER BY UD.ntid
+=========

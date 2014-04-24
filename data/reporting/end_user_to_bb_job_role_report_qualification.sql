@@ -1,4 +1,6 @@
-tmp_pilot_report
+EUDL to Backbone Qualification
+=======
+tmp_pilot_report_5
 ===
 	select col1 as [header], '' as [Category],'' as bColor, '' as fColor from (
 		Select Qname as [col1] from Qualifications 
@@ -28,6 +30,7 @@ SELECT distinct
 	[omsSubfunction] AS [Function (OMS)/ Sub-function],
 	[departmentBusiness] AS [Department or Business Unit],
 	[Specialism],
+	[mapped_bb_job_roles] AS [Backbone Job Roles],
 	[jobTitle] AS [Job Title],
 	[sponsorForeName] AS [Line Manager/ Sponsor Forename],
 	[sponsorSurname] AS [Line Manager/ Sponsor Surname],
@@ -79,10 +82,11 @@ SELECT distinct
 	[Spare35] AS [Optional Field 35],
 	(%MAPPING_FIELDS%)
 FROM (user_data as UD
-inner join tmp_pilot_report as tbl_cached
+inner join tmp_pilot_report_5 as tbl_cached
 on tbl_cached.[key] = UD.ntid)
 Where UD.deleted=0
 and UD.Region='(%RG_NAME%)'
 and UD.suspend=0
 and UD.SFunction (%CUSTOM_FILTER_NAME%)
 ORDER BY UD.ntid
+=========

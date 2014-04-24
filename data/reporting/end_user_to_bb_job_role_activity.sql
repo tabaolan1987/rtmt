@@ -1,4 +1,6 @@
-tmp_pilot_report_4
+EUDL to Backbone Activities
+=======
+tmp_pilot_report_6
 ===
 	select col1 as [header], '' as [Category],'' as bColor, '' as fColor from (
 		Select ActivityDetail as [col1] from activity 
@@ -87,10 +89,11 @@ SELECT distinct
 	[Spare35] AS [Optional Field 35],
 	(%MAPPING_FIELDS%)
 FROM (user_data as UD
-inner join tmp_pilot_report_4 as tbl_cached
+inner join tmp_pilot_report_6 as tbl_cached
 on tbl_cached.[key] = UD.ntid)
 Where UD.deleted=0
 and UD.Region='(%RG_NAME%)'
 and UD.suspend=0
 and UD.SFunction (%CUSTOM_FILTER_NAME%)
 ORDER BY UD.ntid
+=========

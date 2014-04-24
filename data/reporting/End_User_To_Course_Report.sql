@@ -1,3 +1,5 @@
+COURSE REPORT
+=======
 tmp_table_report
 ===
 select distinct UM.idUserdata as [value] from (user_data_mapping_role AS UM inner join user_data AS U
@@ -59,3 +61,4 @@ group by UDT.ntid,Course.courseId,CMR.ps, F.id
 	and UD.suspend = 0
 	and UD.Region='(%RG_NAME%)')
 	order by ntid, courseId
+=========

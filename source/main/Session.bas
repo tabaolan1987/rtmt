@@ -13,6 +13,7 @@ Private mAllReportsZip As String
 Private mCurrentHelpContent As String
 Private mMappingTypes As Scripting.Dictionary
 Private mSelectedCurriculum As String
+Private mSelectedDofa As String
 
 Private mEnablePrimarySync As Scripting.Dictionary
 
@@ -81,6 +82,13 @@ Public Function SetSelectedCurriculum(path As String)
     mSelectedCurriculum = path
 End Function
 
+Public Function SelectedDofa() As String
+    SelectedDofa = mSelectedDofa
+End Function
+
+Public Function SetSelectedDofa(path As String)
+    mSelectedDofa = path
+End Function
 
 Public Function SelectedCSV() As String
     If Len(mSelectedCSV) = 0 Then
@@ -194,6 +202,10 @@ Public Function ReportMDCols() As Collection
      list.Add Constants.RP_ROLE_MAPPING_OUTPUT_OF_TOOL_FOR_SECURITY
      list.Add Constants.RP_END_USER_TO_BB_ACTIVITY
      list.Add Constants.RP_END_USER_TO_BB_QUALIFICATION
+     list.Add Constants.RP_END_USER_TO_DOFA
+     list.Add Constants.RP_USER_DATA_CHANGE_LOG
+     list.Add Constants.RP_END_USER_TO_EVERYTHING
+     list.Add Constants.RP_AD_HOC_REPORTING
      Set ReportMDCols = list
 End Function
 

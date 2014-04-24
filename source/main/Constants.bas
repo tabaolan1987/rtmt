@@ -16,6 +16,8 @@ Public Const HELP_ERROR_EUDL = "data\helps\error-eudl.txt"
 
 Public Const HELP_UPLOAD_EUDL = "data\helps\upload-eudl.txt"
 
+Public Const HELP_UPLOAD_DOFA = "data\helps\upload-dofa.txt"
+
 Public Const HELP_REPORTS = "data\helps\reports.txt"
 
 Public Const HELP_ADMIN = "data\helps\admin.txt"
@@ -64,6 +66,7 @@ Public Const P_R_ADMIN = "Admin"
 Public Const P_R_RC = "RC"
 Public Const P_R_TC = "TC"
 Public Const P_R_AM = "AM"
+Public Const P_R_DOFA = "DofA"
 
 Public Const P_W = "W"
 Public Const P_R = "R"
@@ -112,6 +115,7 @@ Public Const KEY_REGION_FUNCTION_ID = "regionFunctionId"
 Public Const KEY_TEST_NTID = "testNtid"
 Public Const KEY_CHECK_IP_URL = "checkIpURL"
 
+Public Const KEY_FEEDBACK_URL = "feedbackUrl"
 Public Const KEY_VALIDATOR_URL = "validatorUrl"
 Public Const KEY_TOKEN = "token"
 Public Const KEY_BULK_SIZE = "bulkSize"
@@ -144,6 +148,8 @@ Public Const KEY_START_ROW = "startRow"
 Public Const KEY_START_COL = "startCol"
 Public Const KEY_SKIP_CHECK_HEADER = "skipCheckHeader"
 
+Public Const KEY_DATE_COLS = "dateCols"
+
 Public Const SECTION_TOP = "Top"
 Public Const SECTION_LEFT = "Left"
 
@@ -175,6 +181,8 @@ Public Const FILE_EXTENSION_QUERY = ".sql"
 Public Const FILE_EXTENSION_QUERY_MAPPING = ".sqlm"
 Public Const FILE_EXTENSION_TEMPLATE = ".xlsx"
 Public Const FILE_EXTENSION_REPORT = ".xlsx"
+Public Const SPLIT_LEVEL_S = "========="
+Public Const SPLIT_LEVEL_0 = "======="
 Public Const SPLIT_LEVEL_1 = "====="
 Public Const SPLIT_LEVEL_2 = "==="
 
@@ -203,6 +211,10 @@ Public Const RP_END_USER_TO_COURSE = "end_user_to_course_report"
 Public Const RP_END_USER_TO_BB_ACTIVITY = "end_user_to_bb_job_role_activity"
 Public Const RP_END_USER_TO_BB_QUALIFICATION = "end_user_to_bb_job_role_report_qualification"
 Public Const RP_AUDIT_LOG = "Audit_Log_Report"
+Public Const RP_END_USER_TO_DOFA = "end_user_to_dofa"
+Public Const RP_USER_DATA_CHANGE_LOG = "user_data_change_log"
+Public Const RP_END_USER_TO_EVERYTHING = "end_user_to_every_thing"
+Public Const RP_AD_HOC_REPORTING = "adhoc_reporting"
 
 Public Const RP_DEFAULT_OUTPUT_FOLDER = "target\reporting"
 

@@ -176,7 +176,7 @@ Public Function ImportCourse()
                        & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) _
                        & "'" _
                       & " and idFunction='" _
-                      & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.FuncRgID) & "'"
+                      & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.FuncRgID) & "' and deleted=0"
     dbm.OpenRecordSet "select [Course ID], [Course Title], [Course Duration], [Spare Column]," _
       & "[Course Type],[Delivery Timing],[Area] from tmp_curriculum " _
       & " group by [Course ID], [Course Title], [Course Duration], [Spare Column]," _
@@ -237,7 +237,7 @@ Public Function ImportMapping()
                        & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) _
                        & "'" _
                       & " and idFunction='" _
-                      & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.FuncRgID) & "'"
+                      & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.FuncRgID) & "' and deleted=0"
     dbm.OpenRecordSet "select BpRoleStandard.id as [idBpRole], course.id As [idCourse], tmp_curriculum.[P/S] from ((BpRoleStandard inner join tmp_curriculum on BpRoleStandard.BpRoleStandardName = tmp_curriculum.[Role Name]) " _
                         & " inner join course on course.courseId = tmp_curriculum.[Course ID])" _
                         & " where BpRoleStandard.deleted=0 and course.deleted=0 " _

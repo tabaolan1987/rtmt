@@ -673,10 +673,13 @@ Public Function GenerateRoleMapping(rm As ReportMetaData)
     Dim ws As Excel.worksheet
     Dim rng As Excel.range
     Dim tmpRps As ReportSection
+    Dim rpSectsCol As Collection
     Dim header() As String
     Dim IsUpdate As Boolean
     i = 0
-    For Each tmpRps In rm.ReportSections
+    Set rpSectsCol = rm.ReportSheets.Item("Role Mapping Report")
+    For Each tmpRps In rpSectsCol
+        
         startMappingCol = (tmpRps.HeaderCount - tmpRps.PivotHeaderCount) + rm.StartCol
         header = tmpRps.PivotHeader
         mappingCount = tmpRps.PivotHeaderCount
@@ -711,9 +714,10 @@ Public Function GenerateRoleMapping(rm As ReportMetaData)
                         dbm.Init
                         ' Remove all mapping
                         dbm.ExecuteQuery "update user_data_mapping_role set Deleted=-1 where idUserdata='" & StringHelper.EscapeQueryString(tmpNtid) _
-                                            & "' and idRegion='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "'"
+                                            & "' and idRegion='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "' and deleted=0"
                         
                         dbm.Recycle
+                        Logger.LogDebug "UserManagement.GenerateRoleMapping", "Found ntid: " & tmpNtid
                         For i = 0 To mappingCount - 1
                             j = startMappingCol + i
                             Set rng = .Cells(rm.StartHeaderRow, j)
@@ -765,6 +769,7 @@ Public Function GenerateRoleMapping(rm As ReportMetaData)
             End With
             .Quit
         End With
+    TimerHelper.Sleep 1000
     dbm.Recycle
 End Function
  

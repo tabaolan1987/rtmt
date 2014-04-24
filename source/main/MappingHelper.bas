@@ -234,6 +234,7 @@ Public Function GenerateMapping()
         End With
         mmd.RefreshLastModified
         mmd.SetComplete (True)
+        TimerHelper.Sleep 1000
     End If
 End Function
 
@@ -261,6 +262,7 @@ End Function
 
 Public Function ParseMapping()
     If Not StringHelper.IsEqual(mmd.CurrentModifedDate, mmd.LastModified, True) Then
+        
         Dim i As Integer, j As Integer, l As Long, k As Long
         Dim tmpId As String, tmpComment As String, tmpValue As String
         Dim tmpIdLeft As String, tmpIdTop As String
@@ -356,6 +358,7 @@ Public Function ParseMapping()
             End With
             .Quit
         End With
+        TimerHelper.Sleep 1000
         mmd.RefreshLastModified
     End If
 End Function
