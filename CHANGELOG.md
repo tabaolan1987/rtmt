@@ -1,6 +1,58 @@
 CHANGELOG (notable new features or fixes)
 ---------
 
+###<a href='https://cmgcode.atlassian.net/browse/DURM/fixforversion/12002'>Version 0.2.3</a>
+Released on: 24/04/2014
+
+- Added 6 reports: 
+	+ EUDL to DofA
+	+ EUDL to Activity
+	+ EUDL to Qualification
+	+ EUDL to Everything
+	+ User data change log
+	+ Ad-hoc report
+- Add pivot table to report "EUDL to BB Job Roles"
+- Add new role DofA Admin
+- Allow DofA Admin to upload DofA data
+- Move suspened EUDL function to new view
+- Add re-validation EUDL function
+- Add feedback link to About page
+- Critical & major bugs fixed
+
+<h5>        Bug
+</h5>
+<ul>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-258'>DURM-258</a>] -         RTMT Phase1b - Suspended end users should be removed from Edit EUDL screen
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-260'>DURM-260</a>] -         RTMT Phase 1b - List of Standard Functions is not available in Edit EUDL
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-282'>DURM-282</a>] -         RTMT Phase1b - Report - End users belong to deleted Function should be removed from Training report
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-303'>DURM-303</a>] -         Validation for Standard Function/ Sub Function/ Team is ignored
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-306'>DURM-306</a>] -         RTMT Phase1b - Button to upload curriculum is disabled (daily test)
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-308'>DURM-308</a>] -         Synchronizing fails due to duplicate primary key
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-309'>DURM-309</a>] -         Typo mistake in Administration - Specialism
+</li>
+</ul>
+                            
+<h5>        Task
+</h5>
+<ul>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-190'>DURM-190</a>] -         [Dofa] Upload dofa file
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-192'>DURM-192</a>] -         [Dofa] Ad Hoc Reporting
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-193'>DURM-193</a>] -         [Reports] End User to DofA
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-297'>DURM-297</a>] -         [Report - Dofa] Exception report
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-310'>DURM-310</a>] -         Create Audit report: USER DATA CHANGES
+</li>
+</ul>
+
 ###<a href='https://cmgcode.atlassian.net/browse/DURM/fixforversion/11900'>Version 0.2.2</a>
 Released on: 11/04/2014
 
