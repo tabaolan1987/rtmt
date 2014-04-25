@@ -1,6 +1,6 @@
 ' @author Hai Lu
 '
-Option Compare Database
+Option Explicit
 Public Const SKIP_LAUNCH = "skip.launch"
 
 Public Const TMP_END_USER_TABLE_NAME = "tblImport"

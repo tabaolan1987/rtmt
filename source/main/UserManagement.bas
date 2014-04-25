@@ -2,8 +2,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-Option Compare Database
-
+Option Explicit
 Private ss As SystemSetting
 Private dbm As DbManager
 Private mIsConflict As Boolean
@@ -787,7 +786,7 @@ Public Function MergeUserData()
     Dim tmpData As Scripting.Dictionary
     Dim tmpCol As String
     Dim query As String
-    
+    Dim i As Integer
     query = "SELECT * FROM " & Constants.END_USER_DATA_CACHE_TABLE_NAME
     dbm.Init
     dbm.OpenRecordSet query

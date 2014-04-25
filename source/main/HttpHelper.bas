@@ -1,6 +1,6 @@
-Option Compare Database
-
+Option Explicit
 Public Function PostData(url As String, Optional sData As String) As String
+    Dim SXH_SERVER_CERT_IGNORE_ALL_SERVER_ERRORS
     Dim xmlhttp
     Set xmlhttp = CreateObject("MSXML2.ServerXMLHTTP")
     xmlhttp.SetOption 2, xmlhttp.GetOption(2) - SXH_SERVER_CERT_IGNORE_ALL_SERVER_ERRORS

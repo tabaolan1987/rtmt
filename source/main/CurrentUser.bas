@@ -2,7 +2,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-Option Compare Database
+Option Explicit
 
 Private mNtid As String
 Private mFullName As String
@@ -27,6 +27,7 @@ End Property
 
 Public Function Init(iNtid As String, _
                         Optional ss As SystemSetting)
+    Dim i As Integer
     Dim mData As String
     Dim fields As String
     mNtid = iNtid

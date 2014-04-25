@@ -5,7 +5,7 @@ Attribute VB_Exposed = False
 ' @author Hai Lu
 ' @create_date 24/01/2014
 
-Option Compare Database
+Option Explicit
 Private dictTop As Scripting.Dictionary
 Private dictTopComment As Scripting.Dictionary
 Private dictLeft As Scripting.Dictionary
@@ -147,7 +147,7 @@ Public Function GenerateMapping()
         Dim ws As Excel.worksheet
         Dim rng As Excel.range
         Dim check As String
-    
+        Dim tmpIdLeft As String
         With oExcel
             .DisplayAlerts = False
             .Visible = False

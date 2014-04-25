@@ -4,7 +4,7 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 ' @author: Hai Lu
 ' Database management object
-Option Compare Database
+Option Explicit
 Private dbs As DAO.Database
 Private qdf As DAO.QueryDef
 Private rst As DAO.RecordSet
@@ -75,6 +75,7 @@ End Function
 
 Public Function ExecuteQuery(query As String, Optional params As Scripting.Dictionary)
     On Error GoTo OnError
+    Dim i As Integer
     Dim key As String, value As Variant
     Set qdf = dbs.CreateQueryDef("", query)
     If Not params Is Nothing Then
@@ -150,6 +151,7 @@ End Function
 
 Private Function GetHeaderIndex(Name As String) As Integer
     Dim index As Integer
+    Dim i As Integer
     index = -1
     For i = 0 To rst.fields.count - 1
         If StringHelper.IsEqual(Trim(rst.fields(i).Name), Trim(Name), True) Then
@@ -162,6 +164,7 @@ End Function
 
 Public Function GetFieldValue(rs As RecordSet, Name As String) As String
     GetFieldValue = ""
+    Dim i As Integer
     If Len(Name) <> 0 Then
         Dim index As Integer
         index = -1

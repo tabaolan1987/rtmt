@@ -1,6 +1,6 @@
 ' @author Hai Lu
 ' System logger
-Option Compare Database
+Option Explicit
 Private Const L_INFO = 1
 Private Const L_DEBUG = 2
 Private Const L_ERROR = 3

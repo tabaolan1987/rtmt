@@ -2,8 +2,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-Option Compare Database
-
+Option Explicit
 Private mRegion As String
 Private mName As String
 Private mRole As Collection

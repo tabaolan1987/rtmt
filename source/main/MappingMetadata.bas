@@ -3,7 +3,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 ' @author Hai Lu
-Option Compare Database
+Option Explicit
 Private rawName As String
 Private mName As String
 Private mWorksheet As String

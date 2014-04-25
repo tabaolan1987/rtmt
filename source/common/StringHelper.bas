@@ -1,6 +1,6 @@
 ' @author Hai Lu
 ' Custom function with String
-Option Compare Database
+Option Explicit
 Private Type GUID
     Data1 As Long
     Data2 As Integer

@@ -2,7 +2,7 @@
 'Requied:
 ' - Set reference to Microsoft Excel Object library
 ' - Set reference to Microsoft ActiveX DataObject 2.x
-Option Compare Database
+Option Explicit
 
 Public Sub ExportExcelReport(sSQL As String, sFileNameTemplate As String, output As String, workSheets As String, range As String)
     
@@ -44,7 +44,7 @@ Public Sub GenerateReport(rpm As ReportMetaData)
     End If
     If rpm.Valid Then
         Logger.LogDebug "Reporting.GenerateReport", "Report metadata is valid "
-        Dim i As Integer, j As Integer
+        Dim i As Integer, j As Integer, k As Integer
         Dim reportSects As Collection
         Dim reportSheet As Variant
         Dim oExcel As New Excel.Application
@@ -59,6 +59,7 @@ Public Sub GenerateReport(rpm As ReportMetaData)
         Dim objRs As New ADODB.RecordSet
         Set objConn = CurrentProject.Connection
         Dim recordCount As Double
+        Dim colHeadCount As Long
         With oExcel
             .DisplayAlerts = False
             .Visible = False

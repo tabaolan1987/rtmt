@@ -2,8 +2,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-Option Compare Database
-
+Option Explicit
 Private dbm As DbManager
 Private qdf As DAO.QueryDef
 Private rst As DAO.RecordSet
