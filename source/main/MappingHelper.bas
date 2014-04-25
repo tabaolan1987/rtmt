@@ -372,10 +372,13 @@ Public Function PrepareMappingActivitesBBJobRoles()
     Dim rps As ReportSection
     Dim rm As ReportMetaData
     Set rm = Session.ReportMetaData(Constants.RP_END_USER_TO_BB_JOB_ROLE)
-    For Each rps In rm.ReportSections
+    For Each rps In rm.ReportSheets.Item("Role Mapping Report")
             filter = StringHelper.GenerateFilter(rps.PivotHeader)
             Exit For
     Next
+    If Len(filter) = 0 Then
+        filter = "'" & StringHelper.GetGUID & "'"
+    End If
     Dim tmpRst As DAO.RecordSet
     Dim tmpQdf As DAO.QueryDef
     query = "select MA.idActivity, MA.idBpRoleStandard, MA.Description from (MappingActivityBpStandardRole as MA inner join BpRoleStandard AS BR on BR.id = MA.idBpRolestandard)" _
