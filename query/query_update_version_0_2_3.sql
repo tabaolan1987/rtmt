@@ -463,7 +463,7 @@ INSERT [user_action_mapping]([data_field], [action]) VALUES('spare22','Update Op
 GO
 INSERT [user_action_mapping]([data_field], [action]) VALUES('spare23','Update Optional Field 23')
 GO
-INSERT [user_action_mapping]([data_field], [action]) VALUES('spare25','Update Optional Field 24')
+INSERT [user_action_mapping]([data_field], [action]) VALUES('spare24','Update Optional Field 24')
 GO
 INSERT [user_action_mapping]([data_field], [action]) VALUES('spare25','Update Optional Field 25')
 GO

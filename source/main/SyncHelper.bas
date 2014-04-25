@@ -160,6 +160,7 @@ Private Function CompareServer()
     Dim i As Integer
     Dim v As Variant
     Dim queryDelete As String
+    Dim tmpDeleted As String
     cn.Open mConnString
     'cn.BeginTrans
 
@@ -177,6 +178,7 @@ Private Function CompareServer()
     End If
     Logger.LogDebug "SyncHelper.CompareServer", "Query: " & query
     Set rs = cn.Execute(query)
+    
     Set mHeaders = New Collection
     Set mIdPull = New Scripting.Dictionary
     Dim tmpFName As String
@@ -216,9 +218,10 @@ Private Function CompareServer()
                 End If
             Next v
             tmpId = rs("id")
+            tmpDeleted = rs("deleted")
             Logger.LogDebug "SyncHelper.CompareServer", "Found id: " & tmpId
-            queryDelete = "update [" & mTableName _
-                & "] set deleted=-1 where "
+            queryDelete = "delete from [" & mTableName _
+                & "] where "
             query = "select * from [" & mTableName _
                 & "] where "
             If mEnablePrimary Then
