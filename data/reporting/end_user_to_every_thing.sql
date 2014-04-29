@@ -63,6 +63,7 @@ SELECT distinct
 	[Spare35] AS [Optional Field 35]
 FROM user_data as UD
 Where UD.deleted=0
+and UD.suspend=0
 and UD.Region='(%RG_NAME%)'
 and UD.SFunction (%CUSTOM_FILTER_NAME%)
 ORDER BY UD.ntid
