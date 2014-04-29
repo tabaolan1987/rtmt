@@ -45,6 +45,7 @@ SELECT distinct
 	[sponsorNTID] AS [Line Manager/ Sponsor NTID],
 	[purchasingOrg] AS [Purchasing Org],
 	[siteLocation] AS [Maximo Site Location],
+	[mappingTypeBpRoles] AS [Mapping type],
 	[Spare1] AS [Optional Field 1],
 	[Spare2] AS [Optional Field 2],
 	[Spare3] AS [Optional Field 3],
@@ -93,6 +94,7 @@ ORDER BY UD.ntid
 EUDL to BB Job Roles
 =======
 SELECT distinct user_data.NTID, user_data.fname AS [First name], user_data.lname AS [Last name],
+	user_data.[mappingTypeBpRoles] AS [Mapping type],
 	 BpRoleStandard.BpRoleStandardName AS [BB Job Role], 
 	user_data.jobTitle As [Job Title]
 FROM ((user_data INNER JOIN user_data_mapping_role ON user_data.ntid = user_data_mapping_role.idUserdata) 

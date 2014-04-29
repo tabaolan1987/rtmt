@@ -52,6 +52,7 @@ SELECT distinct
 	[sponsorNTID] AS [Line Manager/ Sponsor NTID],
 	[purchasingOrg] AS [Purchasing Org],
 	[siteLocation] AS [Maximo Site Location],
+	[mappingTypeBpRoles] AS [Mapping type],
 	[Spare1] AS [Optional Field 1],
 	[Spare2] AS [Optional Field 2],
 	[Spare3] AS [Optional Field 3],

@@ -1,6 +1,6 @@
 Role Mapping Report
 =======
-tmp_pilot_report
+tmp_pilot_report_7
 ===
 	select col1 as [header], col2 as [Category], bColor, fColor from (
 	select B.BpRoleStandardName as [col1],IIF(ISNULL(BG.BpRoleStandardCategoryName), "MASTER DATA",BG.BpRoleStandardCategoryName) As [col2]
@@ -46,6 +46,7 @@ SELECT distinct
 	[sponsorNTID] AS [Line Manager/ Sponsor NTID],
 	[purchasingOrg] AS [Purchasing Org],
 	[siteLocation] AS [Maximo Site Location],
+	[mappingTypeBpRoles] AS [Mapping type],
 	[Spare1] AS [Optional Field 1],
 	[Spare2] AS [Optional Field 2],
 	[Spare3] AS [Optional Field 3],
@@ -83,7 +84,7 @@ SELECT distinct
 	[Spare35] AS [Optional Field 35],
 	(%MAPPING_FIELDS%)
 FROM (user_data as UD
-left join tmp_pilot_report as tbl_cached
+left join tmp_pilot_report_7 as tbl_cached
 on tbl_cached.[key] = UD.ntid)
 Where UD.deleted=0
 and UD.Region='(%RG_NAME%)'
@@ -95,6 +96,7 @@ ORDER BY UD.ntid
 EUDL to BB Job Roles
 =======
 SELECT distinct user_data.NTID, user_data.fname AS [First name], user_data.lname AS [Last name],
+	user_data.[mappingTypeBpRoles] AS [Mapping type],
 	user_data.jobTitle As [Job Title],
 	 BpRoleStandard.BpRoleStandardName AS [BB Job Role]
 FROM ((user_data INNER JOIN user_data_mapping_role ON user_data.ntid = user_data_mapping_role.idUserdata) 

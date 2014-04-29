@@ -1,7 +1,8 @@
 End user to DofA
 =======
-SELECT user_data.NTID, user_data.fname AS [First name], 
-		user_data.lname AS [Last name], BpRoleStandard.BpRoleStandardName AS [BB Job Role], 
+SELECT user_data.NTID, user_data.fname AS [First name], user_data.lname AS [Last name], 
+		user_data.[mappingTypeBpRoles] AS [Mapping type],
+		BpRoleStandard.BpRoleStandardName AS [BB Job Role], 
 		user_data.jobTitle As [Job Title],
 		Dofa.DOA_SRM_Au As [DOA SRM Au],
 		Dofa.Employee_G As [Employee G],
@@ -27,7 +28,9 @@ ORDER BY user_data.ntid, BpRoleStandard.BpRoleStandardName
 =========
 Exception report (PO)
 =======
-SELECT user_data.NTID, user_data.fname AS [First name], user_data.lname AS [Last name], BpRoleStandard.BpRoleStandardName AS [BB Job Role], user_data.jobTitle As [Job Title]
+SELECT user_data.NTID, user_data.fname AS [First name], user_data.lname AS [Last name], 
+		user_data.[mappingTypeBpRoles] AS [Mapping type],
+		BpRoleStandard.BpRoleStandardName AS [BB Job Role], user_data.jobTitle As [Job Title]
 FROM ((user_data INNER JOIN user_data_mapping_role ON user_data.ntid = user_data_mapping_role.idUserdata) 
 			INNER JOIN BpRoleStandard ON user_data_mapping_role.idBpRoleStandard = BpRoleStandard.id) 
 		LEFT JOIN Dofa ON user_data.ntid = Dofa.username1
@@ -44,7 +47,9 @@ ORDER BY user_data.ntid, BpRoleStandard.BpRoleStandardName
 =========
 Exception report (IN)
 =======
-SELECT user_data.NTID, user_data.fname AS [First name], user_data.lname AS [Last name], BpRoleStandard.BpRoleStandardName AS [BB Job Role], user_data.jobTitle As [Job Title]
+SELECT user_data.NTID, user_data.fname AS [First name], user_data.lname AS [Last name], 
+		user_data.[mappingTypeBpRoles] AS [Mapping type],
+		BpRoleStandard.BpRoleStandardName AS [BB Job Role], user_data.jobTitle As [Job Title]
 FROM ((user_data INNER JOIN user_data_mapping_role ON user_data.ntid = user_data_mapping_role.idUserdata) 
 			INNER JOIN BpRoleStandard ON user_data_mapping_role.idBpRoleStandard = BpRoleStandard.id) 
 		LEFT JOIN Dofa ON user_data.ntid = Dofa.username1
@@ -61,7 +66,9 @@ ORDER BY user_data.ntid, BpRoleStandard.BpRoleStandardName
 =========
 Exception report (IP)
 =======
-SELECT user_data.NTID, user_data.fname AS [First name], user_data.lname AS [Last name], BpRoleStandard.BpRoleStandardName AS [BB Job Role], user_data.jobTitle As [Job Title]
+SELECT user_data.NTID, user_data.fname AS [First name], user_data.lname AS [Last name], 
+		user_data.[mappingTypeBpRoles] AS [Mapping type],
+		BpRoleStandard.BpRoleStandardName AS [BB Job Role], user_data.jobTitle As [Job Title]
 FROM ((user_data INNER JOIN user_data_mapping_role ON user_data.ntid = user_data_mapping_role.idUserdata) 
 			INNER JOIN BpRoleStandard ON user_data_mapping_role.idBpRoleStandard = BpRoleStandard.id) 
 		LEFT JOIN Dofa ON user_data.ntid = Dofa.username1
@@ -78,7 +85,9 @@ ORDER BY user_data.ntid, BpRoleStandard.BpRoleStandardName
 =========
 Exception report (SA)
 =======
-SELECT user_data.NTID, user_data.fname AS [First name], user_data.lname AS [Last name], BpRoleStandard.BpRoleStandardName AS [BB Job Role], user_data.jobTitle As [Job Title]
+SELECT user_data.NTID, user_data.fname AS [First name], user_data.lname AS [Last name], 	
+		user_data.[mappingTypeBpRoles] AS [Mapping type],
+		BpRoleStandard.BpRoleStandardName AS [BB Job Role], user_data.jobTitle As [Job Title]
 FROM ((user_data INNER JOIN user_data_mapping_role ON user_data.ntid = user_data_mapping_role.idUserdata) 
 			INNER JOIN BpRoleStandard ON user_data_mapping_role.idBpRoleStandard = BpRoleStandard.id) 
 		LEFT JOIN Dofa ON user_data.ntid = Dofa.username1

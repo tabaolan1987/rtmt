@@ -19,7 +19,10 @@ select bpRole.BpRoleStandardName as [Job Role]
 			and UD.SFunction (%CUSTOM_FILTER_NAME%)
 		group by bpRole.BpRoleStandardName
 ===
-select * from (select distinct UD.ntid, (UD.fname+','+UD.lname) As Fullname ,UD.fname,UD.lname,UD.omsSubfunction,tmp_table.[value],
+select * from (select distinct UD.ntid, (UD.fname+','+UD.lname) As Fullname ,
+	UD.fname,UD.lname,UD.omsSubfunction,
+	UD.[mappingTypeBpRoles] AS [Mapping type],
+	tmp_table.[value],
 	Cr.courseArena,rpc.courseId,
 Cr.courseTitle,Cr.courseType,
 Cr.courseDuration,rpc.ps,Cr.courseDelivery

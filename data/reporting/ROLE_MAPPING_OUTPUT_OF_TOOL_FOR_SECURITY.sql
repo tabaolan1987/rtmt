@@ -30,6 +30,7 @@ SELECT distinct
 	'' AS [Performace Unit],
 	[purchasingOrg] AS [Purchasing Org],
 	[siteLocation] AS [Maximo Site Location],
+	[mappingTypeBpRoles] AS [Mapping type],
 	(%MAPPING_FIELDS%)
 FROM (user_data as UD
 inner join tmp_pilot_report_1 as tbl_cached
