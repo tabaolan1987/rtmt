@@ -75,6 +75,10 @@ Public Function Recycle()
 End Function
 
 Public Function SelectedCurriculum() As String
+
+    If Len(mSelectedCurriculum) = 0 Then
+        mSelectedCurriculum = FileHelper.GetCSVFile("Open Curriculumn")
+    End If
     SelectedCurriculum = mSelectedCurriculum
 End Function
 
@@ -83,6 +87,10 @@ Public Function SetSelectedCurriculum(path As String)
 End Function
 
 Public Function SelectedDofa() As String
+    If Len(mSelectedDofa) = 0 Then
+        mSelectedDofa = FileHelper.GetCSVFile("Open Dofa")
+    End If
+
     SelectedDofa = mSelectedDofa
 End Function
 

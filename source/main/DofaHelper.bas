@@ -58,6 +58,8 @@ Public Function ImportDofa()
     Dim l, k As Long
     Dim tmpValue As String
     Dim query As String
+    Dim c As Long
+    c = 0
     With oExcel
             .DisplayAlerts = False
             .Visible = False
@@ -94,6 +96,11 @@ Public Function ImportDofa()
                         query = dbm.CreateRecordQuery(mData, mCols, "dofa")
                         dbm.ExecuteQuery query
                         l = l + 1
+                        c = c + 1
+                        If c > 10 Then
+                            DoEvents
+                            c = 0
+                        End If
                     Loop
                 End With
                 Logger.LogDebug "DofaHelper.ImportDofa", "Close excel file " & mPath
