@@ -169,12 +169,12 @@ Private Function CompareServer()
         query = "select * from [" & mTableName _
                 & "] where CONVERT(DATETIME, CONVERT(VARCHAR(MAX), [timestamp], 120), 120) > '" & StringHelper.EscapeQueryString(mLocalTimestamp) _
                 & "'"
-        If mEnablePrimary Then
-            query = query & " order by [" & Session.EnablePrimarySync.Item(LCase(mTableName)) & "]"
-        End If
     Else
         query = "select * from [" & StringHelper.EscapeQueryString(mTableName) _
             & "] where [deleted]=0"
+    End If
+    If mEnablePrimary Then
+        query = query & " order by [" & Session.EnablePrimarySync.Item(LCase(mTableName)) & "]"
     End If
     Logger.LogDebug "SyncHelper.CompareServer", "Query: " & query
     Set rs = cn.Execute(query)
