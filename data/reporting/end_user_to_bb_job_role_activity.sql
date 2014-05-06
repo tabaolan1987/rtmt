@@ -12,22 +12,21 @@ select distinct UM.idUserdata as [value] from (user_data_mapping_role AS UM inne
 	where UM.idRegion='(%RG_NAME%)' and UM.deleted=0 and U.deleted=0 and U.Region='(%RG_NAME%)' and U.suspend=0
 		and U.SFunction (%CUSTOM_FILTER_NAME%) and UM.idMapping='B'
 ===
-
 select distinct ac.ActivityDetail as [Value]
-from ((((user_data_mapping_role as um
-inner join user_data as ud
-on um.idUserdata = ud.ntid)
+from ((((user_data as ud
+inner join mappingType as mt
+on mt.mapp_name = ud.mappingTypeBpRoles)
 inner join specialism as sp
 on ud.specialism = sp.SpecialismName)
 inner join SpecialismMappingActivity as spAc
 on sp.id = spAc.idSpecialism)
 inner join activity as ac
 on spAc.idActivity = ac.id)
-where um.idUserdata ='(%VALUE%)' and um.idMapping='B'
-and ud.deleted=0 and um.deleted=0 and sp.deleted=0 and spAc.deleted=0
+where mt.id='B'
+and ud.ntid='(%VALUE%)'
+and ud.deleted=0 and sp.deleted=0 and spAc.deleted=0 and mt.deleted=0
 and ud.suspend=0
-and ac.deleted=0 and um.idRegion='(%RG_NAME%)'
-
+and ac.deleted=0 and ud.region='(%RG_NAME%)'
 ===
 SELECT distinct
 	UD.[NTID],
