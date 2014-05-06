@@ -12,7 +12,7 @@
 --	+ New RTMT role DofA
 
 -- SELECT DATABASE 
-USE [upstream_role_mapping]
+USE [upstream_role_mapping_int]
 --				 --
 -- ALTER TABLE --
 --				 --
