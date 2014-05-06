@@ -175,7 +175,7 @@ Public Function GetFieldValue(rs As RecordSet, Name As String) As String
         Next i
         If index <> -1 Then
             If Len(rs.fields(index).value) <> 0 Then
-                GetFieldValue = Trim(rs.fields(index).value)
+                GetFieldValue = rs.fields(index).value
             End If
         End If
     End If

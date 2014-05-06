@@ -262,7 +262,12 @@ Public Function Init(raw As String, Optional mss As SystemSetting, Optional Skip
                             tmpStr = pilotHeader.Item(CStr(v))
                             check = False
                             For Each m In tmpValueCol
-                                If StringHelper.IsEqual(CStr(m), tmpStr, True) Then
+                                Logger.LogDebug "ReportSection.Init", "activity detail: " & StringHelper.TrimNewLine(CStr(m))
+                                Logger.LogDebug "ReportSection.Init", "activity detail: " & StringHelper.TrimNewLine(CStr(tmpStr))
+                                If StringHelper.IsEqual(StringHelper.TrimNewLine(CStr(m)), _
+                                                        StringHelper.TrimNewLine(CStr(tmpStr)), _
+                                                        True) Then
+                                    Logger.LogDebug "ReportSection.Init", " mapped!"
                                     check = True
                                     Exit For
                                 End If

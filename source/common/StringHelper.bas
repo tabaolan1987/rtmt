@@ -193,6 +193,8 @@ Public Function TrimNewLine(str As String) As String
     Dim tmp As String
     tmp = Replace(str, Chr(13) & Chr(10), " ")
     tmp = Replace(tmp, Chr(10) & Chr(13), " ")
+    tmp = Replace(tmp, Chr(10), " ")
+    tmp = Replace(tmp, Chr(13), " ")
     TrimNewLine = Trim(tmp)
 End Function
 
