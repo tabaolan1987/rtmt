@@ -20,7 +20,7 @@ select bpRole.BpRoleStandardName as [Job Role]
 		group by bpRole.BpRoleStandardName
 ===
 select * from (select distinct UD.ntid, (UD.fname+','+UD.lname) As Fullname ,
-	UD.fname,UD.lname,UD.omsSubfunction,
+	UD.fname,UD.lname,UD.SFunction,
 	UD.[mappingTypeBpRoles] AS [Mapping type],
 	tmp_table.[value],
 	Cr.courseArena,rpc.courseId,
