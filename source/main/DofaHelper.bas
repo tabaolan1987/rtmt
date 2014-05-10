@@ -99,6 +99,7 @@ Public Function ImportDofa()
                         query = dbm.CreateRecordQuery(mData, mCols, "dofa")
                         On Error Resume Next
                         Forms("frm_dofa_upload").Painting = False
+                        Forms("frm_Mainboard").Painting = False
                         dbm.ExecuteQuery query
                         
                         l = l + 1

@@ -31,6 +31,9 @@ ADD [mapped_bb_job_roles] VARCHAR(4000)
 GO
 ALTER TABLE [user_data]
 ADD [mapped_qualifications] VARCHAR(4000)
+GO
+ALTER TABLE [dofa]
+ADD [region] VARCHAR(255)
 --				--
 -- UPDATE DATA  --
 --	  			--
