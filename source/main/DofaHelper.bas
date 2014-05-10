@@ -41,8 +41,10 @@ End Function
 
 
 Public Function ImportDofa()
+    DoCmd.Echo False
     dbm.Init
     If Ultilities.IfTableExists("dofa") Then
+        
         dbm.ExecuteQuery "update dofa set deleted=-1 where region='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "' and deleted=0"
     Else
         dbm.ExecuteQuery FileHelper.ReadQuery("dofa", Constants.Q_CREATE)
@@ -63,6 +65,7 @@ Public Function ImportDofa()
             .Visible = False
             Logger.LogDebug "DofaHelper.ImportDofa", "Open excel template: " & mPath
             Set WB = .Workbooks.Open(mPath)
+            
             With WB
                 Logger.LogDebug "DofaHelper.ImportDofa", "Select worksheet: " & mWorksheet
                 Set ws = WB.workSheets(mWorksheet)
@@ -72,6 +75,8 @@ Public Function ImportDofa()
                         .ShowAllData
                     End If
                     l = 2
+                    DoCmd.SetWarnings False
+                    Application.Echo False
                     Do While l < 65000
                         Set rng = .Cells(l, 1)
                         tmpValue = Trim(rng.value)
@@ -87,24 +92,25 @@ Public Function ImportDofa()
                         mData.Add "username2", Trim(.Cells(l, 5).value)
                         mData.Add "DOA_Spend_Limit", Trim(.Cells(l, 6).value)
                         mData.Add "Crcy", Trim(.Cells(l, 7).value)
-                        mData.Add "changeOn", Trim(.Cells(l, 8).value)
+                        mData.Add "changeOn", Trim(.Cells(l, 8).Text)
                         mData.Add "timechange", Trim(.Cells(l, 9).Text)
                         mData.Add "changeby", Trim(.Cells(l, 10).value)
                         mData.Add "region", Session.CurrentUser.FuncRegion.Region
                         query = dbm.CreateRecordQuery(mData, mCols, "dofa")
+                        On Error Resume Next
+                        Forms("frm_dofa_upload").Painting = False
                         dbm.ExecuteQuery query
+                        
                         l = l + 1
-                        c = c + 1
-                        If c > 10 Then
-                            
-                            c = 0
-                        End If
                     Loop
+                    DoCmd.SetWarnings True
+                    Application.Echo True
                 End With
                 Logger.LogDebug "DofaHelper.ImportDofa", "Close excel file " & mPath
             End With
             .Quit
         End With
-    dbm.TableDefsRefresh
+
     dbm.Recycle
+    DoCmd.Echo True
 End Function
