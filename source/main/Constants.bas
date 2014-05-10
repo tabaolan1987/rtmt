@@ -179,6 +179,7 @@ Public Const SYNC_TYPE_MAPPING = 2
 
 ' File
 Public Const FILE_EXTENSION_CONFIG = ".ini"
+Public Const FILE_EXTENSION_CONFIG_MAPPING = ".inim"
 Public Const FILE_EXTENSION_QUERY = ".sql"
 Public Const FILE_EXTENSION_QUERY_MAPPING = ".sqlm"
 Public Const FILE_EXTENSION_TEMPLATE = ".xlsx"

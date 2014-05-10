@@ -676,7 +676,7 @@ Public Function GenerateRoleMapping(rm As ReportMetaData)
     Dim header() As String
     Dim IsUpdate As Boolean
     i = 0
-    Set rpSectsCol = rm.ReportSheets.Item("Role Mapping Report")
+    Set rpSectsCol = rm.ReportSheets.Item(rm.worksheet)
     For Each tmpRps In rpSectsCol
         
         startMappingCol = (tmpRps.HeaderCount - tmpRps.PivotHeaderCount) + rm.StartCol

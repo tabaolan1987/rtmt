@@ -1,0 +1,21 @@
+[General]
+name=End user to backbone job role report
+; The name of work sheet in template to fill data
+workSheet=Role Mapping
+pivotTable=No
+pivotTableName=pivotTable
+pivotWorkSheet=EUDL to BB Job Roles (Pivot)
+[Format]
+skipCheckHeader=No
+
+bulkSize=80
+fillHeader=Yes
+fillCategory=Yes
+startCategoryRow=2
+
+startHeaderRow=3
+startHeaderCol=1
+; The first row number
+startRow=5
+; The first column number. Ex: Column A -> startCol = 1. Column C -> startCol = 3
+startCol=1
