@@ -1,0 +1,1 @@
+If your Dofa file has 40,000 rows, then it takes about 40 minutes to complete uploading.

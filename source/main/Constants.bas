@@ -12,6 +12,8 @@ Public Const END_USER_DATA_CACHE_TABLE_NAME = "user_data_cache"
 ' Help content
 Public Const HELP_FIX_READONLY_PERMISSION = "data\helps\fix-readonly-permission.html"
 
+Public Const HELP_DOFA_PERFORMANCE = "data\helps\dofa-performance.txt"
+
 Public Const HELP_ERROR_EUDL = "data\helps\error-eudl.txt"
 
 Public Const HELP_UPLOAD_EUDL = "data\helps\upload-eudl.txt"
