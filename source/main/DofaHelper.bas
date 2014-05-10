@@ -43,9 +43,7 @@ End Function
 Public Function ImportDofa()
     dbm.Init
     If Ultilities.IfTableExists("dofa") Then
-        Session.UpdateDbFlag (False)
         dbm.ExecuteQuery "update dofa set deleted=-1 where region='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "' and deleted=0"
-        Session.UpdateDbFlag (True)
     Else
         dbm.ExecuteQuery FileHelper.ReadQuery("dofa", Constants.Q_CREATE)
     End If
@@ -90,7 +88,7 @@ Public Function ImportDofa()
                         mData.Add "DOA_Spend_Limit", Trim(.Cells(l, 6).value)
                         mData.Add "Crcy", Trim(.Cells(l, 7).value)
                         mData.Add "changeOn", Trim(.Cells(l, 8).value)
-                        mData.Add "timechange", Trim(.Cells(l, 9).value)
+                        mData.Add "timechange", Trim(.Cells(l, 9).Text)
                         mData.Add "changeby", Trim(.Cells(l, 10).value)
                         mData.Add "region", Session.CurrentUser.FuncRegion.Region
                         query = dbm.CreateRecordQuery(mData, mCols, "dofa")
@@ -98,7 +96,7 @@ Public Function ImportDofa()
                         l = l + 1
                         c = c + 1
                         If c > 10 Then
-                            DoEvents
+                            
                             c = 0
                         End If
                     Loop
