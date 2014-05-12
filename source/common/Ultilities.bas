@@ -310,7 +310,7 @@ Function GetTables(SyncTables() As String)
     prop As SystemSetting, _
             isEmpty As Boolean, _
             stTable As String
-    Dim Sh As SyncHelper
+    Dim sh As SyncHelper
     
     isEmpty = Ultilities.IsVarArrayEmpty(SyncTables)
     If Not isEmpty Then
@@ -318,10 +318,10 @@ Function GetTables(SyncTables() As String)
         dbm.RecycleTableName Constants.TABLE_SYNC_CONFLICT
         For i = LBound(SyncTables) To UBound(SyncTables)
             stTable = Trim(SyncTables(i))
-            Set Sh = New SyncHelper
-            Sh.Init stTable
-            Sh.sync
-            Sh.Recycle
+            Set sh = New SyncHelper
+            sh.Init stTable
+            sh.sync
+            sh.Recycle
         Next i
     End If
 OnExit:

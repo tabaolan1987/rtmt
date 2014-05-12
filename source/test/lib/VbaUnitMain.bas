@@ -2,15 +2,15 @@ Option Explicit
 
 Public Sub OnTest()
    ' Run
-   ' Dim sh As New SyncHelper
-   ' sh.Init "user_data"
-   ' sh.sync
-   ' sh.Recycle
-   Dim rpm As New ReportMetaData
-   rpm.Init "end_user_to_dofa"
+    Dim sh As New SyncHelper
+    sh.Init "dofa"
+    sh.sync
+    sh.Recycle
+   'Dim rpm As New ReportMetaData
+   'rpm.Init "end_user_to_dofa"
    
-   Reporting.GenerateReport rpm
-   rpm.OpenReport
+   'Reporting.GenerateReport rpm
+   'rpm.OpenReport
 End Sub
 
 Public Sub Run(Optional TestClassName As String)

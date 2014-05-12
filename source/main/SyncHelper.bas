@@ -269,8 +269,11 @@ Private Function CompareServer()
             Set rst = qdf.OpenRecordSet
             If StringHelper.IsEqual(mTableName, "user_data_mapping_role", True) _
                 Or StringHelper.IsEqual(mTableName, "dofa", True) Then
+                Logger.LogDebug "SyncHelper.CompareServer", "check deleted status: " & tmpDeleted
                 If StringHelper.IsEqual(tmpDeleted, "false", True) Then
                     query = dbm.CreateRecordQuery(tmpData, mHeaders, mTableName, mFieldTypes, False)
+                Else
+                    query = ""
                 End If
             ElseIf Not (rst.EOF And rst.BOF) Then
                 If mEnablePrimary Then
@@ -282,21 +285,23 @@ Private Function CompareServer()
             Else
                 query = dbm.CreateRecordQuery(tmpData, mHeaders, mTableName, mFieldTypes, False)
             End If
-            Logger.LogDebug "SyncHelper.CompareServer", "Post execute query: " & query
-            qdf.Close
-            Set qdf = Nothing
-            rst.Close
-            Set rst = Nothing
-            
-            Set qdf = dbs.CreateQueryDef("", query)
-            qdf.Execute
-            qdf.Close
-            Set qdf = Nothing
-            Set qdf = dbs.CreateQueryDef("", "delete from [ChangeLog] where [TableName]='" & StringHelper.EscapeQueryString(mTableName) _
-                                            & "' and [TableId]='" & StringHelper.EscapeQueryString(tmpId) & "'")
-            qdf.Execute
-            qdf.Close
-            Set qdf = Nothing
+            If Len(query) > 0 Then
+                Logger.LogDebug "SyncHelper.CompareServer", "Post execute query: " & query
+                qdf.Close
+                Set qdf = Nothing
+                rst.Close
+                Set rst = Nothing
+                
+                Set qdf = dbs.CreateQueryDef("", query)
+                qdf.Execute
+                qdf.Close
+                Set qdf = Nothing
+                Set qdf = dbs.CreateQueryDef("", "delete from [ChangeLog] where [TableName]='" & StringHelper.EscapeQueryString(mTableName) _
+                                                & "' and [TableId]='" & StringHelper.EscapeQueryString(tmpId) & "'")
+                qdf.Execute
+                qdf.Close
+                Set qdf = Nothing
+            End If
             rs.MoveNext
         Loop
     End If
@@ -431,20 +436,19 @@ Private Function PushLocalChange()
     adCol.Add "prev_value"
     adCol.Add "new_value"
     adCol.Add "table_name"
-    
+    Dim v1 As String
+    Dim v2 As String
+    Set qBatch = New Collection
+    Dim needUpdate As Boolean
     mFilter = GetChangeLogFilter
+    cn.Open mConnString
     If Not StringHelper.IsEqual(mTableName, "dofa", True) Then
         query = "select * from [" & mTableName & "] where [id] in (" & mFilter & ")"
         If mEnableRegion Then
             query = query & " and [" & Session.SyncByRegion.Item(LCase(mTableName)) & "] = '" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "'"
         End If
         Logger.LogDebug "SyncHelper.PushLocalChange", "List changed data query: " & query
-        cn.Open mConnString
         Set rs = cn.Execute(query)
-        Dim v1 As String
-        Dim v2 As String
-        Set qBatch = New Collection
-        Dim needUpdate As Boolean
         If Not (rs.EOF And rs.BOF) Then
             rs.MoveFirst
             Logger.LogDebug "SyncHelper.PushLocalChange", "Found record in server"
@@ -585,6 +589,7 @@ Private Function PushLocalChange()
     Set qdf = Nothing
     rst.Close
     Set rst = Nothing
+    
     cn.BeginTrans
     Logger.LogDebug "SyncHelper.PushLocalChange", "Start push data to central"
     If Len(deletedDofa) > 0 And Not mDeletedDofa Then
