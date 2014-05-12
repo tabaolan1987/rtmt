@@ -123,8 +123,8 @@ Private Function GetLocalTimestamp()
     Dim query As String
     
     query = "select top 1 [timestamp] from [" & mTableName & "]"
-    If mEnablePrimary Then
-        
+    If mEnableRegion Then
+        query = query & " where [" & Session.SyncByRegion.Item(LCase(mTableName)) & "] = '" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "'"
     End If
     query = query & " order by [timestamp] desc"
     
@@ -171,7 +171,6 @@ Private Function CompareServer()
         query = "select * from [" & mTableName _
                 & "] where CONVERT(DATETIME, CONVERT(VARCHAR(MAX), [timestamp], 120), 120) > '" & StringHelper.EscapeQueryString(mLocalTimestamp) _
                 & "'"
-        
     Else
         query = "select * from [" & StringHelper.EscapeQueryString(mTableName) _
             & "] where [deleted]=0"
