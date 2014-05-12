@@ -23,7 +23,7 @@ Private dbm As DbManager
 Private mUncompleteId As Scripting.Dictionary
 Private mEnablePrimary As Boolean
 Private mEnableRegion As Boolean
-
+Private mDeletedDofa As Boolean
 Private mIdPull As Scripting.Dictionary
 
 Public Function Init(tblName As String)
@@ -32,7 +32,7 @@ Public Function Init(tblName As String)
     Else
         mEnablePrimary = False
     End If
-    
+    mDeletedDofa = False
     If Session.SyncByRegion.Exists(LCase(tblName)) Then
         mEnableRegion = True
     Else
@@ -161,6 +161,8 @@ Private Function CompareServer()
     Dim v As Variant
     Dim queryDelete As String
     Dim tmpDeleted As String
+    Dim deletedDofa As Boolean
+    deletedDofa = False
     cn.Open mConnString
     'cn.BeginTrans
 
@@ -169,9 +171,13 @@ Private Function CompareServer()
         query = "select * from [" & mTableName _
                 & "] where CONVERT(DATETIME, CONVERT(VARCHAR(MAX), [timestamp], 120), 120) > '" & StringHelper.EscapeQueryString(mLocalTimestamp) _
                 & "'"
+        
     Else
         query = "select * from [" & StringHelper.EscapeQueryString(mTableName) _
             & "] where [deleted]=0"
+    End If
+    If mEnableRegion Then
+        query = query & " and [" & Session.SyncByRegion.Item(LCase(mTableName)) & "] = '" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "'"
     End If
     If mEnablePrimary Then
         query = query & " order by [" & Session.EnablePrimarySync.Item(LCase(mTableName)) & "]"
@@ -248,12 +254,24 @@ Private Function CompareServer()
                         Set qdf = Nothing
                     End If
             End If
-            
+            If StringHelper.IsEqual(mTableName, "dofa", True) And Not deletedDofa Then
+                Set qdf = dbs.CreateQueryDef("", "delete from dofa where [" _
+                                    & Session.SyncByRegion.Item(LCase(mTableName)) _
+                                    & "] = '" _
+                                    & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) _
+                                    & "'")
+                qdf.Execute
+                qdf.Close
+                deletedDofa = True
+            End If
             Logger.LogDebug "SyncHelper.CompareServer", "Check table " & mTableName & " id " & tmpId & ". Query: " & query
             Set qdf = dbs.CreateQueryDef("", query)
             Set rst = qdf.OpenRecordSet
-            If StringHelper.IsEqual(mTableName, "user_data_mapping_role", True) Then
-                query = dbm.CreateRecordQuery(tmpData, mHeaders, mTableName, mFieldTypes, False)
+            If StringHelper.IsEqual(mTableName, "user_data_mapping_role", True) _
+                Or StringHelper.IsEqual(mTableName, "dofa", True) Then
+                If StringHelper.IsEqual(tmpDeleted, "false", True) Then
+                    query = dbm.CreateRecordQuery(tmpData, mHeaders, mTableName, mFieldTypes, False)
+                End If
             ElseIf Not (rst.EOF And rst.BOF) Then
                 If mEnablePrimary Then
                     tmpLocalId = dbm.GetFieldValue(rst, "id")
@@ -415,110 +433,111 @@ Private Function PushLocalChange()
     adCol.Add "table_name"
     
     mFilter = GetChangeLogFilter
-    query = "select * from [" & mTableName & "] where [id] in (" & mFilter & ")"
-    Logger.LogDebug "SyncHelper.PushLocalChange", "List changed data query: " & query
-    cn.Open mConnString
-    Set rs = cn.Execute(query)
-    Dim v1 As String
-    Dim v2 As String
-    Set qBatch = New Collection
-    Dim needUpdate As Boolean
-    If Not (rs.EOF And rs.BOF) Then
-        rs.MoveFirst
-        Logger.LogDebug "SyncHelper.PushLocalChange", "Found record in server"
-        Do Until rs.EOF = True
-            tmpId = rs("id")
-            tmpTs = rs("timestamp")
-            If Not idOnServer.Exists(tmpId) Then
-                idOnServer.Add LCase(tmpId), tmpTs
-            End If
-            
-            Set qdf = dbs.CreateQueryDef("", "select * from [" & mTableName & "] where [id]='" & StringHelper.EscapeQueryString(tmpId) & "'")
-            Set rst = qdf.OpenRecordSet
-            If Not (rst.EOF And rst.BOF) Then
-                Set tmpData = New Scripting.Dictionary
-                rst.MoveFirst
-                needUpdate = False
-                For Each v In mHeaders
-                    If Not tmpData.Exists(CStr(v)) Then
-                        tmpData.Add CStr(v), dbm.GetFieldValue(rst, CStr(v))
-                    End If
-                    
-                    If Not StringHelper.IsEqual(CStr(v), "id", True) _
-                         And Not StringHelper.IsEqual(CStr(v), "timestamp", True) Then
-                    
-                        If IsNull(rs(CStr(v))) Then
-                            v1 = ""
-                        Else
-                            v1 = Trim(rs(CStr(v)))
-                        End If
-                        v2 = Trim(dbm.GetFieldValue(rst, CStr(v)))
-                        Logger.LogDebug "SyncHelper.PushLocalChange", "Compare column " & CStr(v) & ". Local: " & v2 & ". Server: " & v1
-                        If Not StringHelper.IsEqual(v1, v2, True) Then
-                            needUpdate = True
-                            'Set adData = New Scripting.Dictionary
-                            'adData.Add "id", StringHelper.GetGUID
-                            'adData.Add "ntid", Session.CurrentUser.ntid
-                            'adData.Add "idFunction", Session.CurrentUser.FuncRegion.Region
-                            'adData.Add "userAction", "Update central store record"
-                            'adData.Add "description", "update [" & mTableName & "] set [" & CStr(v) _
-                                    & "]='" & StringHelper.EscapeQueryString(v2) & "', [timestamp]=getdate() where [id]='" _
-                                    & StringHelper.EscapeQueryString(tmpId) & "'"
-                            'adData.Add "data_fields", CStr(v)
-                            'adData.Add "prev_value", v1
-                            'adData.Add "new_value", v2
-                            'adData.Add "table_name", mTableName
-                            'query = dbm.CreateRecordQuery(adData, adCol, "audit_logs", IsServer:=True)
-                            'qBatch.Add query
-                        End If
-                    End If
-                Next v
-                If needUpdate Then
-                    query = dbm.UpdateRecordQuery(tmpData, mHeaders, mTableName, mFieldTypes, True)
-                    Set adData = New Scripting.Dictionary
-                    adData.Add "id", StringHelper.GetGUID
-                    adData.Add "ntid", Session.CurrentUser.ntid
-                    adData.Add "idFunction", Session.CurrentUser.FuncRegion.Region
-                    adData.Add "userAction", "Update central store record"
-                    adData.Add "description", query
-                    adData.Add "data_fields", ""
-                    adData.Add "prev_value", ""
-                    adData.Add "new_value", ""
-                    adData.Add "table_name", mTableName
-                    query = dbm.CreateRecordQuery(adData, adCol, "audit_logs", IsServer:=True)
-                    qBatch.Add query
+    If Not StringHelper.IsEqual(mTableName, "dofa", True) Then
+        query = "select * from [" & mTableName & "] where [id] in (" & mFilter & ")"
+        If mEnableRegion Then
+            query = query & " and [" & Session.SyncByRegion.Item(LCase(mTableName)) & "] = '" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "'"
+        End If
+        Logger.LogDebug "SyncHelper.PushLocalChange", "List changed data query: " & query
+        cn.Open mConnString
+        Set rs = cn.Execute(query)
+        Dim v1 As String
+        Dim v2 As String
+        Set qBatch = New Collection
+        Dim needUpdate As Boolean
+        If Not (rs.EOF And rs.BOF) Then
+            rs.MoveFirst
+            Logger.LogDebug "SyncHelper.PushLocalChange", "Found record in server"
+            Do Until rs.EOF = True
+                tmpId = rs("id")
+                tmpTs = rs("timestamp")
+                If Not idOnServer.Exists(tmpId) Then
+                    idOnServer.Add LCase(tmpId), tmpTs
                 End If
-                If Not mIdTs.Exists(tmpId) Then
-                    mIdTs.Add tmpId, tmpId
+                
+                Set qdf = dbs.CreateQueryDef("", "select * from [" & mTableName & "] where [id]='" & StringHelper.EscapeQueryString(tmpId) & "'")
+                Set rst = qdf.OpenRecordSet
+                If Not (rst.EOF And rst.BOF) Then
+                    Set tmpData = New Scripting.Dictionary
+                    rst.MoveFirst
+                    needUpdate = False
+                    For Each v In mHeaders
+                        If Not tmpData.Exists(CStr(v)) Then
+                            tmpData.Add CStr(v), dbm.GetFieldValue(rst, CStr(v))
+                        End If
+                        
+                        If Not StringHelper.IsEqual(CStr(v), "id", True) _
+                             And Not StringHelper.IsEqual(CStr(v), "timestamp", True) Then
+                        
+                            If IsNull(rs(CStr(v))) Then
+                                v1 = ""
+                            Else
+                                v1 = Trim(rs(CStr(v)))
+                            End If
+                            v2 = Trim(dbm.GetFieldValue(rst, CStr(v)))
+                            Logger.LogDebug "SyncHelper.PushLocalChange", "Compare column " & CStr(v) & ". Local: " & v2 & ". Server: " & v1
+                            If Not StringHelper.IsEqual(v1, v2, True) Then
+                                needUpdate = True
+                            End If
+                        End If
+                    Next v
+                    If needUpdate Then
+                        query = dbm.UpdateRecordQuery(tmpData, mHeaders, mTableName, mFieldTypes, True)
+                        Set adData = New Scripting.Dictionary
+                        adData.Add "id", StringHelper.GetGUID
+                        adData.Add "ntid", Session.CurrentUser.ntid
+                        adData.Add "idFunction", Session.CurrentUser.FuncRegion.Region
+                        adData.Add "userAction", "Update central store record"
+                        adData.Add "description", query
+                        adData.Add "data_fields", ""
+                        adData.Add "prev_value", ""
+                        adData.Add "new_value", ""
+                        adData.Add "table_name", mTableName
+                        query = dbm.CreateRecordQuery(adData, adCol, "audit_logs", IsServer:=True)
+                        qBatch.Add query
+                    End If
+                    If Not mIdTs.Exists(tmpId) Then
+                        mIdTs.Add tmpId, tmpId
+                    End If
+                    RemoveChangeLog tmpId
                 End If
-                RemoveChangeLog tmpId
-            End If
-            qdf.Close
-            Set qdf = Nothing
-            rst.Close
-            Set rst = Nothing
-            rs.MoveNext
-        Loop
+                qdf.Close
+                Set qdf = Nothing
+                rst.Close
+                Set rst = Nothing
+                rs.MoveNext
+            Loop
+        End If
+        rs.Close
+        Set rs = Nothing
     End If
-    rs.Close
-    Set rs = Nothing
-    'Logger.LogDebug "SyncHelper.PushLocalChange", "Start push data to central"
-    'If qBatch.count > 0 Then
-    '    For Each v In qBatch
-    '        query = CStr(v)
-    '        Logger.LogDebug "SyncHelper.PushLocalChange", "Execute query: " & query
-    '        cn.Execute query
-    '    Next v
-    'End If
-    'Set qBatch = New Collection
     mFilter = GetChangeLogFilter
     
     query = "select * from [" & mTableName & "] where [id] in (" & mFilter & ")"
+    If mEnableRegion Then
+        query = query & " and [" & Session.SyncByRegion.Item(LCase(mTableName)) & "] = '" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "'"
+    End If
     Set qdf = dbs.CreateQueryDef("", query)
     Set rst = qdf.OpenRecordSet
     Logger.LogDebug "SyncHelper.PushLocalChange", "Check for new record"
     Dim tmpDeleted As String
+    Dim deletedDofa As String
+    deletedDofa = ""
     If Not (rst.EOF And rst.BOF) Then
+        If StringHelper.IsEqual(mTableName, "dofa", True) Then
+            Set adData = New Scripting.Dictionary
+            adData.Add "id", StringHelper.GetGUID
+            adData.Add "ntid", Session.CurrentUser.ntid
+            adData.Add "idFunction", Session.CurrentUser.FuncRegion.Region
+            adData.Add "userAction", "Recycle DofA data"
+            adData.Add "description", query
+            adData.Add "data_fields", ""
+            adData.Add "prev_value", ""
+            adData.Add "new_value", ""
+            adData.Add "table_name", mTableName
+            query = "update dofa set deleted=1, timestamp=getdate() where [" & Session.SyncByRegion.Item(LCase(mTableName)) & "] = '" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "' and deleted=0"
+            deletedDofa = query
+        End If
         rst.MoveFirst
         Do Until rst.EOF = True
             tmpTs = Trim(dbm.GetFieldValue(rst, "timestamp"))
@@ -568,6 +587,10 @@ Private Function PushLocalChange()
     Set rst = Nothing
     cn.BeginTrans
     Logger.LogDebug "SyncHelper.PushLocalChange", "Start push data to central"
+    If Len(deletedDofa) > 0 And Not mDeletedDofa Then
+        cn.Execute deletedDofa
+        mDeletedDofa = True
+    End If
     If qBatch.count > 0 Then
         For Each v In qBatch
             query = CStr(v)
@@ -583,7 +606,7 @@ OnExit:
     Exit Function
 OnError:
     cn.RollbackTrans
-    Logger.LogError "SyncHelper.PushLocalChange", "Could not pust local change " & mTableName, Err
+    Logger.LogError "SyncHelper.PushLocalChange", "Could not push local change " & mTableName, Err
     Resume OnExit
 End Function
 
