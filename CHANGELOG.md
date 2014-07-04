@@ -1,6 +1,18 @@
 CHANGELOG (notable new features or fixes)
 ---------
 
+###<a href='https://cmgcode.atlassian.net/browse/DURM/fixforversion/12200'>Version 0.2.4</a>
+Released on: 04/07/2014
+
+- Change upload Dofa function to Global
+
+<h5>        Task
+</h5>
+<ul>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-346'>DURM-346</a>] -         Implement change request: Dofa changing from region to global
+</li>
+</ul>
+
 ###<a href='https://cmgcode.atlassian.net/browse/DURM/fixforversion/12002'>Version 0.2.3</a>
 Released on: 24/04/2014
 
