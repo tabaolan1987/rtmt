@@ -36,7 +36,7 @@ Public Function Init(Optional path As String, Optional worksheet As String)
     mCols.Add "changeOn"
     mCols.Add "timechange"
     mCols.Add "changeby"
-    mCols.Add "region"
+    'mCols.Add "region"
 End Function
 
 
@@ -45,7 +45,8 @@ Public Function ImportDofa()
     dbm.Init
     If Ultilities.IfTableExists("dofa") Then
         Session.UpdateDbFlag (False)
-        dbm.ExecuteQuery "update dofa set deleted=-1 where region='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "' and deleted=0"
+        'dbm.ExecuteQuery "update dofa set deleted=-1 where region='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "' and deleted=0"
+        dbm.ExecuteQuery "update dofa set deleted=-1 where deleted=0"
         Session.UpdateDbFlag (True)
     Else
         dbm.ExecuteQuery FileHelper.ReadQuery("dofa", Constants.Q_CREATE)
@@ -96,7 +97,7 @@ Public Function ImportDofa()
                         mData.Add "changeOn", Trim(.Cells(l, 8).Text)
                         mData.Add "timechange", Trim(.Cells(l, 9).Text)
                         mData.Add "changeby", Trim(.Cells(l, 10).value)
-                        mData.Add "region", Session.CurrentUser.FuncRegion.Region
+                        'mData.Add "region", Session.CurrentUser.FuncRegion.Region
                         query = dbm.CreateRecordQuery(mData, mCols, "dofa")
                         On Error Resume Next
                         Forms("frm_dofa_upload").Painting = False

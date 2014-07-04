@@ -1,5 +1,6 @@
 package com.cmg.hipspot.util;
 
+import com.cmg.hipspot.data.ContactModel;
 import com.cmg.hipspot.data.jdo.FeedbackModel;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -23,6 +24,24 @@ public class MailUtil {
         temp.append("<p style=\"color:#666; font-family: arial; font-size:10pt;\">Step to get error : "+model.getStepError()+" </p>\n");
         temp.append("<p style=\"color:#666; font-family: arial; font-size:10pt;\">Kind regards,<br />\n" +
                 "FeedBack Support</p>");
+        String body = temp.toString();
+        logger.info("body : " + body);
+        return body;
+    }
+
+    public static String getBodyContactMail(ContactModel model) {
+        StringBuffer temp = new StringBuffer();
+        temp.append("<p style=\"color:#666; font-family: arial; font-size:10pt;\">Dear all,</p>\n");
+        temp.append("<p style=\"color:#666; font-family: arial; font-size:10pt;\">There is a contact information from C-MG website :  </p>\n");
+        temp.append("<p style=\"color:#666; font-family: arial; font-size:10pt;\">Email : "+model.getEmail()+" </p>\n");
+        temp.append("<p style=\"color:#666; font-family: arial; font-size:10pt;\">First name : "+model.getFirstName()+" </p>\n");
+        temp.append("<p style=\"color:#666; font-family: arial; font-size:10pt;\">Last name : "+model.getLastName()+" </p>\n");
+        temp.append("<p style=\"color:#666; font-family: arial; font-size:10pt;\">Message : "+model.getMessage() +"</p>\n");
+        temp.append("<p style=\"color:#666; font-family: arial; font-size:10pt;\">Happy to keep update with C-MG developments : "+ (model.isHappy() ? "Yes" : "No") +" </p>\n");
+        temp.append("<p style=\"color:#666; font-family: arial; font-size:10pt;\">Interested in becoming a C-MG member : "+ (model.isMember() ? "Yes" : "No") +" </p>\n");
+
+        temp.append("<p style=\"color:#666; font-family: arial; font-size:10pt;\">Kind regards,<br />\n" +
+                "Contact Support</p>");
         String body = temp.toString();
         logger.info("body : " + body);
         return body;

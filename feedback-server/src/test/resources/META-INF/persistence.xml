@@ -24,7 +24,7 @@
 				value="hsql"/ -->
 
 			<!-- ENABLE THESE FOR MySQL/MariaDB -->
-			<property name="javax.jdo.option.ConnectionURL" value="jdbc:mysql://192.168.1.111:3306/feedback?useServerPrepStmts=false" />
+			<property name="javax.jdo.option.ConnectionURL" value="jdbc:mysql://127.0.0.1:3306/feedback?useServerPrepStmts=false" />
 			<property name="javax.jdo.option.ConnectionDriverName"
 				value="com.mysql.jdbc.Driver" />
 			<property name="javax.jdo.option.ConnectionUserName" value="admin" />

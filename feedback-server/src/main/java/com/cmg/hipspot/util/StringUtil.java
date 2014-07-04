@@ -1,5 +1,7 @@
 package com.cmg.hipspot.util;
 
+import java.util.ArrayList;
+
 /**
  * Created by lantb on 2014-04-21.
  */

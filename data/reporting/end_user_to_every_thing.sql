@@ -122,7 +122,6 @@ and user_data_mapping_role.idRegion='(%RG_NAME%)'
 and ((Dofa.deleted IS NULL) OR Dofa.deleted=0)
 and BpRoleStandard.deleted=0
 and ((Dofa.[DOA_SRM_Au] IS NULL) or BpRoleStandard.Dofa_Type = Dofa.[DOA_SRM_Au])
-and ((Dofa.region IS NULL) or Dofa.region='(%RG_NAME%)')
 and user_data.deleted=0
 and user_data.Region='(%RG_NAME%)'
 and user_data.suspend=0

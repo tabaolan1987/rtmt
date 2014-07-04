@@ -386,7 +386,7 @@
 		<profile>
 			<id>env-int</id>
 			<properties>
-			     <project.root.folder.dir>/var/www/webdav/mobile/root</project.root.folder.dir>
+			    <project.root.folder.dir>/var/www/webdav/mobile/root</project.root.folder.dir>
 			    <project.temp.folder.dir>/var/www/webdav/mobile/feedback</project.temp.folder.dir>
 				<logging.file>/var/www/webdav/hipspot/log/loging.log</logging.file>
 				<project.dir>/var/www/webdav/mobile</project.dir>
@@ -394,7 +394,7 @@
 				<javax.jdo.option.ConnectionURL>jdbc:mysql://127.0.0.1:3306/feedback?useServerPrepStmts=false</javax.jdo.option.ConnectionURL>
 				<javax.jdo.option.ConnectionUserName>admin</javax.jdo.option.ConnectionUserName>
 				<javax.jdo.option.ConnectionPassword>admincmg@3f</javax.jdo.option.ConnectionPassword>
-			
+
 			</properties>
 		</profile>
 	</profiles>

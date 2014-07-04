@@ -254,11 +254,12 @@ Private Function CompareServer()
                     End If
             End If
             If StringHelper.IsEqual(mTableName, "dofa", True) And Not deletedDofa Then
-                Set qdf = dbs.CreateQueryDef("", "delete from dofa where [" _
+                'Set qdf = dbs.CreateQueryDef("", "delete from dofa where [" _
                                     & Session.SyncByRegion.Item(LCase(mTableName)) _
                                     & "] = '" _
                                     & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) _
                                     & "'")
+                Set qdf = dbs.CreateQueryDef("", "delete from dofa")
                 qdf.Execute
                 qdf.Close
                 deletedDofa = True
@@ -538,7 +539,8 @@ Private Function PushLocalChange()
             adData.Add "prev_value", ""
             adData.Add "new_value", ""
             adData.Add "table_name", mTableName
-            query = "update dofa set deleted=1, timestamp=getdate() where [" & Session.SyncByRegion.Item(LCase(mTableName)) & "] = '" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "' and deleted=0"
+            'query = "update dofa set deleted=1, timestamp=getdate() where [" & Session.SyncByRegion.Item(LCase(mTableName)) & "] = '" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "' and deleted=0"
+            query = "update dofa set deleted=1, timestamp=getdate() where deleted=0"
             deletedDofa = query
         End If
         rst.MoveFirst

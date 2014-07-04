@@ -19,7 +19,6 @@ WHERE BpRoleStandard.Dofa_Type = Dofa.[DOA_SRM_Au]
 and user_data_mapping_role.deleted=0
 and user_data_mapping_role.idRegion='(%RG_NAME%)'
 and Dofa.deleted=0
-and Dofa.region='(%RG_NAME%)'
 and BpRoleStandard.deleted=0
 and user_data.deleted=0
 and user_data.Region='(%RG_NAME%)'
@@ -38,7 +37,7 @@ FROM ((user_data INNER JOIN user_data_mapping_role ON user_data.ntid = user_data
 WHERE BpRoleStandard.Dofa_Type='PO' AND Dofa.[DOA_Spend_Limit] Is Null
 and user_data_mapping_role.deleted=0
 and user_data_mapping_role.idRegion='(%RG_NAME%)'
-and ((Dofa.deleted=0 and Dofa.region='(%RG_NAME%)') or Dofa.deleted is null)
+and (Dofa.deleted=0 or Dofa.deleted is null)
 and BpRoleStandard.deleted=0
 and user_data.deleted=0
 and user_data.Region='(%RG_NAME%)'
@@ -57,7 +56,7 @@ FROM ((user_data INNER JOIN user_data_mapping_role ON user_data.ntid = user_data
 WHERE BpRoleStandard.Dofa_Type='IN' AND Dofa.[DOA_Spend_Limit] Is Null
 and user_data_mapping_role.deleted=0
 and user_data_mapping_role.idRegion='(%RG_NAME%)'
-and ((Dofa.deleted=0 and Dofa.region='(%RG_NAME%)') or Dofa.deleted is null)
+and (Dofa.deleted=0 or Dofa.deleted is null)
 and BpRoleStandard.deleted=0
 and user_data.deleted=0
 and user_data.Region='(%RG_NAME%)'
@@ -76,7 +75,7 @@ FROM ((user_data INNER JOIN user_data_mapping_role ON user_data.ntid = user_data
 WHERE BpRoleStandard.Dofa_Type='IP' AND Dofa.[DOA_Spend_Limit] Is Null
 and user_data_mapping_role.deleted=0
 and user_data_mapping_role.idRegion='(%RG_NAME%)'
-and ((Dofa.deleted=0 and Dofa.region='(%RG_NAME%)') or Dofa.deleted is null)
+and (Dofa.deleted=0 or (Dofa.deleted is null))
 and BpRoleStandard.deleted=0
 and user_data.deleted=0
 and user_data.Region='(%RG_NAME%)'
@@ -95,7 +94,7 @@ FROM ((user_data INNER JOIN user_data_mapping_role ON user_data.ntid = user_data
 WHERE BpRoleStandard.Dofa_Type='SA' AND Dofa.[DOA_Spend_Limit] Is Null
 and user_data_mapping_role.deleted=0
 and user_data_mapping_role.idRegion='(%RG_NAME%)'
-and ((Dofa.deleted=0 and Dofa.region='(%RG_NAME%)') or Dofa.deleted is null)
+and (Dofa.deleted=0 or (Dofa.deleted is null))
 and BpRoleStandard.deleted=0
 and user_data.deleted=0
 and user_data.Region='(%RG_NAME%)'
