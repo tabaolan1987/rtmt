@@ -45,8 +45,8 @@ Public Function ImportDofa()
     dbm.Init
     If Ultilities.IfTableExists("dofa") Then
         Session.UpdateDbFlag (False)
-        'dbm.ExecuteQuery "update dofa set deleted=-1 where region='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "' and deleted=0"
-        dbm.ExecuteQuery "update dofa set deleted=-1 where deleted=0"
+        dbm.ExecuteQuery "update dofa set deleted=-1 where region='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "' and deleted=0"
+        'dbm.ExecuteQuery "delete from dofa"
         Session.UpdateDbFlag (True)
     Else
         dbm.ExecuteQuery FileHelper.ReadQuery("dofa", Constants.Q_CREATE)

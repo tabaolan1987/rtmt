@@ -596,6 +596,8 @@ Private Function PushLocalChange()
     If Len(deletedDofa) > 0 And Not mDeletedDofa Then
         cn.Execute deletedDofa
         mDeletedDofa = True
+        dbm.Init
+        dbm.ExecuteQuery "delete from dofa where deleted=-1"
     End If
     If qBatch.count > 0 Then
         For Each v In qBatch
