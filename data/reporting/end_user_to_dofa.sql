@@ -16,11 +16,11 @@ FROM ((user_data INNER JOIN user_data_mapping_role ON user_data.ntid = user_data
 			INNER JOIN BpRoleStandard ON user_data_mapping_role.idBpRoleStandard = BpRoleStandard.id) 
 		INNER JOIN Dofa ON user_data.ntid = Dofa.username1
 WHERE BpRoleStandard.Dofa_Type = Dofa.[DOA_SRM_Au]
-and user_data_mapping_role.deleted=0
 and user_data_mapping_role.idRegion='(%RG_NAME%)'
 and Dofa.deleted=0
 and BpRoleStandard.deleted=0
 and user_data.deleted=0
+and user_data_mapping_role.deleted=0
 and user_data.Region='(%RG_NAME%)'
 and user_data.suspend=0
 and user_data.SFunction (%CUSTOM_FILTER_NAME%)
