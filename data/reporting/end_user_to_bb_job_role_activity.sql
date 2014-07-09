@@ -26,7 +26,7 @@ where mt.id='B'
 and ud.ntid='(%VALUE%)'
 and ud.deleted=0 and sp.deleted=0 and spAc.deleted=0 and mt.deleted=0
 and ud.suspend=0
-and ac.deleted=0 and ud.region='(%RG_NAME%)'
+and ac.deleted=0 and ud.region='(%RG_NAME%)' and spAc.idRegion='(%RG_NAME%)'
 ===
 SELECT distinct
 	UD.[NTID],
