@@ -7,9 +7,9 @@ tmp_pilot_report_5
 		where deleted=0 
 	) order by col1
 ===
-select distinct UM.ntid as [value] from (user_data_mapping_qualification AS UM inner join user_data AS U
-					on U.ntid = UM.ntid)
-	where UM.idRegion='(%RG_NAME%)' and UM.deleted=0 and U.deleted=0 and U.Region='(%RG_NAME%)' and U.suspend=0
+select distinct UM.ntid as [value] from ((user_data_mapping_qualification AS UM inner join user_data AS U
+					on U.ntid = UM.ntid) inner join Qualifications as Q on Q.id = UM.idQuali)
+	where UM.idRegion='(%RG_NAME%)' and UM.deleted=0 and U.deleted=0 and U.Region='(%RG_NAME%)' and U.suspend=0 and Q.deleted=0
 		and U.SFunction (%CUSTOM_FILTER_NAME%)
 ===
 

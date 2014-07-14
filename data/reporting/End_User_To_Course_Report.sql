@@ -2,9 +2,9 @@ COURSE REPORT
 =======
 tmp_table_report
 ===
-select distinct UM.idUserdata as [value] from (user_data_mapping_role AS UM inner join user_data AS U
-					on U.ntid = UM.idUserdata)
-	where UM.idRegion='(%RG_NAME%)' and UM.deleted=0 and U.deleted=0 and U.Region='(%RG_NAME%)' and U.suspend=0
+select distinct UM.idUserdata as [value] from ((user_data_mapping_role AS UM inner join user_data AS U
+					on U.ntid = UM.idUserdata) inner join BpRoleStandard AS B on B.id = UM.idBpRoleStandard)
+	where UM.idRegion='(%RG_NAME%)' and UM.deleted=0 and U.deleted=0 and U.Region='(%RG_NAME%)' and U.suspend=0 and B.deleted=0
 		and U.SFunction (%CUSTOM_FILTER_NAME%)
 ===
 select bpRole.BpRoleStandardName as [Job Role] 
