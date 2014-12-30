@@ -220,6 +220,8 @@ Public Const RP_USER_DATA_CHANGE_LOG = "user_data_change_log"
 Public Const RP_END_USER_TO_EVERYTHING = "end_user_to_every_thing"
 Public Const RP_AD_HOC_REPORTING = "adhoc_reporting"
 
+Public Const RP_COURSE_ANALYTICS = "Course_Analytics"
+
 Public Const RP_DEFAULT_OUTPUT_FOLDER = "target\reporting"
 
 ' For tesing

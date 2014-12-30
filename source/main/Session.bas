@@ -222,6 +222,7 @@ Public Function ReportMDCols() As Collection
      list.Add Constants.RP_USER_DATA_CHANGE_LOG
      list.Add Constants.RP_END_USER_TO_EVERYTHING
      list.Add Constants.RP_AD_HOC_REPORTING
+     list.Add Constants.RP_COURSE_ANALYTICS
      Set ReportMDCols = list
 End Function
 
