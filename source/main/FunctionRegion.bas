@@ -7,14 +7,14 @@ Private mRegion As String
 Private mName As String
 Private mRole As Collection
 Private mFuncRgID As String
-Private mPermission As String
+Private mPermission As Collection
 
 Public Function Init(iRegion As String, _
                         iRole As String, _
                         iPermission As String)
     mRegion = iRegion
     AddRole iRole
-    mPermission = iPermission
+    AddPermission iPermission
 End Function
 
 Public Function AddRole(role As String)
@@ -22,6 +22,13 @@ Public Function AddRole(role As String)
         Set mRole = New Collection
     End If
     mRole.Add role
+End Function
+
+Public Function AddPermission(permission As String)
+    If mPermission Is Nothing Then
+        Set mPermission = New Collection
+    End If
+    mPermission.Add permission
 End Function
 
 Public Property Get value() As String
@@ -52,6 +59,6 @@ Public Property Get role() As Collection
     Set role = mRole
 End Property
 
-Public Property Get permission() As String
-    permission = mPermission
+Public Property Get permission() As Collection
+    Set permission = mPermission
 End Property

@@ -25,6 +25,20 @@ Public Property Get IsRole(role As String) As Boolean
     End If
 End Property
 
+Public Property Get IsPermission(p As String) As Boolean
+    Dim v As Variant
+    IsPermission = False
+    If Not mFuncRegion.permission Is Nothing Then
+        For Each v In mFuncRegion.permission
+            If StringHelper.IsEqual(CStr(v), p, True) Then
+                Logger.LogDebug "CurrentUser.IsPermission", "Found permission: " & CStr(v)
+                IsPermission = True
+                Exit For
+            End If
+        Next v
+    End If
+End Property
+
 Public Function Init(iNtid As String, _
                         Optional ss As SystemSetting)
     Dim i As Integer
