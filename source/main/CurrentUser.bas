@@ -243,6 +243,7 @@ Public Function AddReportCache(Name As String, path As String)
 End Function
 
 Public Function RemoveReportCacheByTable(Name As String)
+    On Error GoTo OnError
     If StringHelper.IsEqual(Name, "user_data", True) _
          Or StringHelper.IsEqual(Name, "BpRoleStandard", True) _
          Or StringHelper.IsEqual(Name, "user_data_mapping_role", True) Then
@@ -309,6 +310,12 @@ Public Function RemoveReportCacheByTable(Name As String)
     If StringHelper.IsEqual(Name, "user_change_log", True) Then
         RemoveReportCache Constants.RP_USER_DATA_CHANGE_LOG
     End If
+OnExit:
+    Exit Function
+OnError:
+    'ShowError "An error occurred while processing"
+    Logger.LogError "CurrentUser.RemoveReportCacheByTable", "An error occurred while processing", Err
+    Resume OnExit
 End Function
 
 Public Function RemoveReportCache(Name As String)
