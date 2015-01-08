@@ -242,6 +242,75 @@ Public Function AddReportCache(Name As String, path As String)
     SaveReportCache
 End Function
 
+Public Function RemoveReportCacheByTable(Name As String)
+    If StringHelper.IsEqual(Name, "user_data", True) _
+         Or StringHelper.IsEqual(Name, "BpRoleStandard", True) _
+         Or StringHelper.IsEqual(Name, "user_data_mapping_role", True) Then
+        RemoveReportCache Constants.RP_AD_HOC_REPORTING
+    End If
+    If StringHelper.IsEqual(Name, "audit_logs", True) Then
+        RemoveReportCache Constants.RP_AUDIT_LOG
+    End If
+    If StringHelper.IsEqual(Name, "user_data", True) _
+        Or StringHelper.IsEqual(Name, "CourseMappingBpRoleStandard", True) _
+        Or StringHelper.IsEqual(Name, "course", True) _
+        Or StringHelper.IsEqual(Name, "BpRoleStandard", True) _
+        Or StringHelper.IsEqual(Name, "Functions", True) Then
+        RemoveReportCache Constants.RP_COURSE_ANALYTICS
+    End If
+    If StringHelper.IsEqual(Name, "user_data_mapping_role", True) _
+        Or StringHelper.IsEqual(Name, "user_data", True) _
+        Or StringHelper.IsEqual(Name, "BpRoleStandard", True) _
+        Or StringHelper.IsEqual(Name, "specialism", True) _
+        Or StringHelper.IsEqual(Name, "SpecialismMappingActivity", True) _
+        Or StringHelper.IsEqual(Name, "activity", True) Then
+        RemoveReportCache Constants.RP_END_USER_TO_BB_ACTIVITY
+    End If
+    If StringHelper.IsEqual(Name, "user_data_mapping_role", True) _
+        Or StringHelper.IsEqual(Name, "user_data", True) _
+        Or StringHelper.IsEqual(Name, "BpRoleStandard", True) _
+        Or StringHelper.IsEqual(Name, "BpRoleStandard", True) Then
+        RemoveReportCache Constants.RP_END_USER_TO_BB_JOB_ROLE
+    End If
+    If StringHelper.IsEqual(Name, "user_data_mapping_qualification", True) _
+        Or StringHelper.IsEqual(Name, "user_data", True) _
+        Or StringHelper.IsEqual(Name, "Qualifications", True) Then
+        RemoveReportCache Constants.RP_END_USER_TO_BB_QUALIFICATION
+    End If
+    If StringHelper.IsEqual(Name, "user_data_mapping_role", True) _
+        Or StringHelper.IsEqual(Name, "user_data", True) _
+        Or StringHelper.IsEqual(Name, "BpRoleStandard", True) _
+        Or StringHelper.IsEqual(Name, "CourseMappingBpRoleStandard", True) _
+        Or StringHelper.IsEqual(Name, "Course", True) _
+        Or StringHelper.IsEqual(Name, "Functions", True) Then
+        RemoveReportCache Constants.RP_END_USER_TO_COURSE
+    End If
+    If StringHelper.IsEqual(Name, "user_data", True) _
+        Or StringHelper.IsEqual(Name, "user_data_mapping_role", True) _
+        Or StringHelper.IsEqual(Name, "BpRoleStandard", True) _
+        Or StringHelper.IsEqual(Name, "Dofa", True) Then
+        RemoveReportCache Constants.RP_END_USER_TO_DOFA
+    End If
+    If StringHelper.IsEqual(Name, "user_data", True) _
+        Or StringHelper.IsEqual(Name, "user_data_mapping_role", True) _
+        Or StringHelper.IsEqual(Name, "BpRoleStandard", True) _
+        Or StringHelper.IsEqual(Name, "Dofa", True) _
+        Or StringHelper.IsEqual(Name, "specialism", True) _
+        Or StringHelper.IsEqual(Name, "SpecialismMappingActivity", True) _
+        Or StringHelper.IsEqual(Name, "activity", True) Then
+        RemoveReportCache Constants.RP_END_USER_TO_EVERYTHING
+    End If
+    If StringHelper.IsEqual(Name, "user_data_mapping_role", True) _
+        Or StringHelper.IsEqual(Name, "user_data", True) _
+        Or StringHelper.IsEqual(Name, "BpRoleStandard", True) _
+        Or StringHelper.IsEqual(Name, "BpRoleStandard", True) Then
+        RemoveReportCache Constants.RP_END_USER_TO_SYSTEM_ROLE
+    End If
+    If StringHelper.IsEqual(Name, "user_change_log", True) Then
+        RemoveReportCache Constants.RP_USER_DATA_CHANGE_LOG
+    End If
+End Function
+
 Public Function RemoveReportCache(Name As String)
     LoadReportCache
     If StringHelper.DictExistKey(mReportCache, Name) Then

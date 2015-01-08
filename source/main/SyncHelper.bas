@@ -310,6 +310,7 @@ Private Function CompareServer()
             End If
             rs.MoveNext
         Loop
+        Session.CurrentUser.RemoveReportCacheByTable mTableName
     End If
    ' cn.CommitTrans
 OnExit:
