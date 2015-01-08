@@ -145,6 +145,29 @@ Public Function GetGUID() As String
     End If
 End Function
 
+Public Function DictExistKey(dict As Scripting.Dictionary, key As String) As Boolean
+    Dim v As Variant
+    DictExistKey = False
+    For Each v In dict.keys
+        If StringHelper.IsEqual(Trim(key), Trim(CStr(v)), True) Then
+            DictExistKey = True
+            Exit For
+        End If
+    Next v
+End Function
+
+Public Function DictGetValue(dict As Scripting.Dictionary, key As String) As String
+    Dim v As Variant
+    DictGetValue = ""
+    For Each v In dict.keys
+        If StringHelper.IsEqual(Trim(key), Trim(CStr(v)), True) Then
+            DictGetValue = dict.Item(v)
+            Exit For
+        End If
+    Next v
+End Function
+
+
 Public Function GetDictKey(dict As Scripting.Dictionary, value As String) As String
     Dim i As Integer
     Dim key As String

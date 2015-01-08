@@ -10,6 +10,7 @@ Private mFuncRegion As FunctionRegion
 Private mListFuncRg As Collection
 Private mAuth As Boolean
 Private mValid As Boolean
+Private mReportCache As Dictionary
 
 Public Property Get IsRole(role As String) As Boolean
     Dim v As Variant
@@ -28,6 +29,7 @@ End Property
 Public Property Get IsPermission(p As String) As Boolean
     Dim v As Variant
     IsPermission = False
+    Logger.LogDebug "CurrentUser.IsPermission", "Check permission in Region: " + mFuncRegion.Region
     If Not mFuncRegion.permission Is Nothing Then
         For Each v In mFuncRegion.permission
             If StringHelper.IsEqual(CStr(v), p, True) Then
@@ -37,6 +39,7 @@ Public Property Get IsPermission(p As String) As Boolean
             End If
         Next v
     End If
+    
 End Property
 
 Public Function Init(iNtid As String, _
@@ -205,6 +208,49 @@ Public Function SelectFunc(fname As String)
             End If
         Next frg
     End If
+End Function
+
+Public Function LoadReportCache()
+    If mReportCache Is Nothing Then
+        Set mReportCache = New Dictionary
+    End If
+    If mReportCache.count = 0 Then
+        Logger.LogDebug "CurrentUser.GetReportCache", "Try to load from cache info"
+        Set mReportCache = FileHelper.ReadDictionary(FileHelper.tmpDir & "/" & mNtid & "_" & mFuncRegion.Region & "_report.cache")
+    End If
+End Function
+
+Public Function SaveReportCache()
+    FileHelper.SaveDictionary FileHelper.tmpDir & "/" & mNtid & "_" & mFuncRegion.Region & "_report.cache", mReportCache
+End Function
+
+Public Function GetReportCache(Name As String)
+    LoadReportCache
+    If StringHelper.DictExistKey(mReportCache, Name) Then
+        GetReportCache = StringHelper.DictGetValue(mReportCache, Name)
+    Else
+        GetReportCache = ""
+    End If
+End Function
+
+Public Function AddReportCache(Name As String, path As String)
+    LoadReportCache
+    If StringHelper.DictExistKey(mReportCache, Name) Then
+        mReportCache.Remove Name
+    End If
+    mReportCache.Add Name, path
+    SaveReportCache
+End Function
+
+Public Function RemoveReportCache(Name As String)
+    LoadReportCache
+    If StringHelper.DictExistKey(mReportCache, Name) Then
+        Dim path As String
+        path = StringHelper.DictGetValue(mReportCache, Name)
+        FileHelper.DeleteFile path
+        mReportCache.Remove Name
+    End If
+    SaveReportCache
 End Function
 
 Public Property Get Valid() As Boolean

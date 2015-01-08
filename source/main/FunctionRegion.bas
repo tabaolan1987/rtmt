@@ -12,6 +12,7 @@ Private mPermission As Collection
 Public Function Init(iRegion As String, _
                         iRole As String, _
                         iPermission As String)
+    Logger.LogDebug "FunctionRegion.Init", "Region: " & iRegion & " Role: " & iRole & " Permission: " & iPermission
     mRegion = iRegion
     AddRole iRole
     AddPermission iPermission

@@ -794,8 +794,11 @@ Public Function CreateRecordQuery(datas As Scripting.Dictionary, cols As Collect
     If StringHelper.EndsWith(tmpVal, ",", True) Then
         tmpVal = Left(tmpVal, Len(tmpVal) - 1)
     End If
-    
-    query = "INSERT INTO [" & table & "](" & tmpCol & ")" & " VALUES(" & tmpVal & ")"
+    If Not IsServer And StringHelper.IsEqual(table, "user_data", True) Then
+        query = "INSERT INTO [" & table & "](" & tmpCol & ", ext_Timestamp)" & " VALUES(" & tmpVal & ", Now())"
+    Else
+        query = "INSERT INTO [" & table & "](" & tmpCol & ")" & " VALUES(" & tmpVal & ")"
+    End If
     Logger.LogDebug "DbManager.CreateRecordQuery", "Query: " & query
     CreateRecordQuery = query
 End Function
@@ -845,7 +848,11 @@ Public Function UpdateRecordQuery(datas As Scripting.Dictionary, cols As Collect
     If StringHelper.EndsWith(tmpCol, ",", True) Then
         tmpCol = Left(tmpCol, Len(tmpCol) - 1)
     End If
-    query = "UPDATE [" & table & "] SET " & tmpCol & "" & " WHERE [id]='" & StringHelper.EscapeQueryString(datas.Item("id")) & "'"
+    query = "UPDATE [" & table & "] SET " & tmpCol & ""
+    If Not IsServer And StringHelper.IsEqual(table, "user_data", True) Then
+        query = query & ", ext_Timestamp=Now() "
+    End If
+    query = query & " WHERE [id]='" & StringHelper.EscapeQueryString(datas.Item("id")) & "'"
     Logger.LogDebug "DbManager.UpdateLocalRecord", "Query: " & query
     UpdateRecordQuery = query
 End Function

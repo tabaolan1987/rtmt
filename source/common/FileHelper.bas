@@ -227,6 +227,57 @@ Function DeleteFolder(path As String) As Boolean
     End If
 End Function
 
+Public Function ReadDictionary(path As String) As Dictionary
+    Dim ln As String
+    Dim dict As New Dictionary
+    Dim tmpCheck() As String
+    If IsExistFile(path) Then
+        Dim Fso As Object
+        Dim ReadFile As Object
+        Set Fso = CreateObject("Scripting.FileSystemObject")
+        Set ReadFile = Fso.OpenTextFile(path, ForReading, False)
+        Do Until ReadFile.AtEndOfStream = True
+            ln = Trim(ReadFile.ReadLine)
+            tmpCheck = Split(ln, "|")
+            If UBound(tmpCheck) > 0 Then
+                dict.Add Trim(tmpCheck(0)), Trim(tmpCheck(1))
+            End If
+        Loop
+        ReadFile.Close
+        Set Fso = Nothing
+        Set ReadFile = Nothing
+    End If
+    Set ReadDictionary = dict
+End Function
+
+Public Function SaveDictionary(path As String, dict As Dictionary)
+    If dict.count > 0 Then
+        Dim writeFile As Object
+        Dim Fso As Object
+        Dim tmpList() As String
+        Dim arraySize As Integer
+    
+        Dim v As String
+        Dim k As Variant
+        For Each k In dict.keys
+            v = dict.Item(CStr(k))
+            ReDim Preserve tmpList(arraySize)
+            tmpList(arraySize) = k & "|" & v
+            arraySize = arraySize + 1
+        Next k
+        
+        Set Fso = CreateObject("Scripting.FileSystemObject")
+        Set writeFile = Fso.CreateTextFile(path, True, False)
+        writeFile.Write Join(tmpList, vbNewLine)
+        writeFile.Close
+
+        Set writeFile = Nothing
+        Set Fso = Nothing
+    Else
+        DeleteFile path
+    End If
+End Function
+
 Public Function ReadSSFile(Name As String) As String()
     Dim path As String
     Dim arraySize As Integer

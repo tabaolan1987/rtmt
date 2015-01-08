@@ -57,11 +57,10 @@ Public Function Init(tblName As String)
 End Function
 
 Public Function sync()
+    Session.UpdateDbFlag (False)
     If Ultilities.IfTableExists(mTableName) Then
         GetLocalTimestamp
-        Session.UpdateDbFlag (False)
         CompareServer
-        Session.UpdateDbFlag (True)
         CompareLocal
         RollbackId
     Else
@@ -72,6 +71,13 @@ Public Function sync()
                                                 & ";PWD=" & Session.Settings.Password
         DoCmd.TransferDatabase acImport, "ODBC Database", cs, acTable, mTableName, mTableName, False, True
     End If
+    If StringHelper.IsEqual(mTableName, "user_data", True) Then
+        Logger.LogDebug "SyncHelper.sync", "Update user data timestamp"
+        Set qdf = dbs.CreateQueryDef("", "update [user_data] set [ext_timestamp]=[timestamp] where deleted=0")
+        qdf.Execute
+        qdf.Close
+    End If
+    Session.UpdateDbFlag (True)
 End Function
 
 Public Function Recycle()
@@ -658,6 +664,8 @@ Private Function UpdateLocalTimestamp()
     End If
     rs.Close
     Set rs = Nothing
+    
+    
     'cn.CommitTrans
 OnExit:
     RecycleLocal

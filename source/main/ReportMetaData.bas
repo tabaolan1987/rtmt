@@ -203,6 +203,12 @@ Public Function Init(Name As String, Optional ss As SystemSetting, Optional rpTy
     mComplete = False
 End Function
 
+Public Function SetOutputPath(path As String)
+    mOutputPath = path
+    mComplete = True
+End Function
+
+
 Public Property Get OutputPath() As String
     If Len(mOutputPath) = 0 Then
         Dim tmpDir As String
@@ -259,7 +265,7 @@ Public Function Recyle()
     FileHelper.DeleteFile mQueryFilePath
     FileHelper.DeleteFile mTemplateFilePath
     FileHelper.DeleteFile mConfigFilePath
-    FileHelper.DeleteFile mOutputPath
+    'FileHelper.DeleteFile mOutputPath
     mComplete = False
 End Function
 
