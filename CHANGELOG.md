@@ -1,5 +1,28 @@
 CHANGELOG (notable new features or fixes)
 ---------
+###<a href='https://cmgcode.atlassian.net/browse/DURM/fixforversion/12500'>Version 0.3</a>
+Released on: 09/01/2015
+
+<h5>        Task
+</h5>
+<ul>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-349'>DURM-349</a>] -         Set up Develop environment 
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-351'>DURM-351</a>] -         EUDL Partial Edit
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-352'>DURM-352</a>] -         Read &amp; Write Access
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-353'>DURM-353</a>] -         Edit EUDL Add Upload Date
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-354'>DURM-354</a>] -         Report Screen 
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-355'>DURM-355</a>] -         NTID Check
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-356'>DURM-356</a>] -         Upload EUDL – Select Full or Limited Validation 
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-357'>DURM-357</a>] -         General Tune
+</li>
+</ul>
 
 ###<a href='https://cmgcode.atlassian.net/browse/DURM/fixforversion/12200'>Version 0.2.4</a>
 Released on: 04/07/2014
