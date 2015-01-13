@@ -17,6 +17,7 @@ Public Sub OnTest()
    'Dim v As String
    'v = user.GetReportCache(Constants.RP_COURSE_ANALYTICS)
    'user.RemoveReportCache (Constants.RP_COURSE_ANALYTICS)
+
 End Sub
 
 Public Sub Run(Optional TestClassName As String)

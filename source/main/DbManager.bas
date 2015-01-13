@@ -27,6 +27,14 @@ Public Property Get Database() As DAO.Database
     Set Database = dbs
 End Property
 
+Public Function IsChange() As Boolean
+    Init
+    OpenRecordSet "Select count(*) as count from ChangeLog"
+    Dim count As String
+    count = GetFieldValue(RecordSet, "count")
+    IsChange = Not StringHelper.IsEqual(count, "0", True)
+End Function
+
 Public Function Init()
     If dbs Is Nothing Then
         Set dbs = CurrentDb
