@@ -166,11 +166,13 @@ End Function
 
 Public Function IsExistUserDataCache() As Boolean
     Dim query As String
-    query = "select * from " & Constants.END_USER_DATA_CACHE_TABLE_NAME
+    query = "select count(*) as count from " & Constants.END_USER_DATA_CACHE_TABLE_NAME & " where ntid <> '' or ntid <> null"
     dbm.Init
     dbm.OpenRecordSet query
     If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
-        IsExistUserDataCache = True
+        Dim count As String
+        count = dbm.GetFieldValue(dbm.RecordSet, "count")
+        IsExistUserDataCache = Not StringHelper.IsEqual(count, "0", True)
     Else
         IsExistUserDataCache = False
     End If
