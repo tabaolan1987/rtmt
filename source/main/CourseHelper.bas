@@ -59,6 +59,17 @@ Public Function PrepareCurriculumSheet()
     Dim l, k As Long
     Dim tmpValue As String
     Dim query As String
+    
+    ' Save all state
+    Logger.LogDebug "CourseHelper.PrepareCurriculumSheet", "Save all excel state"
+    Dim screenUpdateState, statusBarState, calcState, eventsState, displayPageBreakState As Boolean
+    screenUpdateState = oExcel.ScreenUpdating
+    Logger.LogDebug "CourseHelper.PrepareCurriculumSheet", "Save state ScreenUpdating"
+    statusBarState = oExcel.DisplayStatusBar
+    Logger.LogDebug "CourseHelper.PrepareCurriculumSheet", "Save state DisplayStatusBar"
+    eventsState = oExcel.EnableEvents
+    Logger.LogDebug "CourseHelper.PrepareCurriculumSheet", "Save state EnableEvents"
+    
     With oExcel
             .DisplayAlerts = False
             .Visible = False
@@ -67,6 +78,16 @@ Public Function PrepareCurriculumSheet()
             With WB
                 Logger.LogDebug "CourseHelper.PrepareCurriculumSheet", "Select worksheet: " & mWorksheet
                 Set ws = WB.workSheets(mWorksheet)
+                
+                'Turn off some Excel functionality so the code runs faster
+                Logger.LogDebug "CourseHelper.PrepareCurriculumSheet", "Turn off ScreenUpdating"
+                oExcel.ScreenUpdating = False
+                Logger.LogDebug "CourseHelper.PrepareCurriculumSheet", "Turn off DisplayStatusBar"
+                oExcel.DisplayStatusBar = False
+                Logger.LogDebug "CourseHelper.PrepareCurriculumSheet", "Turn off EnableEvents"
+                oExcel.EnableEvents = False
+                Logger.LogDebug "CourseHelper.PrepareCurriculumSheet", "Turn off DisplayPageBreaks"
+                ws.DisplayPageBreaks = False
                 
                 With ws
                     If .FilterMode Then
@@ -96,6 +117,12 @@ Public Function PrepareCurriculumSheet()
                         l = l + 1
                     Loop
                 End With
+                 ' Restore state
+                oExcel.ScreenUpdating = screenUpdateState
+                oExcel.DisplayStatusBar = statusBarState
+                oExcel.EnableEvents = eventsState
+                ws.DisplayPageBreaks = displayPageBreakState
+                
                 Logger.LogDebug "CourseHelper.PrepareCurriculumSheet", "Close excel file " & mPath
             End With
             .Quit

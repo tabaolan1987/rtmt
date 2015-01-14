@@ -62,6 +62,17 @@ Public Function ImportDofa()
     Dim query As String
     Dim c As Long
     c = 0
+    
+    ' Save all state
+    Logger.LogDebug "DofaHelper.ImportDofa", "Save all excel state"
+    Dim screenUpdateState, statusBarState, calcState, eventsState, displayPageBreakState As Boolean
+    screenUpdateState = oExcel.ScreenUpdating
+    Logger.LogDebug "DofaHelper.ImportDofa", "Save state ScreenUpdating"
+    statusBarState = oExcel.DisplayStatusBar
+    Logger.LogDebug "DofaHelper.ImportDofa", "Save state DisplayStatusBar"
+    eventsState = oExcel.EnableEvents
+    Logger.LogDebug "DofaHelper.ImportDofa", "Save state EnableEvents"
+    
     With oExcel
             .DisplayAlerts = False
             .Visible = False
@@ -71,6 +82,15 @@ Public Function ImportDofa()
             With WB
                 Logger.LogDebug "DofaHelper.ImportDofa", "Select worksheet: " & mWorksheet
                 Set ws = WB.workSheets(mWorksheet)
+                'Turn off some Excel functionality so the code runs faster
+                Logger.LogDebug "DofaHelper.ImportDofa", "Turn off ScreenUpdating"
+                oExcel.ScreenUpdating = False
+                Logger.LogDebug "DofaHelper.ImportDofa", "Turn off DisplayStatusBar"
+                oExcel.DisplayStatusBar = False
+                Logger.LogDebug "DofaHelper.ImportDofa", "Turn off EnableEvents"
+                oExcel.EnableEvents = False
+                Logger.LogDebug "DofaHelper.ImportDofa", "Turn off DisplayPageBreaks"
+                ws.DisplayPageBreaks = False
                 
                 With ws
                     If .FilterMode Then
@@ -109,6 +129,12 @@ Public Function ImportDofa()
                     DoCmd.SetWarnings True
                     Application.Echo True
                 End With
+                ' Restore state
+                oExcel.ScreenUpdating = screenUpdateState
+                oExcel.DisplayStatusBar = statusBarState
+                oExcel.EnableEvents = eventsState
+                ws.DisplayPageBreaks = displayPageBreakState
+                
                 Logger.LogDebug "DofaHelper.ImportDofa", "Close excel file " & mPath
             End With
             .Quit

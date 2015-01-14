@@ -69,8 +69,6 @@ Public Sub GenerateReport(rpm As ReportMetaData)
         Logger.LogDebug "Reporting.GenerateReport", "Save state ScreenUpdating"
         statusBarState = oExcel.DisplayStatusBar
         Logger.LogDebug "Reporting.GenerateReport", "Save state DisplayStatusBar"
-        'calcState = oExcel.Calculation
-        'Logger.LogDebug "Reporting.GenerateReport", "Save state Calculation"
         eventsState = oExcel.EnableEvents
         Logger.LogDebug "Reporting.GenerateReport", "Save state EnableEvents"
         

@@ -8,6 +8,8 @@ SystemRole
 SystemRoleCategory
 CourseMappingBpRoleStandard
 course
+privileges
+Functions
 MappingActivityBpStandardRole
 user_data
 SpecialismMappingActivity
