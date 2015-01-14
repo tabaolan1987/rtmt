@@ -17,7 +17,10 @@ Public Sub OnTest()
    'Dim v As String
    'v = user.GetReportCache(Constants.RP_COURSE_ANALYTICS)
    'user.RemoveReportCache (Constants.RP_COURSE_ANALYTICS)
-
+    Dim rpm As ReportMetaData
+    Set rpm = Session.ReportMetaData(Constants.RP_END_USER_TO_BB_JOB_ROLE)
+    Reporting.GenerateReport (rpm)
+    rpm.OpenReport
 End Sub
 
 Public Sub Run(Optional TestClassName As String)

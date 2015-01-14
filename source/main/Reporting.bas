@@ -7,6 +7,7 @@ Option Explicit
 Public Sub ExportExcelReport(sSQL As String, sFileNameTemplate As String, output As String, workSheets As String, range As String)
     
     Dim oExcel As New Excel.Application
+    
     Dim WB As New Excel.Workbook
     Dim ws As Excel.worksheet
     Dim rng As Excel.range
@@ -60,6 +61,19 @@ Public Sub GenerateReport(rpm As ReportMetaData)
         Set objConn = CurrentProject.Connection
         Dim recordCount As Double
         Dim colHeadCount As Long
+        
+        ' Save all state
+        Logger.LogDebug "Reporting.GenerateReport", "Save all excel state"
+        Dim screenUpdateState, statusBarState, calcState, eventsState, displayPageBreakState As Boolean
+        screenUpdateState = oExcel.ScreenUpdating
+        Logger.LogDebug "Reporting.GenerateReport", "Save state ScreenUpdating"
+        statusBarState = oExcel.DisplayStatusBar
+        Logger.LogDebug "Reporting.GenerateReport", "Save state DisplayStatusBar"
+        'calcState = oExcel.Calculation
+        'Logger.LogDebug "Reporting.GenerateReport", "Save state Calculation"
+        eventsState = oExcel.EnableEvents
+        Logger.LogDebug "Reporting.GenerateReport", "Save state EnableEvents"
+        
         With oExcel
             .DisplayAlerts = False
             .Visible = False
@@ -71,6 +85,21 @@ Public Sub GenerateReport(rpm As ReportMetaData)
                         Set reportSects = rpm.ReportSheets.Item(CStr(reportSheet))
                         Logger.LogDebug "Reporting.GenerateReport", "Select worksheet: " & CStr(reportSheet)
                         Set ws = WB.workSheets(CStr(reportSheet)) 'Replace with the name of actual sheet
+                        'Save sheet state
+                        Logger.LogDebug "Reporting.GenerateReport", "Save state DisplayPageBreaks"
+                        displayPageBreakState = ws.DisplayPageBreaks
+                        'Turn off some Excel functionality so the code runs faster
+                        Logger.LogDebug "Reporting.GenerateReport", "Turn off ScreenUpdating"
+                        oExcel.ScreenUpdating = False
+                        Logger.LogDebug "Reporting.GenerateReport", "Turn off DisplayStatusBar"
+                        oExcel.DisplayStatusBar = False
+                        'oExcel.Calculation = xlCalculationManual
+                        Logger.LogDebug "Reporting.GenerateReport", "Turn off EnableEvents"
+                        oExcel.EnableEvents = False
+                        Logger.LogDebug "Reporting.GenerateReport", "Turn off DisplayPageBreaks"
+                        ws.DisplayPageBreaks = False
+                        
+                        
                         With ws
                             If .FilterMode Then
                                 .ShowAllData
@@ -251,6 +280,14 @@ Public Sub GenerateReport(rpm As ReportMetaData)
                                 End If
                              Next pi
                         End If
+                        
+                        ' Restore state
+                        oExcel.ScreenUpdating = screenUpdateState
+                        oExcel.DisplayStatusBar = statusBarState
+                        'oExcel.Calculation = calcState
+                        oExcel.EnableEvents = eventsState
+                        ws.DisplayPageBreaks = displayPageBreakState
+
                         Logger.LogDebug "Reporting.GenerateReport", "Save report as : " & rpm.OutputPath
                         .SaveAs (rpm.OutputPath)
                     End With
