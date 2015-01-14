@@ -1,6 +1,6 @@
 EUDL (Raw)
 =======
-SELECT distinct
+SELECT
 	UD.[NTID],
 	[GPID],
 	[fname] AS [First Name],
@@ -71,7 +71,7 @@ ORDER BY UD.ntid
 =========
 EUDL to Activity (Raw)
 =======
-select distinct ud.NTID, ud.fname AS [First name], 
+select ud.NTID, ud.fname AS [First name], 
 	ud.lname AS [Last name], ud.mapped_bb_job_roles AS [BB Job Roles],
 	ud.[mappingTypeBpRoles] AS [Mapping type],
 	ud.jobTitle As [Job Title],
