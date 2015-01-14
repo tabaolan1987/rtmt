@@ -148,6 +148,17 @@ Public Function GenerateMapping()
         Dim rng As Excel.range
         Dim check As String
         Dim tmpIdLeft As String
+        
+        ' Save all state
+        Logger.LogDebug "MappingHelper.ParseMapping", "Save all excel state"
+        Dim screenUpdateState, statusBarState, calcState, eventsState, displayPageBreakState As Boolean
+        screenUpdateState = oExcel.ScreenUpdating
+        Logger.LogDebug "MappingHelper.ParseMapping", "Save state ScreenUpdating"
+        statusBarState = oExcel.DisplayStatusBar
+        Logger.LogDebug "MappingHelper.ParseMapping", "Save state DisplayStatusBar"
+        eventsState = oExcel.EnableEvents
+        Logger.LogDebug "MappingHelper.ParseMapping", "Save state EnableEvents"
+        
         With oExcel
             .DisplayAlerts = False
             .Visible = False
@@ -158,6 +169,17 @@ Public Function GenerateMapping()
             With WB
                 Logger.LogDebug "MappingHelper.GenerateMapping", "Select worksheet: " & mmd.worksheet
                 Set ws = WB.workSheets(mmd.worksheet)
+                
+                'Turn off some Excel functionality so the code runs faster
+                Logger.LogDebug "MappingHelper.ParseMapping", "Turn off ScreenUpdating"
+                oExcel.ScreenUpdating = False
+                Logger.LogDebug "MappingHelper.ParseMapping", "Turn off DisplayStatusBar"
+                oExcel.DisplayStatusBar = False
+                Logger.LogDebug "MappingHelper.ParseMapping", "Turn off EnableEvents"
+                oExcel.EnableEvents = False
+                Logger.LogDebug "MappingHelper.ParseMapping", "Turn off DisplayPageBreaks"
+                ws.DisplayPageBreaks = False
+                        
                 With ws
                     ' Fill top field heading
                     l = mmd.StartColTop
@@ -227,6 +249,13 @@ Public Function GenerateMapping()
                         l = l + 1
                     Next v
                 End With
+                
+                ' Restore state
+                oExcel.ScreenUpdating = screenUpdateState
+                oExcel.DisplayStatusBar = statusBarState
+                oExcel.EnableEvents = eventsState
+                ws.DisplayPageBreaks = displayPageBreakState
+                
                 Logger.LogDebug "MappingHelper.GenerateMapping", "Save & Close excel file " & mmd.TemplateFilePath
                 .SaveAs mmd.TemplateFilePath
             End With
@@ -278,6 +307,17 @@ Public Function ParseMapping()
         Dim IsChecked As Boolean
         Dim tmpDictLeft As New Scripting.Dictionary
         Dim tmpDictTop As New Scripting.Dictionary
+        
+        ' Save all state
+        Logger.LogDebug "MappingHelper.ParseMapping", "Save all excel state"
+        Dim screenUpdateState, statusBarState, calcState, eventsState, displayPageBreakState As Boolean
+        screenUpdateState = oExcel.ScreenUpdating
+        Logger.LogDebug "MappingHelper.ParseMapping", "Save state ScreenUpdating"
+        statusBarState = oExcel.DisplayStatusBar
+        Logger.LogDebug "MappingHelper.ParseMapping", "Save state DisplayStatusBar"
+        eventsState = oExcel.EnableEvents
+        Logger.LogDebug "MappingHelper.ParseMapping", "Save state EnableEvents"
+        
         With oExcel
             .DisplayAlerts = False
             .Visible = False
@@ -288,6 +328,16 @@ Public Function ParseMapping()
             With WB
                 Logger.LogDebug "MappingHelper.ParseMapping", "Select worksheet: " & mmd.worksheet
                 Set ws = WB.workSheets(mmd.worksheet)
+                
+                'Turn off some Excel functionality so the code runs faster
+                Logger.LogDebug "MappingHelper.ParseMapping", "Turn off ScreenUpdating"
+                oExcel.ScreenUpdating = False
+                Logger.LogDebug "MappingHelper.ParseMapping", "Turn off DisplayStatusBar"
+                oExcel.DisplayStatusBar = False
+                Logger.LogDebug "MappingHelper.ParseMapping", "Turn off EnableEvents"
+                oExcel.EnableEvents = False
+                Logger.LogDebug "MappingHelper.ParseMapping", "Turn off DisplayPageBreaks"
+                ws.DisplayPageBreaks = False
                 
                 With ws
                     If .FilterMode Then
@@ -354,6 +404,13 @@ Public Function ParseMapping()
                         Next k
                     Next l
                 End With
+                
+                ' Restore state
+                oExcel.ScreenUpdating = screenUpdateState
+                oExcel.DisplayStatusBar = statusBarState
+                oExcel.EnableEvents = eventsState
+                ws.DisplayPageBreaks = displayPageBreakState
+                
                 Logger.LogDebug "MappingHelper.ParseMapping", "Close excel file " & mmd.TemplateFilePath
             End With
             .Quit

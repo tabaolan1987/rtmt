@@ -20,6 +20,8 @@ Qualifications
 specialism_mapping_BpRole
 user_data_mapping_qualification
 user_rmt
+Functions
+privileges
 mappingType
 sub_function
 standard_team
