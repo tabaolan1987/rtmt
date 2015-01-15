@@ -1,12 +1,68 @@
 CHANGELOG (notable new features or fixes)
 ---------
 ###<a href='https://cmgcode.atlassian.net/browse/DURM/fixforversion/12500'>Version 0.3</a>
-Released on: 09/01/2015
-
+Released on: 15/01/2015
+  
+<h5>        Bug
+</h5>
+<ul>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-360'>DURM-360</a>] -         New AGT Report
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-362'>DURM-362</a>] -         RTMT v0.3 - Missing help info
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-363'>DURM-363</a>] -         RTMT Phase3a - Runtime error appears when access the tool by an user without permission
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-364'>DURM-364</a>] -         RTMT Phase3a - Should not synchronize at closing when there is no change
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-365'>DURM-365</a>] -         RTMT Phase3a - User not defined in User table still be able to access to tool
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-366'>DURM-366</a>] -         RTMT Phase3a - Should improve warning message
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-368'>DURM-368</a>] -         RTMT Phase3a - Upload EUDL (Full) - Should display Edit EUDL screen only after user finish validating end users data
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-369'>DURM-369</a>] -         RTMT Phase3a - Should improve Validation screen
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-370'>DURM-370</a>] -         RTMT Phase3a - Should enable Validation check for end users in Edit EUDL (Partial) function
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-371'>DURM-371</a>] -         RTMT Phase3a - Upload EUDL Full - Should enable validation check for unavailable region
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-372'>DURM-372</a>] -         RTMT Phase3a - Upload EUDL (Partial) - Should disable validation after resolve conflicts
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-373'>DURM-373</a>] -         RTMT Phase3a - Redundant screen appears when uploading data with conflict
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-374'>DURM-374</a>] -         RTMT Phase3a - Should allow user to choose Edit EUDL Full or Partial after finish uploading
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-375'>DURM-375</a>] -         RTMT Phase3a - Edit EUDL (Full &amp; Partial) - Missing mapping information 
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-376'>DURM-376</a>] -         RTMT Phase3a - Suspended user still appears in EUDL to BB Job Roles Report
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-378'>DURM-378</a>] -         RTMT Phase3a - Mapping BB Job Roles &amp; data changes are not updated in reports
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-379'>DURM-379</a>] -         RTMT Phase3a - EUDL to Everything report - Long data is truncated
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-383'>DURM-383</a>] -         RTMT Phase3a - Should remove mapping of deleted BB Job Role in BluePrint Role table
+</li>
+</ul>
+                
+<h5>        Improvement
+</h5>
+<ul>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-377'>DURM-377</a>] -         RTMT Phase 3a - Opening Audit Report taking too long
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-380'>DURM-380</a>] -         RTMT Phase3a - Filter on uploaded time
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-381'>DURM-381</a>] -         RTMT Phase3a - No option to switch to other screens from Reports or Administration screen
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-382'>DURM-382</a>] -         RTMT Phase3a - Opening mapping table of BB Job Roles to Activities take too long
+</li>
+</ul>
+            
 <h5>        Task
 </h5>
 <ul>
 <li>[<a href='https://cmgcode.atlassian.net/browse/DURM-349'>DURM-349</a>] -         Set up Develop environment 
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-350'>DURM-350</a>] -         Switching Screens 
 </li>
 <li>[<a href='https://cmgcode.atlassian.net/browse/DURM-351'>DURM-351</a>] -         EUDL Partial Edit
 </li>
@@ -22,7 +78,14 @@ Released on: 09/01/2015
 </li>
 <li>[<a href='https://cmgcode.atlassian.net/browse/DURM-357'>DURM-357</a>] -         General Tune
 </li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-359'>DURM-359</a>] -         Perform test Phase 3.1a
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-361'>DURM-361</a>] -         Build EUDL from BP source code
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-367'>DURM-367</a>] -         Release version 0.3 / Phase 3.1a
+</li>
 </ul>
+
 
 ###<a href='https://cmgcode.atlassian.net/browse/DURM/fixforversion/12200'>Version 0.2.4</a>
 Released on: 04/07/2014
