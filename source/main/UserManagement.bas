@@ -687,6 +687,16 @@ Public Function GenerateRoleMapping(rm As ReportMetaData)
         Exit For
     Next
     
+    ' Save all state
+    Logger.LogDebug "UserManagement.GenerateRoleMapping", "Save all excel state"
+    Dim screenUpdateState, statusBarState, calcState, eventsState, displayPageBreakState As Boolean
+    screenUpdateState = oExcel.ScreenUpdating
+    Logger.LogDebug "UserManagement.GenerateRoleMapping", "Save state ScreenUpdating"
+    statusBarState = oExcel.DisplayStatusBar
+    Logger.LogDebug "UserManagement.GenerateRoleMapping", "Save state DisplayStatusBar"
+    eventsState = oExcel.EnableEvents
+    Logger.LogDebug "UserManagement.GenerateRoleMapping", "Save state EnableEvents"
+    
     Logger.LogDebug "UserManagement.GenerateRoleMapping", "Mapping Cols count : " & CStr(mappingCount) _
                                     & ". Start Mapping col: " & CStr(startMappingCol)
     
@@ -698,6 +708,17 @@ Public Function GenerateRoleMapping(rm As ReportMetaData)
             With WB
                 Logger.LogDebug "UserManagement.GenerateRoleMapping", "Select worksheet: " & rm.worksheet
                 Set ws = WB.workSheets(rm.worksheet)
+                
+                'Turn off some Excel functionality so the code runs faster
+                Logger.LogDebug "UserManagement.GenerateRoleMapping", "Turn off ScreenUpdating"
+                oExcel.ScreenUpdating = False
+                Logger.LogDebug "UserManagement.GenerateRoleMapping", "Turn off DisplayStatusBar"
+                oExcel.DisplayStatusBar = False
+                Logger.LogDebug "UserManagement.GenerateRoleMapping", "Turn off EnableEvents"
+                oExcel.EnableEvents = False
+                Logger.LogDebug "UserManagement.GenerateRoleMapping", "Turn off DisplayPageBreaks"
+                ws.DisplayPageBreaks = False
+                
                 l = rm.StartCol
                 k = rm.startRow
                 With ws
@@ -766,6 +787,13 @@ Public Function GenerateRoleMapping(rm As ReportMetaData)
                         k = k + 1
                     Loop
                 End With
+                
+                ' Restore state
+                oExcel.ScreenUpdating = screenUpdateState
+                oExcel.DisplayStatusBar = statusBarState
+                oExcel.EnableEvents = eventsState
+                ws.DisplayPageBreaks = displayPageBreakState
+                
                 Logger.LogDebug "UserManagement.GenerateRoleMapping", "Close excel file " & rm.OutputPath
             End With
             .Quit

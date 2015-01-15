@@ -197,12 +197,6 @@ Public Function ReportMetaData(reportName As String) As ReportMetaData
             sh.sync
             sh.Recycle
         End If
-        If StringHelper.IsEqual(reportName, Constants.RP_USER_DATA_CHANGE_LOG, True) Then
-            Set sh = New SyncHelper
-            sh.Init "user_change_log"
-            sh.sync
-            sh.Recycle
-        End If
         Set rmd = New ReportMetaData
         rmd.Init reportName
         mReportMDCol.Add reportName, rmd

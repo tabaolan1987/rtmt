@@ -297,6 +297,7 @@ Public Sub GenerateReport(rpm As ReportMetaData)
         Set objConn = Nothing
         Set objRs = Nothing
         rpm.SetComplete (True)
+        rpm.Recyle
     Else
         Logger.LogError "Reporting.GenerateReport", "The reporting meta data format is not valid", Nothing
     End If
