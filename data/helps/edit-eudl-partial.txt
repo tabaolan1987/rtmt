@@ -1,0 +1,3 @@
+Select the 'Edit EUDL - Partial' button to view and/or edit the End User Data Landscape without automated mapping functions. When you choose this option, you can edit all end user data manually (including manual mapping), but you will not be able to filter and perform bulk mapping. 
+
+To enable the automated mapping functions you should select 'Edit EUDL- Full' 

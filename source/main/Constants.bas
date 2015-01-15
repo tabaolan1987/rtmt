@@ -18,6 +18,8 @@ Public Const HELP_ERROR_EUDL = "data\helps\error-eudl.txt"
 
 Public Const HELP_UPLOAD_EUDL = "data\helps\upload-eudl.txt"
 
+Public Const HELP_UPLOAD_EUDL_PARTIAL = "data\helps\upload-eudl-partial.txt"
+
 Public Const HELP_UPLOAD_DOFA = "data\helps\upload-dofa.txt"
 
 Public Const HELP_REPORTS = "data\helps\reports.txt"
@@ -27,6 +29,8 @@ Public Const HELP_ADMIN = "data\helps\admin.txt"
 Public Const HELP_MAPPING = "data\helps\mapping.txt"
 
 Public Const HELP_EDIT_EUDL = "data\helps\edit-eudl.txt"
+
+Public Const HELP_EDIT_EUDL_PARTIAL = "data\helps\edit-eudl-partial.txt"
 
 Public Const TEMPLATE_EUDL = "data\template\eudl_template.xlsx"
 
