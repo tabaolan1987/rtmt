@@ -332,6 +332,11 @@ Public Function RemoveReportCacheTableFunc(Name As String, tmpFid As String)
             Or StringHelper.IsEqual(Name, "BpRoleStandard", True) Then
         RemoveReportCache Constants.RP_END_USER_TO_SYSTEM_ROLE, tmpFid
     End If
+    If StringHelper.IsEqual(Name, "user_data_mapping_role", True) _
+            Or StringHelper.IsEqual(Name, "user_data", True) _
+            Or StringHelper.IsEqual(Name, "BpRoleStandard", True) Then
+        RemoveReportCache Constants.RP_ROLE_MAPPING_OUTPUT_OF_TOOL_FOR_SECURITY, tmpFid
+    End If
     If StringHelper.IsEqual(Name, "user_change_log", True) Then
         RemoveReportCache Constants.RP_USER_DATA_CHANGE_LOG, tmpFid
     End If
