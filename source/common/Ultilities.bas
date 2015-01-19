@@ -74,6 +74,15 @@ Public Sub MakeAccde()
     End With
 End Sub
 
+Public Sub WDeleteAllAppData()
+    WDeleteAllTables
+    Dim db As New DbManager
+    db.ExecuteServerQuery "delete from user_data"
+    db.ExecuteServerQuery "delete from user_data_mapping_role"
+    db.ExecuteServerQuery "delete from audit_logs"
+    db.ExecuteServerQuery "delete from user_change_log"
+End Sub
+
 Public Sub WDeleteAllTables()
     Dim i As Integer
     Dim dbm As New DbManager
