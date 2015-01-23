@@ -2,7 +2,27 @@ CHANGELOG (notable new features or fixes)
 ---------
 ###<a href='https://cmgcode.atlassian.net/browse/DURM/fixforversion/12500'>Version 0.3</a>
 Released on: 15/01/2015
-  
+
++ Switching screens:	Added button in Edit EUDL (full and partial) to navigate to the reports page without closing the edit page.
++ EUDL partial edit:	Added a new function to open the edit page without mapping functionality to optimise the time taken to load the page (extra button).
++ Read & write access:	Removed edit EUDL functions for users with 'read only' access.
++ Edit EUDL - upload date:	Added a new field with the timestamp indicating when the end user data was uploaded (can be filtered by date using the access functionality),
++ Reports:
+	- cache	"Added cache function to enable users to view & download reports quicker. Note: The cached report will be refreshed when:
+	- New data is pulled from the server 
+	- The user changes local data (not synced yet)
+	- The Audit report still syncs with the central database when it is first viewed or downloaded to avoid extra time for opening/closing and syncing.
+	- The view option still uses Excel as there is no performance improvement when viewing in Access.
+	-Optimisation from closing some Excel files has been added but is not significant to performance results.
++ AGT report:	Added new report and changed from Access form format to SQL.
++ NTID check:	Removed NTID integrity checking.
++ EUDL partial upload:	Added a new function to upload an EUDL with partial validation (extra button). Partial validation only removes duplicates and informs the user about end user data conflict. If validation is required for Region, Function, Blueprint Job Role or Specialism, the user must select  the 'Full upload' option.
++ General tune:	Implemented where possible:
+	- taking advantage of the cache
+	- using FailOnError for bulk updates
+	- using the me keyword 
+	- turning off screen painting 
+
 <h5>        Bug
 </h5>
 <ul>
