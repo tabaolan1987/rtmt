@@ -25,4 +25,3 @@ user_rmt
 mappingType
 sub_function
 standard_team
-user_change_log

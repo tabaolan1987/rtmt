@@ -71,12 +71,12 @@ Public Function sync()
                                                 & ";PWD=" & Session.Settings.Password
         DoCmd.TransferDatabase acImport, "ODBC Database", cs, acTable, mTableName, mTableName, False, True
     End If
-    If StringHelper.IsEqual(mTableName, "user_data", True) Then
-        Logger.LogDebug "SyncHelper.sync", "Update user data timestamp"
-        Set qdf = dbs.CreateQueryDef("", "update [user_data] set [ext_timestamp]=[timestamp] where deleted=0")
-        qdf.Execute
-        qdf.Close
-    End If
+    'If StringHelper.IsEqual(mTableName, "user_data", True) Then
+    '    Logger.LogDebug "SyncHelper.sync", "Update user data timestamp"
+    '    Set qdf = dbs.CreateQueryDef("", "update [user_data] set [ext_timestamp]=[timestamp] where deleted=0")
+    '    qdf.Execute
+    '    qdf.Close
+    'End If
     Session.UpdateDbFlag (True)
 End Function
 

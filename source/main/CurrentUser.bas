@@ -45,49 +45,79 @@ End Property
 
 Public Function Init(iNtid As String, _
                         Optional ss As SystemSetting)
+    'revised code to use alternative BP authentification dominic gardham 01 July 2014
+    
     Dim i As Integer
     Dim mData As String
     Dim fields As String
     mNtid = iNtid
+    Dim objConnection As ADODB.Connection
+    Dim objRecordSet As ADODB.RecordSet
+    Dim objCommand As ADODB.Command
+
+    Dim objUser, intUserAccountControl As Variant
     Dim result As String
-    Dim tmpNtid As String
-    Dim check As String
+    Dim tmpNtid, strUserID, strCreated, strSponsor, strUserGPID, strExchLegDN, strUserDN As String
+    Dim check, strgivenID, strStaffFlag, intBPint01, strObjType  As String
     Dim tmpDict As Scripting.Dictionary, checkList As Collection
+    Const ADS_UF_DONT_EXPIRE_PASSWD = &H10000
+    Const ADS_UF_PASSWD_REQ = &H20
+    Const ADS_OCS_REQ = &H2
+    Const ADS_PROPERTY_APPEND = 3
+    Const ADS_SCOPE_SUBTREE = 2
+    Set objConnection = CreateObject("ADODB.Connection")
+    Set objCommand = CreateObject("ADODB.Command")
+    objConnection.Provider = "ADsDSOObject"
+    objConnection.Open "Active Directory Provider"
+    Set objCommand.ActiveConnection = objConnection
+    
+    objCommand.Properties("Page Size") = 1000
+    objCommand.Properties("Searchscope") = ADS_SCOPE_SUBTREE
+    
     If ss Is Nothing Then
         Set ss = Session.Settings()
     End If
-    
-   ' If ss.EnableTesting Then
-    If True Then
+
+    If ss.EnableTesting Or StringHelper.IsEqual(ss.Env, "dev", True) Then
         mAuth = True
     Else
         mAuth = False
-        For i = 0 To ss.validatorMapping.count - 1
-            fields = fields & ss.validatorMapping.Items(i) & ","
-        Next i
-        If StringHelper.EndsWith(fields, ",", True) Then
-            fields = Left(fields, Len(fields) - 1)
-        End If
-        mData = "token=" & StringHelper.EncodeURL(ss.Token) _
-                & "&fields=" & StringHelper.EncodeURL(fields) _
-                & "&ntids=" & StringHelper.EncodeURL(mNtid)
-        Logger.LogDebug "CurrentUser.Init", "Post valid ntid: " & mNtid
-        result = Trim(HttpHelper.PostData(ss.ValidatorURL, mData))
-        Logger.LogDebug "CurrentUser.Init", "Result: " & result
-        
-        If Len(result) > 0 Then
-            If StringHelper.IsContain(result, "}", True) And StringHelper.IsContain(result, "{", True) Then
-                Set checkList = JSONHelper.parse(result)
-                For Each tmpDict In checkList
-                    tmpNtid = tmpDict.Item("ntid")
-                    check = tmpDict.Item("isvalid")
-                    If StringHelper.IsEqual(tmpNtid, mNtid, True) And StringHelper.IsEqual(check, "true", True) Then
-                        mAuth = True
-                    End If
-                Next
+        On Error Resume Next
+        strgivenID = VBA.Environ("USERNAME")
+        'strUserID = Replace(strgivenID, src_chr, tar_chr)
+        'strUserID = Trim(strUserID)
+        objCommand.CommandText = _
+            "SELECT DistinguishedName, LegacyExchangeDN, createTimeStamp, extensionAttribute9, BP-Integer-01, BP-text32-01 FROM 'LDAP://ou=client,dc=bp1,dc=ad,dc=bp,dc=com' WHERE objectCategory='user' " & _
+            "AND SamaccountName='" & strgivenID & "'"
+        Err.Clear
+        Set objRecordSet = objCommand.Execute
+        objRecordSet.MoveFirst
+        Do Until objRecordSet.EOF
+                strCreated = ""
+                strSponsor = ""
+                strUserGPID = ""
+                strExchLegDN = ""
+                strUserDN = objRecordSet.fields("DistinguishedName").value
+                strCreated = objRecordSet.fields("CreateTimeStamp").value
+                strStaffFlag = objRecordSet.fields("extensionAttribute9").value
+                intBPint01 = objRecordSet.fields("BP-Integer-01").value
+                strUserGPID = objRecordSet.fields("BP-text32-01").value
+                strExchLegDN = objRecordSet.fields("LegacyExchangeDN").value
+            objRecordSet.MoveNext
+        Loop
+
+        If Err.Number = 0 Then
+            strObjType = "NO"
+            Err.Clear
+            Set objUser = GetObject("LDAP://" & strUserDN)
+            intUserAccountControl = objUser.Get("userAccountControl")
+            
+            ' Do this section if Account has Password DOES NOT Expire ticked
+            If objUser.AccountDisabled = False Then
+                mAuth = True
+            Else
+                mAuth = False
             End If
-        Else
-            mAuth = True
         End If
     End If
     ' skip temp
@@ -187,11 +217,11 @@ Public Function ListFunctions(Region As String) As Collection
     Set ListFunctions = list
 End Function
 
-Public Function SelectRegion(rname As String)
+Public Function SelectRegion(rName As String)
     Dim frg As FunctionRegion
     If mValid And Not mListFuncRg Is Nothing Then
         For Each frg In mListFuncRg
-            If StringHelper.IsEqual(frg.Region, rname, True) Then
+            If StringHelper.IsEqual(frg.Region, rName, True) Then
                 Set mFuncRegion = frg
                 Exit For
             End If

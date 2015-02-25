@@ -766,12 +766,16 @@ Public Function CreateRecordQuery(datas As Scripting.Dictionary, cols As Collect
     Dim value As String
     tmpCol = ""
     tmpVal = ""
+    Dim isContainExtTimestamp As Boolean
+    isContainExtTimestamp = False
     For Each val In cols
         tmpCol = tmpCol & "[" & val & "],"
         
             value = datas.Item(val)
             If IsServer = True And StringHelper.IsEqual(CStr(val), Constants.FIELD_TIMESTAMP, True) Then
                 tmpVal = tmpVal & "getdate(),"
+            ElseIf IsServer = True And StringHelper.IsEqual(CStr(val), Constants.FIELD_EXT_TIMESTAMP, True) Then
+                tmpVal = tmpVal & "CONVERT(DATETIME, '" & StringHelper.EscapeQueryString(value) & "', 103)" & " ,"
             Else
                 If colsType Is Nothing Then
                     tmpVal = tmpVal & "'" & StringHelper.EscapeQueryString(value) & "',"
@@ -792,7 +796,9 @@ Public Function CreateRecordQuery(datas As Scripting.Dictionary, cols As Collect
                     End If
                 End If
             End If
-       
+        If StringHelper.IsEqual(CStr(val), "ext_timestamp", True) Then
+            isContainExtTimestamp = True
+        End If
     Next
     tmpCol = Trim(tmpCol)
     If StringHelper.EndsWith(tmpCol, ",", True) Then
@@ -802,8 +808,8 @@ Public Function CreateRecordQuery(datas As Scripting.Dictionary, cols As Collect
     If StringHelper.EndsWith(tmpVal, ",", True) Then
         tmpVal = Left(tmpVal, Len(tmpVal) - 1)
     End If
-    If Not IsServer And StringHelper.IsEqual(table, "user_data", True) Then
-        query = "INSERT INTO [" & table & "](" & tmpCol & ", ext_Timestamp)" & " VALUES(" & tmpVal & ", Now())"
+    If Not isContainExtTimestamp And Not IsServer And StringHelper.IsEqual(table, "user_data", True) Then
+        query = "INSERT INTO [" & table & "](" & tmpCol & ", ext_Timestamp)" & " VALUES(" & tmpVal & ", DateValue(Now()))"
     Else
         query = "INSERT INTO [" & table & "](" & tmpCol & ")" & " VALUES(" & tmpVal & ")"
     End If
@@ -821,17 +827,21 @@ Public Function UpdateRecordQuery(datas As Scripting.Dictionary, cols As Collect
     Dim i As Integer
     Dim val As Variant
     Dim value As String
+    Dim isContainExtTimestamp As Boolean
+    isContainExtTimestamp = False
     tmpCol = ""
     For Each val In cols
         If Not StringHelper.IsEqual(CStr(val), Constants.FIELD_ID, True) Then
             If IsServer = True And StringHelper.IsEqual(CStr(val), Constants.FIELD_TIMESTAMP, True) Then
                 tmpCol = tmpCol & "[" & CStr(val) & "] = GETDATE()" & " ,"
+            ElseIf IsServer = True And StringHelper.IsEqual(CStr(val), Constants.FIELD_EXT_TIMESTAMP, True) Then
+                    value = datas.Item(CStr(val))
+                    tmpCol = tmpCol & "[" & CStr(val) & "] = CONVERT(DATETIME, '" & StringHelper.EscapeQueryString(value) & "', 103)" & " ,"
             Else
                 value = datas.Item(CStr(val))
                 If colsType Is Nothing Then
                     tmpCol = tmpCol & "[" & CStr(val) & "] = '" & StringHelper.EscapeQueryString(value) & "'" & " ,"
                 Else
-                    
                     If CInt(colsType.Item(val)) = 11 Then
                         If StringHelper.IsEqual(value, "False", True) Then
                             tmpCol = tmpCol & "[" & CStr(val) & "] = '0'" & " ,"
@@ -848,6 +858,9 @@ Public Function UpdateRecordQuery(datas As Scripting.Dictionary, cols As Collect
                 End If
             End If
         End If
+        If StringHelper.IsEqual(CStr(val), Constants.FIELD_EXT_TIMESTAMP, True) Then
+            isContainExtTimestamp = True
+        End If
     Next
     If Len(newId) > 0 Then
         tmpCol = tmpCol & "[id] = '" & StringHelper.EscapeQueryString(newId) & "'" & " ,"
@@ -857,8 +870,8 @@ Public Function UpdateRecordQuery(datas As Scripting.Dictionary, cols As Collect
         tmpCol = Left(tmpCol, Len(tmpCol) - 1)
     End If
     query = "UPDATE [" & table & "] SET " & tmpCol & ""
-    If Not IsServer And StringHelper.IsEqual(table, "user_data", True) Then
-        query = query & ", ext_Timestamp=Now() "
+    If Not isContainExtTimestamp And Not IsServer And StringHelper.IsEqual(table, "user_data", True) Then
+        query = query & ", ext_Timestamp=DateValue(Now()) "
     End If
     query = query & " WHERE [id]='" & StringHelper.EscapeQueryString(datas.Item("id")) & "'"
     Logger.LogDebug "DbManager.UpdateLocalRecord", "Query: " & query

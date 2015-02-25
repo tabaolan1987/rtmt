@@ -36,6 +36,22 @@ Public Sub ExportExcelReport(sSQL As String, sFileNameTemplate As String, output
     Set objRs = Nothing
 End Sub
 
+Public Sub CheckReport(Name As String)
+    Dim sh As SyncHelper
+    If StringHelper.IsEqual(Name, Constants.RP_AUDIT_LOG, True) Then
+        Set sh = New SyncHelper
+        sh.Init Constants.TABLE_AUDIT_LOG
+        sh.sync
+        sh.Recycle
+    End If
+    If StringHelper.IsEqual(Name, Constants.RP_USER_DATA_CHANGE_LOG, True) Then
+        Set sh = New SyncHelper
+        sh.Init Constants.TABLE_USER_CHANGE_LOG
+        sh.sync
+        sh.Recycle
+    End If
+End Sub
+
 Public Sub GenerateReport(rpm As ReportMetaData)
     Dim ss As SystemSetting
     Set ss = Session.Settings()
