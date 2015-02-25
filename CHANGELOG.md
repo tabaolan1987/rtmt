@@ -1,5 +1,26 @@
 CHANGELOG (notable new features or fixes)
 ---------
+
+###<a href='https://cmgcode.atlassian.net/projects/DURM/versions/12701'>Version 0.3.3</a>
+Released on: 25/02/2015
+
++ Fix uploaded date filter issue
++ Add new field Last Edit/Updated date to Edit EUDL
+
+<h5>        Bug
+</h5>
+<ul>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-389'>DURM-389</a>] -         RTMT Phase3a - No result return when filtering end users on a specific uploaded date
+</li>
+</ul>
+                
+<h5>        Improvement
+</h5>
+<ul>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-388'>DURM-388</a>] -         RTMT Phase3a - Add new field Last Edit/Updated date to Edit EUDL
+</li>
+</ul>
+
 ###<a href='https://cmgcode.atlassian.net/browse/DURM/fixforversion/12500'>Version 0.3</a>
 Released on: 15/01/2015
 
