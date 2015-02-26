@@ -476,7 +476,7 @@ Private Function PushLocalChange()
                     needUpdate = False
                     For Each v In mHeaders
                         If Not tmpData.Exists(CStr(v)) Then
-                            tmpData.Add CStr(v), dbm.GetFieldValue(rst, CStr(v))
+                            tmpData.Add CStr(v), dbm.GetFieldValue(rst, CStr(v), True)
                         End If
                         
                         If Not StringHelper.IsEqual(CStr(v), "id", True) _
@@ -506,7 +506,7 @@ Private Function PushLocalChange()
                         adData.Add "prev_value", ""
                         adData.Add "new_value", ""
                         adData.Add "table_name", mTableName
-                        query = dbm.CreateRecordQuery(adData, adCol, "audit_logs", IsServer:=True)
+                        query = dbm.CreateRecordQuery(adData, adCol, "audit_logs", isServer:=True)
                         qBatch.Add query
                     End If
                     If Not mIdTs.Exists(tmpId) Then
@@ -563,7 +563,7 @@ Private Function PushLocalChange()
                 Set tmpData = New Scripting.Dictionary
                 For Each v In mHeaders
                     If Not tmpData.Exists(CStr(v)) Then
-                        tmpData.Add CStr(v), dbm.GetFieldValue(rst, CStr(v))
+                        tmpData.Add CStr(v), dbm.GetFieldValue(rst, CStr(v), True)
                     End If
                 Next v
                 Logger.LogDebug "SyncHelper.PushLocalChange", "Create query for new record"
@@ -583,7 +583,7 @@ Private Function PushLocalChange()
                 adData.Add "new_value", ""
                 adData.Add "table_name", mTableName
                 Logger.LogDebug "SyncHelper.PushLocalChange", "Create query for audit log"
-                query = dbm.CreateRecordQuery(adData, adCol, "audit_logs", IsServer:=True)
+                query = dbm.CreateRecordQuery(adData, adCol, "audit_logs", isServer:=True)
                 'cn.Execute query
                 Logger.LogDebug "SyncHelper.PushLocalChange", "Add to collection"
                 qBatch.Add query

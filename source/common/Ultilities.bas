@@ -120,6 +120,7 @@ Public Sub WDeleteAllTables()
     End If
     dbm.RecycleTableName "ChangeLog"
     dbm.RecycleTableName "audit_logs"
+    dbm.RecycleTableName "user_change_log"
     dbm.RecycleTableName "USysApplicationLog"
     dbm.Recycle
 End Sub

@@ -170,7 +170,7 @@ Private Function GetHeaderIndex(Name As String) As Integer
     GetHeaderIndex = index
 End Function
 
-Public Function GetFieldValue(rs As RecordSet, Name As String) As String
+Public Function GetFieldValue(rs As RecordSet, Name As String, Optional isServer As Boolean) As String
     GetFieldValue = ""
     Dim i As Integer
     If Len(Name) <> 0 Then
@@ -183,7 +183,11 @@ Public Function GetFieldValue(rs As RecordSet, Name As String) As String
         Next i
         If index <> -1 Then
             If Len(rs.fields(index).value) <> 0 Then
-                GetFieldValue = rs.fields(index).value
+                If rs.fields(index).Type = dbDate And isServer Then
+                    GetFieldValue = Format(rs.fields(index).value, "dd/MM/yyyy")
+                Else
+                    GetFieldValue = rs.fields(index).value
+                End If
             End If
         End If
     End If
@@ -758,7 +762,7 @@ End Function
 
 Public Function CreateRecordQuery(datas As Scripting.Dictionary, cols As Collection _
                                 , table As String, Optional colsType As Scripting.Dictionary _
-                                , Optional IsServer As Boolean) As String
+                                , Optional isServer As Boolean) As String
     Dim query As String
     Dim tmpCol As String, tmpVal As String
     Dim i As Integer
@@ -772,9 +776,9 @@ Public Function CreateRecordQuery(datas As Scripting.Dictionary, cols As Collect
         tmpCol = tmpCol & "[" & val & "],"
         
             value = datas.Item(val)
-            If IsServer = True And StringHelper.IsEqual(CStr(val), Constants.FIELD_TIMESTAMP, True) Then
+            If isServer = True And StringHelper.IsEqual(CStr(val), Constants.FIELD_TIMESTAMP, True) Then
                 tmpVal = tmpVal & "getdate(),"
-            ElseIf IsServer = True And StringHelper.IsEqual(CStr(val), Constants.FIELD_EXT_TIMESTAMP, True) Then
+            ElseIf isServer = True And StringHelper.IsEqual(CStr(val), Constants.FIELD_EXT_TIMESTAMP, True) Then
                 tmpVal = tmpVal & "CONVERT(DATETIME, '" & StringHelper.EscapeQueryString(value) & "', 103)" & " ,"
             Else
                 If colsType Is Nothing Then
@@ -785,7 +789,7 @@ Public Function CreateRecordQuery(datas As Scripting.Dictionary, cols As Collect
                         If StringHelper.IsEqual(value, "False", True) Then
                             tmpVal = tmpVal & "'0',"
                         Else
-                            If IsServer Then
+                            If isServer Then
                                 tmpVal = tmpVal & "'1',"
                             Else
                                 tmpVal = tmpVal & "'-1',"
@@ -808,7 +812,7 @@ Public Function CreateRecordQuery(datas As Scripting.Dictionary, cols As Collect
     If StringHelper.EndsWith(tmpVal, ",", True) Then
         tmpVal = Left(tmpVal, Len(tmpVal) - 1)
     End If
-    If Not isContainExtTimestamp And Not IsServer And StringHelper.IsEqual(table, "user_data", True) Then
+    If Not isContainExtTimestamp And Not isServer And StringHelper.IsEqual(table, "user_data", True) Then
         query = "INSERT INTO [" & table & "](" & tmpCol & ", ext_Timestamp)" & " VALUES(" & tmpVal & ", DateValue(Now()))"
     Else
         query = "INSERT INTO [" & table & "](" & tmpCol & ")" & " VALUES(" & tmpVal & ")"
@@ -820,7 +824,7 @@ End Function
 Public Function UpdateRecordQuery(datas As Scripting.Dictionary, cols As Collection, _
                                         table As String, _
                                         Optional colsType As Scripting.Dictionary, _
-                                        Optional IsServer As Boolean, _
+                                        Optional isServer As Boolean, _
                                         Optional newId As String) As String
     Dim query As String
     Dim tmpCol As String
@@ -832,9 +836,9 @@ Public Function UpdateRecordQuery(datas As Scripting.Dictionary, cols As Collect
     tmpCol = ""
     For Each val In cols
         If Not StringHelper.IsEqual(CStr(val), Constants.FIELD_ID, True) Then
-            If IsServer = True And StringHelper.IsEqual(CStr(val), Constants.FIELD_TIMESTAMP, True) Then
+            If isServer = True And StringHelper.IsEqual(CStr(val), Constants.FIELD_TIMESTAMP, True) Then
                 tmpCol = tmpCol & "[" & CStr(val) & "] = GETDATE()" & " ,"
-            ElseIf IsServer = True And StringHelper.IsEqual(CStr(val), Constants.FIELD_EXT_TIMESTAMP, True) Then
+            ElseIf isServer = True And StringHelper.IsEqual(CStr(val), Constants.FIELD_EXT_TIMESTAMP, True) Then
                     value = datas.Item(CStr(val))
                     tmpCol = tmpCol & "[" & CStr(val) & "] = CONVERT(DATETIME, '" & StringHelper.EscapeQueryString(value) & "', 103)" & " ,"
             Else
@@ -846,7 +850,7 @@ Public Function UpdateRecordQuery(datas As Scripting.Dictionary, cols As Collect
                         If StringHelper.IsEqual(value, "False", True) Then
                             tmpCol = tmpCol & "[" & CStr(val) & "] = '0'" & " ,"
                         Else
-                            If IsServer Then
+                            If isServer Then
                                 tmpCol = tmpCol & "[" & CStr(val) & "] = '1'" & " ,"
                             Else
                                 tmpCol = tmpCol & "[" & CStr(val) & "] = '-1'" & " ,"
@@ -870,7 +874,7 @@ Public Function UpdateRecordQuery(datas As Scripting.Dictionary, cols As Collect
         tmpCol = Left(tmpCol, Len(tmpCol) - 1)
     End If
     query = "UPDATE [" & table & "] SET " & tmpCol & ""
-    If Not isContainExtTimestamp And Not IsServer And StringHelper.IsEqual(table, "user_data", True) Then
+    If Not isContainExtTimestamp And Not isServer And StringHelper.IsEqual(table, "user_data", True) Then
         query = query & ", ext_Timestamp=DateValue(Now()) "
     End If
     query = query & " WHERE [id]='" & StringHelper.EscapeQueryString(datas.Item("id")) & "'"
@@ -968,7 +972,7 @@ Public Function UpdateServerRecord(datas As Scripting.Dictionary, cols As Collec
         stConnect = "DRIVER=SQL Server;SERVER=" & Server & ";DATABASE=" & DatabaseName
     End If
     Logger.LogDebug "DbManager.UpdateServerRecord", "Connection String: " & stConnect
-    updateQuery = UpdateRecordQuery(datas, cols, table, IsServer:=True)
+    updateQuery = UpdateRecordQuery(datas, cols, table, isServer:=True)
     
     cn.Open stConnect
     cn.BeginTrans
