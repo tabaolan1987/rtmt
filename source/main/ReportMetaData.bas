@@ -64,7 +64,7 @@ Public Function CustomFilter() As Scripting.Dictionary
     Set CustomFilter = mCustomFilter
 End Function
 
-Public Function Init(Name As String, Optional ss As SystemSetting, Optional rpType As String)
+Public Function InitRaw(Name As String, Optional ss As SystemSetting, Optional rpType As String)
     If Len(rpType) > 0 Then
         mType = rpType
     Else
@@ -157,12 +157,22 @@ Public Function Init(Name As String, Optional ss As SystemSetting, Optional rpTy
     mStartRow = ir.ReadLongKey(Constants.SECTION_FORMAT, Constants.KEY_START_ROW)
     Logger.LogDebug "ReportMetaData.Init", "Start row: " & CStr(mStartRow)
     
-    
-    
     Logger.LogDebug "ReportMetaData.Init", "Read query path: " & mQueryFilePath
-    mValid = False
+    mValid = True
     mQuery = FileHelper.ReadFileFullPath(mQueryFilePath)
-    
+    mComplete = False
+End Function
+
+Public Function Init(Name As String, Optional ss As SystemSetting, Optional rpType As String)
+    InitRaw Name, ss, rpType
+    Dim mReportSect As Collection
+    Dim tmpRawSection() As String, tmpStr As String, i As Integer
+    Dim tmpRawSheet() As String
+    Dim tmpRawSheetSection() As String
+    Dim v As Variant
+    Dim tmpList() As String
+    Dim rpSection As ReportSection
+    Dim j As Integer
     If Len(mQuery) <> 0 And StringHelper.IsContain(mQuery, Constants.SPLIT_LEVEL_S, True) _
             And StringHelper.IsContain(mQuery, Constants.SPLIT_LEVEL_0, True) Then
         Set mReportSheets = New Scripting.Dictionary

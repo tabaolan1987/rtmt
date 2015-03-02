@@ -241,47 +241,47 @@ Public Function SelectFunc(fname As String)
     End If
 End Function
 
-Public Function LoadReportCache(func As String)
+Public Function LoadReportCache(mRegion As String, func As String)
     Set mReportCache = New Dictionary
     Logger.LogDebug "CurrentUser.GetReportCache", "Try to load from cache info"
-    Set mReportCache = FileHelper.ReadDictionary(FileHelper.tmpDir & "/" & mNtid & "_" & mFuncRegion.Region & "_" & func & "_report.cache")
+    Set mReportCache = FileHelper.ReadDictionary(FileHelper.tmpDir & "/" & mNtid & "_" & mRegion & "_" & func & "_report.cache")
 End Function
 
-Public Function SaveReportCache(func As String)
-    FileHelper.SaveDictionary FileHelper.tmpDir & "/" & mNtid & "_" & mFuncRegion.Region & "_" & func & "_report.cache", mReportCache
+Public Function SaveReportCache(mRegion, func As String)
+    FileHelper.SaveDictionary FileHelper.tmpDir & "/" & mNtid & "_" & mRegion & "_" & func & "_report.cache", mReportCache
 End Function
 
-Public Function GetReportCache(Name As String, func As String)
-    LoadReportCache func
-    If StringHelper.DictExistKey(mReportCache, Name) Then
-        GetReportCache = StringHelper.DictGetValue(mReportCache, Name)
+Public Function GetReportCache(rName As String, func As String, mRegion As String)
+    LoadReportCache mRegion, func
+    If StringHelper.DictExistKey(mReportCache, rName) Then
+        GetReportCache = StringHelper.DictGetValue(mReportCache, rName)
     Else
         GetReportCache = ""
     End If
 End Function
 
-Public Function AddReportCache(Name As String, path As String, func As String)
-    LoadReportCache func
-    If StringHelper.DictExistKey(mReportCache, Name) Then
-        mReportCache.Remove Name
+Public Function AddReportCache(rName As String, path As String, func As String, mRegion As String)
+    LoadReportCache mRegion, func
+    If StringHelper.DictExistKey(mReportCache, rName) Then
+        mReportCache.Remove rName
     End If
-    mReportCache.Add Name, path
-    SaveReportCache func
+    mReportCache.Add rName, path
+    SaveReportCache mRegion, func
 End Function
 
-Public Function RecheckLocalChangeForReportCacheByTable(Name As String)
+Public Function RecheckLocalChangeForReportCacheByTable(rName As String)
     Dim dbm As New DbManager
     Dim tmpName As String
     dbm.Init
-    dbm.OpenRecordSet "select TableName from ChangeLog where CacheStatus=0 and TableName='" & StringHelper.EscapeQueryString(Name) & "' group by TableName"
+    dbm.OpenRecordSet "select TableName from ChangeLog where CacheStatus=0 and TableName='" & StringHelper.EscapeQueryString(rName) & "' group by TableName"
     If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
-        RemoveReportCacheByTable Name
-        dbm.ExecuteQuery "update ChangeLog set CacheStatus=-1 where CacheStatus=0 and TableName='" & StringHelper.EscapeQueryString(Name) & "'"
+        RemoveReportCacheByTable rName
+        dbm.ExecuteQuery "update ChangeLog set CacheStatus=-1 where CacheStatus=0 and TableName='" & StringHelper.EscapeQueryString(rName) & "'"
     End If
     dbm.Recycle
 End Function
 
-Public Function RecheckLocalChangeForReportCache()
+Public Function RecheckLocalChangeForReportCache(test As Boolean)
     Dim dbm As New DbManager
     Dim tmpName As String
     dbm.Init
@@ -298,94 +298,100 @@ Public Function RecheckLocalChangeForReportCache()
     dbm.Recycle
 End Function
 
-Public Function RemoveReportCacheTableFunc(Name As String, tmpFid As String)
-    If StringHelper.IsEqual(Name, "user_data", True) _
-            Or StringHelper.IsEqual(Name, "BpRoleStandard", True) _
-            Or StringHelper.IsEqual(Name, "user_data_mapping_role", True) Then
-        RemoveReportCache Constants.RP_AD_HOC_REPORTING, tmpFid
+Public Function RemoveReportCacheTableFunc(rName As String, tmpFid As String, mRegion As String)
+    If StringHelper.IsEqual(rName, "user_data", True) _
+            Or StringHelper.IsEqual(rName, "BpRoleStandard", True) _
+            Or StringHelper.IsEqual(rName, "user_data_mapping_role", True) Then
+        RemoveReportCache Constants.RP_AD_HOC_REPORTING, tmpFid, mRegion
     End If
-    If StringHelper.IsEqual(Name, "audit_logs", True) Then
-        RemoveReportCache Constants.RP_AUDIT_LOG, tmpFid
+    If StringHelper.IsEqual(rName, "audit_logs", True) Then
+        RemoveReportCache Constants.RP_AUDIT_LOG, tmpFid, mRegion
     End If
-    If StringHelper.IsEqual(Name, "user_data", True) _
-            Or StringHelper.IsEqual(Name, "CourseMappingBpRoleStandard", True) _
-            Or StringHelper.IsEqual(Name, "course", True) _
-            Or StringHelper.IsEqual(Name, "BpRoleStandard", True) _
-            Or StringHelper.IsEqual(Name, "Functions", True) _
-            Or StringHelper.IsEqual(Name, "user_data_mapping_role", True) Then
-        RemoveReportCache Constants.RP_COURSE_ANALYTICS, tmpFid
+    If StringHelper.IsEqual(rName, "user_data", True) _
+            Or StringHelper.IsEqual(rName, "CourseMappingBpRoleStandard", True) _
+            Or StringHelper.IsEqual(rName, "course", True) _
+            Or StringHelper.IsEqual(rName, "BpRoleStandard", True) _
+            Or StringHelper.IsEqual(rName, "Functions", True) _
+            Or StringHelper.IsEqual(rName, "user_data_mapping_role", True) Then
+        RemoveReportCache Constants.RP_COURSE_ANALYTICS, tmpFid, mRegion
     End If
-    If StringHelper.IsEqual(Name, "user_data_mapping_role", True) _
-            Or StringHelper.IsEqual(Name, "user_data", True) _
-            Or StringHelper.IsEqual(Name, "BpRoleStandard", True) _
-            Or StringHelper.IsEqual(Name, "specialism", True) _
-            Or StringHelper.IsEqual(Name, "SpecialismMappingActivity", True) _
-            Or StringHelper.IsEqual(Name, "activity", True) Then
-        RemoveReportCache Constants.RP_END_USER_TO_BB_ACTIVITY, tmpFid
+    If StringHelper.IsEqual(rName, "user_data_mapping_role", True) _
+            Or StringHelper.IsEqual(rName, "user_data", True) _
+            Or StringHelper.IsEqual(rName, "BpRoleStandard", True) _
+            Or StringHelper.IsEqual(rName, "specialism", True) _
+            Or StringHelper.IsEqual(rName, "SpecialismMappingActivity", True) _
+            Or StringHelper.IsEqual(rName, "activity", True) Then
+        RemoveReportCache Constants.RP_END_USER_TO_BB_ACTIVITY, tmpFid, mRegion
     End If
-    If StringHelper.IsEqual(Name, "user_data_mapping_role", True) _
-            Or StringHelper.IsEqual(Name, "user_data", True) _
-            Or StringHelper.IsEqual(Name, "BpRoleStandard", True) Then
-        RemoveReportCache Constants.RP_END_USER_TO_BB_JOB_ROLE, tmpFid
+    If StringHelper.IsEqual(rName, "user_data_mapping_role", True) _
+            Or StringHelper.IsEqual(rName, "user_data", True) _
+            Or StringHelper.IsEqual(rName, "BpRoleStandard", True) Then
+        RemoveReportCache Constants.RP_END_USER_TO_BB_JOB_ROLE, tmpFid, mRegion
     End If
-    If StringHelper.IsEqual(Name, "user_data_mapping_qualification", True) _
-            Or StringHelper.IsEqual(Name, "user_data", True) _
-            Or StringHelper.IsEqual(Name, "Qualifications", True) _
-            Or StringHelper.IsEqual(Name, "user_data_mapping_role", True) Then
-        RemoveReportCache Constants.RP_END_USER_TO_BB_QUALIFICATION, tmpFid
+    If StringHelper.IsEqual(rName, "user_data_mapping_qualification", True) _
+            Or StringHelper.IsEqual(rName, "user_data", True) _
+            Or StringHelper.IsEqual(rName, "Qualifications", True) _
+            Or StringHelper.IsEqual(rName, "user_data_mapping_role", True) Then
+        RemoveReportCache Constants.RP_END_USER_TO_BB_QUALIFICATION, tmpFid, mRegion
     End If
-    If StringHelper.IsEqual(Name, "user_data_mapping_role", True) _
-            Or StringHelper.IsEqual(Name, "user_data", True) _
-            Or StringHelper.IsEqual(Name, "BpRoleStandard", True) _
-            Or StringHelper.IsEqual(Name, "CourseMappingBpRoleStandard", True) _
-            Or StringHelper.IsEqual(Name, "Course", True) _
-            Or StringHelper.IsEqual(Name, "Functions", True) Then
-        RemoveReportCache Constants.RP_END_USER_TO_COURSE, tmpFid
+    If StringHelper.IsEqual(rName, "user_data_mapping_role", True) _
+            Or StringHelper.IsEqual(rName, "user_data", True) _
+            Or StringHelper.IsEqual(rName, "BpRoleStandard", True) _
+            Or StringHelper.IsEqual(rName, "CourseMappingBpRoleStandard", True) _
+            Or StringHelper.IsEqual(rName, "Course", True) _
+            Or StringHelper.IsEqual(rName, "Functions", True) Then
+        RemoveReportCache Constants.RP_END_USER_TO_COURSE, tmpFid, mRegion
     End If
-    If StringHelper.IsEqual(Name, "user_data", True) _
-            Or StringHelper.IsEqual(Name, "user_data_mapping_role", True) _
-            Or StringHelper.IsEqual(Name, "BpRoleStandard", True) _
-            Or StringHelper.IsEqual(Name, "Dofa", True) Then
-        RemoveReportCache Constants.RP_END_USER_TO_DOFA, tmpFid
+    If StringHelper.IsEqual(rName, "user_data", True) _
+            Or StringHelper.IsEqual(rName, "user_data_mapping_role", True) _
+            Or StringHelper.IsEqual(rName, "BpRoleStandard", True) _
+            Or StringHelper.IsEqual(rName, "Dofa", True) Then
+        RemoveReportCache Constants.RP_END_USER_TO_DOFA, tmpFid, mRegion
     End If
-    If StringHelper.IsEqual(Name, "user_data", True) _
-            Or StringHelper.IsEqual(Name, "user_data_mapping_role", True) _
-            Or StringHelper.IsEqual(Name, "BpRoleStandard", True) _
-            Or StringHelper.IsEqual(Name, "Dofa", True) _
-            Or StringHelper.IsEqual(Name, "specialism", True) _
-            Or StringHelper.IsEqual(Name, "SpecialismMappingActivity", True) _
-            Or StringHelper.IsEqual(Name, "activity", True) Then
-        RemoveReportCache Constants.RP_END_USER_TO_EVERYTHING, tmpFid
+    If StringHelper.IsEqual(rName, "user_data", True) _
+            Or StringHelper.IsEqual(rName, "user_data_mapping_role", True) _
+            Or StringHelper.IsEqual(rName, "BpRoleStandard", True) _
+            Or StringHelper.IsEqual(rName, "Dofa", True) _
+            Or StringHelper.IsEqual(rName, "specialism", True) _
+            Or StringHelper.IsEqual(rName, "SpecialismMappingActivity", True) _
+            Or StringHelper.IsEqual(rName, "activity", True) Then
+        RemoveReportCache Constants.RP_END_USER_TO_EVERYTHING, tmpFid, mRegion
     End If
-    If StringHelper.IsEqual(Name, "user_data_mapping_role", True) _
-            Or StringHelper.IsEqual(Name, "user_data", True) _
-            Or StringHelper.IsEqual(Name, "BpRoleStandard", True) Then
-        RemoveReportCache Constants.RP_END_USER_TO_SYSTEM_ROLE, tmpFid
+    If StringHelper.IsEqual(rName, "user_data_mapping_role", True) _
+            Or StringHelper.IsEqual(rName, "user_data", True) _
+            Or StringHelper.IsEqual(rName, "BpRoleStandard", True) Then
+        RemoveReportCache Constants.RP_END_USER_TO_SYSTEM_ROLE, tmpFid, mRegion
     End If
-    If StringHelper.IsEqual(Name, "user_data_mapping_role", True) _
-            Or StringHelper.IsEqual(Name, "user_data", True) _
-            Or StringHelper.IsEqual(Name, "BpRoleStandard", True) Then
-        RemoveReportCache Constants.RP_ROLE_MAPPING_OUTPUT_OF_TOOL_FOR_SECURITY, tmpFid
+    If StringHelper.IsEqual(rName, "user_data_mapping_role", True) _
+            Or StringHelper.IsEqual(rName, "user_data", True) _
+            Or StringHelper.IsEqual(rName, "BpRoleStandard", True) Then
+        RemoveReportCache Constants.RP_ROLE_MAPPING_OUTPUT_OF_TOOL_FOR_SECURITY, tmpFid, mRegion
     End If
-    If StringHelper.IsEqual(Name, "user_change_log", True) Then
-        RemoveReportCache Constants.RP_USER_DATA_CHANGE_LOG, tmpFid
+    If StringHelper.IsEqual(rName, "user_change_log", True) Then
+        RemoveReportCache Constants.RP_USER_DATA_CHANGE_LOG, tmpFid, mRegion
     End If
 End Function
 
-Public Function RemoveReportCacheByTable(Name As String)
+Public Function RemoveReportCacheByTable(rName As String)
     On Error GoTo OnError
     Dim dbm As New DbManager
     Dim tmpFid As String
     Dim tmpName As String
+    Dim v As Variant
     dbm.Init
     dbm.OpenRecordSet "select * from Functions where deleted=0"
-    RemoveReportCacheTableFunc Name, Constants.TEXT_DEFAULT_ALL_FUNCTION
+    For Each v In ListRegions
+        RemoveReportCacheTableFunc rName, Constants.TEXT_DEFAULT_ALL_FUNCTION, CStr(v)
+    Next
+    
     If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
         dbm.RecordSet.MoveFirst
         Do While Not dbm.RecordSet.EOF
             tmpFid = dbm.GetFieldValue(dbm.RecordSet, "id")
             tmpName = dbm.GetFieldValue(dbm.RecordSet, "nameFunction")
-            RemoveReportCacheTableFunc Name, tmpFid
+            For Each v In ListRegions
+                RemoveReportCacheTableFunc rName, tmpFid, CStr(v)
+            Next
             dbm.RecordSet.MoveNext
         Loop
     End If
@@ -398,15 +404,15 @@ OnError:
     Resume OnExit
 End Function
 
-Public Function RemoveReportCache(Name As String, func As String)
-    LoadReportCache func
-    If StringHelper.DictExistKey(mReportCache, Name) Then
+Public Function RemoveReportCache(rName As String, func As String, mRegion As String)
+    LoadReportCache mRegion, func
+    If StringHelper.DictExistKey(mReportCache, rName) Then
         Dim path As String
-        path = StringHelper.DictGetValue(mReportCache, Name)
+        path = StringHelper.DictGetValue(mReportCache, rName)
         FileHelper.DeleteFile path
-        mReportCache.Remove Name
+        mReportCache.Remove rName
     End If
-    SaveReportCache func
+    SaveReportCache mRegion, func
 End Function
 
 Public Property Get Valid() As Boolean
