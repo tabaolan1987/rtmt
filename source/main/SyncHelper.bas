@@ -607,6 +607,7 @@ Private Function PushLocalChange()
         mDeletedDofa = True
         dbm.Init
         dbm.ExecuteQuery "delete from dofa where deleted=-1"
+        dbm.ExecuteQuery "delete from [ChangeLog] where [TableName]='" & StringHelper.EscapeQueryString(mTableName) & "'"
     End If
     If qBatch.count > 0 Then
         For Each v In qBatch
