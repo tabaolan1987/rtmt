@@ -1,20 +1,21 @@
 CHANGELOG (notable new features or fixes)
 ---------
 
-###<a href='https://cmgcode.atlassian.net/projects/DURM/versions/12801'>Version 0.3.6</a>
-Released on: 03/03/2015
+###<a href='https://cmgcode.atlassian.net/projects/DURM/versions/12803'>Version 0.3.6</a>
+Released on: 13/03/2015
 
-+ Fix issues of version 0.3.4
++ Fix issue when sync tool
++ Change logic of upload function
 
 <h5>        Bug
 </h5>
 <ul>
-<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-399'>DURM-399</a>] -         RTMT Phase3a - The tool still performs synchronizing at closing when no changes made
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-413'>DURM-413</a>] -         RTMT Phase3a - Synchronizing of User Privileges changes by quitting the tool cause update status turned on
 </li>
-<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-400'>DURM-400</a>] -         RTMT Phase3a - Reports - Download reports failed in North sea region
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-414'>DURM-414</a>] -         RTMT Phase3a - Validation is ignored when opening Edit EUDL partial from Upload screen
 </li>
 </ul>
-
+                            
 
 ###<a href='https://cmgcode.atlassian.net/projects/DURM/versions/12801'>Version 0.3.5</a>
 Released on: 03/03/2015
