@@ -1,6 +1,21 @@
 CHANGELOG (notable new features or fixes)
 ---------
 
+###<a href='https://cmgcode.atlassian.net/projects/DURM/versions/12801'>Version 0.3.6</a>
+Released on: 03/03/2015
+
++ Fix issues of version 0.3.4
+
+<h5>        Bug
+</h5>
+<ul>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-399'>DURM-399</a>] -         RTMT Phase3a - The tool still performs synchronizing at closing when no changes made
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-400'>DURM-400</a>] -         RTMT Phase3a - Reports - Download reports failed in North sea region
+</li>
+</ul>
+
+
 ###<a href='https://cmgcode.atlassian.net/projects/DURM/versions/12801'>Version 0.3.5</a>
 Released on: 03/03/2015
 
@@ -12,6 +27,35 @@ Released on: 03/03/2015
 <li>[<a href='https://cmgcode.atlassian.net/browse/DURM-399'>DURM-399</a>] -         RTMT Phase3a - The tool still performs synchronizing at closing when no changes made
 </li>
 <li>[<a href='https://cmgcode.atlassian.net/browse/DURM-400'>DURM-400</a>] -         RTMT Phase3a - Reports - Download reports failed in North sea region
+</li>
+</ul>
+
+###<a href='https://cmgcode.atlassian.net/projects/DURM/versions/12800'>Version 0.3.4</a>
+Released on: 02/03/2015
+
++ Fix issues of version 0.3.3
+
+<h5>        Bug
+</h5>
+<ul>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-395'>DURM-395</a>] -         RTMT Phase 3a - Validation is ignored after resolved conflict with Ignore All
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-396'>DURM-396</a>] -         RTMT Phase 3a - Synchronizing failed due to different datetime format at local machine
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-400'>DURM-400</a>] -         RTMT Phase3a - Reports - Download reports failed in North sea region
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-401'>DURM-401</a>] -         RTMT Phase3a - Readonly user should not be allowed to use Edit EUDL functions
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-403'>DURM-403</a>] -         RTMT Phase3a - EUDL to Activity report - End user is still listed after its Activity is removed
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-407'>DURM-407</a>] -         RTMT Phase3a - DofA report - Cache issue makes the report cannot be validated
+</li>
+</ul>
+                
+<h5>        Improvement
+</h5>
+<ul>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-397'>DURM-397</a>] -         RTMT Phase 3a - Should change &#39;Timestamp&#39; field in Edit EUDL screen to &#39;Uploaded date&#39;
 </li>
 </ul>
 

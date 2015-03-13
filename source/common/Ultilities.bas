@@ -122,6 +122,14 @@ Public Sub WDeleteAllTables()
     dbm.RecycleTableName "audit_logs"
     dbm.RecycleTableName "user_change_log"
     dbm.RecycleTableName "USysApplicationLog"
+    dbm.RecycleTableName "tmp_curriculum"
+    dbm.RecycleTableName "w_in_curriculum_not_in_db"
+    dbm.RecycleTableName "w_in_db_not_in_curriculum"
+    dbm.RecycleTableName "w_invalid_bluesprint_role"
+    dbm.RecycleTableName "w_invalid_specialism"
+    dbm.RecycleTableName "w_invalid_standard_function"
+    dbm.RecycleTableName "w_invalid_standard_team"
+    dbm.RecycleTableName "w_invalid_sub_function"
     dbm.Recycle
 End Sub
 

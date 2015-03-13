@@ -56,9 +56,11 @@ Public Function Init(tblName As String)
     Set mIdTs = New Scripting.Dictionary
 End Function
 
+
 Public Function sync()
     Session.UpdateDbFlag (False)
     If Ultilities.IfTableExists(mTableName) Then
+        RecheckChangelog
         GetLocalTimestamp
         CompareServer
         CompareLocal
@@ -78,6 +80,13 @@ Public Function sync()
     '    qdf.Close
     'End If
     Session.UpdateDbFlag (True)
+End Function
+
+Public Function RecheckChangelog()
+ Dim dbm As New DbManager
+ dbm.Init
+ dbm.ExecuteQuery "delete from [ChangeLog] where (TableId is null or TableId='') and [TableName]='" & StringHelper.EscapeQueryString(mTableName) & "'"
+ dbm.Recycle
 End Function
 
 Public Function Recycle()
