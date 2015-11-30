@@ -36,8 +36,8 @@ Public Property Get value() As String
     value = mRegion ' & " - " & mName
 End Property
 
-Public Function SetFuncRgId(id As String)
-    mFuncRgID = id
+Public Function SetFuncRgId(ID As String)
+    mFuncRgID = ID
 End Function
 
 Public Property Get FuncRgID() As String

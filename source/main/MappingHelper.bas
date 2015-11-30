@@ -60,7 +60,7 @@ Public Function CheckExistMapping() As Boolean
     Dim query As String
     query = FileHelper.ReadQuery(Constants.TABLE_MAPPING_SPECIALISM_ACITIVITY, Q_SELECT)
     Dim data As New Scripting.Dictionary
-    data.Add Constants.Q_KEY_REGION_NAME, Session.Settings.regionName
+    data.Add Constants.Q_KEY_REGION_NAME, Session.Settings.RegionName
     data.Add Constants.Q_KEY_FUNCTION_REGION_ID, Session.Settings.RegionFunctionId
     query = StringHelper.GenerateQuery(query, data)
     dbm.Init

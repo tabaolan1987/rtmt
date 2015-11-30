@@ -22,7 +22,7 @@ Private Property Get DataQuery() As Scripting.Dictionary
     
     Set ss = Session.Settings()
     data.Add Constants.Q_KEY_FUNCTION_REGION_ID, ss.RegionFunctionId
-    data.Add Constants.Q_KEY_REGION_NAME, ss.regionName
+    data.Add Constants.Q_KEY_REGION_NAME, ss.RegionName
     data.Add Constants.Q_KEY_FUNCTION_REGION_NAME, Session.CurrentUser.FuncRegion.Name
     Set DataQuery = data
 End Property
@@ -378,7 +378,7 @@ Private Function PrepareQuery(query As String, Optional ss As SystemSetting) As 
         For i = LBound(mHeader) To UBound(mHeader)
             strTemp = Replace(qIn, "(%VALUE%)", StringHelper.EscapeQueryString(mHeader(i)))
             If Not ss Is Nothing Then
-                strTemp = Replace(strTemp, "(%RG_F_ID%)", ss.regionName)
+                strTemp = Replace(strTemp, "(%RG_F_ID%)", ss.RegionName)
             End If
             tmpQuery = tmpQuery & qIn & ","
         Next i
@@ -426,7 +426,7 @@ Private Function GenerateQuery(query As String, Optional ss As SystemSetting) As
                 tmpVal = dbm.RecordSet(0)
                 strTemp = Replace(qIn, "(%VALUE%)", StringHelper.EscapeQueryString(tmpVal))
                 If Not ss Is Nothing Then
-                    strTemp = Replace(strTemp, "(%RG_F_ID%)", ss.regionName)
+                    strTemp = Replace(strTemp, "(%RG_F_ID%)", ss.RegionName)
                 End If
                 tmpQuery = tmpQuery & strTemp & ","
                 'Logger.LogDebug "ReportSection.GenerateQuery", "Found value: " & tmpVal
