@@ -690,13 +690,13 @@ OnError:
     Resume OnExit
 End Function
 
-Private Function RemoveChangeLog(ID As String)
+Private Function RemoveChangeLog(id As String)
     On Error Resume Next
     Dim v As Variant
     If mIdCol.count > 0 Then
-        Logger.LogDebug "SyncHelper.CheckConflict", "Remove conflict id: " & ID
-        If mIdCol.Exists(ID) Then
-            mIdCol.Remove (ID)
+        Logger.LogDebug "SyncHelper.CheckConflict", "Remove conflict id: " & id
+        If mIdCol.Exists(id) Then
+            mIdCol.Remove (id)
         End If
     End If
 End Function

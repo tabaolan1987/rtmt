@@ -81,6 +81,34 @@ Public Function DeleteTable(Name As String)
     End If
 End Function
 
+Public Function ExecuteNamedQuery(query As String, Optional params As Scripting.Dictionary)
+    On Error GoTo OnError
+    Dim i As Integer
+    Dim key As String, value As Variant
+    Set qdf = CurrentDb.QueryDefs(query)
+    If Not params Is Nothing Then
+        'Logger.LogDebug "DbManager.OpenRecordSet", "Param cound: " & params.count
+        For i = 0 To params.count - 1
+            On Error Resume Next
+            key = params.keys(i)
+            value = params.Items(i)
+            'Logger.LogDebug "DbManager.OpenRecordSet", "Param key: " & key & ". Value: " & value
+            qdf.Parameters(key).value = value
+            On Error GoTo 0
+        Next i
+    End If
+    qdf.Execute
+    'dbs.TableDefs.Refresh
+OnExit:
+    On Error Resume Next
+    qdf.Close
+    Set qdf = Nothing
+    Exit Function
+OnError:
+    Logger.LogError "DbManager.ExecuteQuery", "Could execute query: " & query, Err
+    Resume OnExit
+End Function
+
 Public Function ExecuteQuery(query As String, Optional params As Scripting.Dictionary)
     On Error GoTo OnError
     Dim i As Integer
