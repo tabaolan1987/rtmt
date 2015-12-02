@@ -15,7 +15,7 @@ Private tmpDirPath As String
 #End If
 
 
-Public Function WaitForFileClose(FileName As String, ByVal TestIntervalMilliseconds As Double, _
+Public Function WaitForFileClose(fileName As String, ByVal TestIntervalMilliseconds As Double, _
     ByVal TimeOutMilliseconds As Double) As Boolean
 
 Dim StartTickCount As Double
@@ -25,7 +25,7 @@ Dim FileIsOpen As Boolean
 Dim done As Boolean
 Dim CancelKeyState As Double
 
-FileIsOpen = IsFileOpen(FileName:=FileName)
+FileIsOpen = IsFileOpen(fileName:=fileName)
 If FileIsOpen = False Then
     WaitForFileClose = True
     Exit Function
@@ -47,7 +47,7 @@ End If
 
 done = False
 Do Until done
-    If IsFileOpen(FileName:=FileName) = False Then
+    If IsFileOpen(fileName:=fileName) = False Then
         WaitForFileClose = True
    '     Application.EnableCancelKey = CancelKeyState
         Exit Function
@@ -56,13 +56,13 @@ Do Until done
     TickCountNow = GetTickCount()
     If EndTickCount > 0 Then
         If TickCountNow >= EndTickCount Then
-            WaitForFileClose = Not (IsFileOpen(FileName))
+            WaitForFileClose = Not (IsFileOpen(fileName))
   '          Application.EnableCancelKey = CancelKeyState
             Exit Function
         Else
         End If
     Else
-        If IsFileOpen(FileName:=FileName) = False Then
+        If IsFileOpen(fileName:=fileName) = False Then
             WaitForFileClose = True
  '           Application.EnableCancelKey = CancelKeyState
             Exit Function
@@ -80,22 +80,22 @@ WaitForFileClose = False
 End Function
 
 
-Private Function IsFileOpen(FileName As String) As Boolean
+Private Function IsFileOpen(fileName As String) As Boolean
 Dim FileNum As Integer
 Dim ErrNum As Integer
 
 On Error Resume Next
-If FileName = vbNullString Then
+If fileName = vbNullString Then
     IsFileOpen = False
     Exit Function
 End If
-If Dir(FileName) = vbNullString Then
+If Dir(fileName) = vbNullString Then
     IsFileOpen = False
     Exit Function
 End If
 FileNum = FreeFile()
 Err.Clear
-Open FileName For Input Lock Read As #FileNum
+Open fileName For Input Lock Read As #FileNum
 ErrNum = Err.Number
 On Error GoTo 0
 Close #FileNum

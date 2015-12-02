@@ -28,6 +28,7 @@ Private mRegionName As String
 Private mRegionFunctionId As String
 Private mLogLevel As String
 Private mEnableTesting As Boolean
+Private mEnableLdap As Boolean
 Private mEnableValidation As Boolean
 Private mTestNtid As String
 Private mEnv As String
@@ -85,6 +86,7 @@ Public Function Init()
     mCheckIpURL = ir.ReadKey(Constants.SECTION_APPLICATION, Constants.KEY_CHECK_IP_URL)
     mFeedbackUrl = ir.ReadKey(Constants.SECTION_APPLICATION, Constants.KEY_FEEDBACK_URL)
     mEnableTesting = ir.ReadBooleanKey(Constants.SECTION_APPLICATION, Constants.KEY_ENABLE_TESTING)
+    mEnableLdap = ir.ReadBooleanKey(Constants.SECTION_APPLICATION, Constants.KEY_ENABLE_LDAP)
     mEnableAuditLog = ir.ReadBooleanKey(Constants.SECTION_APPLICATION, Constants.KEY_ENABLE_AUDITLOG)
     mSyncFixedTables = ir.ReadBooleanKey(Constants.SECTION_APPLICATION, Constants.KEY_SYNC_FIXED_TABLES)
     
@@ -198,6 +200,9 @@ End Property
 
 Public Property Get EnableTesting() As Boolean
     EnableTesting = mEnableTesting
+End Property
+Public Property Get EnableLdap() As Boolean
+    EnableLdap = mEnableLdap
 End Property
 
 Public Property Get EnableValidation() As Boolean

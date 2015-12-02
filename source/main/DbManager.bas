@@ -495,7 +495,7 @@ Public Function ImportData(csvPath As String)
     End If
     dbs.TableDefs.Refresh
     DoCmd.TransferText TransferType:=acLinkDelim, tableName:=Constants.TMP_END_USER_TABLE_NAME, _
-        FileName:=csvPath, HasFieldNames:=True
+        fileName:=csvPath, HasFieldNames:=True
     dbs.TableDefs.Refresh
 OnExit:
     On Error Resume Next
