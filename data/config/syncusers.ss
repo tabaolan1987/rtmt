@@ -24,6 +24,9 @@ purchasingOrg : Purchasing Org
 SFunction : Standard Function
 SdSubFunction : Standard Sub Function
 STeam : Standard Team
+day1user : Day1 User
+courserq : Course Requirements
+ntr : NTR
 spare1 : Optional Field 1
 spare2 : Optional Field 2
 spare3 : Optional Field 3
