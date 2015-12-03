@@ -59,7 +59,10 @@ INSERT INTO [user_data_cache](
 	[spare35],
 	[SFunction],
 	[SdSubFunction],
-	[STeam]
+	[STeam],
+	[day1user],
+	[courserq],
+	[ntr]
 ) VALUES (
 	[id],
 	[ntid],
@@ -121,5 +124,8 @@ INSERT INTO [user_data_cache](
 	[spare35],
 	[SFunction],
 	[SdSubFunction],
-	[STeam]
+	[STeam],
+	[day1user],
+	[courserq],
+	[ntr]
 )
