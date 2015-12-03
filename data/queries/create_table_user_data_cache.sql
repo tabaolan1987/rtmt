@@ -61,5 +61,8 @@ CREATE TABLE [user_data_cache](
 	[Deleted] bit,
 	SFunction varchar(255),
 	SdSubFunction varchar(255),
-	STeam varchar(255)
+	STeam varchar(255),
+	[day1user] varchar(255),
+	[courserq] varchar(255),
+	[ntr] varchar(255)
 )
