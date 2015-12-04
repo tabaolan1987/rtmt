@@ -35,7 +35,7 @@ Public Sub TestImportData()
     csvPath = FileHelper.CurrentDbPath & Constants.END_USER_DATA_CSV_FILE_PATH
     Dim im As DbManager: Set im = New DbManager
     im.Init
-    im.ImportData csvPath
+    im.importdata csvPath
     
 OnExit:
     im.Recycle

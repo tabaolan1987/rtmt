@@ -488,7 +488,7 @@ Public Function SyncUserData()
     End If
 End Function
 
-Public Function ImportData(csvPath As String)
+Public Function importdata(csvPath As String)
     On Error GoTo OnError
     If Ultilities.IfTableExists(Constants.TMP_END_USER_TABLE_NAME) Then
         dbs.TableDefs.Delete Constants.TMP_END_USER_TABLE_NAME
@@ -583,7 +583,7 @@ Public Function RecycleTableName(Name As String)
     Recycle
 End Function
 
-Public Function SyncTable(Server As String, _
+Public Function syncTable(Server As String, _
                                     DatabaseName As String, _
                                     fromTable As String, _
                                     desTable As String, _
