@@ -25,3 +25,7 @@ privileges
 mappingType
 sub_function
 standard_team
+CourseBundle
+tbl_ASSIG
+tbl_ASSIG1
+tbl_ASSIG2
