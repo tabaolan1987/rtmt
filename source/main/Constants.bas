@@ -32,6 +32,22 @@ Public Const HELP_EDIT_EUDL = "data\helps\edit-eudl.txt"
 
 Public Const HELP_EDIT_EUDL_PARTIAL = "data\helps\edit-eudl-partial.txt"
 
+Public Const HELP_TRAINING = "data\helps\training.txt"
+
+Public Const HELP_TRAINING_UPLOAD_CURICULUMN = "data\helps\upload_curriculumn.txt"
+
+Public Const HELP_TRAINING_COURSE_BUNDLE = "data\helps\courseBundle.txt"
+
+Public Const HELP_TRAINING_VIEW_ASSIGNMENT = "data\helps\viewAssigment.txt"
+
+Public Const HELP_TRAINING_MANUAL_ASSIGNMENT = "data\helps\manualAssigment.txt"
+
+Public Const HELP_TRAINING_PROCESS_ASSIGNMENT = "data\helps\processAssigment.txt"
+
+Public Const HELP_TRAINING_COMPLETE_ASSIGNMENT = "data\helps\completeAssigment.txt"
+
+Public Const HELP_TRAINING_GENERATE_REPORT = "data\helps\generate-report-training.txt"
+
 Public Const TEMPLATE_EUDL = "data\template\eudl_template.xlsx"
 
 Public Const FIELD_TIMESTAMP = "Timestamp"
