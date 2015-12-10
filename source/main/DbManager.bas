@@ -147,7 +147,7 @@ Public Function OpenRecordSet(query As String, Optional params As Scripting.Dict
         For i = 0 To params.count - 1
             On Error Resume Next
             key = params.keys(i)
-            'Logger.LogDebug "DbManager.OpenRecordSet", "Param key: " & params.Keys(i) & ". Value: " & params.Items(i)
+            Logger.LogDebug "DbManager.OpenRecordSet", "Param key: " & params.keys(i) & ". Value: " & params.Items(i)
             If params.Exists(key) Then
                 qdf.Parameters(key).value = params.Items(key)
             End If
@@ -159,6 +159,31 @@ OnExit:
     Exit Function
 OnError:
     Logger.LogError "DbManager.OpenRecordSet", "Could execute query: " & query, Err
+    Resume OnExit
+End Function
+
+Public Function OpenRecordSetQr(query As String, Optional params As Scripting.Dictionary)
+    Dim prm As DAO.Parameter, i As Integer, key As String
+    On Error GoTo OnError
+    Set qdf = CurrentDb.QueryDefs(query)
+    If Not params Is Nothing Then
+        qdf.Parameters.Refresh
+        'Logger.LogDebug "DbManager.OpenRecordSet", "Param cound: " & params.count
+        For i = 0 To params.count - 1
+            On Error Resume Next
+            key = params.keys(i)
+            'Logger.LogDebug "DbManager.OpenRecordSet", "Param key: " & params.Keys(i) & ". Value: " & params.Items(i)
+            If params.Exists(key) Then
+                qdf.Parameters(key).value = params.Items(key)
+            End If
+            On Error GoTo 0
+        Next i
+    End If
+    Set rst = qdf.OpenRecordSet()
+OnExit:
+    Exit Function
+OnError:
+    Logger.LogError "DbManager.OpenRecordSetQr", "Could execute query: " & query, Err
     Resume OnExit
 End Function
 
