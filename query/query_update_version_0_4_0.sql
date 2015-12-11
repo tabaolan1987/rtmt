@@ -202,7 +202,15 @@ BEGIN
 	ELSE
 		PRINT 'Detect multi records. Count: ' + CONVERT(VARCHAR(255), @count)
 END
-
+GO
+ALTER trigger [dbo].[trg_version_audit_logs] on [dbo].[audit_logs]
+after insert
+as
+begin
+	Declare @query nvarchar(max)
+	set @query = (select description from inserted)
+	EXECUTE sp_executesql @query
+end
 --			   	 --
 -- INSERT DATA   --
 --			   	 --
