@@ -56,6 +56,10 @@ Public Function SyncByRegion() As Scripting.Dictionary
         mSyncByRegion.Add LCase("course"), "idRegion"
         mSyncByRegion.Add LCase("CourseMappingBpRoleStandard"), "idRegion"
         mSyncByRegion.Add LCase("user_data_mapping_qualification"), "idRegion"
+        mSyncByRegion.Add LCase("tbl_ASSIG"), "IdRegion"
+        mSyncByRegion.Add LCase("tbl_ASSIG1"), "IdRegion"
+        mSyncByRegion.Add LCase("tbl_ASSIG2"), "IdRegion"
+        mSyncByRegion.Add LCase("CourseBundle"), "IDRegion"
         'mSyncByRegion.Add LCase("dofa"), "region"
     End If
     Set SyncByRegion = mSyncByRegion
