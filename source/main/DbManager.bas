@@ -237,7 +237,7 @@ Public Function GetFieldValue(rs As RecordSet, Name As String, Optional isServer
         If index <> -1 Then
             If Len(rs.fields(index).value) <> 0 Then
                 If rs.fields(index).Type = dbDate And isServer Then
-                    GetFieldValue = Format(rs.fields(index).value, "dd/MM/yyyy")
+                    GetFieldValue = Format(rs.fields(index).value, Session.Settings.DateFormat)
                 Else
                     GetFieldValue = rs.fields(index).value
                 End If
@@ -832,7 +832,7 @@ Public Function CreateRecordQuery(datas As Scripting.Dictionary, cols As Collect
             If isServer = True And StringHelper.IsEqual(CStr(val), Constants.FIELD_TIMESTAMP, True) Then
                 tmpVal = tmpVal & "getdate(),"
             ElseIf isServer = True And StringHelper.IsEqual(CStr(val), Constants.FIELD_EXT_TIMESTAMP, True) Then
-                tmpVal = tmpVal & "CONVERT(DATETIME, '" & StringHelper.EscapeQueryString(value) & "', 103)" & " ,"
+                tmpVal = tmpVal & "'" & StringHelper.EscapeQueryString(value) & "'" & " ,"
             Else
                 If colsType Is Nothing Then
                     tmpVal = tmpVal & "'" & StringHelper.EscapeQueryString(value) & "',"
@@ -893,7 +893,7 @@ Public Function UpdateRecordQuery(datas As Scripting.Dictionary, cols As Collect
                 tmpCol = tmpCol & "[" & CStr(val) & "] = GETDATE()" & " ,"
             ElseIf isServer = True And StringHelper.IsEqual(CStr(val), Constants.FIELD_EXT_TIMESTAMP, True) Then
                     value = datas.Item(CStr(val))
-                    tmpCol = tmpCol & "[" & CStr(val) & "] = CONVERT(DATETIME, '" & StringHelper.EscapeQueryString(value) & "', 103)" & " ,"
+                    tmpCol = tmpCol & "[" & CStr(val) & "] = '" & StringHelper.EscapeQueryString(value) & "'" & " ,"
             Else
                 value = datas.Item(CStr(val))
                 If colsType Is Nothing Then
