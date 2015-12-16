@@ -1,6 +1,37 @@
 CHANGELOG (notable new features or fixes)
 ---------
 
+
+###<a href='https://cmgcode.atlassian.net/projects/DURM/versions/12803'>Version 0.4.1</a>
+Released on: 13/03/2015
+
++ Fix issue
+
+<h5>        Bug
+</h5>
+<ul>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-437'>DURM-437</a>] -         Phase 4 - View assignments - draft assignments report is truncated for MapComb field
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-443'>DURM-443</a>] -         Phase 4 - View assignment - Missing ILT assignment in draft assignment
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-445'>DURM-445</a>] -         Phase 4 - Training bundles - Standard functions list in the table does not show all available functions for the current region
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-438'>DURM-438</a>] -         Phase 4 - SQL runtime error
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-442'>DURM-442</a>] -         Phase 4 - Training screen - wrong information of login user and region
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-444'>DURM-444</a>] -         Phase 4 - View assignment - Missing 'Status' column in draft assignment report
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-446'>DURM-446</a>] -         Phase 4 - Manual Assignment - data does not sync on other regions not Angola
+</li>
+</ul>
+
+###<a href='https://cmgcode.atlassian.net/projects/DURM/versions/14600'>Version 0.4.0</a>
+Released on: 15/12/2015
+
++ Enhancement of the RTMT tool and central database to support additional functionality for training processes.
+
+
 ###<a href='https://cmgcode.atlassian.net/projects/DURM/versions/12803'>Version 0.3.6</a>
 Released on: 13/03/2015
 
