@@ -281,6 +281,7 @@ CREATE TABLE [tbl_ASSIG1] (
 GO
 CREATE TABLE [tbl_ASSIG2] (
 	[ID] VARCHAR(255) PRIMARY KEY,
+	[NName] VARCHAR(255),
 	[fname] VARCHAR(255),
 	[lname] VARCHAR(255),
 	[ntid] VARCHAR(255),
@@ -288,6 +289,9 @@ CREATE TABLE [tbl_ASSIG2] (
 	[courseID] VARCHAR(255),
 	[coursetitle] VARCHAR(255),
 	[Actor] VARCHAR(255),
+	[NDate] DATETIME,
+	[Status] VARCHAR(255),
+	[Trainingtype] VARCHAR(255),
 	[IdRegion] VARCHAR(255),
 	[Timestamp] DATETIME DEFAULT (getdate()),
 	[deleted] BIT DEFAULT ((0))
