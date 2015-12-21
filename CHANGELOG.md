@@ -2,6 +2,48 @@ CHANGELOG (notable new features or fixes)
 ---------
 
 
+###<a href='https://cmgcode.atlassian.net/projects/DURM/versions/12803'>Version 0.4.2</a>
+Released on: 21/12/2015
+
++ Fix issues
+
+<h5>        Bug
+</h5>
+<ul>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-449'>DURM-449</a>] -         Phase 4 - Training Bundles - Updating existing bundles does not synch to server
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-450'>DURM-450</a>] -         Phase 4 - Process Assignment - LSC_Assignments report has no data
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-452'>DURM-452</a>] -         Phase 4 - Edit EUDL - Cannot suspend user
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-453'>DURM-453</a>] -         Phase 4 - View Assignments - Worksheet INVALID FUNCTION of Draft Assignments report has no data
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-454'>DURM-454</a>] -         Phase 4 - Manual Assignments - Missing some fields in the table
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-455'>DURM-455</a>] -         Phase 4 - Training Bundle - Can add data duplicated in Course Bundle table.
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-456'>DURM-456</a>] -         Phase 4 - Training Bundle - Issues with Function field
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-457'>DURM-457</a>] -         Phase 4 - Process Assignments - Data from Manual Assignments table (tbl_ASSIG_2) does not append to working assignments table (tbl_ASSIG_1)
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-458'>DURM-458</a>] -         Phase 4 - Process Assignments - Status is not updated in Working assignments table (tbl_ASSIG_1)
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-459'>DURM-459</a>] -         Phase 4 - Generate Training Report - Runtime error shown when import incorrect ducuments
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-460'>DURM-460</a>] -         Phase 4 - Team Status report - Missing data
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-439'>DURM-439</a>] -         Phase4 - Missing help text for Training button & buttons in Training screen
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-441'>DURM-441</a>] -         Phase 4 - Edit EUDL - Missing 3 new fields on the screen
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-447'>DURM-447</a>] -         Phase 4 - Training Bundles - Issues with ID and TimeStamp fields
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-440'>DURM-440</a>] -         Phase 4 - Reports should be generated in C:/Temp folder
+</li>
+</ul>
+
+
+
 ###<a href='https://cmgcode.atlassian.net/projects/DURM/versions/12803'>Version 0.4.1</a>
 Released on: 16/12/2015
 
