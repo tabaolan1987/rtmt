@@ -139,7 +139,7 @@ Private Function GetLocalTimestamp()
     
     query = "select top 1 [timestamp] from [" & mTableName & "]"
     If mEnableRegion Then
-        query = query & " where [" & Session.SyncByRegion.Item(LCase(mTableName)) & "] = '" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "'"
+        query = query & " where [" & Session.SyncByRegion.Item(LCase(mTableName)) & "] = '" & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.Region) & "'"
     End If
     query = query & " order by [timestamp] desc"
     
@@ -191,7 +191,7 @@ Private Function CompareServer()
             & "] where [deleted]=0"
     End If
     If mEnableRegion Then
-        query = query & " and [" & Session.SyncByRegion.Item(LCase(mTableName)) & "] = '" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "'"
+        query = query & " and [" & Session.SyncByRegion.Item(LCase(mTableName)) & "] = '" & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.Region) & "'"
     End If
     If mEnablePrimary Then
         query = query & " order by [" & Session.EnablePrimarySync.Item(LCase(mTableName)) & "]"
@@ -319,8 +319,8 @@ Private Function CompareServer()
             End If
             rs.MoveNext
         Loop
-        If Not Session.CurrentUser Is Nothing Then
-            Session.CurrentUser.RemoveReportCacheByTable mTableName
+        If Not Session.currentUser Is Nothing Then
+            Session.currentUser.RemoveReportCacheByTable mTableName
         End If
     End If
    ' cn.CommitTrans
@@ -463,7 +463,7 @@ Private Function PushLocalChange()
     If Not StringHelper.IsEqual(mTableName, "dofa", True) Then
         query = "select * from [" & mTableName & "] where [id] in (" & mFilter & ")"
         If mEnableRegion Then
-            query = query & " and [" & Session.SyncByRegion.Item(LCase(mTableName)) & "] = '" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "'"
+            query = query & " and [" & Session.SyncByRegion.Item(LCase(mTableName)) & "] = '" & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.Region) & "'"
         End If
         Logger.LogDebug "SyncHelper.PushLocalChange", "List changed data query: " & query
         Set rs = cn.Execute(query)
@@ -507,8 +507,8 @@ Private Function PushLocalChange()
                         query = dbm.UpdateRecordQuery(tmpData, mHeaders, mTableName, mFieldTypes, True)
                         Set adData = New Scripting.Dictionary
                         adData.Add "id", StringHelper.GetGUID
-                        adData.Add "ntid", Session.CurrentUser.ntid
-                        adData.Add "idFunction", Session.CurrentUser.FuncRegion.Region
+                        adData.Add "ntid", Session.currentUser.ntid
+                        adData.Add "idFunction", Session.currentUser.FuncRegion.Region
                         adData.Add "userAction", "Update central store record"
                         adData.Add "description", query
                         adData.Add "data_fields", ""
@@ -537,7 +537,7 @@ Private Function PushLocalChange()
     
     query = "select * from [" & mTableName & "] where [id] in (" & mFilter & ")"
     If mEnableRegion Then
-        query = query & " and [" & Session.SyncByRegion.Item(LCase(mTableName)) & "] = '" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "'"
+        query = query & " and [" & Session.SyncByRegion.Item(LCase(mTableName)) & "] = '" & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.Region) & "'"
     End If
     Set qdf = dbs.CreateQueryDef("", query)
     Set rst = qdf.OpenRecordSet
@@ -549,8 +549,8 @@ Private Function PushLocalChange()
         If StringHelper.IsEqual(mTableName, "dofa", True) Then
             Set adData = New Scripting.Dictionary
             adData.Add "id", StringHelper.GetGUID
-            adData.Add "ntid", Session.CurrentUser.ntid
-            adData.Add "idFunction", Session.CurrentUser.FuncRegion.Region
+            adData.Add "ntid", Session.currentUser.ntid
+            adData.Add "idFunction", Session.currentUser.FuncRegion.Region
             adData.Add "userAction", "Recycle DofA data"
             adData.Add "description", query
             adData.Add "data_fields", ""
@@ -583,8 +583,8 @@ Private Function PushLocalChange()
                 End If
                 Set adData = New Scripting.Dictionary
                 adData.Add "id", StringHelper.GetGUID
-                adData.Add "ntid", Session.CurrentUser.ntid
-                adData.Add "idFunction", Session.CurrentUser.FuncRegion.Region
+                adData.Add "ntid", Session.currentUser.ntid
+                adData.Add "idFunction", Session.currentUser.FuncRegion.Region
                 adData.Add "userAction", "Create central store record"
                 adData.Add "description", query
                 adData.Add "data_fields", ""

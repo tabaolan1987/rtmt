@@ -2,7 +2,7 @@
 ' To control the current session data
 Option Explicit
 
-Private mCurrentUser As CurrentUser
+Private mCurrentUser As currentUser
 Private ss As SystemSetting
 Private mFlagMapping As Boolean
 Private mFlagReports As Boolean
@@ -171,7 +171,7 @@ End Function
 
 Public Function Init()
     Set mCurrentUser = Nothing
-    CurrentUser
+    currentUser
     Recycle
 End Function
 
@@ -224,9 +224,9 @@ Public Function ReportMDCols() As Collection
      Set ReportMDCols = list
 End Function
 
-Public Function CurrentUser() As CurrentUser
+Public Function currentUser() As currentUser
     If mCurrentUser Is Nothing Then
-        Set mCurrentUser = New CurrentUser
+        Set mCurrentUser = New currentUser
         If Settings().EnableTesting Then
             Logger.LogDebug "Session.CurrentUser", "Enable testing mode"
             mCurrentUser.Init Settings().TestNtid, Settings()
@@ -235,7 +235,7 @@ Public Function CurrentUser() As CurrentUser
             mCurrentUser.Init Ultilities.GetUserName, Settings()
         End If
     End If
-   Set CurrentUser = mCurrentUser
+   Set currentUser = mCurrentUser
 End Function
 
 Public Function Settings() As SystemSetting

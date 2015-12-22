@@ -3,7 +3,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
-
+Private mSelectedProcess As String
 Private mNtid As String
 Private mFullName As String
 Private mFuncRegion As FunctionRegion
@@ -46,7 +46,7 @@ End Property
 Public Function Init(iNtid As String, _
                         Optional ss As SystemSetting)
     'revised code to use alternative BP authentification dominic gardham 01 July 2014
-    
+    mSelectedProcess = "false"
     Dim i As Integer
     Dim mData As String
     Dim fields As String
@@ -438,3 +438,10 @@ End Property
 Public Function SetNtid(ntid As String)
     mNtid = ntid
 End Function
+
+Public Function SetSelectedProcess(selected As String)
+    mSelectedProcess = selected
+End Function
+Public Property Get selectedProcess() As String
+    selectedProcess = mSelectedProcess
+End Property

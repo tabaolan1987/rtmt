@@ -988,8 +988,8 @@ Public Function CreateServerRecord(datas As Scripting.Dictionary, colsType As Sc
         If Session.Settings.EnableAuditLog Then
             ExecuteQuery "insert into audit_logs([id], [ntid], [idFunction], [userAction], [description]) values('" _
             & StringHelper.EscapeQueryString(StringHelper.GetGUID) & "','" _
-            & StringHelper.EscapeQueryString(Session.CurrentUser.ntid) & "','" _
-            & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.FuncRgID) & "','" _
+            & StringHelper.EscapeQueryString(Session.currentUser.ntid) & "','" _
+            & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.FuncRgID) & "','" _
             & StringHelper.EscapeQueryString("Create central store record") & "','" _
             & StringHelper.EscapeQueryString(createQuery) & "')"
         End If
@@ -1047,8 +1047,8 @@ Public Function UpdateServerRecord(datas As Scripting.Dictionary, cols As Collec
         If Session.Settings.EnableAuditLog Then
             ExecuteQuery "insert into audit_logs([id], [ntid], [idFunction], [userAction], [description]) values('" _
             & StringHelper.EscapeQueryString(StringHelper.GetGUID) & "','" _
-            & StringHelper.EscapeQueryString(Session.CurrentUser.ntid) & "','" _
-            & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.FuncRgID) & "','" _
+            & StringHelper.EscapeQueryString(Session.currentUser.ntid) & "','" _
+            & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.FuncRgID) & "','" _
             & StringHelper.EscapeQueryString("Update central store record") & "','" _
             & StringHelper.EscapeQueryString(updateQuery) & "')"
         End If

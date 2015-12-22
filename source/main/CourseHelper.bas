@@ -200,10 +200,10 @@ Public Function ImportCourse()
     mCols.Add "deleted"
     dbm.Init
     dbm.ExecuteQuery "update course set deleted=-1 where idRegion='" _
-                       & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) _
+                       & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.Region) _
                        & "'" _
                       & " and idFunction='" _
-                      & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.FuncRgID) & "' and deleted=0"
+                      & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.FuncRgID) & "' and deleted=0"
     dbm.OpenRecordSet "select [Course ID], [Course Title], [Course Duration], [Spare Column]," _
       & "[Course Type],[Delivery Timing],[Area] from tmp_curriculum " _
       & " group by [Course ID], [Course Title], [Course Duration], [Spare Column]," _
@@ -220,15 +220,15 @@ Public Function ImportCourse()
             mData.Add "courseType", dbm.GetFieldValue(dbm.RecordSet, "Course Type")
             mData.Add "courseDelivery", dbm.GetFieldValue(dbm.RecordSet, "Delivery Timing")
             mData.Add "courseArena", dbm.GetFieldValue(dbm.RecordSet, "Area")
-            mData.Add "idRegion", Session.CurrentUser.FuncRegion.Region
-            mData.Add "idFunction", Session.CurrentUser.FuncRegion.FuncRgID
+            mData.Add "idRegion", Session.currentUser.FuncRegion.Region
+            mData.Add "idFunction", Session.currentUser.FuncRegion.FuncRgID
             mData.Add "deleted", "0"
             Set qdf = dbm.Database.CreateQueryDef("", "select [id] from course where courseId='" _
                        & StringHelper.EscapeQueryString(tmpCourseId) & "' and idRegion='" _
-                       & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) _
+                       & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.Region) _
                        & "'" _
                       & " and idFunction='" _
-                      & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.FuncRgID) & "'")
+                      & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.FuncRgID) & "'")
             Set rst = qdf.OpenRecordSet
             If Not (rst.EOF And rst.BOF) Then
                 mData.Add "id", dbm.GetFieldValue(rst, "id")
@@ -261,18 +261,18 @@ Public Function ImportMapping()
     mCols.Add "deleted"
     dbm.Init
     dbm.ExecuteQuery "update CourseMappingBpRoleStandard set deleted=-1 where idRegion='" _
-                       & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) _
+                       & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.Region) _
                        & "'" _
                       & " and idFunction='" _
-                      & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.FuncRgID) & "' and deleted=0"
+                      & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.FuncRgID) & "' and deleted=0"
     dbm.OpenRecordSet "select BpRoleStandard.id as [idBpRole], course.id As [idCourse], tmp_curriculum.[P/S] from ((BpRoleStandard inner join tmp_curriculum on BpRoleStandard.BpRoleStandardName = tmp_curriculum.[Role Name]) " _
                         & " inner join course on course.courseId = tmp_curriculum.[Course ID])" _
                         & " where BpRoleStandard.deleted=0 and course.deleted=0 " _
                         & " and course.idRegion='" _
-                        & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) _
+                        & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.Region) _
                         & "'" _
                         & " and course.idFunction='" _
-                        & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.FuncRgID) & "'"
+                        & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.FuncRgID) & "'"
     If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
         dbm.RecordSet.MoveFirst
         Do While Not dbm.RecordSet.EOF
@@ -282,17 +282,17 @@ Public Function ImportMapping()
             mData.Add "idCourse", tmpIdCourse
             mData.Add "idBpRole", tmpIdBpRole
             mData.Add "ps", dbm.GetFieldValue(dbm.RecordSet, "P/S")
-            mData.Add "idRegion", Session.CurrentUser.FuncRegion.Region
-            mData.Add "idFunction", Session.CurrentUser.FuncRegion.FuncRgID
+            mData.Add "idRegion", Session.currentUser.FuncRegion.Region
+            mData.Add "idFunction", Session.currentUser.FuncRegion.FuncRgID
             mData.Add "deleted", "0"
             Set qdf = dbm.Database.CreateQueryDef("", "select [id] from CourseMappingBpRoleStandard where idCourse='" _
                        & StringHelper.EscapeQueryString(tmpIdCourse) & "'" _
                        & " and idBpRole='" & StringHelper.EscapeQueryString(tmpIdBpRole) & "'" _
                        & " and idRegion='" _
-                       & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) _
+                       & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.Region) _
                        & "'" _
                       & " and idFunction='" _
-                      & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.FuncRgID) & "'")
+                      & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.FuncRgID) & "'")
             Set rst = qdf.OpenRecordSet
             If Not (rst.EOF And rst.BOF) Then
                 mData.Add "id", dbm.GetFieldValue(rst, "id")

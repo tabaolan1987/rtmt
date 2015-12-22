@@ -31,7 +31,7 @@ End Sub
 
 Public Sub TestCurrentUser()
     On Error GoTo OnError
-    Dim cUser As New CurrentUser
+    Dim cUser As New currentUser
     cUser.Init "Carld0"
 'mAssert.Equals cUser.Auth, True
    ' mAssert.Equals cUser.Valid, True

@@ -176,7 +176,7 @@ Public Function query(qType As Integer, Optional data As Scripting.Dictionary) A
         data.Add Constants.Q_KEY_REGION_NAME, Session.Settings.RegionName
     End If
     If Not data.Exists(Constants.Q_KEY_FUNCTION_REGION_NAME) Then
-        data.Add Constants.Q_KEY_FUNCTION_REGION_NAME, Session.CurrentUser.FuncRegion.Name
+        data.Add Constants.Q_KEY_FUNCTION_REGION_NAME, Session.currentUser.FuncRegion.Name
     End If
     mQuery = StringHelper.GenerateQuery(mQuery, data)
     'Logger.LogDebug "MappingMetaData.Query", mQuery

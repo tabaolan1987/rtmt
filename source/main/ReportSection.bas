@@ -23,7 +23,7 @@ Private Property Get DataQuery() As Scripting.Dictionary
     Set ss = Session.Settings()
     data.Add Constants.Q_KEY_FUNCTION_REGION_ID, ss.RegionFunctionId
     data.Add Constants.Q_KEY_REGION_NAME, ss.RegionName
-    data.Add Constants.Q_KEY_FUNCTION_REGION_NAME, Session.CurrentUser.FuncRegion.Name
+    data.Add Constants.Q_KEY_FUNCTION_REGION_NAME, Session.currentUser.FuncRegion.Name
     Set DataQuery = data
 End Property
 

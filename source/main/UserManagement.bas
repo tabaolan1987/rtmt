@@ -59,7 +59,7 @@ Public Function ApplyCheckData(tblName As String)
                 Case "w_invalid_sub_function": query = "update " & mValidationTable & " set SdSubFunction = '" & StringHelper.EscapeQueryString(tmpData) & "' where ntid = '" & StringHelper.EscapeQueryString(tmpNtid) & "'"
             End Select
             If mCustomValidation Then
-                query = query & " and region='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "'"
+                query = query & " and region='" & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.Region) & "'"
             End If
             dbm.ExecuteQuery query
             dbm.RecordSet.MoveNext
@@ -96,7 +96,7 @@ Public Function CheckValidData(tblName As String)
     End Select
     If mCustomValidation Then
         query = query & " and deleted=0 and suspend=0 "
-        query = query & " and region='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "'"
+        query = query & " and region='" & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.Region) & "'"
     End If
     Logger.LogDebug "UserManagement.CheckValidData", "query: " & query
     dbm.RecycleTableName tblName
@@ -151,7 +151,7 @@ Public Function IsExistUserData() As Boolean
     Logger.LogDebug "UserManagement.IsExistUserData", "Start check"
     Dim query As String
     query = "select * from " & Constants.END_USER_DATA_TABLE_NAME & " where deleted = 0 and region='" & _
-               StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "'"
+               StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.Region) & "'"
     dbm.Init
     dbm.OpenRecordSet query
     If Not (dbm.RecordSet.EOF And dbm.RecordSet.BOF) Then
@@ -182,7 +182,7 @@ End Function
 Public Function CheckRegionFunction()
     Dim query As String
     Dim tmpNtid As String
-    query = "SELECT * FROM " & Constants.END_USER_DATA_CACHE_TABLE_NAME & " WHERE [Region] not like '" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "'"
+    query = "SELECT * FROM " & Constants.END_USER_DATA_CACHE_TABLE_NAME & " WHERE [Region] not like '" & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.Region) & "'"
     dbm.Init
     dbm.OpenRecordSet query
     mIsFunctionRegionConflict = False
@@ -196,7 +196,7 @@ Public Function CheckRegionFunction()
             dbm.RecordSet.MoveNext
         Loop
     End If
-    dbm.ExecuteQuery "DELETE FROM " & Constants.END_USER_DATA_CACHE_TABLE_NAME & " WHERE [Region] not like '" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "'"
+    dbm.ExecuteQuery "DELETE FROM " & Constants.END_USER_DATA_CACHE_TABLE_NAME & " WHERE [Region] not like '" & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.Region) & "'"
     dbm.ExecuteQuery "DELETE FROM " & Constants.END_USER_DATA_CACHE_TABLE_NAME & " WHERE ntid is null"
     dbm.ExecuteQuery "DELETE FROM " & Constants.END_USER_DATA_CACHE_TABLE_NAME & " WHERE ntid = ''"
     dbm.Recycle
@@ -278,7 +278,7 @@ Public Function CheckConflict()
             query = "SELECT * FROM " & Constants.END_USER_DATA_TABLE_NAME _
                                                         & " WHERE " & ss.NtidField & " = '" _
                                                         & StringHelper.EscapeQueryString(ntid) & "'" _
-                                                        & " and region='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "'" _
+                                                        & " and region='" & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.Region) & "'" _
                                                         & " and deleted=0 and suspend=0"
             'Logger.LogDebug "UserManagement.CheckConflict", "Compare NTID query: " & query
             Set qdf = dbm.Database.CreateQueryDef("", query)
@@ -736,7 +736,7 @@ Public Function GenerateRoleMapping(rm As ReportMetaData)
                         dbm.Init
                         ' Remove all mapping
                         dbm.ExecuteQuery "update user_data_mapping_role set Deleted=-1 where idUserdata='" & StringHelper.EscapeQueryString(tmpNtid) _
-                                            & "' and idRegion='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "' and deleted=0"
+                                            & "' and idRegion='" & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.Region) & "' and deleted=0"
                         
                         dbm.Recycle
                         Logger.LogDebug "UserManagement.GenerateRoleMapping", "Found ntid: " & tmpNtid
@@ -769,7 +769,7 @@ Public Function GenerateRoleMapping(rm As ReportMetaData)
                                         tmpQuery = "insert into user_data_mapping_role(id, idUserdata, idRegion, idBpRoleStandard, idMapping)" _
                                             & " select '" & StringHelper.EscapeQueryString(StringHelper.GetGUID) & "' as id " _
                                             & ",'" & StringHelper.EscapeQueryString(tmpNtid) & "' As idUserdata " _
-                                            & ", '" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "' As idRegion " _
+                                            & ", '" & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.Region) & "' As idRegion " _
                                             & ", BpRoleStandard.id as idBpRoleStandard " _
                                             & ", mappingType.id  As idMapping " _
                                             & " from BpRoleStandard, mappingType " _
@@ -843,7 +843,7 @@ Public Function MergeUserData()
             tmpData.Add "suspend", "0"
             ntid = dbm.GetFieldValue(dbm.RecordSet, ss.NtidField)
             query = "SELECT * FROM " & Constants.END_USER_DATA_TABLE_NAME & " WHERE ntid = '" & StringHelper.EscapeQueryString(ntid) & "'" _
-                    & " and region='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "'"
+                    & " and region='" & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.Region) & "'"
                     
             Set tmpQdf = dbm.Database.CreateQueryDef("", query)
             Set tmpRst = tmpQdf.OpenRecordSet
@@ -929,19 +929,19 @@ Public Function LoadQualifications()
     Dim quals As New Scripting.Dictionary
     Dim lastNtid As String
     dbm.Init
-    dbm.ExecuteQuery "delete [user_data].[mappingQuanlifications].value from user_data where [Region]='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "' and deleted=0"
+    dbm.ExecuteQuery "delete [user_data].[mappingQuanlifications].value from user_data where [Region]='" & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.Region) & "' and deleted=0"
     
     dbm.ExecuteQuery "update user_data set mapped_qualifications=''" _
-                            & " where Region='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "' and deleted=0"
+                            & " where Region='" & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.Region) & "' and deleted=0"
     dbm.ExecuteQuery "update user_data set mappingQuanlificationsStatus=''" _
-                    & " where Region='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "' and deleted=0"
+                    & " where Region='" & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.Region) & "' and deleted=0"
     
     dbm.OpenRecordSet "select U.ntid, Q.Qname from ((user_data_mapping_qualification As U inner join qualifications As Q on Q.id = U.idQuali)" _
                 & " inner join user_data AS UD on UD.ntid = U.ntid)" _
                 & " where U.idRegion = '" _
-                & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) _
+                & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.Region) _
                 & "' and U.deleted=0 and Q.deleted=0 and UD.deleted=0 and UD.region = '" _
-                & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) _
+                & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.Region) _
                 & "' order by U.ntid, Q.Qname"
     If Not (dbm.RecordSet.BOF And dbm.RecordSet.EOF) Then
         If quals Is Nothing Then
@@ -954,16 +954,16 @@ Public Function LoadQualifications()
             tmpNtid = dbm.GetFieldValue(dbm.RecordSet, "ntid")
             dbm.ExecuteQuery "insert into user_data([mappingQuanlifications].value) values('" & StringHelper.EscapeQueryString(tmpQual) & "') where ntid='" _
                         & StringHelper.EscapeQueryString(tmpNtid) & "'" _
-                        & " and Region='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "'"
+                        & " and Region='" & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.Region) & "'"
             dbm.ExecuteQuery "update user_data set mappingQuanlificationsStatus='Mapped'" _
                     & " where ntid='" & StringHelper.EscapeQueryString(tmpNtid) & "'" _
-                    & " and Region='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "' and deleted=0"
+                    & " and Region='" & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.Region) & "' and deleted=0"
             
             If Not StringHelper.IsEqual(lastNtid, tmpNtid, True) Then
                 If quals.count > 0 Then
                     dbm.ExecuteQuery "update user_data set mapped_qualifications='" & StringHelper.GenerateCommaDict(quals) & "'" _
                             & " where ntid='" & StringHelper.EscapeQueryString(lastNtid) & "'" _
-                            & " and Region='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "' and deleted=0"
+                            & " and Region='" & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.Region) & "' and deleted=0"
                   
                 End If
                 Set quals = New Scripting.Dictionary
@@ -979,7 +979,7 @@ Public Function LoadQualifications()
         If quals.count > 0 Then
                     dbm.ExecuteQuery "update user_data set mapped_qualifications='" & StringHelper.GenerateCommaDict(quals) & "'" _
                             & " where ntid='" & StringHelper.EscapeQueryString(lastNtid) & "'" _
-                            & " and Region='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "' and deleted=0"
+                            & " and Region='" & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.Region) & "' and deleted=0"
                   
         End If
     Else
@@ -994,26 +994,26 @@ Public Function LoadBBJobRoles(Optional mFilter As String)
     Dim dbm As New DbManager
     Dim query As String
     dbm.Init
-    query = "delete [user_data].[mappingBpRoles].value from user_data where [Region]='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "' and deleted=0"
+    query = "delete [user_data].[mappingBpRoles].value from user_data where [Region]='" & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.Region) & "' and deleted=0"
     If Len(mFilter) > 0 Then
         query = query & " and ntid in (" & mFilter & ")"
     End If
     dbm.ExecuteQuery query
     query = "update user_data set mappingTypeBpRoles=''" _
-                    & " where Region='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "' and deleted=0"
+                    & " where Region='" & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.Region) & "' and deleted=0"
     If Len(mFilter) > 0 Then
         query = query & " and ntid in (" & mFilter & ")"
     End If
     dbm.ExecuteQuery query
     query = "update user_data set mapped_bb_job_roles=''" _
-                    & " where Region='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "' and deleted=0"
+                    & " where Region='" & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.Region) & "' and deleted=0"
     If Len(mFilter) > 0 Then
         query = query & " and ntid in (" & mFilter & ")"
     End If
     dbm.ExecuteQuery query
     query = "select U.idUserdata, B.BproleStandardName, M.mapp_name from ((user_data_mapping_role as U inner join mappingType as M on M.id = U.idMapping)" _
             & " inner join BpRoleStandard as B on U.idBpRoleStandard = B.id) where U.idRegion='" _
-            & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "'" _
+            & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.Region) & "'" _
             & " and U.deleted=0 and B.deleted=0 and M.deleted=0"
     If Len(mFilter) > 0 Then
         query = query & " and U.idUserdata in (" & mFilter & ")"
@@ -1033,16 +1033,16 @@ Public Function LoadBBJobRoles(Optional mFilter As String)
             tmpMappingType = dbm.GetFieldValue(dbm.RecordSet, "mapp_name")
             dbm.ExecuteQuery "insert into user_data([mappingBpRoles].value) values('" & StringHelper.EscapeQueryString(tmpRole) & "') where ntid='" _
                         & StringHelper.EscapeQueryString(tmpNtid) & "'" _
-                        & " and Region='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "' and deleted=0"
+                        & " and Region='" & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.Region) & "' and deleted=0"
             dbm.ExecuteQuery "update user_data set mappingTypeBpRoles='" & StringHelper.EscapeQueryString(tmpMappingType) & "'," _
-                    & " actor_ntid='" & StringHelper.EscapeQueryString(Session.CurrentUser.ntid) & "'" _
+                    & " actor_ntid='" & StringHelper.EscapeQueryString(Session.currentUser.ntid) & "'" _
                     & " where ntid='" & StringHelper.EscapeQueryString(tmpNtid) & "'" _
-                    & " and Region='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "' and deleted=0"
+                    & " and Region='" & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.Region) & "' and deleted=0"
             If Not StringHelper.IsEqual(lastNtid, tmpNtid, True) Then
                 If roles.count > 0 Then
                     dbm.ExecuteQuery "update user_data set mapped_bb_job_roles='" & StringHelper.GenerateCommaDict(roles) & "'" _
                             & " where ntid='" & StringHelper.EscapeQueryString(lastNtid) & "'" _
-                            & " and Region='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "' and deleted=0"
+                            & " and Region='" & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.Region) & "' and deleted=0"
                   
                 End If
                 Set roles = New Scripting.Dictionary
@@ -1056,7 +1056,7 @@ Public Function LoadBBJobRoles(Optional mFilter As String)
         If roles.count > 0 Then
             dbm.ExecuteQuery "update user_data set mapped_bb_job_roles='" & StringHelper.GenerateCommaDict(roles) & "'" _
                             & " where ntid='" & StringHelper.EscapeQueryString(lastNtid) & "'" _
-                            & " and Region='" & StringHelper.EscapeQueryString(Session.CurrentUser.FuncRegion.Region) & "' and deleted=0"
+                            & " and Region='" & StringHelper.EscapeQueryString(Session.currentUser.FuncRegion.Region) & "' and deleted=0"
                   
         End If
     Else
