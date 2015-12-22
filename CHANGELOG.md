@@ -2,7 +2,7 @@ CHANGELOG (notable new features or fixes)
 ---------
 
 ###<a href='https://cmgcode.atlassian.net/projects/DURM/versions/12803'>Version 0.4.4</a>
-Released on: 21/12/2015
+Released on: 22/12/2015
 
 + Fix issues
 
