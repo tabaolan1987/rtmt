@@ -1,5 +1,24 @@
 CHANGELOG (notable new features or fixes)
 ---------
+
+###<a href='https://cmgcode.atlassian.net/projects/DURM/versions/12803'>Version 0.4.4</a>
+Released on: 21/12/2015
+
++ Fix issues
+
+<h5>        Bug
+</h5>
+<ul>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-459'>DURM-459</a>] -         Phase 4 - Generate Training Report - Runtime error shown when import incorrect ducuments
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-460'>DURM-460</a>] -         Phase 4 - Team Status report - Missing data
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-467'>DURM-467</a>] -         Phase 4 - Manual Assignments - Missing data for NName field after synched
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-465'>DURM-465</a>] -         Phase 4 - Training Bundle - Invalid message appears after deleting an item
+</li>
+</ul>
+
 ###<a href='https://cmgcode.atlassian.net/projects/DURM/versions/12803'>Version 0.4.3</a>
 Released on: 21/12/2015
 
