@@ -11,6 +11,8 @@ Released on: 22/12/2015
 <ul>
 <li>[<a href='https://cmgcode.atlassian.net/browse/DURM-459'>DURM-459</a>] -         Phase 4 - Generate Training Report - Runtime error shown when import incorrect ducuments
 </li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-451'>DURM-451</a>] -         Phase 4 - Training screen - Update confirmation message should not show for current user
+</li>
 <li>[<a href='https://cmgcode.atlassian.net/browse/DURM-460'>DURM-460</a>] -         Phase 4 - Team Status report - Missing data
 </li>
 <li>[<a href='https://cmgcode.atlassian.net/browse/DURM-467'>DURM-467</a>] -         Phase 4 - Manual Assignments - Missing data for NName field after synched
