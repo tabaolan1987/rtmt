@@ -1,8 +1,25 @@
 CHANGELOG (notable new features or fixes)
 ---------
 
+###<a href='https://cmgcode.atlassian.net/projects/DURM/versions/12803'>Version 0.4.5</a>
+Released on: 23/12/2015
+
++ Fix issues
+
+<h5>        Bug
+</h5>
+<ul>
+
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-451'>DURM-451</a>] -         Phase 4 - Training screen - Update confirmation message should not show for current user
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-466'>DURM-466</a>] -         Phase 4 - Team Status report - Inconsistency between coding and requirement
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-465'>DURM-465</a>] -         Phase 4 - Training Bundle - Invalid message appears after deleting an item
+</li>
+</ul>
+
 ###<a href='https://cmgcode.atlassian.net/projects/DURM/versions/12803'>Version 0.4.4</a>
-Released on: 22/12/2015
+Released on: 23/12/2015
 
 + Fix issues
 
