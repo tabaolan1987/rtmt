@@ -1,6 +1,19 @@
 CHANGELOG (notable new features or fixes)
 ---------
 
+###<a href='https://cmgcode.atlassian.net/projects/DURM/versions/12803'>Version 0.4.6</a>
+Released on: 24/12/2015
+
++ Fix issues
+
+<h5>        Bug
+</h5>
+<ul>
+
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-468'>DURM-468</a>] -       Phase 4 - Complete Assignments - Status of all entries in tbl_ASSIG is empty 
+</li>
+</ul>
+
 ###<a href='https://cmgcode.atlassian.net/projects/DURM/versions/12803'>Version 0.4.5</a>
 Released on: 23/12/2015
 
