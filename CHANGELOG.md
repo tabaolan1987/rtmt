@@ -1,5 +1,18 @@
 CHANGELOG (notable new features or fixes)
 ---------
+
+###<a href='https://cmgcode.atlassian.net/projects/DURM/versions/12803'>Version 0.4.9</a>
+Released on: 30/12/2015
+
++ Fix issues
+
+<h5>        Bug
+</h5>
+<ul>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-471'>DURM-471</a>] -       View Assignments - Missing e-learning assignments in Draft assignments report for end users after updated NTR to empty
+</li>
+</ul>
+
 ###<a href='https://cmgcode.atlassian.net/projects/DURM/versions/12803'>Version 0.4.8</a>
 Released on: 25/12/2015
 
