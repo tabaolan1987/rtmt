@@ -1,5 +1,19 @@
 CHANGELOG (notable new features or fixes)
 ---------
+
+###<a href='https://cmgcode.atlassian.net/projects/DURM/versions/12803'>Version 0.4.11</a>
+Released on: 05/01/2016
+
++ Fix issues
+
+<h5>        Bug
+</h5>
+<ul>
+<li> Fix issue generate report in excel 2013
+</li>
+</ul>
+
+
 ###<a href='https://cmgcode.atlassian.net/projects/DURM/versions/12803'>Version 0.4.10</a>
 Released on: 30/12/2015
 
