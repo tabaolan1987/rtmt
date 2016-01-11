@@ -671,7 +671,7 @@ Public Function GenerateRoleMapping(rm As ReportMetaData)
     Dim tmpQuery As String
     Dim oExcel As New Excel.Application
     Dim WB As New Excel.Workbook
-    Dim ws As Excel.worksheet
+    Dim WS As Excel.worksheet
     Dim rng As Excel.range
     Dim tmpRps As ReportSection
     Dim rpSectsCol As Collection
@@ -707,7 +707,7 @@ Public Function GenerateRoleMapping(rm As ReportMetaData)
             Set WB = .Workbooks.Open(rm.OutputPath)
             With WB
                 Logger.LogDebug "UserManagement.GenerateRoleMapping", "Select worksheet: " & rm.worksheet
-                Set ws = WB.workSheets(rm.worksheet)
+                Set WS = WB.workSheets(rm.worksheet)
                 
                 'Turn off some Excel functionality so the code runs faster
                 Logger.LogDebug "UserManagement.GenerateRoleMapping", "Turn off ScreenUpdating"
@@ -717,11 +717,11 @@ Public Function GenerateRoleMapping(rm As ReportMetaData)
                 Logger.LogDebug "UserManagement.GenerateRoleMapping", "Turn off EnableEvents"
                 oExcel.EnableEvents = False
                 Logger.LogDebug "UserManagement.GenerateRoleMapping", "Turn off DisplayPageBreaks"
-                ws.DisplayPageBreaks = False
+                WS.DisplayPageBreaks = False
                 
                 l = rm.StartCol
                 k = rm.startRow
-                With ws
+                With WS
                     If .FilterMode Then
                         .ShowAllData
                     End If
@@ -792,7 +792,7 @@ Public Function GenerateRoleMapping(rm As ReportMetaData)
                 oExcel.ScreenUpdating = screenUpdateState
                 oExcel.DisplayStatusBar = statusBarState
                 oExcel.EnableEvents = eventsState
-                ws.DisplayPageBreaks = displayPageBreakState
+                WS.DisplayPageBreaks = displayPageBreakState
                 
                 Logger.LogDebug "UserManagement.GenerateRoleMapping", "Close excel file " & rm.OutputPath
             End With

@@ -9,7 +9,7 @@ Public Sub ExportExcelReport(sSQL As String, sFileNameTemplate As String, output
     Dim oExcel As New Excel.Application
     
     Dim WB As New Excel.Workbook
-    Dim ws As Excel.worksheet
+    Dim WS As Excel.worksheet
     Dim rng As Excel.range
     Dim objConn As New ADODB.Connection
     Dim objRs As New ADODB.RecordSet
@@ -19,15 +19,15 @@ Public Sub ExportExcelReport(sSQL As String, sFileNameTemplate As String, output
                    'Create new workbook from the template file
                     Set WB = .Workbooks.Add(sFileNameTemplate)
                             With WB
-                                 Set ws = WB.workSheets(workSheets) 'Replace with the name of actual sheet
-                                 With ws
+                                 Set WS = WB.workSheets(workSheets) 'Replace with the name of actual sheet
+                                 With WS
                                         
                                           objRs.Open sSQL, objConn, adOpenStatic, adLockReadOnly
                                           Set rng = .range(range) 'Starting point of the data range
                                           rng.CopyFromRecordset objRs
                                           objRs.Close
                                  End With
-                                 ws.SaveAs (output)
+                                 WS.SaveAs (output)
                             End With
         .Quit
     End With
@@ -66,7 +66,7 @@ Public Sub GenerateReport(rpm As ReportMetaData)
         Dim reportSheet As Variant
         Dim oExcel As New Excel.Application
         Dim WB As New Excel.Workbook
-        Dim ws As Excel.worksheet
+        Dim WS As Excel.worksheet
         Dim rng As Excel.range
         Dim Pivot As Excel.PivotTable
         Dim c As Long
@@ -98,10 +98,10 @@ Public Sub GenerateReport(rpm As ReportMetaData)
                     For Each reportSheet In rpm.ReportSheets.keys
                         Set reportSects = rpm.ReportSheets.Item(CStr(reportSheet))
                         Logger.LogDebug "Reporting.GenerateReport", "Select worksheet: " & CStr(reportSheet)
-                        Set ws = WB.workSheets(CStr(reportSheet)) 'Replace with the name of actual sheet
+                        Set WS = WB.workSheets(CStr(reportSheet)) 'Replace with the name of actual sheet
                         'Save sheet state
                         Logger.LogDebug "Reporting.GenerateReport", "Save state DisplayPageBreaks"
-                        displayPageBreakState = ws.DisplayPageBreaks
+                        displayPageBreakState = WS.DisplayPageBreaks
                         'Turn off some Excel functionality so the code runs faster
                         Logger.LogDebug "Reporting.GenerateReport", "Turn off ScreenUpdating"
                         oExcel.ScreenUpdating = False
@@ -111,10 +111,10 @@ Public Sub GenerateReport(rpm As ReportMetaData)
                         Logger.LogDebug "Reporting.GenerateReport", "Turn off EnableEvents"
                         oExcel.EnableEvents = False
                         Logger.LogDebug "Reporting.GenerateReport", "Turn off DisplayPageBreaks"
-                        ws.DisplayPageBreaks = False
+                        WS.DisplayPageBreaks = False
                         
                         
-                        With ws
+                        With WS
                             If .FilterMode Then
                                 .ShowAllData
                             End If
@@ -275,17 +275,17 @@ Public Sub GenerateReport(rpm As ReportMetaData)
                     Next reportSheet
                     If rpm.PivotTable Then
                             Logger.LogDebug "Reporting.GenerateReport", "Select pivot worksheet: " & rpm.PivotTableWorksheet
-                            Set ws = WB.workSheets(rpm.PivotTableWorksheet)
+                            Set WS = WB.workSheets(rpm.PivotTableWorksheet)
                             Logger.LogDebug "Reporting.GenerateReport", "Select pivot table: " & rpm.PivotTableName
-                            Set Pivot = ws.PivotTables(rpm.PivotTableName)
+                            Set Pivot = WS.PivotTables(rpm.PivotTableName)
                             Pivot.RefreshTable
                             Pivot.Update
                             If rpm.PivotWordWrapCols.count > 0 Then
                                 For Each v In rpm.PivotWordWrapCols
-                                    ws.range(ws.Cells(1, CInt(v)), ws.Cells(rpm.startRow + recordCount, CInt(v))).WrapText = True
+                                    WS.range(WS.Cells(1, CInt(v)), WS.Cells(rpm.startRow + recordCount, CInt(v))).WrapText = True
                                 Next v
                             End If
-                            ws.Rows.AutoFit
+                            WS.Rows.AutoFit
                             Dim pi As PivotItem
                             On Error Resume Next
                              For Each pi In Pivot.PivotFields("NTID").PivotItems
@@ -300,7 +300,7 @@ Public Sub GenerateReport(rpm As ReportMetaData)
                         oExcel.DisplayStatusBar = statusBarState
                         'oExcel.Calculation = calcState
                         oExcel.EnableEvents = eventsState
-                        ws.DisplayPageBreaks = displayPageBreakState
+                        WS.DisplayPageBreaks = displayPageBreakState
 
                         Logger.LogDebug "Reporting.GenerateReport", "Save report as : " & rpm.OutputPath
                         .SaveAs (rpm.OutputPath)

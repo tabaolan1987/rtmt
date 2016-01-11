@@ -232,7 +232,7 @@ End Property
 Public Function OpenReport()
     Dim oExcel As New Excel.Application
     Dim WB As New Excel.Workbook
-    Dim ws As Excel.worksheet
+    Dim WS As Excel.worksheet
     Dim rng As Excel.range
     With oExcel
         .Visible = True
@@ -246,7 +246,7 @@ End Function
 Public Function OpenSaveAs()
     Dim oExcel As New Excel.Application
     Dim WB As New Excel.Workbook
-    Dim ws As Excel.worksheet
+    Dim WS As Excel.worksheet
     Dim rng As Excel.range
     With oExcel
         .Visible = False

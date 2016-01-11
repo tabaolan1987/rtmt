@@ -55,7 +55,7 @@ Public Function ImportDofa()
     dbm.Init
     Dim oExcel As New Excel.Application
     Dim WB As New Excel.Workbook
-    Dim ws As Excel.worksheet
+    Dim WS As Excel.worksheet
     Dim rng As Excel.range
     Dim l, k As Long
     Dim tmpValue As String
@@ -81,7 +81,7 @@ Public Function ImportDofa()
             
             With WB
                 Logger.LogDebug "DofaHelper.ImportDofa", "Select worksheet: " & mWorksheet
-                Set ws = WB.workSheets(mWorksheet)
+                Set WS = WB.workSheets(mWorksheet)
                 'Turn off some Excel functionality so the code runs faster
                 Logger.LogDebug "DofaHelper.ImportDofa", "Turn off ScreenUpdating"
                 oExcel.ScreenUpdating = False
@@ -90,9 +90,9 @@ Public Function ImportDofa()
                 Logger.LogDebug "DofaHelper.ImportDofa", "Turn off EnableEvents"
                 oExcel.EnableEvents = False
                 Logger.LogDebug "DofaHelper.ImportDofa", "Turn off DisplayPageBreaks"
-                ws.DisplayPageBreaks = False
+                WS.DisplayPageBreaks = False
                 
-                With ws
+                With WS
                     If .FilterMode Then
                         .ShowAllData
                     End If
@@ -133,7 +133,7 @@ Public Function ImportDofa()
                 oExcel.ScreenUpdating = screenUpdateState
                 oExcel.DisplayStatusBar = statusBarState
                 oExcel.EnableEvents = eventsState
-                ws.DisplayPageBreaks = displayPageBreakState
+                WS.DisplayPageBreaks = displayPageBreakState
                 
                 Logger.LogDebug "DofaHelper.ImportDofa", "Close excel file " & mPath
             End With

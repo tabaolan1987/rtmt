@@ -1,6 +1,23 @@
 CHANGELOG (notable new features or fixes)
 ---------
 
+###<a href='https://cmgcode.atlassian.net/projects/DURM/versions/12803'>Version 0.4.12</a>
+Released on: 11/01/2016
+
++ Fix issues
+
+<h5>        Bug
+</h5>
+<ul>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-473'>DURM-473</a>] -       [RTMT V4] - courseTitle is missing from LSC_Assignments report
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-474'>DURM-474</a>] -       Phase 4 - Data in Team status report should be ordered by NTID
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-475'>DURM-475</a>] -       Update text for curriculum?
+</li>
+</ul>
+
+
 ###<a href='https://cmgcode.atlassian.net/projects/DURM/versions/12803'>Version 0.4.11</a>
 Released on: 05/01/2016
 

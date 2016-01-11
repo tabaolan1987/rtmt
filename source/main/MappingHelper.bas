@@ -144,7 +144,7 @@ Public Function GenerateMapping()
         Dim v As Variant, y As Variant
         Dim oExcel As New Excel.Application
         Dim WB As New Excel.Workbook
-        Dim ws As Excel.worksheet
+        Dim WS As Excel.worksheet
         Dim rng As Excel.range
         Dim check As String
         Dim tmpIdLeft As String
@@ -168,7 +168,7 @@ Public Function GenerateMapping()
             Set WB = .Workbooks.Open(mWorkingFile)
             With WB
                 Logger.LogDebug "MappingHelper.GenerateMapping", "Select worksheet: " & mmd.worksheet
-                Set ws = WB.workSheets(mmd.worksheet)
+                Set WS = WB.workSheets(mmd.worksheet)
                 
                 'Turn off some Excel functionality so the code runs faster
                 Logger.LogDebug "MappingHelper.ParseMapping", "Turn off ScreenUpdating"
@@ -178,9 +178,9 @@ Public Function GenerateMapping()
                 Logger.LogDebug "MappingHelper.ParseMapping", "Turn off EnableEvents"
                 oExcel.EnableEvents = False
                 Logger.LogDebug "MappingHelper.ParseMapping", "Turn off DisplayPageBreaks"
-                ws.DisplayPageBreaks = False
+                WS.DisplayPageBreaks = False
                         
-                With ws
+                With WS
                     ' Fill top field heading
                     l = mmd.StartColTop
                     For Each v In dictTop.keys
@@ -254,7 +254,7 @@ Public Function GenerateMapping()
                 oExcel.ScreenUpdating = screenUpdateState
                 oExcel.DisplayStatusBar = statusBarState
                 oExcel.EnableEvents = eventsState
-                ws.DisplayPageBreaks = displayPageBreakState
+                WS.DisplayPageBreaks = displayPageBreakState
                 
                 Logger.LogDebug "MappingHelper.GenerateMapping", "Save & Close excel file " & mmd.TemplateFilePath
                 .SaveAs mmd.TemplateFilePath
@@ -270,7 +270,7 @@ End Function
 Public Function OpenMapping()
     Dim oExcel As New Excel.Application
     Dim WB As New Excel.Workbook
-    Dim ws As Excel.worksheet
+    Dim WS As Excel.worksheet
     Dim rng As Excel.range
     With oExcel
         .Visible = True
@@ -300,7 +300,7 @@ Public Function ParseMapping()
         Dim v As Variant, y As Variant
         Dim oExcel As New Excel.Application
         Dim WB As New Excel.Workbook
-        Dim ws As Excel.worksheet
+        Dim WS As Excel.worksheet
         Dim rng As Excel.range
         Dim check As String
         Dim needUpdate As Boolean
@@ -327,7 +327,7 @@ Public Function ParseMapping()
             Set WB = .Workbooks.Open(mWorkingFile)
             With WB
                 Logger.LogDebug "MappingHelper.ParseMapping", "Select worksheet: " & mmd.worksheet
-                Set ws = WB.workSheets(mmd.worksheet)
+                Set WS = WB.workSheets(mmd.worksheet)
                 
                 'Turn off some Excel functionality so the code runs faster
                 Logger.LogDebug "MappingHelper.ParseMapping", "Turn off ScreenUpdating"
@@ -337,9 +337,9 @@ Public Function ParseMapping()
                 Logger.LogDebug "MappingHelper.ParseMapping", "Turn off EnableEvents"
                 oExcel.EnableEvents = False
                 Logger.LogDebug "MappingHelper.ParseMapping", "Turn off DisplayPageBreaks"
-                ws.DisplayPageBreaks = False
+                WS.DisplayPageBreaks = False
                 
-                With ws
+                With WS
                     If .FilterMode Then
                         .ShowAllData
                     End If
@@ -409,7 +409,7 @@ Public Function ParseMapping()
                 oExcel.ScreenUpdating = screenUpdateState
                 oExcel.DisplayStatusBar = statusBarState
                 oExcel.EnableEvents = eventsState
-                ws.DisplayPageBreaks = displayPageBreakState
+                WS.DisplayPageBreaks = displayPageBreakState
                 
                 Logger.LogDebug "MappingHelper.ParseMapping", "Close excel file " & mmd.TemplateFilePath
             End With

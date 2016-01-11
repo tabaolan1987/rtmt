@@ -54,7 +54,7 @@ Public Function PrepareCurriculumSheet()
     dbm.Init
     Dim oExcel As New Excel.Application
     Dim WB As New Excel.Workbook
-    Dim ws As Excel.worksheet
+    Dim WS As Excel.worksheet
     Dim rng As Excel.range
     Dim l, k As Long
     Dim tmpValue As String
@@ -77,7 +77,7 @@ Public Function PrepareCurriculumSheet()
             Set WB = .Workbooks.Open(mPath)
             With WB
                 Logger.LogDebug "CourseHelper.PrepareCurriculumSheet", "Select worksheet: " & mWorksheet
-                Set ws = WB.workSheets(mWorksheet)
+                Set WS = WB.workSheets(mWorksheet)
                 
                 'Turn off some Excel functionality so the code runs faster
                 Logger.LogDebug "CourseHelper.PrepareCurriculumSheet", "Turn off ScreenUpdating"
@@ -87,9 +87,9 @@ Public Function PrepareCurriculumSheet()
                 Logger.LogDebug "CourseHelper.PrepareCurriculumSheet", "Turn off EnableEvents"
                 oExcel.EnableEvents = False
                 Logger.LogDebug "CourseHelper.PrepareCurriculumSheet", "Turn off DisplayPageBreaks"
-                ws.DisplayPageBreaks = False
+                WS.DisplayPageBreaks = False
                 
-                With ws
+                With WS
                     If .FilterMode Then
                         .ShowAllData
                     End If
@@ -121,7 +121,7 @@ Public Function PrepareCurriculumSheet()
                 oExcel.ScreenUpdating = screenUpdateState
                 oExcel.DisplayStatusBar = statusBarState
                 oExcel.EnableEvents = eventsState
-                ws.DisplayPageBreaks = displayPageBreakState
+                WS.DisplayPageBreaks = displayPageBreakState
                 
                 Logger.LogDebug "CourseHelper.PrepareCurriculumSheet", "Close excel file " & mPath
             End With

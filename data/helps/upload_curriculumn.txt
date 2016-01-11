@@ -1,1 +1,3 @@
-Refer to C & T Team
+Upload the the curriculum file, this will use the e-learning or Online course data to create assignments to the LSC.
+
+The curriculum must be in the standard format.
