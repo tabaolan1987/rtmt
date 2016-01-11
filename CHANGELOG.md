@@ -1,5 +1,18 @@
 CHANGELOG (notable new features or fixes)
 ---------
+###<a href='https://cmgcode.atlassian.net/projects/DURM/versions/12803'>Version 0.4.13</a>
+Released on: 11/01/2016
+
++ Fix issues
+
+<h5>        Bug
+</h5>
+<ul>
+<li>[<a href='https://cmgcode.atlassian.net/browse/DURM-476'>DURM-476</a>] -       Phase 4 - Team status report has redundant sheets
+</li>
+</ul>
+
+
 
 ###<a href='https://cmgcode.atlassian.net/projects/DURM/versions/12803'>Version 0.4.12</a>
 Released on: 11/01/2016
