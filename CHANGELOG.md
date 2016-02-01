@@ -1,5 +1,24 @@
 CHANGELOG (notable new features or fixes)
 ---------
+
+###<a href='https://cmgcode.atlassian.net/projects/DURM/versions/12803'>Version 0.4.15</a>
+Released on: 01/02/2016
+
++ Fix issues
+
+<h5>        Bug
+</h5>
+<ul>
+<li>[<a href='https://cmgcode.atlassian.net/browse/MURM-37'>MURM-37</a>] -       Progress Bar on some of the training forms not helpful
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/MURM-41'>MURM-41</a>] -       User Data Changes Report
+</li>
+<li>[<a href='https://cmgcode.atlassian.net/browse/MURM-42'>MURM-42</a>] -       Team Status report - format not correct
+</li>
+</ul>
+
+
+
 ###<a href='https://cmgcode.atlassian.net/projects/DURM/versions/12803'>Version 0.4.14</a>
 Released on: 11/01/2016
 
