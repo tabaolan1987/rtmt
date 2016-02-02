@@ -1,6 +1,19 @@
 CHANGELOG (notable new features or fixes)
 ---------
 
+###<a href='https://cmgcode.atlassian.net/projects/DURM/versions/12803'>Version 0.4.16</a>
+Released on: 02/02/2016
+
++ Fix issues
+
+<h5>        Bug
+</h5>
+<ul>
+<li>[<a href='https://cmgcode.atlassian.net/browse/MURM-42'>MURM-42</a>] -       Team Status report - format not correct
+</li>
+</ul>
+
+
 ###<a href='https://cmgcode.atlassian.net/projects/DURM/versions/12803'>Version 0.4.15</a>
 Released on: 01/02/2016
 
