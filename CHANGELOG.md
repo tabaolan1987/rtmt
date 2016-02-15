@@ -1,6 +1,19 @@
 CHANGELOG (notable new features or fixes)
 ---------
 
+###<a href='https://cmgcode.atlassian.net/projects/DURM/versions/12803'>Version 0.4.18</a>
+Released on: 15/02/2016
+
++ Fix issues
+
+<h5>        Bug
+</h5>
+<ul>
+<li>[<a href='https://cmgcode.atlassian.net/browse/MURM-45'>MURM-45</a>] -   Complete Assignments Processing effecting simultaneous regions
+</li>
+</ul>
+
+
 ###<a href='https://cmgcode.atlassian.net/projects/DURM/versions/12803'>Version 0.4.17</a>
 Released on: 03/02/2016
 
